@@ -170,7 +170,7 @@ lapply(
         disagscors_list <- NULL
         
         # For one specific core scenario, compute disaggregated scores
-        if(technology_variable %in% "OwnLnd" &  
+        if(technology_variable %in% "educated" &  
            matching_type %in% "optimal" & 
            disaggregate_level %in% "Pooled" & 
            disaggregate_variable %in% "CropID" & 
