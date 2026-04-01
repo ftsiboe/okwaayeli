@@ -78,7 +78,7 @@ model_specifications <- sf_model_specifications(
   technology_variables = c("index0CAT","index1CAT", "index2CAT", "index3CAT", "index4CAT", "index5CAT", "index6CAT"))
 
 # Drop specifications that use disaggregation variables you do NOT want
-model_specifications <- model_specifications[model_specifications$disasg %in% c("EduLevel","EduCat","Region","Ecozon"),]
+#model_specifications <- model_specifications[model_specifications$disasg %in% c("EduLevel","EduCat","Region","Ecozon"),]
 
 row.names(model_specifications) <- 1:nrow(model_specifications)
 
@@ -168,21 +168,21 @@ lapply(
         disagscors_list <- NULL
         
         # For one specific core scenario, compute disaggregated scores
-        if(technology_variable %in% "OwnLnd" &  
-           matching_type %in% "optimal" & 
-           disaggregate_level %in% "Pooled" & 
-           disaggregate_variable %in% "CropID" & 
-           f %in% 2 & d %in% 1){
-          
-          disagscors_list <- c("Ecozon","Region","AgeCat","Female",
-                               names(data)[grepl("CROP_",names(data))],"LndAq","ShrCrpCat")
-          disagscors_list <- unique(disagscors_list[disagscors_list %in% names(data)])
-          
-        }
+        # if(technology_variable %in% "index0CAT" &  
+        #    matching_type %in% "optimal" & 
+        #    disaggregate_level %in% "Pooled" & 
+        #    disaggregate_variable %in% "CropID" & 
+        #    f %in% 2 & d %in% 1){
+        #   
+        #   disagscors_list <- c("Ecozon","Region","AgeCat","Female",
+        #                        names(data)[grepl("CROP_",names(data))],"LndAq","ShrCrpCat")
+        #   disagscors_list <- unique(disagscors_list[disagscors_list %in% names(data)])
+        #   
+        # }
         
         # Multi-stage frontier estimation over sample draws
         res <- lapply(
-          unique(drawlist$ID),
+          unique(drawlist$ID)[1],
           draw_msf_estimations,
           data                    = data,
           surveyy                 = FALSE,
@@ -199,7 +199,7 @@ lapply(
           f                       = f,
           d                       = d,
           technology_variable     = technology_variable,
-          matching_type           = matching_type,
+          matching_type           = NULL,
           match_specifications        = match_specifications,
           match_specification_optimal = study_environment$match_specification_optimal[c("ARRAY","method","distance","link")],
           match_path                  = study_environment$wd$matching
@@ -226,7 +226,7 @@ lapply(
         function(){
           Main <- res$ef_mean
           Main <- Main[Main$Survey %in% "GLSS0",]
-          Main <- Main[!Main$sample %in% "unmatched",]
+          Main <- Main[Main$sample %in% "unmatched",]
           Main <- Main[Main$stat %in% "wmean",]
           Main <- Main[Main$CoefName %in% "efficiencyGap_lvl",]
           Main <- Main[Main$restrict %in% "Restricted",]
