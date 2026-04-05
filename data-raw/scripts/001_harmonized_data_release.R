@@ -13,7 +13,7 @@ if (requireNamespace("gh", quietly = TRUE)) try(gh::gh_whoami(), silent = TRUE)
 
 # Official Pasture, Rangeland, Forage Pilot Insurance Program Data
 piggyback::pb_release_create(
-  repo = "ftsiboe/GHAgricProductivityLab",
+  repo = "ftsiboe/okwaayeli",
   tag  = "hh_data",
   name = "Harmonized household Datasets",
   body = readr::read_file(file.path(output_directory,"README.md"))
@@ -24,7 +24,7 @@ asset_list <- list.files(output_directory, full.names = TRUE, recursive = TRUE)
 asset_list <- asset_list[grepl(
   paste(c("farmer_data",
           "disability_data",
-          "disability_data",
+          "ag_services_data",
           "time_poverty_data",
           "education_data",
           "financial_inclusion_data"),
@@ -32,7 +32,7 @@ asset_list <- asset_list[grepl(
 
 piggyback::pb_upload(
   asset_list,
-  repo  = "ftsiboe/GHAgricProductivityLab",
+  repo  = "ftsiboe/okwaayeli",
   tag   = "hh_data",
   overwrite = TRUE
 )
