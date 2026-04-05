@@ -34,14 +34,15 @@
 #'   If `NULL`, the function checks the environment variable `GHProdLab_TOKEN`.  
 #'   If that is also missing, the piggyback download will use default 
 #'   authentication behavior.
-#'
+#' @param force force re download
 #' @return
 #' A `data.frame` containing the requested harmonized dataset.
 #' @import piggyback 
 #' @export
 get_household_data <- function(
     dataset = "harmonized_crop_farmer_data",
-    github_token = NULL){
+    github_token = NULL, 
+    force = FALSE){
   
   # Handle GitHub token: use supplied token, then env var, then default credentials
   if (is.null(github_token)) {
@@ -59,6 +60,10 @@ get_household_data <- function(
   }
   
   file_path <- file.path(temporary_dir, paste0(dataset, ".dta"))
+  
+  if(force){
+    unlink(file_path)
+  }
   
   if (!file.exists(file_path)) {
     message(paste0("Downloading ", dataset, " ..."))

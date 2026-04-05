@@ -55,6 +55,13 @@ case "$SLURM_ARRAY_TASK_ID" in
     R --no-save -q < replications/land_tenure/001_DATA_societal_peace_and_cohesion_study.R
     R --no-save -q < replications/land_tenure/002_MATCHING_societal_peace_and_cohesion_study.R
     ;;
+
+  7)
+    echo "Running Time Poverty Study"
+    R --no-save -q < replications/land_tenure/001_DATA_time_poverty_study.R
+    R --no-save -q < replications/land_tenure/002_MATCHING_time_poverty_study.R
+    R --no-save -q < replications/land_tenure/003_TREATMENT_time_poverty_study.R
+    ;;
 esac
 
 

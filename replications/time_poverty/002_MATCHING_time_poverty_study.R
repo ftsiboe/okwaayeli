@@ -1,5 +1,5 @@
 # =============================================================================
-#  MATCHING WORKFLOW - EDUCATION STUDY
+#  MATCHING WORKFLOW - TIME POVERTY STUDY 
 # =============================================================================
 #  General Description:
 #  ---------------------------------------------------------------------------
@@ -38,7 +38,9 @@ rm(list = ls(all = TRUE)); gc()
 
 devtools::document()                         
 
-project_name <- "input_dealers"
+run_only_for(id = 7, allowed_jobnames = "run_all")
+
+project_name <- "time_poverty"
 
 study_environment <- readRDS(
   file.path(paste0("replications/", project_name, "/output"),
@@ -47,20 +49,24 @@ study_environment <- readRDS(
 # --- Data ingest & harmonization
 DATA <- harmonized_data_prep(study_environment$study_raw_data)           
 
+table(DATA$TimePovWEAI)
+table(DATA$TimPov125)
+table(DATA$TimPov15)
+
 # Focus analysis sample: pooled crop only; define treatment indicator
-DATA$Treat <- as.integer(as.numeric(DATA$dealer010 >0)) # logical treated flag
+DATA$Treat <- as.integer(as.numeric(DATA$disabled %in% 1)) # logical treated flag
 data <- DATA[as.character(DATA$CropID) %in% "Pooled", ]
 
 # --- Matching variable sets
 # Continuous/scalar covariates (plus dynamic crop area columns discovered from data)
 crop_area_list         <- get_crop_area_list(data)
-match_variables_scaler <- c("AgeYr","HHSizeAE","FmleAERt","Depend","CrpMix", crop_area_list)
+match_variables_scaler <- c("AgeYr", "YerEdu", "HHSizeAE", "FmleAERt", "Depend", "CrpMix", crop_area_list)
 
 # Categorical covariates used as factors in matching distance
-match_variables_factor <- c("Credit","OwnLnd","Ethnic","Marital","Religion","Head")
+match_variables_factor <- c("Credit", "OwnLnd", "Ethnic", "Marital", "Religion", "Head")
 
 # Exact-match strata (must match identically)
-match_variables_exact  <- c("Region", "Ecozon", "Locality", "Female")
+match_variables_exact  <- c("Survey", "Region", "Ecozon", "Locality", "Female")
 
 # --- Complete-case restriction (ensures no NAs in any matching fields)
 required_cols <- c("Surveyx", "EaId", "HhId", "Mid", "UID", "Weight", "Treat",
@@ -127,12 +133,14 @@ lapply(
 cli::cli_progress_done()
 
 # --- Covariate balance stage 
+# Compute balance tables and spec-level composite balance “rate”
 res <- covariate_balance(
   matching_output_directory = study_environment$wd$matching,
   match_specifications      = study_environment$match_specifications
 )
 
 # Save: full ranking, top spec, and detailed long-format balance table
+
 study_environment[["match_specification_ranking"]] <- res$rate
 study_environment[["match_specification_optimal"]] <- res$rate[nrow(res$rate),]
 study_environment[["balance_table"]]               <- res$bal_tab
@@ -142,4 +150,5 @@ saveRDS(
   study_environment,
   file.path(study_environment$wd$output, paste0(project_name,"_study_environment.rds"))
 )
+
 

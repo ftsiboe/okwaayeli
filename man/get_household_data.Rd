@@ -6,7 +6,8 @@
 \usage{
 get_household_data(
   dataset = "harmonized_crop_farmer_data",
-  github_token = NULL
+  github_token = NULL,
+  force = FALSE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ Must correspond to a \code{.dta} file in the \code{hh_data} GitHub release
 If \code{NULL}, the function checks the environment variable \code{GHProdLab_TOKEN}.
 If that is also missing, the piggyback download will use default
 authentication behavior.}
+
+\item{force}{force re download}
 }
 \value{
 A \code{data.frame} containing the requested harmonized dataset.

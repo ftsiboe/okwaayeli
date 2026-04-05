@@ -1,0 +1,62 @@
+Production Gaps Among Disabled Farmers Is Associated with Limited
+Technology
+================
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+For an overview of the broader project context, please refer to the main
+[GHAgricProductivityLab
+README](https://github.com/ftsiboe/GHAgricProductivityLab/blob/main/README.md)
+in the repository root.
+
+See the
+[LICENSE](https://github.com/ftsiboe/GHAgricProductivityLab/blob/main/LICENSE)
+file in the repository root for details.
+
+**Status**: Currently under review but you can read the working paper
+[here](https://github.com/ftsiboe/GHAgricProductivityLab/blob/master/replications/disability/DisabilityAgricProdGapGhana_public_version.pdf).
+
+### Contributers
+
+- [Francis
+  Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
+- [Edward
+  Martey](https://scholar.google.com/citations?user=SMoBI3wAAAAJ&hl=en)
+- [Jacob
+  Asravor](https://scholar.google.com/citations?user=_zUi3FsAAAAJ&hl=en)
+
+### Abstract
+
+In sub-Saharan Africa, agriculture is vital; however, the systematic
+exclusion of persons with disabilities from farming hinders sustainable
+development and social equity. While several studies have analyzed
+productivity differentials across various dimensions of social
+exclusion, empirical evidence on technology adoption, farming
+efficiency, and productivity gaps among farmers with disabilities
+remains limited. This study addresses this gap by evaluating disparities
+in crop production between farmers with and without disabilities in
+Ghana, with particular focus on differences in technology access and
+production efficiency. Utilizing meta-stochastic frontier analysis
+coupled with statistical matching techniques on nationally
+representative farm-level data from the 2012/13 and 2016/17 agricultural
+seasons, we find negligible differences in technical efficiency between
+the two groups (less than 0.5%). However, the productive capacity of the
+technology sets employed by farmers with disabilities is approximately
+11 percentage points lower than that of their counterparts without
+disability, resulting in a 9.5 percentage points shortfall in crop
+production. This production shortfall is primarily driven by reduced
+per-hectare use of critical inputs such as planting materials, labor,
+fertilizer, and agro-chemicals. These findings highlight a significant
+disability-induced technology access gap which reflects broader
+structural inequalities. Addressing these disparities is essential for
+promoting equitable agricultural development while harnessing the full
+potential of all farmers in Ghana.
+
+**Keywords**: disability parity; agricultural technology; technical
+efficiency; Ghana; production gap
+
+**JEL Classification**: J14, Q12, O13, O33, I38
+
+------------------------------------------------------------------------
+
+*Maintained by [ftsiboe](https://github.com/ftsiboe)*
