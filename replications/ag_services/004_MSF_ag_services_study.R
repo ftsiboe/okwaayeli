@@ -54,7 +54,7 @@ library(rgenoud);library(quadprog);library(car)
 
 devtools::document()  
 
-project_name = "resource_extraction"
+project_name = "ag_services"
 
 # Detect operating system to determine runtime environment
 sysname <- toupper(as.character(Sys.info()[["sysname"]]))
@@ -75,7 +75,7 @@ model_specifications <- sf_model_specifications(
   distforms = distforms,
   fxnforms = fxnforms,
   data = study_environment$estimation_data,
-  technology_variables = c("extraction_any","mining_any","mining_comm","mining_gala","quarrying","sand","salt"))
+  technology_variables = c("ag_services","cooperative","extension"))
 
 row.names(model_specifications) <- 1:nrow(model_specifications)
 
@@ -166,7 +166,7 @@ lapply(
         
         # Multi-stage frontier estimation over sample draws
         res <- lapply(
-          unique(drawlist$ID),
+          unique(drawlist$ID)[1],
           draw_msf_estimations,
           data                    = data,
           surveyy                 = "Pooled" %in% data[,"CropID"],

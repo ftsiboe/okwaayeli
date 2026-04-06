@@ -1,5 +1,5 @@
 # =============================================================================
-#  DATA and SETUP - RESOURCE EXTRACTION STUDY 
+#  DATA and SETUP - ag_services STUDY 
 # =============================================================================
 #  General Description:
 #  ---------------------------------------------------------------------------
@@ -20,10 +20,10 @@ rm(list = ls(all = TRUE)); gc()
 # This calls roxygen2 via devtools to regenerate .Rd docs and NAMESPACE.
 devtools::document()                         
 
-run_only_for(id = 2, allowed_jobnames = "run_all")
+run_only_for(id = 8, allowed_jobnames = "run_all")
 
 # ---- Define study name and initialize study environment
-project_name <- "resource_extraction"
+project_name <- "ag_services"
 
 # study_setup() is assumed to:
 #   - create / verify directories,
@@ -37,8 +37,8 @@ study_environment <- study_setup(project_name = project_name)
 # the GHAgricProductivityLab GitHub repo, then reads them with haven.
 farmer_data <- get_household_data("harmonized_crop_farmer_data")
 
-# resource_extraction_data <- get_household_data("harmonized_resources_extraction_data")
-resource_extraction_data  <- as.data.frame(haven::read_dta("data-raw/releases/harmonized_data/harmonized_resources_extraction_data.dta"))
+# ag_services_data <- get_household_data("harmonized_resources_extraction_data")
+ag_services_data  <- as.data.frame(haven::read_dta("data-raw/releases/harmonized_data/harmonized_ag_services_data.dta"))
 
 # ---- Merge farmer and resource extraction data at the household-member level
 # Merge keys:
@@ -48,13 +48,13 @@ resource_extraction_data  <- as.data.frame(haven::read_dta("data-raw/releases/ha
 #   - Mid     : member ID
 study_data <- dplyr::inner_join(
   farmer_data,
-  resource_extraction_data,
+  ag_services_data,
   by = c("Surveyx", "EaId")
 )
 
 # ---- Restrict to relevant survey rounds and drop certain variables
 study_data <- study_data[
-  study_data$Surveyx %in% c("GLSS3","GLSS4","GLSS5","GLSS6","GLSS7"),
+  study_data$Surveyx %in% c("GLSS5","GLSS6","GLSS7"),
 ]
 
 # ---- Attach raw data to study environment (potential issue)

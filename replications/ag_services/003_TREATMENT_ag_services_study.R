@@ -27,7 +27,7 @@ devtools::document()
 
 run_only_for(id = 2, allowed_jobnames = "run_all")
 
-project_name = "resource_extraction"
+project_name = "ag_services"
 
 # Detect operating system to determine runtime environment
 sysname <- toupper(as.character(Sys.info()[["sysname"]]))

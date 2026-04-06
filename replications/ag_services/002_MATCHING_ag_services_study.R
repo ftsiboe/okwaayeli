@@ -38,9 +38,9 @@ rm(list = ls(all = TRUE)); gc()
 
 devtools::document()                         
 
-run_only_for(id = 2, allowed_jobnames = "run_all")
+run_only_for(id = 8, allowed_jobnames = "run_all")
 
-project_name <- "resource_extraction"
+project_name <- "ag_services"
 
 study_environment <- readRDS(
   file.path(paste0("replications/", project_name, "/output"),
@@ -50,7 +50,7 @@ study_environment <- readRDS(
 DATA <- harmonized_data_prep(study_environment$study_raw_data)           
 
 # Focus analysis sample: pooled crop only; define treatment indicator
-DATA$Treat <- as.integer(as.numeric(DATA$extraction_any %in% 1)) # logical treated flag
+DATA$Treat <- as.integer(as.numeric(DATA$ag_services >0)) # logical treated flag
 data <- DATA[as.character(DATA$CropID) %in% "Pooled", ]
 
 # --- Matching variable sets
