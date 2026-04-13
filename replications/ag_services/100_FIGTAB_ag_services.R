@@ -3,7 +3,7 @@ library('magrittr');library(ggplot2);library(gridExtra)
 library(dplyr);library(gtable);library(stringr);library(cowplot)
 devtools::document()  
 
-project_name = "resource_extraction"
+project_name = "ag_services"
 study_environment <- readRDS(
   file.path(paste0("replications/", project_name, "/output"),
             paste0(project_name,"_study_environment.rds")))
