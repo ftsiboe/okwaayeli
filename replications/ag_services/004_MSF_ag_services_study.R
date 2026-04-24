@@ -80,9 +80,10 @@ model_specifications <- sf_model_specifications(
   data = study_environment$estimation_data,
   technology_variables = c("services0", "services1", "services2", "services3"))
 
-# model_specifications <- model_specifications[!model_specifications$disasg %in% c("EduLevel","EduCat","Region","Ecozon","AgeCat"),]
-# model_specifications <- model_specifications[!(model_specifications$disasg %in% c("CropID") & ! model_specifications$level %in% "Pooled"),]
-model_specifications
+# Drop specifications that use disaggregation variables you do NOT want
+model_specifications <- model_specifications[!model_specifications$disasg %in% c( "Female","Region","Ecozon","EduCat","EduLevel","AgeCat"),]
+model_specifications <- model_specifications[model_specifications$level %in% c( "Pooled"),]
+
 row.names(model_specifications) <- 1:nrow(model_specifications)
 
 # If running on a cluster with SLURM array jobs:
