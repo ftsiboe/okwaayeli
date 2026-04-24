@@ -179,7 +179,7 @@ lapply(
            disaggregate_variable %in% "CropID" & 
            f %in% 2 & d %in% 1){
           
-          disagscors_list <- c(names(data)[grepl("CROP_",names(data))])
+          disagscors_list <- c("Ecozon","Region","AgeCat","EduLevel","Female",names(data)[grepl("CROP_",names(data))])
 
           for(ddx in c(
             names(data)[grepl("extension_agency_",names(data))],
