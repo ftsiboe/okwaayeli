@@ -1,5 +1,5 @@
 # =============================================================================
-#  TREATMENT EFFECT WORKFLOW - DISABILITY STUDY 
+#  TREATMENT EFFECT WORKFLOW - TIME POVERTY STUDY 
 # =============================================================================
 #  General Description:
 # -----------------------------------------------------------------------------
@@ -27,7 +27,7 @@ devtools::document()
 
 run_only_for(id = 1, allowed_jobnames = "run_all")
 
-project_name = "disability"
+project_name = "time_poverty"
 
 # Detect operating system to determine runtime environment
 sysname <- toupper(as.character(Sys.info()[["sysname"]]))

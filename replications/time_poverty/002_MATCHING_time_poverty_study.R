@@ -49,12 +49,8 @@ study_environment <- readRDS(
 # --- Data ingest & harmonization
 DATA <- harmonized_data_prep(study_environment$study_raw_data)           
 
-table(DATA$TimePovWEAI)
-table(DATA$TimPov125)
-table(DATA$TimPov15)
-
 # Focus analysis sample: pooled crop only; define treatment indicator
-DATA$Treat <- as.integer(as.numeric(DATA$TimPov125 %in% 1)) # logical treated flag
+DATA$Treat <- as.integer(as.numeric(DATA$tpoor0150 %in% 1)) # logical treated flag
 data <- DATA[as.character(DATA$CropID) %in% "Pooled", ]
 
 # --- Matching variable sets
@@ -66,7 +62,7 @@ match_variables_scaler <- c("AgeYr", "YerEdu", "HHSizeAE", "FmleAERt", "Depend",
 match_variables_factor <- c("Credit", "OwnLnd", "Ethnic", "Marital", "Religion")
 
 # Exact-match strata (must match identically)
-match_variables_exact  <- c("Survey", "Region", "Ecozon", "Locality", "Female")
+match_variables_exact  <- c("Region", "Ecozon", "Locality", "Female") # "Survey", 
 
 # --- Complete-case restriction (ensures no NAs in any matching fields)
 required_cols <- c("Surveyx", "EaId", "HhId", "Mid", "UID", "Weight", "Treat",

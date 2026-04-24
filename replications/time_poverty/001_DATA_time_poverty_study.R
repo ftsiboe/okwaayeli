@@ -57,7 +57,7 @@ study_data <- dplyr::inner_join(
 # Keep only GLSS6 and GLSS7, i.e., more recent rounds with richer time poverty data.
 # Then drop any variables whose names match the patterns "LndFrgMid", "EduWhyNo", or "RentHa".
 study_data <- study_data[
-  study_data$Surveyx %in% c("GLSS6","GLSS7"),
+  study_data$Surveyx %in% c("GLSS7"),
   names(study_data)[!grepl("LndFrgMid|EduWhyNo|RentHa", names(study_data))]
 ]
 
