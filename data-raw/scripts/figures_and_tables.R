@@ -56,10 +56,10 @@ ers_theme = function() {
 }
 #------------------------------------------------------------
 # Function to process and save main specification results ####
-tab_main_specification <- function(study_environment) {
-  
-  res_list <- list.files(study_environment$wd$estimations, pattern = "_optimal.rds", full.names = TRUE)
-  
+tab_main_specification <- function(
+    res_list,
+    study_environment) {
+
   res <- as.data.frame(
     data.table::rbindlist(
       lapply(
@@ -71,11 +71,13 @@ tab_main_specification <- function(study_environment) {
             
             # Process production and inefficiency function parameters
             sf_estm <- res$sf_estm
-            sf_estm$jack_pv <- ifelse(sf_estm$CoefName %in% c("Nobs", "olsSkew", "olsM3Okay", "CoelliM3Test", "AgostinoSkw", "LRInef", "mlLoglik", "LRT_LL0", "LRT_LL1", "LRT_DF0", "LRT_DF1", "LRT_Tv", "LRT_DF"), sf_estm$Pvalue, sf_estm$jack_pv)
+            sf_estm$jack_pv <- ifelse(sf_estm$CoefName %in% c(
+              "Nobs", "olsSkew", "olsM3Okay", "CoelliM3Test", "AgostinoSkw", 
+                                                              "LRInef", "mlLoglik", "LRT_LL0", "LRT_LL1", "LRT_DF0", "LRT_DF1", "LRT_Tv", "LRT_DF"), sf_estm$Pvalue, sf_estm$jack_pv)
             sf_estm$estm_type <- "sf_estm"
             sf_estm$level_type <- "level"
             sf_estm <- sf_estm[c("technology_variable", "fxnforms", "distforms", "estm_type", "level_type", "sample", "Survey", "restrict", "Tech", "CoefName", "Estimate", "Estimate.sd", "jack_pv")]
-            
+            sf_estm[sf_estm$CoefName %in% "Nobs", ]
             # Process elasticities
             el_mean <- res$el_mean
             el_mean <- el_mean[el_mean$stat %in% "wmean", ]
@@ -84,6 +86,8 @@ tab_main_specification <- function(study_environment) {
             el_mean$level_type <- ifelse(el_mean$level_type %in% "", "level", el_mean$level_type)
             el_mean$CoefName <- el_mean$input
             el_mean <- el_mean[c("technology_variable", "fxnforms", "distforms", "estm_type", "level_type", "sample", "Survey", "restrict", "Tech", "CoefName", "Estimate", "Estimate.sd", "jack_pv")]
+            el_mean <- el_mean[!el_mean$CoefName %in% "Nobs", ]
+            
             
             # Process efficiency scores
             ef_mean <- res$ef_mean
@@ -101,12 +105,13 @@ tab_main_specification <- function(study_environment) {
             res <- res[res$sample %in% c(ifelse(study_environment$match_specification_optimal$link %in% NA,study_environment$match_specification_optimal$distance,study_environment$match_specification_optimal$link),"unmatched"),]
             res <- res[res$restrict %in% c("Restricted"),]
             res$sample <- ifelse(res$sample %in% ifelse(study_environment$match_specification_optimal$link %in% NA,study_environment$match_specification_optimal$distance,study_environment$match_specification_optimal$link),"matched",res$sample)
-            saveRDS(res, file = file.path(study_environment$wd$output,"figure_data","main_specification.rds"))
+            #saveRDS(res, file = file.path(study_environment$wd$output,"figure_data","main_specification.rds"))
             return(res)
           }, error = function(e) {
             return(NULL)
           })
         }), fill = TRUE))
+  
   return(res)
 }
 

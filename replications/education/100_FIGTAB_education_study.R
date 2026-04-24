@@ -16,7 +16,21 @@ Keep.List<-c("Keep.List",ls())
 
 # Main Specification   
 rm(list= ls()[!(ls() %in% c(Keep.List))])
-res <- tab_main_specification(study_environment)
+res_list <- c(
+  file.path(study_environment$wd$estimations,"CropID_Pooled_educated_TL_hnormal_optimal.rds"),
+  file.path(study_environment$wd$estimations,"CropID_Pooled_any_formal_TL_hnormal_optimal.rds"),
+  file.path(study_environment$wd$estimations,"CropID_Pooled_EduLevel_TL_hnormal_optimal.rds"),
+  file.path(study_environment$wd$estimations,"CropID_Pooled_numeracy_TL_hnormal_optimal.rds"),
+  file.path(study_environment$wd$estimations,"CropID_Pooled_any_read_TL_hnormal_optimal.rds"),
+  file.path(study_environment$wd$estimations,"CropID_Pooled_any_write_TL_hnormal_optimal.rds"),
+  file.path(study_environment$wd$estimations,"CropID_Pooled_local_literacy_TL_hnormal_optimal.rds"),
+  file.path(study_environment$wd$estimations,"CropID_Pooled_fregn_literacy_TL_hnormal_optimal.rds"),
+  file.path(study_environment$wd$estimations,"CropID_Pooled_any_train_TL_hnormal_optimal.rds"),
+  file.path(study_environment$wd$estimations,"CropID_Pooled_student_TL_hnormal_optimal.rds"),
+  file.path(study_environment$wd$estimations,"CropID_Pooled_apprentice_TL_hnormal_optimal.rds"))
+
+res <- tab_main_specification(res_list=res_list,study_environment=study_environment)
+
 wb <- openxlsx::loadWorkbook(file.path(study_environment$wd$output,paste0(project_name,"_results_smf.xlsx")))
 openxlsx::writeData(wb, sheet = "msf",res[res$Survey %in% "GLSS0",] , colNames = T, startCol = "A", startRow = 1)
 openxlsx::saveWorkbook(wb,file.path(study_environment$wd$output,paste0(project_name,"_results_smf.xlsx")),overwrite = T)

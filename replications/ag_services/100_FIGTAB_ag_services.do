@@ -17,6 +17,7 @@ decode CropID,gen(CropIDx)
 keep if CropIDx == "Pooled"
 qui levelsof CropIDx, local(levels)
 tab services0
+tab Surveyx services0
 
 qui foreach disag in services0 farm_association community_cooperative extension0{
 	
@@ -233,10 +234,8 @@ decode CropID,gen(CropIDx)
 loc xlist services0 farm_association community_cooperative extension0 /*
 */ ag_services1 ag_services2 ag_services3 ag_services4 ag_services5 ag_services6 ag_services7 ag_services8 /*
 */ extension_agency_mofa extension_agency_ngo extension_agency_coop  /*
-*/ services_ext_planting services_ext_mechanization services_ext_credit  /*
-*/ services_ext_irrigation services_ext_husbandry services_ext_agchemicals services_ext_post_harvest  /*
-*/ services_asso_employment services_asso_credit services_asso_equipment services_asso_inputs  /*
-*/ services_asso_marketing services_asso_records services_asso_labour /*
+*/ services_planting services_mechanization services_credit services_irrigation services_husbandry  /*
+*/ services_agchemicals services_post_harvest services_employment services_records services_labour /*
 */ compliance1 compliance2 compliance3 compliance4 /*
 */ extensionCat1 extensionCat2 extensionCat3 extensionCat4 extensionCat5 extensionCat6 extensionCat7
 
@@ -303,5 +302,5 @@ keep Variable crop mesure Beta SE Tv Pv Min Max SD N
 order Variable crop mesure Beta SE Tv Pv Min Max SD N
 
 export excel Variable crop mesure Beta SE Tv Pv Min Max SD N /*
-*/ using "$GitHub\labs\okwaayeli\replications\ag_services\output\ag_services_results.xlsx", /*
+*/ using "$GitHub\labs\okwaayeli\replications\ag_services\output\ag_services_results-summary-statistics.xlsx", /*
 */ sheet("services") sheetmodify firstrow(variables) 

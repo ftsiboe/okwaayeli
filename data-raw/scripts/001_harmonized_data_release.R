@@ -12,12 +12,12 @@ output_directory <- "data-raw/releases/harmonized_data"
 if (requireNamespace("gh", quietly = TRUE)) try(gh::gh_whoami(), silent = TRUE)
 
 # Official Pasture, Rangeland, Forage Pilot Insurance Program Data
-piggyback::pb_release_create(
-  repo = "ftsiboe/okwaayeli",
-  tag  = "hh_data",
-  name = "Harmonized household Datasets",
-  body = readr::read_file(file.path(output_directory,"README.md"))
-)
+# piggyback::pb_release_create(
+#   repo = "ftsiboe/okwaayeli",
+#   tag  = "hh_data",
+#   name = "Harmonized household Datasets",
+#   body = readr::read_file(file.path(output_directory,"README.md"))
+# )
 
 # Upload the assets
 asset_list <- list.files(output_directory, full.names = TRUE, recursive = TRUE)
