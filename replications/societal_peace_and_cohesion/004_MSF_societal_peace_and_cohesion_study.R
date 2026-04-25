@@ -70,15 +70,18 @@ estimation_data$EduCat <- as.character(estimation_data$EduCat)
 distforms   <- sf_functional_forms()$distforms
 fxnforms    <- sf_functional_forms()$fxnforms
 
+estimation_data$index0DMY <- as.integer(as.numeric(estimation_data$index0CAT >0))
+
 # Build table of model specifications for multi–stage frontier estimation
 model_specifications <- sf_model_specifications(
   distforms = distforms,
   fxnforms = fxnforms,
   data = study_environment$estimation_data,
-  technology_variables = c("index0CAT","index1CAT", "index2CAT", "index3CAT", "index4CAT", "index5CAT", "index6CAT"))
+  technology_variables = c("index0CAT","index1CAT", "index2CAT", "index3CAT", "index4CAT", "index5CAT", "index6CAT","index0DMY"))
 
 # Drop specifications that use disaggregation variables you do NOT want
-#model_specifications <- model_specifications[model_specifications$disasg %in% c("EduLevel","EduCat","Region","Ecozon"),]
+model_specifications <- model_specifications[!model_specifications$disasg %in% c( "Female","Region","Ecozon","EduCat","EduLevel","AgeCat"),]
+model_specifications <- model_specifications[model_specifications$level %in% c( "Pooled"),]
 
 row.names(model_specifications) <- 1:nrow(model_specifications)
 
@@ -165,41 +168,54 @@ lapply(
         drawlist = study_environment$sample_draw_list
         
         # By default, no disaggregated scores list
+        
+        # By default, no disaggregated scores list
         disagscors_list <- NULL
         
         # For one specific core scenario, compute disaggregated scores
-        # if(technology_variable %in% "index0CAT" &  
-        #    matching_type %in% "optimal" & 
-        #    disaggregate_level %in% "Pooled" & 
-        #    disaggregate_variable %in% "CropID" & 
-        #    f %in% 2 & d %in% 1){
-        #   
-        #   disagscors_list <- c("Ecozon","Region","AgeCat","Female",
-        #                        names(data)[grepl("CROP_",names(data))],"LndAq","ShrCrpCat")
-        #   disagscors_list <- unique(disagscors_list[disagscors_list %in% names(data)])
-        #   
-        # }
+        if(technology_variable %in% "index0CAT" &  
+           matching_type %in% "optimal" & 
+           disaggregate_level %in% "Pooled" & 
+           disaggregate_variable %in% "CropID" & 
+           f %in% 2 & d %in% 1){
+          
+          disagscors_list <- c("Ecozon","Region","AgeCat","EduLevel","Female",names(data)[grepl("CROP_",names(data))])
+          
+          # for(ddx in c(
+          #   names(data)[grepl("extension_agency_",names(data))],
+          #   names(data)[grepl("extension_",names(data))],
+          #   names(data)[grepl("ag_services_",names(data))],
+          #   names(data)[grepl("extension_compliance_",names(data))],
+          #   names(data)[grepl("extensionCat_",names(data))],
+          #   names(data)[grepl("services_",names(data))])){
+          #   if(round(mean(data[,ddx],na.rm=T),2) >= 0.03){ 
+          #     disagscors_list <- c(disagscors_list,ddx)
+          #   }
+          # }
+          
+          disagscors_list <- unique(disagscors_list[disagscors_list %in% names(data)])
+        }
         
         # Multi-stage frontier estimation over sample draws
         res <- lapply(
-          unique(drawlist$ID)[1],
+          unique(drawlist$ID),
           draw_msf_estimations,
           data                    = data,
           surveyy                 = FALSE,
-          intercept_shifters      = list(scalar_variables=crop_area_list,factor_variables=c("Survey","Ecozon")),
-          intercept_shifters_meta = list(scalar_variables=crop_area_list,factor_variables=c("Survey","Ecozon")),
+          intercept_shifters      = list(scalar_variables=crop_area_list,factor_variables=c("Survey", "Ecozon")),
+          intercept_shifters_meta = list(scalar_variables=crop_area_list,factor_variables=c("Survey", "Ecozon")),
           drawlist                = drawlist,
           weight_variable         = "Weight",
           output_variable         = "HrvstKg",
           input_variables         = c("Area", "SeedKg", "HHLaborAE","HirdHr","FertKg","PestLt"),
-          inefficiency_covariates = list(scalar_variables=c("lnAgeYr","lnYerEdu","CrpMix"),factor_variables=c("Female","Survey","Ecozon","Extension","Credit","OwnLnd","EqipMech")),
-          adoption_covariates     = list(scalar_variables=c("lnAgeYr","lnYerEdu","CrpMix"),factor_variables=c("Female","Survey","Ecozon","Extension","Credit","OwnLnd","EqipMech")),
+          inefficiency_covariates = list(scalar_variables=c("lnAgeYr","lnYerEdu","CrpMix"),factor_variables=c("Survey", "Female","Ecozon","Credit","OwnLnd","EqipMech","Survey")),
+          adoption_covariates     = list(scalar_variables=c("lnAgeYr","lnYerEdu","CrpMix"),factor_variables=c("Survey", "Female","Ecozon","Credit","OwnLnd","EqipMech","Survey")),
           identifiers             = c("unique_identifier", "Survey", "CropID", "HhId", "EaId", "Mid"),
           disagscors_list         = disagscors_list,
           f                       = f,
           d                       = d,
           technology_variable     = technology_variable,
-          matching_type           = NULL,
+          matching_type           = matching_type,
           match_specifications        = match_specifications,
           match_specification_optimal = study_environment$match_specification_optimal[c("ARRAY","method","distance","link")],
           match_path                  = study_environment$wd$matching
@@ -226,7 +242,7 @@ lapply(
         function(){
           Main <- res$ef_mean
           Main <- Main[Main$Survey %in% "GLSS0",]
-          Main <- Main[Main$sample %in% "unmatched",]
+          Main <- Main[!Main$sample %in% "unmatched",]
           Main <- Main[Main$stat %in% "wmean",]
           Main <- Main[Main$CoefName %in% "efficiencyGap_lvl",]
           Main <- Main[Main$restrict %in% "Restricted",]
@@ -234,6 +250,38 @@ lapply(
           Main[Main$type %in% "TGR",c("Survey","sample","type","Tech","Estimate")]
           Main[Main$type %in% "TE",c("Survey","sample","type","Tech","Estimate")]
           Main[Main$type %in% "MTE",c("Survey","sample","type","Tech","Estimate")]
+
+          
+          # Survey=TRUE             sample       type   Estimate
+          # 1245  GLSS0 euclidean  TGR    2 -0.07175605
+          # 2109  GLSS0 euclidean  TGR    3 -0.03097495
+          # 813   GLSS0 euclidean   TE    2 0.06216912
+          # 1677  GLSS0 euclidean   TE    3 0.02933333
+          # 597   GLSS0 euclidean  MTE    2  0.0020287652
+          # 1461  GLSS0 euclidean  MTE    3 -0.0002784049
+          # 
+          # 3549  GLSS0 unmatched  TGR    2 -0.04150663
+          # 4413  GLSS0 unmatched  TGR    3 -0.01375172
+          # 3117  GLSS0 unmatched   TE    2 0.07855750
+          # 3981  GLSS0 unmatched   TE    3 0.04379637
+          # 2901  GLSS0 unmatched  MTE    2 0.04085799
+          # 3765  GLSS0 unmatched  MTE    3 0.03076111
+          # 
+          # # Survey=FALSE             sample       type  Estimate
+          # 1245  GLSS0 euclidean  TGR    2 0.001033147
+          # 2109  GLSS0 euclidean  TGR    3 0.002819235
+          # 813   GLSS0 euclidean   TE    2  0.02083189
+          # 1677  GLSS0 euclidean   TE    3 -0.01749843
+          # 597   GLSS0 euclidean  MTE    2  0.02104647
+          # 1461  GLSS0 euclidean  MTE    3 -0.01632129
+          # 
+          # 3549  GLSS0 unmatched  TGR    2 0.003527937
+          # 4413  GLSS0 unmatched  TGR    3 0.027013430
+          # 3117  GLSS0 unmatched   TE    2 0.04366680
+          # 3981  GLSS0 unmatched   TE    3 0.01133146
+          # 2901  GLSS0 unmatched  MTE    2 0.04181128
+          # 3765  GLSS0 unmatched  MTE    3 0.02244573
+          
         }
         
         # Add the estimation name to the result list

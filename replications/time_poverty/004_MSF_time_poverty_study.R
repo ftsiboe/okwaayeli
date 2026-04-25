@@ -1,5 +1,5 @@
 # =============================================================================
-#  MULTI-STAGE FRONTIER ESTIMATION WORKFLOW – DISABILITY STUDY
+#  MULTI-STAGE FRONTIER ESTIMATION WORKFLOW – TIME POVERTY STUDY
 # =============================================================================
 #  General Description:
 # -----------------------------------------------------------------------------
@@ -54,7 +54,7 @@ library(rgenoud);library(quadprog);library(car)
 
 devtools::document()  
 
-project_name = "disability"
+project_name = "time_poverty"
 
 # Detect operating system to determine runtime environment
 sysname <- toupper(as.character(Sys.info()[["sysname"]]))
@@ -75,7 +75,7 @@ model_specifications <- sf_model_specifications(
   distforms = distforms,
   fxnforms = fxnforms,
   data = study_environment$estimation_data,
-  technology_variables = c("disabled","disabled_self","disabled_spouse","disabled_child","disabled_close","disabled_member"))
+  technology_variables = c("tpoor0150","tpoor0125"))
 
 # Drop specifications that use disaggregation variables you do NOT want
 model_specifications <- model_specifications[!model_specifications$disasg %in% c( "Female","Region","Ecozon","EduCat","EduLevel","AgeCat"),]
@@ -169,17 +169,17 @@ lapply(
         disagscors_list <- NULL
         
         # For one specific core scenario, compute disaggregated scores
-        if(technology_variable %in% "disabled" &  
+        if(technology_variable %in% "tpoor0150" &  
            matching_type %in% "optimal" & 
            disaggregate_level %in% "Pooled" & 
            disaggregate_variable %in% "CropID" & 
            f %in% 2 & d %in% 1){
-          disagscors_list <- c("Ecozon","Region","AgeCat","EduLevel","Female","disability",names(data)[grepl("CROP_",names(data))])
+          disagscors_list <- c("Ecozon","Region","AgeCat","EduLevel","Female",names(data)[grepl("CROP_",names(data))])
         }
         
         # Multi-stage frontier estimation over sample draws
         res <- lapply(
-          unique(drawlist$ID),
+          unique(drawlist$ID)[1],
           draw_msf_estimations,
           data                    = data,
           surveyy                 = FALSE,

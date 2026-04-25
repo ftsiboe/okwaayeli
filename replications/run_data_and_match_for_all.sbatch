@@ -5,7 +5,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=10G
-#SBATCH --array=1-5
+#SBATCH --array=1-8
 #SBATCH --mail-user=ftsiboe@hotmail.com
 #SBATCH --mail-type=ALL
 #SBATCH --output=/dev/null
@@ -54,6 +54,7 @@ case "$SLURM_ARRAY_TASK_ID" in
     echo "Running Societal Peace and Cohesion Study"
     R --no-save -q < replications/land_tenure/001_DATA_societal_peace_and_cohesion_study.R
     R --no-save -q < replications/land_tenure/002_MATCHING_societal_peace_and_cohesion_study.R
+    R --no-save -q < replications/land_tenure/003_TREATMENT_societal_peace_and_cohesion_study.R
     ;;
 
   7)
