@@ -185,22 +185,23 @@ fig <- ggplot(
 ggsave(file.path(study_environment$wd$output,"figure/score_by_services.png"), fig,dpi = 600,width = 7, height = 5)
 
 # Fig - Heterogeneity          
-# rm(list= ls()[!(ls() %in% c(Keep.List))])
-# res <- readRDS(file.path(study_environment$wd$estimations,"CropID_Pooled_services0_TL_hnormal_optimal.rds"))$disagscors
-# res$disasg <- as.character(res$disagscors_var)
-# res$level  <- as.character(res$disagscors_level)
-# res <- res[res$estType %in% "teBC",]
-# res <- res[res$Survey %in% "GLSS0",]
-# res <- res[res$restrict %in% "Restricted",]
-# res <- res[res$stat %in% "mean",]
-# res <- res[!res$sample %in% "unmatched",]
-# res <- res[res$CoefName %in% "disag_efficiencyGap_lvl",]
-# res <- res[c("disasg","level","fxnforms","distforms","Survey","input","technology_variable","Tech","CoefName","Estimate","Estimate.sd","jack_pv")]
-# 
-# fig <- fig_heterogeneity00(res=res,y_title="Level difference [Any services less No services]\n",study_environment=study_environment)
-# fig[["genderAge"]] <- fig[["genderAge"]] + theme(axis.text.x = element_text(size = 5.5))
-# ggsave(file.path(study_environment$wd$output,"figure","heterogeneity_crop_region.png"), fig[["crop_region"]],dpi = 600,width = 8, height = 5)
-# ggsave(file.path(study_environment$wd$output,"figure","heterogeneity_genderAge.png"), fig[["genderAge"]],dpi = 600,width = 8, height = 5)
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+res <- readRDS(file.path(study_environment$wd$estimations,"CropID_Pooled_services0_TL_hnormal_optimal.rds"))$disagscors
+res$disasg <- as.character(res$disagscors_var)
+res$level  <- as.character(res$disagscors_level)
+res <- res[res$estType %in% "teBC",]
+res <- res[res$Survey %in% "GLSS0",]
+res <- res[res$restrict %in% "Restricted",]
+res <- res[res$stat %in% "mean",]
+res <- res[!res$sample %in% "unmatched",]
+res <- res[res$CoefName %in% "disag_efficiencyGap_lvl",]
+res <- res[c("disasg","level","fxnforms","distforms","Survey","input","technology_variable","Tech","CoefName","Estimate","Estimate.sd","jack_pv")]
+
+
+fig <- fig_heterogeneity00(res=res,y_title="Level difference [Any services less No services]\n",study_environment=study_environment)
+fig[["genderAge"]] <- fig[["genderAge"]] + theme(axis.text.x = element_text(size = 5.5))
+ggsave(file.path(study_environment$wd$output,"figure","heterogeneity_crop_region.png"), fig[["crop_region"]],dpi = 600,width = 8, height = 5)
+ggsave(file.path(study_environment$wd$output,"figure","heterogeneity_genderAge.png"), fig[["genderAge"]],dpi = 600,width = 8, height = 5)
 
 
 # Fig - Robustness         
@@ -264,7 +265,7 @@ fig_dsistribution(dataFrq,study_environment=study_environment)
 
 # Fig - Region and crop ranking text
 rm(list= ls()[!(ls() %in% c(Keep.List))])
-res <-readRDS(file.path(study_environment$wd$output,"estimations/CropID_Pooled_extraction_any_TL_hnormal_optimal.rds"))$disagscors
+res <-readRDS(file.path(study_environment$wd$output,"estimations/CropID_Pooled_services0_TL_hnormal_optimal.rds"))$disagscors
 res$disasg <- res$disagscors_var
 res$level <- res$disagscors_level
 res <- res[res$estType %in% "teBC",]

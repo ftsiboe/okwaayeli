@@ -114,7 +114,6 @@ tab_main_specification <- function(
   
   return(res)
 }
-
 #------------------------------------------------------------
 # Function to generate heterogeneity figures              ####
 
@@ -206,7 +205,7 @@ fig_heterogeneity00 <- function(res, y_title,colset=c("orange", "darkgreen", "bl
               file =   file.path(study_environment$wd$output,"figure_data",paste0(paste0(disasg, collapse = "_"), ".csv")))
     return(fig)
   }
-
+  
   # Generate legend and y-axis label for the plots
   grobs <- ggplotGrob(eff_fig_fxn(disasg = "CROP", xsize = 5.5, title = "(A) Major crops") + theme(legend.position = "bottom"))$grobs
   legend <- grobs[[which(sapply(grobs, function(x) x$name) == "guide-box")]]

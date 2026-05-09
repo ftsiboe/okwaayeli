@@ -1,22 +1,18 @@
 
 
-use "$GitHub\labs\GHAgricProductivityLab\data-raw\releases\harmonized_data\harmonized_financial_inclusion_data",clear
-merg 1:m Surveyx EaId HhId Mid using "$GitHub\labs\GHAgricProductivityLab\data-raw\releases\harmonized_data\financial_inclusion_index"
+use "$GitHub\labs\okwaayeli\data-raw\releases\harmonized_data\harmonized_financial_inclusion_data",clear
+merg 1:m Surveyx EaId HhId Mid using "$GitHub\labs\okwaayeli\data-raw\releases\harmonized_data\financial_inclusion_index"
 keep if _merge==3
 drop _merge
-merg 1:m Surveyx EaId HhId Mid using "$GitHub\labs\GHAgricProductivityLab\data-raw\releases\harmonized_data\harmonized_crop_farmer_data"
+merg 1:m Surveyx EaId HhId Mid using "$GitHub\labs\okwaayeli\data-raw\releases\harmonized_data\harmonized_crop_farmer_data"
 keep if _merge==3
 drop _merge
 keep if inlist(Surveyx,"GLSS6","GLSS7")
 compress
-saveold "$GitHub\labs\GHAgricProductivityLab\replications\financial_inclusion\output\financial_inclusion_study_data",replace ver(12)
-
-
-
+saveold "$GitHub\labs\okwaayeli\replications\financial_inclusion\output\financial_inclusion_study_data",replace ver(12)
 
 decode CropID,gen(CropIDx)
 keep if CropIDx == "Pooled"
-
 
 qui levelsof CropIDx, local(levels)
 tab credit_hh
@@ -29,14 +25,14 @@ sca drop _all
 loc ApID0 = 0
 tempfile Summaries DATA
 
-use "$GitHub\labs\GHAgricProductivityLab\replications\financial_inclusion\output\financial_inclusion_study_data",clear
+use "$GitHub\labs\okwaayeli\replications\financial_inclusion\output\financial_inclusion_study_data",clear
 decode CropID,gen(CropIDx)
 qui levelsof CropIDx, local(levels)
 
 qui foreach crop in `levels'{
   
 *loc crop "Pooled"
-use "$GitHub\labs\GHAgricProductivityLab\replications\financial_inclusion\output\financial_inclusion_study_data",clear
+use "$GitHub\labs\okwaayeli\replications\financial_inclusion\output\financial_inclusion_study_data",clear
 decode CropID,gen(CropIDx)
 keep if CropIDx == "`crop'"
 gen disagCat = `disab'
@@ -223,7 +219,7 @@ loc ApID0=`ApID0'+1
 use `Summaries', clear
 
 export excel CropIDx Equ Coef Beta SE Tv Pv Min Max SD N /*
-*/ using "$GitHub\labs\GHAgricProductivityLab\replications\financial_inclusion\output\financial_inclusion_results.xlsx", /*
+*/ using "$GitHub\labs\okwaayeli\replications\financial_inclusion\output\financial_inclusion_results.xlsx", /*
 */ sheet("Means_`disab'") sheetmodify firstrow(variables) 
 
 }
@@ -231,7 +227,7 @@ export excel CropIDx Equ Coef Beta SE Tv Pv Min Max SD N /*
 
 mat drop _all
 sca drop _all
-use "$GitHub\labs\GHAgricProductivityLab\replications\financial_inclusion\output\financial_inclusion_study_data",clear
+use "$GitHub\labs\okwaayeli\replications\financial_inclusion\output\financial_inclusion_study_data",clear
 tab FinIdxCat,gen(FinIdxCatx)
 decode CropID,gen(CropIDx)
 unab Person: FinWorker YerEdu HHFinWorker // Variables related to the person
@@ -561,6 +557,6 @@ keep Variable crop mesure Beta SE Tv Pv Min Max SD N
 order Variable crop mesure Beta SE Tv Pv Min Max SD N
 
 export excel Variable crop mesure Beta SE Tv Pv Min Max SD N /*
-*/ using "$GitHub\labs\GHAgricProductivityLab\replications\financial_inclusion\output\financial_inclusion_results.xlsx", /*
+*/ using "$GitHub\labs\okwaayeli\replications\financial_inclusion\output\financial_inclusion_results.xlsx", /*
 */ sheet("inclusion") sheetmodify firstrow(variables) 
 

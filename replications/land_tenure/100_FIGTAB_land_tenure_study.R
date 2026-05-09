@@ -22,7 +22,7 @@ res_list <- c(file.path(study_environment$wd$estimations,"CropID_Pooled_OwnLnd_T
 
 res <- tab_main_specification(res_list=res_list,study_environment=study_environment)
 wb <- openxlsx::loadWorkbook(file.path(study_environment$wd$output,paste0(project_name,"_results.xlsx")))
-openxlsx::writeData(wb, sheet = "msf",res[res$Survey %in% "GLSS0",] , colNames = T, startCol = "A", startRow = 1)
+openxlsx::writeData(wb, sheet = "msf",res , colNames = T, startCol = "A", startRow = 1)
 openxlsx::saveWorkbook(wb,file.path(study_environment$wd$output,paste0(project_name,"_results.xlsx")),overwrite = T)
 
 # Fig - Heterogeneity          

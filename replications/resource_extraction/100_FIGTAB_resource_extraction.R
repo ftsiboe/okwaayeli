@@ -16,7 +16,10 @@ Keep.List<-c("Keep.List",ls())
 
 # Main Specification   
 rm(list= ls()[!(ls() %in% c(Keep.List))])
-res <- tab_main_specification(study_environment)
+res_list <- list.files(study_environment$wd$estimations, pattern = "_hnormal_optimal.rds", full.names = TRUE)
+res_list <- res_list[grepl("CropID_Pooled_",res_list)]
+res <- tab_main_specification(res_list=res_list,study_environment=study_environment)
+
 wb <- openxlsx::loadWorkbook(file.path(study_environment$wd$output,paste0(project_name,"_results.xlsx")))
 openxlsx::writeData(wb, sheet = "msf",rbind(
   res[res$Survey %in% "GLSS0",],
