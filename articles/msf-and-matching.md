@@ -1,0 +1,193 @@
+# Meta-stochastic frontiers and statistical matching: the okwaayeli pipeline
+
+## Why this pipeline exists
+
+Sub-Saharan crop yields are typically 30–60% below global benchmarks.
+The shortfall has two distinct sources:
+
+- **Technical inefficiency** — farmers operating *below* the best
+  practice that is already available in their district.
+- **Technology gap** — entire regions (or sub-populations) lacking the
+  inputs, varieties, or know-how that define the global / national
+  production frontier.
+
+The two sources call for different policy responses. Closing
+inefficiency mainly needs extension and managerial support; closing
+technology gaps needs investment in inputs, varieties, and
+infrastructure. To decide where scarce policy attention should go, you
+need to *decompose* the observed output shortfall.
+
+`okwaayeli` implements this decomposition through a
+meta-stochastic-frontier (MSF) framework (Huang, Huang, and Liu, 2014)
+coupled with statistical matching (Abadie & Imbens, 2006, 2016) so that
+group comparisons (e.g. farmers with vs without disabilities) are not
+contaminated by selection on observables.
+
+## The pipeline at a glance
+
+    ┌──────────────┐   ┌─────────────────┐   ┌──────────────────┐   ┌────────────┐   ┌────────────┐
+    │  Harmonized  │   │  001_DATA       │   │  002_MATCHING    │   │  003_TE    │   │  004_MSF   │
+    │  GLSS data   ├──▶│  (sample        ├──▶│  (write specs,   ├──▶│  (treat-   ├──▶│  (frontier │
+    │  (release)   │   │   restriction,  │   │   match, balance)│   │   ment     │   │   estim'n) │
+    └──────────────┘   │   covariates)   │   └──────────────────┘   │   effects) │   └─────┬──────┘
+                       └─────────────────┘                          └────────────┘         │
+                                                                                           ▼
+                                                                           ┌────────────────────────────┐
+                                                                           │  100_FIGTAB                │
+                                                                           │  (figures, tables,         │
+                                                                           │   *_results.xlsx)          │
+                                                                           └────────────────────────────┘
+
+Each study under `replications/<study>/` follows this same skeleton.
+
+## Step 0 — set up
+
+``` r
+
+library(okwaayeli)
+
+study_environment <- study_setup(project_name = "tutorial")
+```
+
+[`study_setup()`](https://ftsiboe.github.io/okwaayeli/reference/study_setup.md)
+creates the standard folder tree under
+`replications/<project_name>/output/` and returns the resolved paths
+plus a reproducible seed (default `11122025`, set via
+[`okwaayeli_control()`](https://ftsiboe.github.io/okwaayeli/reference/okwaayeli_control.md)).
+
+## Step 1 — pull harmonized data (001_DATA)
+
+``` r
+
+farmer_data     <- get_household_data("harmonized_crop_farmer_data")
+disability_data <- get_household_data("harmonized_disability_data")
+
+study_data <- merge(
+  farmer_data, disability_data,
+  by = c("Surveyx", "EaId", "HhId", "Mid")
+)
+```
+
+[`get_household_data()`](https://ftsiboe.github.io/okwaayeli/reference/get_household_data.md)
+downloads the requested `.dta` file once from the `hh_data` GitHub
+release via `piggyback`, caches it under
+`tools::R_user_dir("okwaayeli", "cache")`, and returns a data.frame.
+
+Typical 001 work after the merge: restrict the survey waves, build the
+treatment indicator
+(e.g. `disabled <- as.integer(disabled_self == 1 | …)`), build the
+covariate list.
+
+## Step 2 — matching (002_MATCHING)
+
+``` r
+
+formulas <- write_match_formulas(
+  treatment = "disabled",
+  covariates = c("Female", "Age", "YerEdu", "HouseholdSize", "Region")
+)
+
+matched <- match_sample_specifications(
+  data     = study_data,
+  formulas = formulas,
+  weight   = "Weight"
+)
+
+balance <- covariate_balance(matched)
+```
+
+The matching engine evaluates several specifications (nearest-neighbour,
+CBPS, propensity-score, BART, etc.) in parallel and reports standardised
+mean differences so you can pick the best-balanced one. Output is
+written to `output/matching/`.
+
+## Step 3 — treatment effects (003_TREATMENT)
+
+``` r
+
+draws <- draw_matched_samples(matched, n_draws = 100)
+
+te_summary <- treatment_effect_calculation(
+  draws  = draws,
+  data   = study_data,
+  outcomes = c("HrvstKg", "FertKg", "SeedKg")
+)
+
+treatment_effect_summary(te_summary)
+```
+
+Outputs land in `output/treatment_effects/` and feed both the MSF
+estimation and the final exhibits.
+
+## Step 4 — meta-stochastic frontier (004_MSF)
+
+``` r
+
+msf_specs <- list(
+  output_variable  = "HrvstKg",
+  input_variables  = c("Area", "LabHr", "FertKg", "SeedKg", "PstcdHr"),
+  inefficiency_covariates = list(
+    Svarlist = c("YerEdu", "Female", "Region"),
+    Fvarlist = c("Surveyx")
+  ),
+  risk_covariates  = list(Svarlist = c("Region")),
+  weight_variable  = "Weight"
+)
+
+est <- draw_msf_estimations(
+  draw                 = 0,
+  drawlist             = draws,
+  data                 = study_data,
+  output_variable      = msf_specs$output_variable,
+  input_variables      = msf_specs$input_variables,
+  inefficiency_covariates = msf_specs$inefficiency_covariates,
+  risk_covariates      = msf_specs$risk_covariates,
+  weight_variable      = msf_specs$weight_variable
+)
+
+summary_est <- draw_msf_summary(est, technology_legend = c("With", "Without"))
+```
+
+The MSF block returns input elasticities, returns to scale, technical
+efficiency (TE), technology-gap ratios (TGR), and the meta-frontier
+performance metric (TE × TGR). Outputs land in `output/estimations/`.
+
+For real studies you typically run draws 1..N in parallel via the SLURM
+`job_msf.sbatch` script that ships in each replication folder, then
+aggregate.
+
+## Step 5 — figures and tables (100_FIGTAB)
+
+The final stage writes the canonical `*_results.xlsx` exhibit plus the
+publication-ready figures into `output/figure/` and
+`output/figure_data/`. The shell of this script is study-specific
+because exhibits vary, but the inputs are always the per-draw estimation
+`.rds` files written in step 4.
+
+## What to read next
+
+- [`?study_setup`](https://ftsiboe.github.io/okwaayeli/reference/study_setup.md)
+  and
+  [`?okwaayeli_control`](https://ftsiboe.github.io/okwaayeli/reference/okwaayeli_control.md)
+  for the project scaffolding.
+- [`?get_household_data`](https://ftsiboe.github.io/okwaayeli/reference/get_household_data.md)
+  for the data download mechanics.
+- [`?msf_workhorse`](https://ftsiboe.github.io/okwaayeli/reference/msf_workhorse.md)
+  and
+  [`?sf_workhorse`](https://ftsiboe.github.io/okwaayeli/reference/sf_workhorse.md)
+  for the core estimators.
+- The `disability` study under `replications/disability/` for a fully
+  worked example.
+
+## References
+
+- Huang, C. J., Huang, T. H., & Liu, N. H. (2014). A new approach to
+  estimating the metafrontier production function based on a stochastic
+  frontier framework. *Journal of Productivity Analysis*, 42(3),
+  241–254. <https://doi.org/10.1007/s11123-014-0402-2>
+- Abadie, A., & Imbens, G. W. (2006). Large sample properties of
+  matching estimators for average treatment effects. *Econometrica*,
+  74(1), 235–267. <https://doi.org/10.1111/j.1468-0262.2006.00655.x>
+- Abadie, A., & Imbens, G. W. (2016). Matching on the estimated
+  propensity score. *Econometrica*, 84(2), 781–807.
+  <https://doi.org/10.3982/ECTA11293>
