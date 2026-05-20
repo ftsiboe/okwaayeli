@@ -1,72 +1,34 @@
-Land Ownership Appears Neither Necessary nor Sufficient for Superior
-Agricultural Performance in Ghana
+Landownership Appears Neither Necessary nor Sufficient for Superior Agricultural Performance in Ghana
 ================
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from land_tenure.Rmd. Please edit that file. -->
+
+![Status: Drafting (v001)](https://img.shields.io/badge/status-drafting-lightgrey)
 
 For an overview of the broader project context, please refer to the main
-[GHAgricProductivityLab
-README](https://github.com/ftsiboe/GHAgricProductivityLab/README.md) in
-the repository root.
+[okwaayeli README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md)
+in the repository root.
 
 See the
-[LICENSE](https://github.com/ftsiboe/GHAgricProductivityLab/LICENSE)
+[LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
 file in the repository root for details.
 
-**Status**: Currently under review but you can read the working paper
-[here]().
+**Status**: Drafting (v001 produced 20 May 2026); GAAE 2025 conference paper available.
 
-### Contributers
+### Contributors
 
 - [Gilbert Addae](https://github.com/Gilbertaddae)
-- [Francis
-  Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
-- [Jacob
-  Asravor](https://scholar.google.com/citations?user=_zUi3FsAAAAJ&hl=en)
+- [Jacob Asravor](https://scholar.google.com/citations?user=_zUi3FsAAAAJ&hl=en)
+- [Francis Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
 
-## Abstract
+### Abstract
 
-Secure land tenure is widely assumed to stimulate investment and raise
-agricultural productivity, yet rigorous evidence from sub-Saharan Africa
-remains scarce. Leveraging six rounds of the Ghana Living Standards
-Survey (GLSS 3–7), this study links land-ownership status to production
-outcomes for 35,185 farm households. We use statistical matching within
-a meta-stochastic frontier framework to isolate ownership effects on
-input elasticities, returns to scale, technology gaps, and technical
-efficiency.
+Secure land tenure is widely assumed to stimulate investment and raise agricultural productivity, yet rigorous evidence from sub-Saharan Africa remains inconclusive. Leveraging six rounds of the Ghana Living Standards Survey (GLSS 3-7), this study links land-ownership status to production outcomes for 35,185 farm households. We use statistical matching within a meta-stochastic frontier framework to isolate ownership effects on input elasticities, returns to scale, technology gaps, and technical efficiency. Across the matched sample, all inputs significantly boost output, but fertilizer and pesticide use generate larger marginal gains for non-landowners. Landholders register slightly higher returns to scale (Delta = 0.0154); however, at the aggregate level we detect no statistically significant difference in either technology adoption or technical efficiency between owners and non-owners. Disaggregating by tenure form, documented owners and farmers with transferable or informal rights show lower meta-frontier access and reduced technical efficiency relative to matched non-owners, challenging the conventional narrative that tenure security automatically delivers productivity gains.
 
-Across the matched sample, all inputs significantly boost output, but
-fertilizer and pesticide use generate larger marginal gains for
-non-landowners—consistent with more intensive management when land is
-scarce. Landholders register slightly higher returns to scale (Δ =
-0.0154), implying stronger output growth from expanded input bundles.
-However, at the aggregate level we detect no statistically significant
-difference in either technology adoption or technical efficiency between
-owners and non-owners.
+**Keywords**: land tenure; ownership; meta-stochastic frontier; technical efficiency; technology gap; Ghana
 
-Disaggregating by tenure form reveals a more nuanced picture. Compared
-with non-owners, farmers holding documented titles, transferable rights
-(sale or collateral), or informal arrangements (free use, sharecropping,
-rental, purchase) face lower access to the meta-frontier technology and
-reduced technical efficiency. For example, documented owners show a
-technology-gap ratio of nine percentage points below—and meta-frontier
-technical efficiency three percentage points below—matched non-owners.
-Similar efficiency penalties emerge across the other tenure categories.
+**JEL Classification**: Q15, Q12, O13, K11
 
-These findings challenge the conventional narrative that land-tenure
-security automatically delivers productivity gains. In Ghana, secure
-ownership appears neither necessary nor sufficient for superior
-performance; its benefits materialize only when coupled with
-complementary measures—such as extension, credit access, and
-input-market reforms—that enable farmers to convert secure rights into
-tangible efficiency and technological gains.
-
-Our results will spur debate on whether land titling alone lifts yields,
-prompting scrutiny of tenure reform versus complementary support,
-sharing district experiences in extension, credit, and inputs, and
-comparing crop-sector impacts—advancing evidence-based strategies for
-converting land policy into tangible productivity gains.
-
-------------------------------------------------------------------------
+---
 
 *Maintained by [ftsiboe](https://github.com/ftsiboe)*

@@ -1,5 +1,5 @@
 ---
-title: "Production Gaps Among Disabled Farmers Is Associated with Limited Technology"
+title: "Production Gaps Among Disabled Farmers Are Associated with Limited Technology"
 
 output:
   github_document:
@@ -12,29 +12,36 @@ knit: >
       inputFile,
       encoding      = encoding,
       output_format = "github_document",
-      # always output README.md in the same folder as the .Rmd
       output_file   = paste0(getwd(), "/README.md")
     )
   })
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from disability_study.Rmd. Please edit that file. -->
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE,comment = "#>",out.width = "100%")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", out.width = "100%")
 ```
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache = FALSE,echo = TRUE)
+knitr::opts_chunk$set(cache = FALSE, echo = TRUE)
 ```
 
-For an overview of the broader project context, please refer to the main [GHAgricProductivityLab README](https://github.com/ftsiboe/GHAgricProductivityLab/blob/main/README.md) in the repository root.
+![Status: Under review (Agricultural Economics, R2)](https://img.shields.io/badge/status-under%20review-blue)
 
-See the [LICENSE](https://github.com/ftsiboe/GHAgricProductivityLab/blob/main/LICENSE) file in the repository root for details.
+For an overview of the broader project context, please refer to the main
+[okwaayeli README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md)
+in the repository root.
 
-**Status**: Currently under review but you can read the working paper [here](https://github.com/ftsiboe/GHAgricProductivityLab/blob/master/replications/disability/DisabilityAgricProdGapGhana_public_version.pdf).
+See the
+[LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
+file in the repository root for details.
 
-### Contributers
+**Status**: Under review at Agricultural Economics (round 2). Working paper:
+[DisabilityAgricProdGapGhana_public_version.pdf](https://github.com/ftsiboe/okwaayeli/blob/main/replications/disability/DisabilityAgricProdGapGhana_public_version.pdf).
+
+### Contributors
+
 - [Francis Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
 - [Edward Martey](https://scholar.google.com/citations?user=SMoBI3wAAAAJ&hl=en)
 - [Jacob Asravor](https://scholar.google.com/citations?user=_zUi3FsAAAAJ&hl=en)

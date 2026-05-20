@@ -1,0 +1,70 @@
+name: Study proposal
+description: Propose a new study to add to the okwaayeli lab.
+title: "[study] "
+labels: ["study-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to propose a new study that would live under `replications/<your_study>/`.
+
+        Before submitting, please skim the existing replication folders so your proposal does not
+        duplicate work in progress.
+
+  - type: input
+    id: title
+    attributes:
+      label: Proposed study title
+      placeholder: e.g. Climate variability and farm-level efficiency in Ghana
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Research question(s)
+      description: One or two clearly-stated questions.
+    validations:
+      required: true
+
+  - type: textarea
+    id: data
+    attributes:
+      label: Data
+      description: Which harmonized okwaayeli datasets you would use, plus any external data (CHIRPS, GIS, etc.).
+    validations:
+      required: true
+
+  - type: textarea
+    id: methods
+    attributes:
+      label: Proposed methods
+      description: How would you adapt the standard 001_DATA → 002_MATCHING → 003_TREATMENT → 004_MSF → 100_FIGTAB pipeline?
+    validations:
+      required: true
+
+  - type: input
+    id: target
+    attributes:
+      label: Target output
+      description: Journal article, policy brief, conference paper, dashboard, etc.
+    validations:
+      required: false
+
+  - type: input
+    id: author
+    attributes:
+      label: Lead author / contributor
+      description: Who would lead this study?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmation
+      options:
+        - label: I have reviewed `replications/` to confirm this is not already in progress.
+          required: true
+        - label: I have read CONTRIBUTING and understand the study folder template.
+          required: true

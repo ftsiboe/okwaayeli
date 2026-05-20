@@ -1,0 +1,30 @@
+citHeader("To cite okwaayeli in publications, please cite both the package and the data paper that underlies it.")
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "okwaayeli: Agricultural Productivity in Ghana",
+  author   = person("Francis", "Tsiboe", role = c("aut", "cre"),
+                    email = "ftsiboe@hotmail.com",
+                    comment = c(ORCID = "0000-0001-5984-1072")),
+  year     = format(Sys.Date(), "%Y"),
+  note     = sprintf("R package version %s", utils::packageVersion("okwaayeli")),
+  url      = "https://github.com/ftsiboe/okwaayeli",
+  textVersion =
+    paste0("Tsiboe, F. (", format(Sys.Date(), "%Y"),
+           "). okwaayeli: Agricultural Productivity in Ghana. ",
+           "R package version ", utils::packageVersion("okwaayeli"),
+           ". https://github.com/ftsiboe/okwaayeli")
+)
+
+bibentry(
+  bibtype  = "Article",
+  title    = "Nationally Representative Farm/Household Level Dataset on Crop Production in Ghana from 1987-2017",
+  author   = person("Francis", "Tsiboe"),
+  journal  = "SSRN Electronic Journal",
+  year     = "2022",
+  doi      = "10.2139/ssrn.4134518",
+  url      = "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4134518",
+  textVersion =
+    paste0("Tsiboe, F. (2022). Nationally Representative Farm/Household Level Dataset on Crop Production in Ghana from 1987-2017. ",
+           "SSRN Electronic Journal. https://doi.org/10.2139/ssrn.4134518")
+)

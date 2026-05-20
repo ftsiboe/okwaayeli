@@ -1,4 +1,4 @@
-okwaayeli : Agricultural Productivity Analaysis in Ghana
+okwaayeli: Agricultural Productivity Analysis in Ghana
 ================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -10,17 +10,36 @@ state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![R-CMD-check](https://github.com/ftsiboe/okwaayeli/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ftsiboe/USFarmSafetyNetLab/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/ftsiboe/okwaayeli/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ftsiboe/okwaayeli/actions/workflows/R-CMD-check.yaml)
+[![pkgdown](https://github.com/ftsiboe/okwaayeli/actions/workflows/pkgdown.yaml/badge.svg)](https://ftsiboe.github.io/okwaayeli/)
 [![codecov](https://codecov.io/gh/ftsiboe/okwaayeli/graph/badge.svg?token=KIE05NKNU8)](https://codecov.io/gh/ftsiboe/okwaayeli)
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
-![R \>= 4.0](https://img.shields.io/badge/R-%3E=4.0-blue) [![Contributor
+![R \>= 4.1](https://img.shields.io/badge/R-%3E=4.1-blue) [![Contributor
 Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 <!-- badges: end -->
 
 *Collaborations with enthusiastic and committed graduate students are
 welcomed. For more details see the wiki on [Graduate Student Opportunity
 to Lead Research on Agricultural Productivity in
-Ghana](https://github.com/ftsiboe/okwaayeli/wiki/Graduate-Student-Opportunity-to-Lead-Research-on-Agricultural-Productivity-in-Ghana)*
+Ghana](https://github.com/ftsiboe/okwaayeli/wiki/Graduate-Student-Opportunity-to-Lead-Research-on-Agricultural-Productivity-in-Ghana).*
+
+## Contents
+
+- [Overview](#-overview)
+- [At a glance](#-at-a-glance)
+- [Data](#-data)
+- [Methods](#-methods)
+- [Pipeline](#-pipeline)
+- [Published studies](#-published-studies)
+- [Work in progress](#-work-in-progress)
+- [Scheduled studies](#-scheduled-studies)
+- [Installation](#-installation)
+- [Quick start](#-quick-start)
+- [Contributing](#-contributing)
+- [Citation](#-citation)
+- [Data and code availability](#-data-and-code-availability)
+- [Contact](#-contact)
+- [Funding](#-funding)
 
 ## 📘 Overview
 
@@ -37,6 +56,16 @@ provides empirical evidence crucial for policy discussions aimed at
 enhancing agricultural productivity in contexts with limited access to
 new technologies.
 
+## 📌 At a glance
+
+|  |  |
+|----|----|
+| **Published outputs** | 9 (7 peer-reviewed articles + 1 data paper + 1 conference paper) |
+| **Active manuscript streams** | 8 (disability, education, resource extraction, financial inclusion, land tenure, conflict/peace, income transfer, agricultural services) |
+| **Harmonized datasets released** | 11 farmer- and community-level GLSS datasets |
+| **GLSS rounds covered** | GLSS1 (1987/88) – GLSS7 (2016/17) |
+| **License** | GPL-3 |
+
 ## 📊 Data
 
 The project utilizes farm-level data from the Ghana Living Standards
@@ -48,7 +77,12 @@ periodically, approximately every five years, in Ghana:
 [GLSS4](https://microdata.statsghana.gov.gh/index.php/catalog/14),
 [GLSS5](https://microdata.statsghana.gov.gh/index.php/catalog/5),
 [GLSS6](https://microdata.statsghana.gov.gh/index.php/catalog/72), and
-[GLSS7](https://microdata.statsghana.gov.gh/index.php/catalog/97)
+[GLSS7](https://microdata.statsghana.gov.gh/index.php/catalog/97).
+
+The harmonized data products are documented in
+[data-raw/releases/harmonized_data/codebook.md](data-raw/releases/harmonized_data/codebook.md)
+and distributed through the [`hh_data`
+release](https://github.com/ftsiboe/okwaayeli/releases/tag/hh_data).
 
 ## 🧪 Methods
 
@@ -61,82 +95,162 @@ periodically, approximately every five years, in Ghana:
   Imbens 2006](https://doi.org/10.1111/j.1468-0262.2006.00655.x);
   [Abadie and Imbens 2016](https://doi.org/10.3982/ECTA11293)).
 
-## 📄 Published Studies
+For a worked walkthrough of the full pipeline, see the [methodology
+vignette](vignettes/msf-and-matching.Rmd).
+
+## 🔗 Pipeline
+
+Every active study follows the same five-stage pipeline. Each stage is a
+numbered R script whose output feeds the next.
+
+``` mermaid
+flowchart LR
+    A[Harmonized GLSS data<br/>get_household_data()] --> B[001_DATA<br/>sample &amp; covariates]
+    B --> C[002_MATCHING<br/>specs &amp; balance]
+    C --> D[003_TREATMENT<br/>treatment effects]
+    D --> E[004_MSF<br/>frontier estimation]
+    E --> F[100_FIGTAB<br/>results.xlsx + figures]
+```
+
+## 📄 Published studies
 
 - [Technology and managerial performance of farm operators by age in
   Ghana](https://doi.org/10.1007/s11123-023-00679-y) \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
-
 - [Taking stock of gender gaps in crop production technology adoption
   and technical efficiency in
   Ghana](https://doi.org/10.1080/03031853.2022.2150664) \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
-
 - [Starchy Staples Production Shortfall in Ghana is influenced by
   Technical Inefficiency than by Ecological Technology
   Gaps](https://doi.org/10.1371/journal.pone.0284780) \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
-
 - [Production Technology, Efficiency, and Productivity of Cereal
   Farms](https://doi.org/10.1017/age.2022.16) \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
-
 - [Chronic Sources of Low Cocoa Production in
   Ghana](https://doi.org/10.1017/age.2021.3) \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
-
 - [Effect of Fertilizer Subsidy on Household Level Cereal Production in
   Ghana](https://doi.org/10.1016/j.sciaf.2021.e00916) \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
-
 - [Spatiotemporal Evaluation of Dry Beans and Groundnut Production
   Technology and Inefficiency in
   Ghana](https://ageconsearch.umn.edu/record/310316/?ln=en&v=pdf) \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
-
 - [Vegetable Production Technical Efficiency and Technology Gaps in
   Ghana](https://ageconsearch.umn.edu/record/301046/?ln=en&v=pdf) \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
-
 - [Nationally Representative Farm/Household Level Dataset on Crop
   Production in Ghana from
   1987-2017](http://dx.doi.org/10.2139/ssrn.4134518) \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
 
-## 🛠 Work in Progress
+## 🛠 Work in progress
 
 - [Technology Gaps Drive Inequality in Production for Farmers with
   Disabilities](https://github.com/ftsiboe/okwaayeli/blob/main/replications/disability/DisabilityAgricProdGapGhana_public_version.pdf)
   \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/disability)
-- \[Heterogeneous Impacts of Farmer Education on Technology Access and
+  — *under review (Agricultural Economics)*
+- [Heterogeneous Impacts of Farmer Education on Technology Access and
   Technical Efficiency in
-  Ghana\]<https://github.com/ftsiboe/okwaayeli/blob/main/replications/tech_inefficiency_education#heterogeneous-impacts-of-farmer-education-on-technology-access-and-technical-efficiency-in-ghana>)
+  Ghana](https://github.com/ftsiboe/okwaayeli/tree/main/replications/education)
   \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/education)
-- \[Digging into the Linkages Between Resource Extraction and Farm
-  Performance\]<https://github.com/ftsiboe/okwaayeli/blob/main/replications/tech_inefficiency_resource_extract#digging-into-the-linkages-between-resource-extraction-and-farm-performance>)
+  — *revise & resubmit (JAE)*
+- [Digging into the Linkages Between Resource Extraction and Farm
+  Performance](https://github.com/ftsiboe/okwaayeli/tree/main/replications/resource_extraction)
   \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/resource_extract)
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/resource_extraction)
+  — *submitted (Land Use Policy)*
 - Societal Peace and Cohesion Improve Farm Technology and Technical
   Efficiency in Ghana \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/conflict)
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/societal_peace_and_cohesion)
+  — *drafting*
 - Financial Inclusion and Credit Impacts on Crop Production in Ghana \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/financial_inclusion)
+  — *drafting*
 - Land Ownership Appears Neither Necessary nor Sufficient for Superior
   Agricultural Performance in Ghana \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/land_tenure)
+  — *drafting*
 - The Association Between Income Transfers and Crop Production in Ghana
   \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/income_transfer)
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/) —
+  *concept*
+- Agricultural Service Delivery and Smallholder Farm Performance in
+  Ghana \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/ag_services)
+  — *drafting*
 
-## 📅 Scheduled Studies
+## 📅 Scheduled studies
 
 - The link between extension services and Farm Technology Endowment and
-  its Efficient Use \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/extension)
+  its Efficient Use — *planned*
+- Input-dealer density and farm performance \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/input_dealers)
+  — *code-only, manuscript pending*
+- Time poverty and farm output gaps in Ghana \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/time_poverty)
+  — *code-only, manuscript pending*
 
-## 🔓 Data and Code Availability
+## ⬇️ Installation
+
+``` r
+# install.packages("devtools")
+devtools::install_github("ftsiboe/okwaayeli")
+```
+
+`okwaayeli` requires R ≥ 4.1 and a working C/Fortran toolchain for the
+econometric back-ends (`frontier`, `micEcon`, `rgenoud`, `quadprog`,
+`optmatch`, `dbarts`, `CBPS`).
+
+## 🚀 Quick start
+
+``` r
+library(okwaayeli)
+
+# 1. scaffold a project tree under replications/<project_name>/
+env <- study_setup(project_name = "tutorial")
+
+# 2. pull a harmonized dataset (cached locally after first call)
+farmer_data <- get_household_data("harmonized_crop_farmer_data")
+
+# 3. follow the standard 001 -> 100 pipeline; see the methodology vignette
+vignette("msf-and-matching", package = "okwaayeli")
+```
+
+## 🤝 Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for the standard study
+pipeline, the “how to add a new study” template, and the coding
+conventions. New issues, study proposals and data requests have
+dedicated [issue templates](.github/ISSUE_TEMPLATE/). Methodology
+questions are best asked under
+[Discussions](https://github.com/ftsiboe/okwaayeli/discussions).
+
+This project follows the [Contributor Covenant](code_of_conduct.md).
+Security disclosures: see [SECURITY.md](SECURITY.md).
+
+## 📚 Citation
+
+To cite the package itself:
+
+``` r
+citation("okwaayeli")
+```
+
+For the harmonized dataset underlying every study:
+
+> Tsiboe, F. (2022). *Nationally Representative Farm/Household Level
+> Dataset on Crop Production in Ghana from 1987–2017.* SSRN Electronic
+> Journal. <https://doi.org/10.2139/ssrn.4134518>
+
+Please also cite the specific paper(s) whose data or method you use; the
+full list is in [Published studies](#-published-studies).
+
+## 🔓 Data and code availability
 
 The datasets and code used in this project are openly available to
 facilitate replication and further research. They may also be used
@@ -154,11 +268,6 @@ by sending emails to Francis Tsiboe (<ftsiboe@hotmail.com>).
 
 This project did not receive any external funding.
 
-## 📚 Citation
-
-If you find this repository useful, please star this project and cite
-our papers listed above.
-
-See the [LICENSE](../LICENSE) file in the repository’s root for details.
+See the [LICENSE](LICENSE) file in the repository’s root for details.
 
 *Maintained by [ftsiboe](https://github.com/ftsiboe)*

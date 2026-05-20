@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Methodology / Research question (use Discussions)
+    url: https://github.com/ftsiboe/okwaayeli/discussions
+    about: Questions about the meta-stochastic-frontier methodology, the matching design, or how a study is set up.
+  - name: Graduate-student collaboration
+    url: https://github.com/ftsiboe/okwaayeli/wiki/Graduate-Student-Opportunity-to-Lead-Research-on-Agricultural-Productivity-in-Ghana
+    about: Interested in leading a study? Start with the lab wiki, then open a Study Proposal issue.
