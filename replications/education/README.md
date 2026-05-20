@@ -1,32 +1,37 @@
-Heterogeneous Impacts of Farmer Education on Technology Access and
-Technical Efficiency in Ghana
+Farm Production Dividend from Education Is Neither Automatic nor Uniform in Ghana
 ================
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from education.Rmd. Please edit that file. -->
+
+![Status: Revise &amp; resubmit (Journal of Agricultural Economics)](https://img.shields.io/badge/status-revise%20%26%20resubmit-orange)
 
 For an overview of the broader project context, please refer to the main
-[GHAgricProductivityLab
-README](https://github.com/ftsiboe/GHAgricProductivityLab/README.md) in
-the repository root.
+[okwaayeli README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md)
+in the repository root.
 
 See the
-[LICENSE](https://github.com/ftsiboe/GHAgricProductivityLab/LICENSE)
+[LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
 file in the repository root for details.
 
-**Status**: Currently under review but you can read the working paper
-[here]().
+**Status**: Revise &amp; resubmit at the Journal of Agricultural Economics (MS ID JAE-0528-OAR-08-25).
 
-### Contributers
+### Contributors
 
-- [Mark
-  Appiah-Twumasi](https://scholar.google.com/citations?user=SrQaedsAAAAJ&hl=en)
-- [Jacob
-  Asravor](https://scholar.google.com/citations?user=_zUi3FsAAAAJ&hl=en)
-- [Francis
-  Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
+- [Jacob Asravor](https://scholar.google.com/citations?user=_zUi3FsAAAAJ&hl=en)
+- [Mark Appiah-Twumasi](https://scholar.google.com/citations?user=SrQaedsAAAAJ&hl=en)
+- [Francis Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
+- Emmanuel Donkor
+- Ernestina Wiafe
+- Victor Owusu
 
 ### Abstract
 
-------------------------------------------------------------------------
+Using data from almost 20,000 farm households across Ghana, this study asks whether more schooling helps farmers grow more crops or adopt better tools. The answer is more complicated than commonly assumed. Farmers with formal education adopt some technologies more readily, but the productivity dividend is heterogeneous across crops, regions, gender, and the level of schooling completed. Applying a meta-stochastic frontier framework with statistical matching on harmonized GLSS data, we decompose the education-productivity link into technology-access and technical-efficiency components and document where the schooling premium binds and where it does not.
+
+**Keywords**: farmer education; human capital; technical efficiency; technology access; agricultural productivity; Ghana
+
+**JEL Classification**: I25, O13, Q12, Q16, J24, C21
+
+---
 
 *Maintained by [ftsiboe](https://github.com/ftsiboe)*

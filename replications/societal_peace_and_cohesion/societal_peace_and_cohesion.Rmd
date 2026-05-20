@@ -1,46 +1,57 @@
 ---
-title: "Heterogeneous Impacts of Farmer Education on Technology Access and Technical Efficiency in Ghana"
+title: "Societal Peace and Cohesion Improve Farm Technology and Technical Efficiency in Ghana"
 
 output:
   github_document:
     toc: false
     toc_depth: 3
-    
+
 knit: >
   (function(inputFile, encoding) {
     rmarkdown::render(
       inputFile,
       encoding      = encoding,
       output_format = "github_document",
-      # always output README.md in the same folder as the .Rmd
       output_file   = paste0(getwd(), "/README.md")
     )
   })
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from societal_peace_and_cohesion.Rmd. Please edit that file. -->
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE,comment = "#>",out.width = "100%")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", out.width = "100%")
 ```
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache = FALSE,echo = TRUE)
+knitr::opts_chunk$set(cache = FALSE, echo = TRUE)
 ```
 
-For an overview of the broader project context, please refer to the main [GHAgricProductivityLab README](https://github.com/ftsiboe/GHAgricProductivityLab/README.md) in the repository root.
+![Status: Drafting (v000)](https://img.shields.io/badge/status-drafting-lightgrey)
 
-See the [LICENSE](https://github.com/ftsiboe/GHAgricProductivityLab/LICENSE) file in the repository root for details.
+For an overview of the broader project context, please refer to the main
+[okwaayeli README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md)
+in the repository root.
 
-**Status**: Currently under review but you can read the working paper [here]().
+See the
+[LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
+file in the repository root for details.
 
-### Contributers
-- [Mark Appiah-Twumasi](https://scholar.google.com/citations?user=SrQaedsAAAAJ&hl=en)
-- [Jacob Asravor](https://scholar.google.com/citations?user=_zUi3FsAAAAJ&hl=en)
+**Status**: Drafting (v000 manuscript; abstract pending).
+
+### Contributors
+
 - [Francis Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
+- [Jacob Asravor](https://scholar.google.com/citations?user=_zUi3FsAAAAJ&hl=en)
+- [Antoinette Tsiboe-Darko](https://csps.ug.edu.gh/antoinette-adjoa-tsiboe-darko-phd)
 
 ### Abstract
 
+Conflict and weak social cohesion are widely recognised as constraints on agricultural performance, but rigorous farm-level evidence from peaceful contexts that nonetheless display meaningful subnational variation in cohesion is scarce. Using the community modules of GLSS6 and GLSS7, this study constructs a Peace and Social Cohesion Index (PCSI) for Ghanaian farming locales and links it to farm-level technology adoption and technical efficiency through statistical matching and a meta-stochastic frontier framework. *Full abstract to follow once v001 lands.*
+
+**Keywords**: social cohesion; conflict; technical efficiency; meta-stochastic frontier; Ghana
+
+**JEL Classification**: D74, O13, Q12, Z13
 
 ---
 

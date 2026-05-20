@@ -1,0 +1,40 @@
+name: Data request
+description: Request a new variable, new harmonization, or a fix to an existing harmonized dataset.
+title: "[data] "
+labels: ["data"]
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Request type
+      options:
+        - New variable in an existing harmonized dataset
+        - New harmonized dataset
+        - Bug / inconsistency in an existing variable
+        - Documentation / codebook gap
+    validations:
+      required: true
+
+  - type: input
+    id: dataset
+    attributes:
+      label: Affected dataset
+      description: e.g. harmonized_crop_farmer_data, harmonized_disability_data.
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is being requested and why?
+    validations:
+      required: true
+
+  - type: textarea
+    id: source
+    attributes:
+      label: Source / construction
+      description: For a new variable, point at the GLSS module / question. For a bug, give an example record.
+    validations:
+      required: false

@@ -6,12 +6,12 @@ Agricultural Productivity in Ghana: Legacy studies
 ## Overview
 
 For an overview of the broader project context, please refer to the main
-[GHAgricProductivityLab
-README](https://github.com/ftsiboe/GHAgricProductivityLab/README.md) in
+[okwaayeli
+README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md) in
 the repository root.
 
 See the
-[LICENSE](https://github.com/ftsiboe/GHAgricProductivityLab/LICENSE)
+[LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
 file in the repository root for details.
 
 This release contains legacy studies that were conducted before the
@@ -20,9 +20,9 @@ based on the current resources available in this repository.
 Nonetheless, legacy files are provided in the individual study folders
 to replicate, as closely as possible, the initial studies.
 
-## \## Outputs
+## Outputs
 
-### [Nationally Representative Farm/Household Level Dataset on Crop Production in Ghana from 1987-2017](http://dx.doi.org/10.2139/ssrn.4134518) \| [🗂️⚙️](https://github.com/ftsiboe/GHAgricProductivityLab/releases/download/legacy_studies/30%20Years%20of%20Crop%20Production%20in%20Ghana.zip)
+### [Nationally Representative Farm/Household Level Dataset on Crop Production in Ghana from 1987-2017](http://dx.doi.org/10.2139/ssrn.4134518) \| [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/download/legacy_studies/30%20Years%20of%20Crop%20Production%20in%20Ghana.zip)
 
 Reliable and comprehensive national agricultural statistics is crucial
 not only for agricultural development but general economic
@@ -37,7 +37,7 @@ seasonal coverage of farmers in Ghana. As such it presents a unique
 opportunity to empirically analyze key agricultural phenomena at the
 household if not at the farmer level.
 
-### [Technology and managerial performance of farm operators by age in Ghana](https://doi.org/10.1007/s11123-023-00679-y) \| [🗂️⚙️](https://github.com/ftsiboe/GHAgricProductivityLab/releases/download/legacy_studies/2023%20Technology%20and%20managerial%20performance%20of%20farm%20operators%20by%20age%20in%20Ghana.zip)
+### [Technology and managerial performance of farm operators by age in Ghana](https://doi.org/10.1007/s11123-023-00679-y) \| [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/download/legacy_studies/2023%20Technology%20and%20managerial%20performance%20of%20farm%20operators%20by%20age%20in%20Ghana.zip)
 
 Farm-level decision-making by resource-constrained smallholder farmers,
 such as investment in improved farm management practices and
@@ -66,7 +66,7 @@ policy attention, in terms of the targeting of support to farm operators
 in the various age cohorts and in the country’s quest to achieve greater
 agricultural productivity.
 
-### [Taking Stock of Gender Gaps in Crop Production Technology Adoption and Technical Efficiency in Ghana](https://doi.org/10.1080/03031853.2022.2150664) \| [🗂️⚙️](https://github.com/ftsiboe/GHAgricProductivityLab/releases/download/legacy_studies/2023%20Taking%20stock%20of%20gender%20gaps%20in%20crop%20production%20in%20Ghana.zip)
+### [Taking Stock of Gender Gaps in Crop Production Technology Adoption and Technical Efficiency in Ghana](https://doi.org/10.1080/03031853.2022.2150664) \| [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/download/legacy_studies/2023%20Taking%20stock%20of%20gender%20gaps%20in%20crop%20production%20in%20Ghana.zip)
 
 This paper examines gender disparities in agricultural production by
 applying a stylized translog meta-stochastic frontier model to data
@@ -81,7 +81,7 @@ of the potential available through Ghana’s crop production technology,
 compared to 61% for their male counterparts. These findings are critical
 for shaping policies to reduce gender disparities in agriculture.
 
-### [Starchy Staples Production Shortfall in Ghana: Influence of Technical Inefficiency Versus Ecological Technology Gaps](https://doi.org/10.1371/journal.pone.0284780) \| [🗂️⚙️](https://github.com/ftsiboe/GHAgricProductivityLab/releases/download/legacy_studies/2023%20Starchy%20staples%20production%20shortfalls%20in%20Ghana.zip)
+### [Starchy Staples Production Shortfall in Ghana: Influence of Technical Inefficiency Versus Ecological Technology Gaps](https://doi.org/10.1371/journal.pone.0284780) \| [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/download/legacy_studies/2023%20Starchy%20staples%20production%20shortfalls%20in%20Ghana.zip)
 
 Starchy staples are essential for the livelihoods of many in Ghana, yet
 their productivity remains low. This study uses a unique dataset and
@@ -93,7 +93,7 @@ farmer technical inefficiencies and 20% to technology gaps. The findings
 suggest that enhancing farmer managerial skills could significantly
 improve output in the starchy staples sector.
 
-### [Production Technology, Efficiency, and Productivity of Cereal Farms: Prospects for Enhancing Farm Performance in Ghana](https://doi.org/10.1017/age.2022.16) \| [🗂️⚙️](https://github.com/ftsiboe/GHAgricProductivityLab/releases/download/legacy_studies/2022%20Production%20technology%20efficiency%20and%20productivity%20of%20cereal%20farms%20in%20Ghana.zip)
+### [Production Technology, Efficiency, and Productivity of Cereal Farms: Prospects for Enhancing Farm Performance in Ghana](https://doi.org/10.1017/age.2022.16) \| [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/download/legacy_studies/2022%20Production%20technology%20efficiency%20and%20productivity%20of%20cereal%20farms%20in%20Ghana.zip)
 
 This paper examines the production technology and performance of Ghana’s
 cereal farms using a nationally representative dataset from 26,449 farms
@@ -105,7 +105,7 @@ in farm management practices. The research highlights variations in
 technology adoption and management practices as pivotal for boosting
 cereal productivity.
 
-### [Chronic Sources of Low Cocoa Production in Ghana: New Insights from Meta-Analysis of Old Survey Data](https://doi.org/10.1017/age.2021.3) \| [🗂️⚙️](https://github.com/ftsiboe/GHAgricProductivityLab/releases/download/legacy_studies/2021%20Chronic%20Sources%20of%20Low%20Cocoa%20Production%20in%20Ghana.zip)
+### [Chronic Sources of Low Cocoa Production in Ghana: New Insights from Meta-Analysis of Old Survey Data](https://doi.org/10.1017/age.2021.3) \| [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/download/legacy_studies/2021%20Chronic%20Sources%20of%20Low%20Cocoa%20Production%20in%20Ghana.zip)
 
 Analyzing 30 years of production data from a nationally representative
 household sample, this study investigates chronic factors behind low
@@ -115,7 +115,7 @@ and consistently hampers overall performance. The findings imply that
 enhancing managerial skills among cocoa farmers could lead to
 significant increases in output.
 
-### [Effect of Fertilizer Subsidy on Household Level Cereal Production in Ghana](https://doi.org/10.1016/j.sciaf.2021.e00916) \| [🗂️⚙️](https://github.com/ftsiboe/GHAgricProductivityLab/releases/download/legacy_studies/2021%20Effect%20of%20fertilizer%20subsidy%20on%20household%20level%20cereal%20production%20in%20Ghana.zip)
+### [Effect of Fertilizer Subsidy on Household Level Cereal Production in Ghana](https://doi.org/10.1016/j.sciaf.2021.e00916) \| [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/download/legacy_studies/2021%20Effect%20of%20fertilizer%20subsidy%20on%20household%20level%20cereal%20production%20in%20Ghana.zip)
 
 This study evaluates Ghana’s nationwide Fertilizer Subsidy Program
 (GFSP), launched in 2008, and its impact on cereal yields. Using
@@ -125,7 +125,7 @@ program increased cereal yields by 24.5%, with maize farmers showing the
 most benefit. The results support the GFSP’s effectiveness in enhancing
 agricultural productivity.
 
-### [Spatiotemporal Evaluation of Dry Beans and Groundnut Production Technology and Inefficiency in Ghana](https://ageconsearch.umn.edu/record/310316/?ln=en&v=pdf) \| [🗂️⚙️](https://github.com/ftsiboe/GHAgricProductivityLab/releases/download/legacy_studies/2021%20Dry%20Beans%20and%20Groundnut%20Production%20Technology%20and%20Inefficiency%20in%20Ghana.zip)
+### [Spatiotemporal Evaluation of Dry Beans and Groundnut Production Technology and Inefficiency in Ghana](https://ageconsearch.umn.edu/record/310316/?ln=en&v=pdf) \| [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/download/legacy_studies/2021%20Dry%20Beans%20and%20Groundnut%20Production%20Technology%20and%20Inefficiency%20in%20Ghana.zip)
 
 This paper investigates the changes in production efficiency and
 technology adoption for dry beans and groundnuts over 15 production
@@ -136,7 +136,7 @@ inefficiencies remain a major limiting factor. Key determinants for
 these trends include farmer education, mechanization, access to
 extension services, and land ownership.
 
-### [Vegetable Production Technical Efficiency and Technology Gaps in Ghana](https://ageconsearch.umn.edu/record/301046/?ln=en&v=pdf) \| [🗂️⚙️](https://github.com/ftsiboe/GHAgricProductivityLab/releases/download/legacy_studies/2019%20Vegetable%20Production%20Technical%20Efficiency%20and%20Technology%20Gaps%20in%20Ghana.zip)
+### [Vegetable Production Technical Efficiency and Technology Gaps in Ghana](https://ageconsearch.umn.edu/record/301046/?ln=en&v=pdf) \| [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/download/legacy_studies/2019%20Vegetable%20Production%20Technical%20Efficiency%20and%20Technology%20Gaps%20in%20Ghana.zip)
 
 This study assesses the shortfall in vegetable production in Ghana by
 analyzing data from okra, pepper, and tomato farmers using a
@@ -149,3 +149,4 @@ vary, being severe for okra, modest for tomato, and nearly non-existent
 for pepper, suggesting tailored strategies for each crop.
 
 *Maintained by [ftsiboe](https://github.com/ftsiboe)*
+                       

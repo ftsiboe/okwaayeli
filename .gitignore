@@ -3,19 +3,49 @@
 .RData
 .Ruserdata
 .DS_Store
+.Renviron
+
+# Replication outputs (large; download from GitHub release instead).
 replications/**/*.dta
 replications/**/*.rds
 replications/**/*.zip
 replications/**/*.csv
 replications/**/*.xlsx
 replications/**/*.png
+
+# Package data slot kept lean.
 data/*.rds
 data/*.dta
+
+# data-raw/ is private by default, but we want to track the
+# documentation and scripts that live alongside the harmonized release.
 data-raw/*
 !data-raw/scripts/
+!data-raw/releases/
+data-raw/releases/*
+!data-raw/releases/harmonized_data/
+data-raw/releases/harmonized_data/*
+!data-raw/releases/harmonized_data/README.md
+!data-raw/releases/harmonized_data/README.Rmd
+!data-raw/releases/harmonized_data/codebook.md
+
+# Manuscripts are tracked privately.
+manuscripts/*
+
+# Test fixtures (downloaded on demand).
 tests/**/*.dta
 tests/**/*.rds
 tests/**/*.zip
 tests/**/*.csv
 tests/**/*.xlsx
 tests/**/*.png
+
+# Office lock files.
+~$*
+*.tmp
+
+# pkgdown / R build artifacts.
+docs/
+inst/doc/
+*.Rcheck/
+*.tar.gz

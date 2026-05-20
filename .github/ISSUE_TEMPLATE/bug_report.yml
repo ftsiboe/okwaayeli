@@ -1,0 +1,54 @@
+name: Bug report
+description: Something in the okwaayeli package or a replication script is not behaving as documented.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill out the form below.
+
+  - type: input
+    id: where
+    attributes:
+      label: Where did this occur?
+      description: Package function (e.g. `draw_msf_estimations()`), replication script (e.g. `replications/disability/004_MSF_disability_study.R`), or harmonized dataset (e.g. `harmonized_crop_farmer_data`).
+      placeholder: e.g. R/draw_msf.R::draw_msf_estimations()
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect? What did you observe? Include the full error message if there is one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reprex
+    attributes:
+      label: Reproducible example
+      description: Minimal code that reproduces the problem. Use the `reprex` package if possible.
+      render: r
+    validations:
+      required: false
+
+  - type: textarea
+    id: sessioninfo
+    attributes:
+      label: Session info
+      description: Output of `sessionInfo()` or `sessioninfo::session_info()`.
+      render: r
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission checks
+      options:
+        - label: I have searched existing issues for duplicates.
+          required: true
+        - label: I have updated to the latest version of okwaayeli (or checked the `main` branch).
+          required: true

@@ -5,43 +5,55 @@ output:
   github_document:
     toc: false
     toc_depth: 3
-    
+
 knit: >
   (function(inputFile, encoding) {
     rmarkdown::render(
       inputFile,
       encoding      = encoding,
       output_format = "github_document",
-      # always output README.md in the same folder as the .Rmd
       output_file   = paste0(getwd(), "/README.md")
     )
   })
 ---
 
-<!-- README.md is generated from land_tenure.Rmd. Please edit that file -->
+<!-- README.md is generated from financial_inclusion.Rmd. Please edit that file. -->
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE,comment = "#>",out.width = "100%")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", out.width = "100%")
 ```
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache = FALSE,echo = TRUE)
+knitr::opts_chunk$set(cache = FALSE, echo = TRUE)
 ```
 
-For an overview of the broader project context, please refer to the main [GHAgricProductivityLab README](https://github.com/ftsiboe/GHAgricProductivityLab/README.md) in the repository root.
+![Status: Drafting (v005)](https://img.shields.io/badge/status-drafting-lightgrey)
 
-See the [LICENSE](https://github.com/ftsiboe/GHAgricProductivityLab/LICENSE) file in the repository root for details.
+For an overview of the broader project context, please refer to the main
+[okwaayeli README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md)
+in the repository root.
 
-**Status**: Currently under review but you can read the working paper [here]().
+See the
+[LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
+file in the repository root for details.
 
-### Contributers
-- [Francis Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
-- [Aisha Adam](https://scholar.google.com/citations?user=Yf2zSWAAAAAJ&hl=en&oi=ao)
+**Status**: Drafting (v005, abstract pending).
+
+### Contributors
+
 - [Mark Appiah-Twumasi](https://scholar.google.com/citations?user=SrQaedsAAAAJ&hl=en)
+- [Francis Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
+- [Aisha Adam](https://scholar.google.com/citations?user=Yf2zSWAAAAAJ&hl=en)
 - [Sylvanus Gaku](https://people.extension.wisc.edu/#home/person/66ed8e9bc09f6f031b8fa85e/)
-- [Peter Quartey](https://scholar.google.com/citations?user=rEPtTzoAAAAJ&hl=en&oi=ao)
- 
-## Abstract
+- [Peter Quartey](https://scholar.google.com/citations?user=rEPtTzoAAAAJ&hl=en)
+
+### Abstract
+
+Financial inclusion, defined as improved access to savings, credit, digital payments, and insurance, is central to the development strategy of agro-based economies in sub-Saharan Africa, and recent reports document a marked expansion of (in)formal financial services in Ghana, including the spread of mobile money. In theory, relaxing liquidity constraints should foster poverty reduction and food security by enabling farmers to undertake lumpy, yield-enhancing investments and operate nearer to the production frontier. This study constructs a financial inclusion index for Ghanaian farm households across multiple GLSS rounds and combines it with statistical matching and a meta-stochastic frontier framework to identify how financial inclusion and credit access affect technology adoption and technical efficiency in crop production. *Full abstract to follow once v006 lands.*
+
+**Keywords**: financial inclusion; credit; mobile money; technical efficiency; meta-stochastic frontier; Ghana
+
+**JEL Classification**: G21, G51, O13, Q12, Q14
 
 ---
 

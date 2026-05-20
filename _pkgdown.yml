@@ -1,0 +1,76 @@
+url: https://ftsiboe.github.io/okwaayeli/
+
+template:
+  bootstrap: 5
+  bootswatch: cosmo
+  bslib:
+    primary: "#3D7B3D"
+    base_font: {google: "Inter"}
+    heading_font: {google: "Inter"}
+    code_font: {google: "JetBrains Mono"}
+
+home:
+  title: okwaayeli — Agricultural Productivity in Ghana
+  description: >
+    Tools and datasets for investigating the drivers of agricultural
+    production shortfalls in Ghana via meta-stochastic-frontier analysis
+    and statistical matching.
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github]
+  components:
+    intro:
+      text: Get started
+      href: articles/okwaayeli.html
+    articles:
+      text: Methodology
+      menu:
+        - text: Meta-stochastic frontier + matching
+          href: articles/msf-and-matching.html
+
+reference:
+  - title: Study setup
+    desc: Helpers to scaffold and configure a new study.
+    contents:
+      - study_setup
+      - okwaayeli_control
+      - run_only_for
+  - title: Data access
+    desc: Download and prepare the harmonized GLSS datasets.
+    contents:
+      - get_household_data
+      - harmonized_data_prep
+      - get_crop_area_list
+  - title: Matching
+    desc: Build, draw and balance matched samples.
+    contents:
+      - write_match_formulas
+      - match_sample_specifications
+      - draw_matched_samples
+      - covariate_balance
+  - title: Stochastic frontier
+    desc: The MSF estimation engine.
+    contents:
+      - msf_workhorse
+      - sf_workhorse
+      - draw_msf_estimations
+      - draw_msf_summary
+  - title: Treatment effects
+    contents:
+      - treatment_effect_calculation
+      - treatment_effect_summary
+  - title: Utilities
+    contents:
+      - compute_jenks_binned_shares
+      - mode
+
+articles:
+  - title: Getting started
+    navbar: ~
+    contents:
+      - msf-and-matching
+
+development:
+  mode: auto

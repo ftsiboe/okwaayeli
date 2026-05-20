@@ -1,59 +1,35 @@
-Digging into the Linkages Between Resource Extraction and Farm
-Performance
+Extractive Land Uses and Farm Performance: Evidence of Technology Gaps and Adaptive Efficiency
 ================
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from resource_extraction.Rmd. Please edit that file. -->
+
+![Status: Submitted (Land Use Policy)](https://img.shields.io/badge/status-submitted-yellow)
 
 For an overview of the broader project context, please refer to the main
-[GHAgricProductivityLab
-README](https://github.com/ftsiboe/GHAgricProductivityLab/README.md) in
-the repository root.
+[okwaayeli README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md)
+in the repository root.
 
 See the
-[LICENSE](https://github.com/ftsiboe/GHAgricProductivityLab/LICENSE)
+[LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
 file in the repository root for details.
 
-**Status**: Currently under review but you can read the working paper
-[here]().
+**Status**: Submitted to Land Use Policy (cover letter dated 17 May 2026).
 
-### Contributers
+### Contributors
 
-- [Francis
-  Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
-- [Sylvanus
-  Gaku](https://people.extension.wisc.edu/#home/person/66ed8e9bc09f6f031b8fa85e/)
-- [Antoinette
-  Tsiboe-Darko](https://csps.ug.edu.gh/antoinette-adjoa-tsiboe-darko-phd)
+- [Francis Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
+- [Mark Appiah-Twumasi](https://scholar.google.com/citations?user=SrQaedsAAAAJ&hl=en)
+- [Antoinette Tsiboe-Darko](https://csps.ug.edu.gh/antoinette-adjoa-tsiboe-darko-phd)
+- [Sylvanus Gaku](https://people.extension.wisc.edu/#home/person/66ed8e9bc09f6f031b8fa85e/)
 
-## Concept note
+### Abstract
 
-This research explores how extracting natural resources—like oil,
-minerals, and precious metals—influences agriculture in Ghana. While
-natural resources bring significant money to countries, supporting
-things like building roads, schools, and hospitals, they can also cause
-problems such as environmental damage, soil pollution, and loss of
-farmland, negatively impacting agriculture.
+Ensuring sustainable productivity in Ghana's agriculture is essential for national food security and poverty reduction, yet rapid expansion of resource extraction poses new challenges. This paper examines how proximity to extraction sites influences farmers' use of production technologies and technical efficiency. Using the latest four waves of the Ghana Living Standards Survey together with community-level extraction indicators, statistical matching, and a meta-stochastic frontier framework, we distinguish technology gaps from technical efficiency among farmers exposed to gold and bauxite mining, sand winning, and stone quarrying. We find that farmers in extraction communities generally operate with weaker production technologies but often use the technologies they do have more efficiently, with important differences across extraction types. The results suggest that land-use policy should avoid treating extractive activities as a single policy problem and should instead target the specific combination of technology access and managerial constraints each type of extraction creates.
 
-Agriculture is crucial for African economies, employing nearly half of
-the continent’s workers and significantly contributing to national
-income, food security, and rural livelihoods. Improvements in
-agriculture also help protect the environment, combat climate change,
-and reduce rural poverty.
+**Keywords**: resource extraction; mining; technology gap; technical efficiency; meta-stochastic frontier; Ghana
 
-In Ghana, the discovery of oil and mining activities (especially gold
-mining) has boosted economic growth, but it has also posed challenges
-for agriculture. This study specifically investigates how being close to
-resource extraction sites affects farmers’ productivity and their
-farming techniques. It examines these effects over many years and across
-various regions and farming communities.
+**JEL Classification**: Q15, Q32, Q33, O13, Q12
 
-Using advanced statistical methods, the research compares farmers near
-resource extraction activities with those further away to measure
-differences in farming efficiency and technology use. The study aims to
-provide clear evidence on how natural resource extraction impacts
-agriculture in Ghana, informing better policies that support sustainable
-economic growth without harming agricultural production.
-
-------------------------------------------------------------------------
+---
 
 *Maintained by [ftsiboe](https://github.com/ftsiboe)*

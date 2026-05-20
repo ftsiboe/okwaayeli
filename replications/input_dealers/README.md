@@ -1,31 +1,7 @@
----
-title: "Input-Dealer Density and Farm Performance in Ghana"
-
-output:
-  github_document:
-    toc: false
-    toc_depth: 3
-
-knit: >
-  (function(inputFile, encoding) {
-    rmarkdown::render(
-      inputFile,
-      encoding      = encoding,
-      output_format = "github_document",
-      output_file   = paste0(getwd(), "/README.md")
-    )
-  })
----
+Input-Dealer Density and Farm Performance in Ghana
+================
 
 <!-- README.md is generated from input_dealers.Rmd. Please edit that file. -->
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", out.width = "100%")
-```
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache = FALSE, echo = TRUE)
-```
 
 ![Status: Code-only (manuscript pending)](https://img.shields.io/badge/status-code--only-lightgrey)
 
