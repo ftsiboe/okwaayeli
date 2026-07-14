@@ -19,32 +19,42 @@ pooled <- readRDS(file.path(EST, "CropID_Pooled_extraction_any_TL_hnormal_optima
 
 # --- Aggregate group-level TGR / TE / MTE by extraction status -----------------
 # ef_mean rows: estType (teBC), stat (wmean), Survey (GLSS0 = pooled),
-# restrict (Restricted), sample (matched), type (TGR/TE/MTE), Tech (0/1),
+# restrict (Restricted), sample (matched), type (TGR/TE/MTE),
 # CoefName ("efficiency" = level; "efficiencyGap_lvl" = difference).
+# The extraction GROUP is coded in TCHLvel (0 = No extraction, 1 = Some extraction),
+# matching 100_exhibits.R: factor(TCHLvel, 0:1, c("No extraction","Any extraction")).
+# NB: `Tech` in the extraction_any object is the analysis label ("Any extraction")
+# on every row, so we must split on TCHLvel, not Tech.
 ef <- pooled$ef_mean
 ef <- ef[ef$estType %in% "teBC" & ef$stat %in% "wmean" &
          ef$Survey  %in% "GLSS0" & ef$restrict %in% "Restricted" &
          ef$CoefName %in% "efficiency", ]
-if (!is.na(opt_sample)) ef <- ef[ef$sample %in% opt_sample, ]
+if (!is.na(opt_sample) && "sample" %in% names(ef)) ef <- ef[ef$sample %in% opt_sample, ]
 
-# Tech may be coded 0/1 or labelled; match both.
-none_lab <- c("0", "No extraction", "No")
-any_lab  <- c("1", "Any extraction", "Any")
-grab <- function(metric, labs) {
-  v <- ef$Estimate[ef$type %in% metric & as.character(ef$Tech) %in% labs]
+grp_col <- intersect(c("TCHLvel", "Tech"), names(ef))[1]
+grp <- as.character(ef[[grp_col]])
+
+grab <- function(metric, g) {
+  v <- ef$Estimate[ef$type %in% metric & grp %in% g]
   if (length(v) == 0) NA_real_ else as.numeric(v[1])
 }
 mk <- function(metric) {
-  none <- grab(metric, none_lab); any <- grab(metric, any_lab)
-  list(none = none, any = any, gap = any - none)
+  none <- grab(metric, c("0", "No extraction", "No"))
+  any  <- grab(metric, c("1", "Any extraction", "Some extraction", "Some"))
+  list(none = none, any = any,
+       gap = if (is.na(any) || is.na(none)) NA_real_ else any - none)
 }
 eff <- list(tgr = mk("TGR"), te = mk("TE"), mte = mk("MTE"))
 
-# Guard: warn (do not stop) if the aggregate figures did not resolve, so the
-# knit still runs and the NAs are visible in the draft.
-for (m in names(eff)) for (k in c("none", "any"))
-  if (is.na(eff[[m]][[k]]))
-    warning(sprintf("301: %s$%s did not resolve - check ef_mean filters.", m, k))
+# Diagnostics: if anything did not resolve, print the available group / type codes
+# so the filter can be adjusted; also flag an implausible TGR ordering (extraction
+# communities should have the LOWER technology gap ratio).
+if (anyNA(unlist(eff)))
+  message("301: unresolved values. Group column '", grp_col, "' = {",
+          paste(unique(grp), collapse = ", "), "}; type = {",
+          paste(unique(as.character(ef$type)), collapse = ", "), "}.")
+if (!is.na(eff$tgr$none) && !is.na(eff$tgr$any) && eff$tgr$any > eff$tgr$none)
+  warning("301: TGR(any) > TGR(none) - extraction group may be swapped; check TCHLvel coding.")
 
 objs <- list(
   meta = list(

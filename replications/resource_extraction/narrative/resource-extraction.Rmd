@@ -1,5 +1,5 @@
 ---
-title: "Extractive Land Uses and Farm Performance: Evidence of Technology Gaps and Adaptive Efficiency"
+title: "Digging into the Linkages Between Resource Extraction and Farm Performance"
 author:
   - Francis Tsiboe
   - Mark Appiah-Twumasi
