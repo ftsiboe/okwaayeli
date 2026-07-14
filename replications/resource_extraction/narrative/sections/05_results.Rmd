@@ -2,7 +2,7 @@
 
 This section presents the results on how extractive land-use activities are associated with agricultural production technology and efficiency in Ghana. We first report diagnostic tests that justify the stochastic and meta-stochastic frontier specifications. We then examine the differences in input elasticities and returns to scale between farmers in extraction and non-extraction communities. The section then turns to aggregate technology gap, technical efficiency estimates, and meta-technical efficiency estimates, before disaggregating the results by mineral mining, informal or small-scale mining, stone quarrying, and sand winning. The final subsection discusses observed heterogeneity across crops and regions. Covariates associated with production inefficiency are discussed separately in the online appendix (Note A1).
 
-**5.1 Diagnostic tests**
+## 5.1 Diagnostic tests
 
 Table 3 reports the diagnostic tests used to assess the suitability of the stochastic frontier and meta-stochastic frontier specifications. We first examine whether the composed error structure is appropriate using the one-sided generalized likelihood-ratio test for technical inefficiency [@gutierrez2001] and two residual skewness tests based on OLS estimation [@schmidt1984; @coelli1995]. The tests generally reject the null hypothesis of no one-sided inefficiency component, indicating that deviations from the frontier are not explained only by random noise. This supports the use of stochastic frontier methods rather than conventional average-response production functions.
 

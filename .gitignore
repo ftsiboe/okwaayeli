@@ -12,7 +12,7 @@ replications/**/*.zip
 replications/**/*.csv
 replications/**/*.xlsx
 replications/**/*.png
-
+# !replications/**/narrative/resource-extraction.html
 # Package data slot kept lean.
 data/*
 
