@@ -28,7 +28,7 @@ Ensuring sustainable productivity in Ghana's agriculture is essential for nation
 
 **Keywords**: resource extraction; mining; technology gap; technical efficiency; meta-stochastic frontier; Ghana
 
-**JEL Classification**: Q15, Q32, Q33, O13, Q12
+**JEL Classification**: C21, Q12, Q15, Q16, Q32
 
 ### Project layout
 

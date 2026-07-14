@@ -12,7 +12,10 @@ output:
     toc: true
     toc_depth: 2
 bibliography: references.bib
-csl: ieee.csl
+# Citation style — switch by changing the `csl:` line below (files live in csl/):
+#   Food Policy (Elsevier Harvard, author-date):  csl/elsevier-harvard.csl
+#   IEEE (numbered):                               csl/ieee.csl
+csl: "`r Sys.getenv('ARTICLE_CSL', 'csl/elsevier-harvard.csl')`"
 link-citations: true
 ---
 
