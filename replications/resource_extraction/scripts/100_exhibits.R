@@ -5,7 +5,7 @@ devtools::document()
 
 project_name = "resource_extraction"
 study_environment <- readRDS(
-  file.path(paste0("replications/", project_name, "/output"),
+  file.path(paste0("replications/", project_name, "/data"),
             paste0(project_name,"_study_environment.rds")))
 
 mspecs_optimal <- study_environment$match_specification_optimal

@@ -5,10 +5,28 @@
 .DS_Store
 .Renviron
 
+# Replication outputs (large; download from GitHub release instead).
+replications/**/*.dta
+replications/**/*.rds
+replications/**/*.zip
+replications/**/*.csv
+replications/**/*.xlsx
+replications/**/*.png
+
+# Package data slot kept lean.
 data/*
+
+# data-raw/ is private by default, but we track the documentation and
+# scripts that live alongside the harmonized release.
 data-raw/*
-
-
+!data-raw/scripts/
+!data-raw/releases/
+data-raw/releases/*
+!data-raw/releases/harmonized_data/
+data-raw/releases/harmonized_data/*
+!data-raw/releases/harmonized_data/README.md
+!data-raw/releases/harmonized_data/README.Rmd
+!data-raw/releases/harmonized_data/codebook.md
 
 # Test fixtures (downloaded on demand).
 tests/**/*.dta
@@ -27,4 +45,3 @@ docs/
 inst/doc/
 *.Rcheck/
 *.tar.gz
-

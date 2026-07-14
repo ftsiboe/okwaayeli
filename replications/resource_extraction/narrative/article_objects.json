@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "generated": "2026-07-14 07:06:26.167134",
+    "source": "output/estimations/CropID_Pooled_extraction_any_TL_hnormal_optimal.rds",
+    "matched_sample": "logit"
+  },
+  "eff": {
+    "tgr": {
+      "none": null,
+      "any": 0.819,
+      "gap": null
+    },
+    "te": {
+      "none": null,
+      "any": 0.4539,
+      "gap": null
+    },
+    "mte": {
+      "none": null,
+      "any": 0.3708,
+      "gap": null
+    }
+  }
+}
