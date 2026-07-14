@@ -28,7 +28,47 @@ Ensuring sustainable productivity in Ghana's agriculture is essential for nation
 
 **Keywords**: resource extraction; mining; technology gap; technical efficiency; meta-stochastic frontier; Ghana
 
-**JEL Classification**: Q15, Q32, Q33, O13, Q12
+**JEL Classification**: C21, Q12, Q15, Q16, Q32
+
+### Project layout
+
+This study follows the standard research-project framework:
+
+```
+resource_extraction/
+  scripts/            analysis pipeline + article layer
+    000_initialize.R          bootstrap: source helpers, build output/ tree, seed
+    001_DATA_…_study.R        assemble the analysis dataset
+    002_MATCHING_…_study.R    proximity-based matching
+    003_TREATMENT_…_study.R   treatment-effect construction
+    004_MSF_…_study.R         meta-stochastic frontier estimation
+    100_exhibits.R (.do)      build figures/tables into output/exhibits/
+    300_article_helpers.R     paths, fmt_* helpers, assert_present()
+    301_article_objects.R     assemble narrative/article_objects.json
+    302_render_article.R      knit the master narrative to .docx/.html
+    run_article.R             source 300 -> 301 -> 302
+    job_msf.sbatch            HPC batch job for 004_MSF
+  narrative/          the article, split into reproducible sections
+    resource-extraction.Rmd   master Rmd (stitches sections/*.Rmd)
+    sections/                 00_abstract … 98_tables_and_figures
+    references.bib            bibliography seed
+    reference.docx            Word style reference
+    review_comments.Rmd       reviewer-comment tracker
+    writeup/ submissions/ literature/   private drafts, journal packages, source PDFs
+  data/               study inputs (gitignored)
+  output/             estimations/ matching/ exhibits/ summary/ releases/ (gitignored)
+```
+
+### Analysis pipeline
+
+Run from the repository root, in order:
+
+1. `scripts/001_DATA_resource_extraction_study.R` — build the analysis dataset.
+2. `scripts/002_MATCHING_resource_extraction_study.R` — match extraction vs. non-extraction farmers.
+3. `scripts/003_TREATMENT_resource_extraction_study.R` — construct treatment effects.
+4. `scripts/004_MSF_resource_extraction_study.R` — estimate the meta-stochastic frontier (or submit `scripts/job_msf.sbatch`).
+5. `scripts/100_exhibits.R` — build figures and tables into `output/exhibits/`.
+6. `scripts/run_article.R` — assemble article objects and knit the manuscript.
 
 ---
 

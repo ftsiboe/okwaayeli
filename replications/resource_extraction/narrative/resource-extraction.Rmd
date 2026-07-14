@@ -1,0 +1,60 @@
+---
+title: "Digging into the Linkages Between Resource Extraction and Farm Performance"
+author:
+  - Francis Tsiboe
+  - Mark Appiah-Twumasi
+  - Antoinette Tsiboe-Darko
+  - Sylvanus Gaku
+output:
+  word_document:
+    reference_docx: reference.docx
+  html_document:
+    toc: true
+    toc_depth: 2
+bibliography: references.bib
+# Citation style — switch by changing the `csl:` line below (files live in csl/):
+#   Food Policy (Elsevier Harvard, author-date):  csl/elsevier-harvard.csl
+#   IEEE (numbered):                               csl/ieee.csl
+csl: "`r Sys.getenv('ARTICLE_CSL', 'csl/elsevier-harvard.csl')`"
+link-citations: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+if (file.exists("article_objects.json")) {
+  objs <- jsonlite::fromJSON("article_objects.json")
+}
+```
+
+```{r child = "sections/00_abstract.Rmd"}
+```
+
+```{r child = "sections/01_introduction.Rmd"}
+```
+
+```{r child = "sections/02_data.Rmd"}
+```
+
+```{r child = "sections/03_state_of_extraction.Rmd"}
+```
+
+```{r child = "sections/04_methods.Rmd"}
+```
+
+```{r child = "sections/05_results.Rmd"}
+```
+
+```{r child = "sections/06_discussion.Rmd"}
+```
+
+```{r child = "sections/07_conclusion.Rmd"}
+```
+
+```{r child = "sections/98_tables_and_figures.Rmd"}
+```
+
+```{r child = "sections/97_references.Rmd"}
+```
+
+```{r child = "sections/99_appendix.Rmd"}
+```
