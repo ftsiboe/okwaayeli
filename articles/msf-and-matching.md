@@ -38,7 +38,7 @@ contaminated by selection on observables.
                                                                            │   *_results.xlsx)          │
                                                                            └────────────────────────────┘
 
-Each study under `replications/<study>/` follows this same skeleton.
+Each study under `studies/<study>/` follows this same skeleton.
 
 ## Step 0 — set up
 
@@ -50,9 +50,9 @@ study_environment <- study_setup(project_name = "tutorial")
 ```
 
 [`study_setup()`](https://ftsiboe.github.io/okwaayeli/reference/study_setup.md)
-creates the standard folder tree under
-`replications/<project_name>/output/` and returns the resolved paths
-plus a reproducible seed (default `11122025`, set via
+creates the standard folder tree under `studies/<project_name>/output/`
+and returns the resolved paths plus a reproducible seed (default
+`11122025`, set via
 [`okwaayeli_control()`](https://ftsiboe.github.io/okwaayeli/reference/okwaayeli_control.md)).
 
 ## Step 1 — pull harmonized data (001_DATA)
@@ -176,8 +176,8 @@ because exhibits vary, but the inputs are always the per-draw estimation
   and
   [`?sf_workhorse`](https://ftsiboe.github.io/okwaayeli/reference/sf_workhorse.md)
   for the core estimators.
-- The `disability` study under `replications/disability/` for a fully
-  worked example.
+- The `disability` study under `studies/disability/` for a fully worked
+  example.
 
 ## References
 

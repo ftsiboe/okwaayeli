@@ -35,7 +35,7 @@ behaviour to <ftsiboe@hotmail.com>.
     ├── man/                            # Auto-generated function documentation
     ├── data-raw/                       # Sources used to build the harmonized data
     │   └── releases/harmonized_data/   # 11 published .dta files + codebook
-    ├── replications/                   # One folder per study
+    ├── studies/                   # One folder per study
     │   └── <study_name>/
     │       ├── 001_DATA_<study>.R
     │       ├── 002_MATCHING_<study>.R
@@ -56,7 +56,7 @@ Where to put things:
 | Type of change | Path |
 |----|----|
 | Reusable function (MSF, matching, helper) | `R/` + `man/` + a unit test in `tests/testthat/` |
-| Study-specific analysis | `replications/<study>/` |
+| Study-specific analysis | `studies/<study>/` |
 | Public data harmonization | `data-raw/` and the GitHub `hh_data` release |
 | Manuscript text, figures, lit | `manuscripts/<study>/` (not part of the R package build) |
 | Long-form how-tos | `vignettes/` |
@@ -107,7 +107,7 @@ otherwise standard `gh` CLI / git credential helpers.
 ## 4. The standard study pipeline
 
 Every active study follows the same five-stage pipeline. Each stage is a
-numbered R script. Output is written to `replications/<study>/output/`.
+numbered R script. Output is written to `studies/<study>/output/`.
 
     001_DATA      Pull the relevant harmonized .dta files, restrict the sample,
                   build the treatment indicator(s) and the covariate set.
@@ -130,7 +130,7 @@ numbered R script. Output is written to `replications/<study>/output/`.
 
     005_Release   (optional) Package the public replication bundle.
 
-SLURM users: each replication folder ships a `job_msf.sbatch` for array
+SLURM users: each study folder ships a `job_msf.sbatch` for array
 execution. The
 [`run_only_for()`](https://ftsiboe.github.io/okwaayeli/reference/run_only_for.md)
 helper in `R/helpers.R` lets you target a specific subset of draw IDs.
@@ -138,7 +138,7 @@ helper in `R/helpers.R` lets you target a specific subset of draw IDs.
 ## 5. Adding a new study
 
 The cleanest way to bootstrap a new study is to copy
-`replications/disability/` as a template, then:
+`studies/disability/` as a template, then:
 
 1.  Rename all scripts from `*_disability_study.R` to
     `*_<your_study>_study.R`.
@@ -146,8 +146,8 @@ The cleanest way to bootstrap a new study is to copy
     you need (use `get_household_data("harmonized_<…>_data")`).
 3.  Edit `002_MATCHING_<your_study>_study.R` to declare your treatment
     variable and the variables you want to balance on.
-4.  Add a `replications/<your_study>/<your_study>.Rmd` describing the
-    study, its contributors, and (eventually) the abstract.
+4.  Add a `studies/<your_study>/<your_study>.Rmd` describing the study,
+    its contributors, and (eventually) the abstract.
 5.  Open a [Study proposal
     issue](https://ftsiboe.github.io/okwaayeli/.github/ISSUE_TEMPLATE/study_proposal.yml)
     so it appears on the lab roadmap and reviewers can flag duplication

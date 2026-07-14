@@ -62,7 +62,7 @@
 ├── man/                            # Auto-generated function documentation
 ├── data-raw/                       # Sources used to build the harmonized data
 │   └── releases/harmonized_data/   # 11 published .dta files + codebook
-├── replications/                   # One folder per study
+├── studies/                   # One folder per study
 │   └── &lt;study_name&gt;/
 │       ├── 001_DATA_&lt;study&gt;.R
 │       ├── 002_MATCHING_&lt;study&gt;.R
@@ -85,7 +85,7 @@
 <code>R/</code> + <code>man/</code> + a unit test in <code>tests/testthat/</code>
 </td>
 </tr><tr><td>Study-specific analysis</td>
-<td><code>replications/&lt;study&gt;/</code></td>
+<td><code>studies/&lt;study&gt;/</code></td>
 </tr><tr><td>Public data harmonization</td>
 <td>
 <code>data-raw/</code> and the GitHub <code>hh_data</code> release</td>
@@ -118,7 +118,7 @@
 </div>
 <div class="section level2">
 <h2 id="id_4-the-standard-study-pipeline">4. The standard study pipeline<a class="anchor" aria-label="anchor" href="#id_4-the-standard-study-pipeline"></a></h2>
-<p>Every active study follows the same five-stage pipeline. Each stage is a numbered R script. Output is written to <code>replications/&lt;study&gt;/output/</code>.</p>
+<p>Every active study follows the same five-stage pipeline. Each stage is a numbered R script. Output is written to <code>studies/&lt;study&gt;/output/</code>.</p>
 <pre><code>001_DATA      Pull the relevant harmonized .dta files, restrict the sample,
               build the treatment indicator(s) and the covariate set.
 
@@ -139,15 +139,15 @@
               Writes the canonical *_results.xlsx exhibit.
 
 005_Release   (optional) Package the public replication bundle.</code></pre>
-<p>SLURM users: each replication folder ships a <code>job_msf.sbatch</code> for array execution. The <code><a href="reference/run_only_for.html">run_only_for()</a></code> helper in <code>R/helpers.R</code> lets you target a specific subset of draw IDs.</p>
+<p>SLURM users: each study folder ships a <code>job_msf.sbatch</code> for array execution. The <code><a href="reference/run_only_for.html">run_only_for()</a></code> helper in <code>R/helpers.R</code> lets you target a specific subset of draw IDs.</p>
 </div>
 <div class="section level2">
 <h2 id="id_5-adding-a-new-study">5. Adding a new study<a class="anchor" aria-label="anchor" href="#id_5-adding-a-new-study"></a></h2>
-<p>The cleanest way to bootstrap a new study is to copy <code>replications/disability/</code> as a template, then:</p>
+<p>The cleanest way to bootstrap a new study is to copy <code>studies/disability/</code> as a template, then:</p>
 <ol style="list-style-type: decimal"><li>Rename all scripts from <code>*_disability_study.R</code> to <code>*_&lt;your_study&gt;_study.R</code>.</li>
 <li>Edit <code>001_DATA_&lt;your_study&gt;_study.R</code> to pull the harmonized datasets you need (use <code>get_household_data("harmonized_&lt;…&gt;_data")</code>).</li>
 <li>Edit <code>002_MATCHING_&lt;your_study&gt;_study.R</code> to declare your treatment variable and the variables you want to balance on.</li>
-<li>Add a <code>replications/&lt;your_study&gt;/&lt;your_study&gt;.Rmd</code> describing the study, its contributors, and (eventually) the abstract.</li>
+<li>Add a <code>studies/&lt;your_study&gt;/&lt;your_study&gt;.Rmd</code> describing the study, its contributors, and (eventually) the abstract.</li>
 <li>Open a <a href="./.github/ISSUE_TEMPLATE/study_proposal.yml">Study proposal issue</a> so it appears on the lab roadmap and reviewers can flag duplication risks.</li>
 <li>Submit a PR adding the study folder and a row in the main README’s “Work in progress” / “Scheduled studies” list.</li>
 </ol><p>If your study needs a new harmonized dataset, see §6.</p>

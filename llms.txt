@@ -131,39 +131,38 @@ flowchart LR
 ## 🛠 Work in progress
 
 - [Technology Gaps Drive Inequality in Production for Farmers with
-  Disabilities](https://github.com/ftsiboe/okwaayeli/blob/main/replications/disability/DisabilityAgricProdGapGhana_public_version.pdf)
+  Disabilities](https://github.com/ftsiboe/okwaayeli/blob/main/studies/disability/DisabilityAgricProdGapGhana_public_version.pdf)
   \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/disability)
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/studies/disability)
   — *under review (Agricultural Economics)*
 - [Heterogeneous Impacts of Farmer Education on Technology Access and
   Technical Efficiency in
-  Ghana](https://github.com/ftsiboe/okwaayeli/tree/main/replications/education)
+  Ghana](https://github.com/ftsiboe/okwaayeli/tree/main/studies/education)
   \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/education)
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/studies/education)
   — *revise & resubmit (JAE)*
 - [Digging into the Linkages Between Resource Extraction and Farm
-  Performance](https://github.com/ftsiboe/okwaayeli/tree/main/replications/resource_extraction)
+  Performance](https://github.com/ftsiboe/okwaayeli/tree/main/studies/resource_extraction)
   \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/resource_extraction)
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/studies/resource_extraction)
   — *submitted (Land Use Policy)*
 - Societal Peace and Cohesion Improve Farm Technology and Technical
   Efficiency in Ghana \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/societal_peace_and_cohesion)
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/studies/societal_peace_and_cohesion)
   — *drafting*
 - Financial Inclusion and Credit Impacts on Crop Production in Ghana \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/financial_inclusion)
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/studies/financial_inclusion)
   — *drafting*
 - Land Ownership Appears Neither Necessary nor Sufficient for Superior
   Agricultural Performance in Ghana \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/land_tenure)
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/studies/land_tenure)
   — *drafting*
 - The Association Between Income Transfers and Crop Production in Ghana
-  \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/) —
+  \| [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/studies/) —
   *concept*
 - Agricultural Service Delivery and Smallholder Farm Performance in
   Ghana \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/ag_services)
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/studies/ag_services)
   — *drafting*
 
 ## 📅 Scheduled studies
@@ -171,10 +170,10 @@ flowchart LR
 - The link between extension services and Farm Technology Endowment and
   its Efficient Use — *planned*
 - Input-dealer density and farm performance \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/input_dealers)
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/studies/input_dealers)
   — *code-only, manuscript pending*
 - Time poverty and farm output gaps in Ghana \|
-  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/time_poverty)
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/studies/time_poverty)
   — *code-only, manuscript pending*
 
 ## ⬇️ Installation
@@ -195,7 +194,7 @@ econometric back-ends (`frontier`, `micEcon`, `rgenoud`, `quadprog`,
 
 library(okwaayeli)
 
-# 1. scaffold a project tree under replications/<project_name>/
+# 1. scaffold a project tree under studies/<project_name>/
 env <- study_setup(project_name = "tutorial")
 
 # 2. pull a harmonized dataset (cached locally after first call)
