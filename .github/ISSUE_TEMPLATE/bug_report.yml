@@ -12,7 +12,7 @@ body:
     id: where
     attributes:
       label: Where did this occur?
-      description: Package function (e.g. `draw_msf_estimations()`), replication script (e.g. `replications/disability/004_MSF_disability_study.R`), or harmonized dataset (e.g. `harmonized_crop_farmer_data`).
+      description: Package function (e.g. `draw_msf_estimations()`), replication script (e.g. `studies/disability/004_MSF_disability_study.R`), or harmonized dataset (e.g. `harmonized_crop_farmer_data`).
       placeholder: e.g. R/draw_msf.R::draw_msf_estimations()
     validations:
       required: true

@@ -1,0 +1,99 @@
+---
+title: "Digging into the Linkages Between Resource Extraction and Farm Performance"
+
+output:
+  github_document:
+    toc: false
+    toc_depth: 3
+
+knit: >
+  (function(inputFile, encoding) {
+    rmarkdown::render(
+      inputFile,
+      encoding      = encoding,
+      output_format = "github_document",
+      output_file   = paste0(getwd(), "/README.md")
+    )
+  })
+---
+
+<!-- README.md is generated from resource_extraction.Rmd. Please edit that file. -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", out.width = "100%")
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE, echo = TRUE)
+```
+
+![Status: Submitted (Land Use Policy)](https://img.shields.io/badge/status-submitted-yellow)
+
+For an overview of the broader project context, please refer to the main
+[okwaayeli README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md)
+in the repository root.
+
+See the
+[LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
+file in the repository root for details.
+
+**Status**: Submitted to Land Use Policy (cover letter dated 17 May 2026).
+
+### Contributors
+
+- [Francis Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
+- [Mark Appiah-Twumasi](https://scholar.google.com/citations?user=SrQaedsAAAAJ&hl=en)
+- [Antoinette Tsiboe-Darko](https://csps.ug.edu.gh/antoinette-adjoa-tsiboe-darko-phd)
+- [Sylvanus Gaku](https://people.extension.wisc.edu/#home/person/66ed8e9bc09f6f031b8fa85e/)
+
+### Abstract
+
+Ensuring sustainable productivity in Ghana's agriculture is essential for national food security and poverty reduction, yet rapid expansion of resource extraction poses new challenges. This paper examines how proximity to extraction sites influences farmers' use of production technologies and technical efficiency. Using the latest four waves of the Ghana Living Standards Survey together with community-level extraction indicators, statistical matching, and a meta-stochastic frontier framework, we distinguish technology gaps from technical efficiency among farmers exposed to gold and bauxite mining, sand winning, and stone quarrying. We find that farmers in extraction communities generally operate with weaker production technologies but often use the technologies they do have more efficiently, with important differences across extraction types. The results suggest that land-use policy should avoid treating extractive activities as a single policy problem and should instead target the specific combination of technology access and managerial constraints each type of extraction creates.
+
+**Keywords**: resource extraction; mining; technology gap; technical efficiency; meta-stochastic frontier; Ghana
+
+**JEL Classification**: C21, Q12, Q15, Q16, Q32
+
+### Project layout
+
+This study follows the standard research-project framework:
+
+```
+resource_extraction/
+  scripts/            analysis pipeline + article layer
+    000_initialize.R          bootstrap: source helpers, build output/ tree, seed
+    001_DATA_…_study.R        assemble the analysis dataset
+    002_MATCHING_…_study.R    proximity-based matching
+    003_TREATMENT_…_study.R   treatment-effect construction
+    004_MSF_…_study.R         meta-stochastic frontier estimation
+    100_exhibits.R (.do)      build figures/tables into output/exhibits/
+    300_article_helpers.R     paths, fmt_* helpers, assert_present()
+    301_article_objects.R     assemble narrative/article_objects.json
+    302_render_article.R      knit the master narrative to .docx/.html
+    run_article.R             source 300 -> 301 -> 302
+    job_msf.sbatch            HPC batch job for 004_MSF
+  narrative/          the article, split into reproducible sections
+    resource-extraction.Rmd   master Rmd (stitches sections/*.Rmd)
+    sections/                 00_abstract … 98_tables_and_figures
+    references.bib            bibliography seed
+    reference.docx            Word style reference
+    review_comments.Rmd       reviewer-comment tracker
+    writeup/ submissions/ literature/   private drafts, journal packages, source PDFs
+  data/               study inputs (gitignored)
+  output/             estimations/ matching/ exhibits/ summary/ releases/ (gitignored)
+```
+
+### Analysis pipeline
+
+Run from the repository root, in order:
+
+1. `scripts/001_DATA_resource_extraction_study.R` — build the analysis dataset.
+2. `scripts/002_MATCHING_resource_extraction_study.R` — match extraction vs. non-extraction farmers.
+3. `scripts/003_TREATMENT_resource_extraction_study.R` — construct treatment effects.
+4. `scripts/004_MSF_resource_extraction_study.R` — estimate the meta-stochastic frontier (or submit `scripts/job_msf.sbatch`).
+5. `scripts/100_exhibits.R` — build figures and tables into `output/exhibits/`.
+6. `scripts/run_article.R` — assemble article objects and knit the manuscript.
+
+---
+
+*Maintained by [ftsiboe](https://github.com/ftsiboe)*

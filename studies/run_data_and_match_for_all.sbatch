@@ -1,0 +1,76 @@
+#!/bin/bash -l
+
+#SBATCH --job-name=run_all 
+#SBATCH --time=0-05:00:00    
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --mem=10G
+#SBATCH --array=1-8
+#SBATCH --mail-user=ftsiboe@hotmail.com
+#SBATCH --mail-type=ALL
+#SBATCH --output=/dev/null
+
+module purge
+module load GDAL/3.5.0-foss-2022a PROJ/9.0.0-GCCcore-11.3.0
+module load R/4.2.1-foss-2022a
+
+case "$SLURM_ARRAY_TASK_ID" in
+  1)
+    echo "Running Disability Study"
+    R --no-save -q < studies/disability/001_DATA_disability_study.R
+    R --no-save -q < studies/disability/002_MATCHING_disability_study.R
+    R --no-save -q < studies/disability/003_TREATMENT_disability_study.R
+    ;;
+
+  2)
+    echo "Running Resource Extraction Study"
+    R --no-save -q < studies/resource_extraction/001_DATA_resource_extraction_study.R
+    R --no-save -q < studies/resource_extraction/002_MATCHING_resource_extraction_study.R
+    R --no-save -q < studies/resource_extraction/003_TREATMENT_resource_extraction_study.R
+    ;;
+
+  3)
+    echo "Running Education Study"
+    R --no-save -q < studies/education/001_DATA_education_study.R
+    R --no-save -q < studies/education/002_MATCHING_education_study.R
+    R --no-save -q < studies/education/003_TREATMENT_education_study.R
+    ;;
+
+  4)
+    echo "Running Financial Inclusion Study"
+    R --no-save -q < studies/financial_inclusion/001_DATA_financial_inclusion_study.R
+    R --no-save -q < studies/financial_inclusion/002_MATCHING_financial_inclusion_study.R
+    R --no-save -q < studies/financial_inclusion/003_TREATMENT_financial_inclusion_study.R
+    ;;
+
+  5)
+    echo "Running Land Tenure Study"
+    R --no-save -q < studies/land_tenure/001_DATA_land_tenure_study.R
+    R --no-save -q < studies/land_tenure/002_MATCHING_land_tenure_study.R
+    R --no-save -q < studies/land_tenure/003_TREATMENT_land_tenure_study.R
+    ;;
+    
+  6)
+    echo "Running Societal Peace and Cohesion Study"
+    R --no-save -q < studies/land_tenure/001_DATA_societal_peace_and_cohesion_study.R
+    R --no-save -q < studies/land_tenure/002_MATCHING_societal_peace_and_cohesion_study.R
+    R --no-save -q < studies/land_tenure/003_TREATMENT_societal_peace_and_cohesion_study.R
+    ;;
+
+  7)
+    echo "Running Time Poverty Study"
+    R --no-save -q < studies/time_poverty/001_DATA_time_poverty_study.R
+    R --no-save -q < studies/time_poverty/002_MATCHING_time_poverty_study.R
+    R --no-save -q < studies/time_poverty/003_TREATMENT_time_poverty_study.R
+    ;;
+
+  8)
+    echo "Running Ag Services Study"
+    R --no-save -q < studies/ag_services/001_DATA_ag_services_study.R
+    R --no-save -q < studies/ag_services/002_MATCHING_ag_services_study.R
+    R --no-save -q < studies/ag_services/003_TREATMENT_ag_services_study.R
+    ;;
+esac
+
+
+

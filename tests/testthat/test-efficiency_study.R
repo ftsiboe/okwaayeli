@@ -87,7 +87,7 @@ test_that("efficiency study has no issues", {
   project_name <- "test"
 
   study_environment <- readRDS(
-    file.path(paste0("replications/", project_name, "/output"),
+    file.path(paste0("studies/", project_name, "/output"),
               paste0(project_name,"_study_environment.rds")))
 
   # Detect operating system to determine runtime environment
@@ -199,7 +199,7 @@ test_that("efficiency study has no issues", {
     project_name <- "test"
 
     study_environment <- readRDS(
-      file.path(paste0("replications/", project_name, "/output"),
+      file.path(paste0("studies/", project_name, "/output"),
                 paste0(project_name,"_study_environment.rds")))
 
     # Compute balance tables and spec-level composite balance “rate”
@@ -229,7 +229,7 @@ test_that("efficiency study has no issues", {
   expect_true(all(list.files(study_environment$wd$matching) %in% paste0("match_",stringr::str_pad(1:8, 4, pad = "0"), ".rds")))
 
   obj <- readRDS(
-    file.path(paste0("replications/", project_name, "/output"),
+    file.path(paste0("studies/", project_name, "/output"),
               paste0(project_name,"_study_environment.rds")))
   
   expect_true(nrow(obj$match_specifications) >= 8)
@@ -250,7 +250,7 @@ test_that("efficiency study has no issues", {
 
   # Load saved study environment (directories, specifications, etc.)
   study_environment <- readRDS(
-    file.path(paste0("replications/", project_name, "/output"),
+    file.path(paste0("studies/", project_name, "/output"),
               paste0(project_name,"_study_environment.rds")))
 
   # --- Data ingest & harmonization
@@ -318,7 +318,7 @@ test_that("efficiency study has no issues", {
     # Reload environment to ensure clean references (paths, specs, etc.)
     project_name <- "test"
     study_environment <- readRDS(
-      file.path(paste0("replications/", project_name, "/output"),
+      file.path(paste0("studies/", project_name, "/output"),
                 paste0(project_name,"_study_environment.rds")))
 
     # Summarize all treatment effect estimates across specifications
@@ -350,7 +350,7 @@ test_that("efficiency study has no issues", {
 
   # Load saved study environment (directories, specifications, etc.)
   study_environment <- readRDS(
-    file.path(paste0("replications/", project_name, "/output"),
+    file.path(paste0("studies/", project_name, "/output"),
               paste0(project_name,"_study_environment.rds")))
 
   # Data ingest & basic harmonization

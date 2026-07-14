@@ -6,9 +6,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Use this template to propose a new study that would live under `replications/<your_study>/`.
+        Use this template to propose a new study that would live under `studies/<your_study>/`.
 
-        Before submitting, please skim the existing replication folders so your proposal does not
+        Before submitting, please skim the existing study folders so your proposal does not
         duplicate work in progress.
 
   - type: input
@@ -64,7 +64,7 @@ body:
     attributes:
       label: Confirmation
       options:
-        - label: I have reviewed `replications/` to confirm this is not already in progress.
+        - label: I have reviewed `studies/` to confirm this is not already in progress.
           required: true
         - label: I have read CONTRIBUTING and understand the study folder template.
           required: true

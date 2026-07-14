@@ -5,14 +5,14 @@
 .DS_Store
 .Renviron
 
-# Replication outputs (large; download from GitHub release instead).
-replications/**/*.dta
-replications/**/*.rds
-replications/**/*.zip
-replications/**/*.csv
-replications/**/*.xlsx
-replications/**/*.png
-# !replications/**/narrative/resource-extraction.html
+# Study outputs (large; download from GitHub release instead).
+studies/**/*.dta
+studies/**/*.rds
+studies/**/*.zip
+studies/**/*.csv
+studies/**/*.xlsx
+studies/**/*.png
+# !studies/**/narrative/resource-extraction.html
 # Package data slot kept lean.
 data/*
 

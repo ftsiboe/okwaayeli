@@ -55,7 +55,7 @@ observables.
                                                                        └────────────────────────────┘
 ```
 
-Each study under `replications/<study>/` follows this same skeleton.
+Each study under `studies/<study>/` follows this same skeleton.
 
 ## Step 0 — set up
 
@@ -66,7 +66,7 @@ study_environment <- study_setup(project_name = "tutorial")
 ```
 
 `study_setup()` creates the standard folder tree under
-`replications/<project_name>/output/` and returns the resolved paths plus
+`studies/<project_name>/output/` and returns the resolved paths plus
 a reproducible seed (default `11122025`, set via `okwaayeli_control()`).
 
 ## Step 1 — pull harmonized data (001_DATA)
@@ -176,7 +176,7 @@ inputs are always the per-draw estimation `.rds` files written in step 4.
 - `?study_setup` and `?okwaayeli_control` for the project scaffolding.
 - `?get_household_data` for the data download mechanics.
 - `?msf_workhorse` and `?sf_workhorse` for the core estimators.
-- The `disability` study under `replications/disability/` for a fully
+- The `disability` study under `studies/disability/` for a fully
   worked example.
 
 ## References

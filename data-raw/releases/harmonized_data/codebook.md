@@ -135,7 +135,7 @@ Powers the agricultural-services and (planned) extension-services papers.
 - **Coverage:** Multi-wave.
 - **Granularity:** household.
 
-Released for the income-transfer paper; replication folder is not yet
+Released for the income-transfer paper; study folder is not yet
 scaffolded.
 
 ### `harmonized_time_poverty_data.dta` (≈ 1.5 MB)
@@ -153,7 +153,7 @@ Companion files in `data-raw/`: `PaidTimepoverty.dta`,
 - **Coverage:** Multi-wave.
 - **Granularity:** household.
 
-No replication folder yet — included in the release for downstream users.
+No study folder yet — included in the release for downstream users.
 
 ### `ghana_agro_dealer_sale_points.rds` (≈ 161 KB)
 
@@ -161,7 +161,7 @@ No replication folder yet — included in the release for downstream users.
 - **Coverage:** Cross-section.
 - **Granularity:** sale point.
 
-Used by `replications/input_dealers/`.
+Used by `studies/input_dealers/`.
 
 ## Updating this codebook
 

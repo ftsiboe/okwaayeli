@@ -5,7 +5,7 @@
 
 ## Type of change
 - [ ] Bug fix in package code (R/)
-- [ ] Replication script change (replications/)
+- [ ] Study script change (studies/)
 - [ ] Harmonized data change (data-raw/)
 - [ ] Manuscript / writeup (manuscripts/)
 - [ ] Documentation only (README, CONTRIBUTING, vignettes, etc.)

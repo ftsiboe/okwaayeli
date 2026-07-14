@@ -24,7 +24,7 @@ okwaayeli.Rproj
 ^codemeta\.json$
 ^\.github$
 data-raw
-replications
+studies
 README.Rmd
 data/README.Rmd
 data/README.md

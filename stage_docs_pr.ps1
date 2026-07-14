@@ -52,8 +52,8 @@ $keep = @(
     "README.Rmd",
     ".gitignore",
     ".gitattributes",
-    "replications/legacy_studies/README.md",
-    "replications/income_transfer/README.md"
+    "studies/legacy_studies/README.md",
+    "studies/income_transfer/README.md"
 )
 
 # Plus the per-study README pairs.
@@ -67,8 +67,8 @@ $rmds   = @{
     "time_poverty"="time_poverty_study.Rmd"
 }
 foreach ($s in $studies) {
-    $keep += "replications/$s/README.md"
-    $keep += "replications/$s/$($rmds[$s])"
+    $keep += "studies/$s/README.md"
+    $keep += "studies/$s/$($rmds[$s])"
 }
 
 # 5. Reset every tracked file EXCEPT the ones in $keep back to HEAD.
@@ -95,7 +95,7 @@ $newFiles = @(
     "vignettes/msf-and-matching.Rmd",
     "data-raw/releases/harmonized_data/codebook.md",
     ".gitattributes",
-    "replications/income_transfer/README.md"
+    "studies/income_transfer/README.md"
 )
 
 # 7. Stage everything.

@@ -9,14 +9,14 @@
 # Harmonized data pipeline
 /data-raw/              @ftsiboe
 
-# Replications - per-study owners can be added here as they come on board.
-/replications/                                  @ftsiboe
-# /replications/disability/                     @ftsiboe @emartey @jasravor
-# /replications/education/                      @jasravor @mappiah-twumasi @ftsiboe
-# /replications/financial_inclusion/            @mappiah-twumasi @ftsiboe @aishaadam @sgaku @pquartey
-# /replications/land_tenure/                    @Gilbertaddae @jasravor @ftsiboe
-# /replications/resource_extraction/            @ftsiboe @mappiah-twumasi @sgaku @atsiboedarko
-# /replications/societal_peace_and_cohesion/    @ftsiboe @jasravor @atsiboedarko
+# Studies - per-study owners can be added here as they come on board.
+/studies/                                  @ftsiboe
+# /studies/disability/                     @ftsiboe @emartey @jasravor
+# /studies/education/                      @jasravor @mappiah-twumasi @ftsiboe
+# /studies/financial_inclusion/            @mappiah-twumasi @ftsiboe @aishaadam @sgaku @pquartey
+# /studies/land_tenure/                    @Gilbertaddae @jasravor @ftsiboe
+# /studies/resource_extraction/            @ftsiboe @mappiah-twumasi @sgaku @atsiboedarko
+# /studies/societal_peace_and_cohesion/    @ftsiboe @jasravor @atsiboedarko
 
 # CI & repo configuration
 /.github/               @ftsiboe

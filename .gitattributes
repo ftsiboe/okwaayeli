@@ -34,4 +34,4 @@
 # GitHub Linguist hints: don't let manuscript text inflate the language stats.
 manuscripts/**          linguist-documentation
 data-raw/old_codes/**   linguist-vendored
-replications/**/output/** linguist-generated
+studies/**/output/** linguist-generated
