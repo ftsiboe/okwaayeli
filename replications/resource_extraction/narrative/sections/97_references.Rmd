@@ -1,0 +1,175 @@
+# References
+
+<!-- Numbered references migrated verbatim from the latest draft. -->
+
+[1]  AfDB, "Catalyzing growth and development through effective natural resources management," 2016. Accessed: Jun. 07, 2024. \[Online\]. Available: https://www.afdb.org/ fileadmin/uploads/afdb/Documents/Publications/anrc/AfDB\_ANRC\_ BROCHURE\_en.pdf
+
+[2]  J. Cust and A. Zeufack, *Africa's resource future: harnessing natural resources for economic transformation during the low-carbon transition*. World Bank Publications, 2023.
+
+[3]  T. Harding and A. J. Venables, "The Implications of Natural Resource Exports for Nonresource Trade," *IMF Econ Rev*, vol. 64, no. 2, pp. 268--302, Jun. 2016, doi: 10.1057/imfer.2015.43.
+
+[4]  IMF, "Myanmar: Selected Issues," Sep. 2015, Accessed: Jun. 08, 2024. \[Online\]. Available: https://www.elibrary.imf.org/view/journals/002/2015/268/article-A001-en.xml
+
+[5]  F. N. Mabe, E. Owusu-Sekyere, and O. T. Adeosun, "Livelihood coping strategies among displaced small scale miners in Ghana," *Resources Policy*, vol. 74, p. 102291, Dec. 2021, doi: 10.1016/j.resourpol.2021.102291.
+
+[6]  F. M. Aragón, P. Chuhan-Pole, and B. C. Land, "The local economic impacts of resource abundance: What have we learned?," *World Bank Policy Research Working Paper*, no. 7263, 2015, Accessed: Jun. 18, 2024. \[Online\]. Available: https://papers.ssrn.com/sol3/papers.cfm?abstract\_id=2609380
+
+[7]  L. Buur, R. H. Pedersen, M. J. Nystrand, J. J. Macuane, and T. Jacob, "The politics of natural resource investments and rights in Africa: A theoretical approach," *The Extractive Industries and Society*, vol. 7, no. 3, pp. 918--930, 2020.
+
+[8]  J. Cust and R. D. Rusli, "The economic spillovers from resource extraction: a partial resource blessing at the subnational level," *DEM Discussion Paper Series*, Art. no. 14--08, 2014, Accessed: Jun. 18, 2024. \[Online\]. Available: https://ideas.repec.org//p/luc/wpaper/14-08.html
+
+[9]  T. Frederiksen, "Political settlements, the mining industry and corporate social responsibility in developing countries," *The Extractive Industries and Society*, vol. 6, no. 1, pp. 162--170, 2019.
+
+[10]  L. Acha, P. Gaius-Obaseki, and O. Onyekweli, "The future of African oil and gas: Positioning for the energy transition \| McKinsey." Accessed: Jun. 08, 2024. \[Online\]. Available: https://www.mckinsey.com/industries/oil-and-gas/our-insights/the-future-of-african-oil-and-gas-positioning-for-the-energy-transition
+
+[11]  L. L. Chinjenge and S. A. Roosa, "Impact of Oil and Gas on Governance of Emerging Producers," *European Journal of Science, Innovation and Technology*, vol. 2, no. 5, Art. no. 5, Dec. 2022.
+
+[12]  A. Gerval and J. Hansen, "Sub-Saharan Africa's Reliance on Oil Exports Leads to Decline in Agricultural Imports During Pandemic." Accessed: Jun. 08, 2024. \[Online\]. Available: https://www.ers.usda.gov/amber-waves/2022/september/sub-saharan-africa-s-reliance-on-oil-exports-leads-to-decline-in-agricultural-imports-during-pandemic/
+
+[13]  E. K. Ogunleye, "Natural resource abundance in Nigeria: From dependence to development," *Resources Policy*, vol. 33, no. 3, pp. 168--174, Sep. 2008, doi: 10.1016/j.resourpol.2008.03.002.
+
+[14]  T. Addison and A. Roe, Eds., *Extractive Industries: The Management of Resources as a Driver of Sustainable Development*. Oxford University Press, 2018. doi: 10.1093/oso/9780198817369.001.0001.
+
+[15]  FAO, "Employment indicators 2000--2021 July 2023 update. FAOSTAT Analytical Briefs Series," vol. 67, 2023.
+
+[16]  D. Gollin, "Agricultural productivity and economic growth," *Handbook of agricultural economics*, vol. 4, pp. 3825--3866, 2010.
+
+[17]  FAO, "World Food and Agriculture -- Statistical Yearbook 2023," 2023, \[Online\]. Available: https://doi.org/10.4060/cc8166en
+
+[18]  A. Mwaniki, "Achieving food security in Africa: Challenges and issues," *UN Office of the Special Advisor on Africa (OSAA)*, 2006.
+
+[19]  J. von Braun, J. M. Ulimwengu, A. Nwafor, and S. Nhlengethwa, "1 Empowering African Food Systems for the Future," *Africa's Food Systems for the Future*, p. 14, 2023.
+
+[20]  C. Change, "Agriculture and Food Security," *The State of Food and Agriculture; FAO (Ed.) FAO: Rome, Italy*, 2016.
+
+[21]  J. MacPherson *et al.*, "Future agricultural systems and the role of digitalization for achieving sustainability goals. A review," *Agron. Sustain. Dev.*, vol. 42, no. 4, p. 70, Aug. 2022, doi: 10.1007/s13593-022-00792-6.
+
+[22]  L. Christiaensen, L. Demery, and J. Kuhl, "The (evolving) role of agriculture in poverty reduction---An empirical perspective," *Journal of development economics*, vol. 96, no. 2, pp. 239--254, 2011.
+
+[23]  P. Collier and S. Dercon, "African agriculture in 50 years: smallholders in a rapidly changing world?," *World development*, vol. 63, pp. 92--101, 2014.
+
+[24]  R. Chopra, C. Magazzino, M. I. Shah, G. D. Sharma, A. Rao, and U. Shahzad, "The role of renewable energy and natural resources for sustainable agriculture in ASEAN countries: do carbon emissions and deforestation affect agriculture productivity?," *Resources Policy*, vol. 76, p. 102578, 2022.
+
+[25]  E. Dorinet, P.-A. Jouvet, and J. Wolfersberger, "Is the agricultural sector cursed too? Evidence from Sub-Saharan Africa," *World Development*, vol. 140, p. 105250, 2021.
+
+[26]  O. M. Abutu, I. L. Shuneba, and E. N. Shu, "Human Health Risk Assessment of Heavy Metal Contamination in an Artisanal Gold Mining Community of Kogi State, Nigeria," *Journal of Applied Sciences and Environmental Management*, vol. 26, no. 2, pp. 202--209, 2022.
+
+[27]  F. M. Aragón and J. P. Rud, "Polluting industries and agricultural productivity: Evidence from mining in Ghana," *The Economic Journal*, vol. 126, no. 597, pp. 1980--2011, 2016.
+
+[28]  A. O. Awuah and B. Kyereh, "Heavy Metal Contamination in Topsoil in Mining-Plagued Communities in the Amansie West District, Ghana," *Soil and Sediment Contamination: An International Journal*, pp. 1--16, Sep. 2023, doi: 10.1080/15320383.2023.2260897.
+
+[29]  UNEP, "Trends and outlook of natural resource use in West Asia. Report of the International Resource Panel.," 2023, \[Online\]. Available: https://www.resourcepanel.org/reports/trends-and-outlook-natural-resource-use-west-asia
+
+[30]  Y. Ouoba, "Industrial mining land use and poverty in regions of Burkina Faso," *Agricultural Economics*, vol. 49, no. 4, pp. 511--520, Jul. 2018, doi: 10.1111/agec.12432.
+
+[31]  A. S. Worlanyo and L. Jiangfeng, "Evaluating the environmental and economic impact of mining for post-mined land restoration and land-use: A review," *Journal of Environmental Management*, vol. 279, p. 111623, 2021.
+
+[32]  C. Bravo-Ortega and J. De Gregorio, "The relative richness of the poor? Natural resources, human capital, and economic growth," *Lederman and Maloney*, pp. 71--103, 2007.
+
+[33]  C. Ebeke, L. D. Omgba, and R. Laajaj, "Oil, governance and the (mis)allocation of talent in developing countries," *Journal of Development Economics*, vol. 114, pp. 126--141, May 2015, doi: 10.1016/j.jdeveco.2014.12.004.
+
+[34]  A. Kotsadam and A. Tolonen, "African mining, gender, and local employment," *World Development*, vol. 83, pp. 325--339, 2016.
+
+[35]  F. Li, *Unearthing conflict: corporate mining, activism, and expertise in Peru*. Duke University Press, 2015.
+
+[36]  World Bank, "Ghana looks to retool its economy as it reaches middle-income status," 2011.
+
+[37]  R. Gyampo, "Saving Ghana from its oil: a critical assessment of preparations so far made," *African Research Review*, vol. 4, no. 3, 2010, Accessed: Jun. 29, 2024. \[Online\]. Available: https://www.ajol.info/index.php/afrrev/article/view/60138
+
+[38]  D. Mihalyi and T. Scurfield, "How Africa's prospective petroleum producers fell victim to the presource curse," *The Extractive Industries and Society*, vol. 8, no. 1, pp. 220--232, Mar. 2021, doi: 10.1016/j.exis.2020.11.003.
+
+[39]  J. Ofori Adofo, N. Tarui, and T. Tanaka, "The Local Economic Effects of Natural Resources Evidence from Ghana," 2022, Accessed: Jun. 29, 2024. \[Online\]. Available: https://papers.ssrn.com/sol3/papers.cfm?abstract\_id=4220007
+
+[40]  A. K. Fosu, "Oil and Ghana's economy," *The economy of Ghana sixty years after independence*, vol. 137, 2017.
+
+[41]  F. N. Mabe, "Small-scale mining policies in Ghana: Miners' knowledge, attitudes and practices," *Resources Policy*, vol. 85, p. 103924, 2023.
+
+[42]  K. J. Bansah, A. B. Yalley, and N. Dumakor-Dupey, "The hazardous nature of small scale underground mining in Ghana," *Journal of sustainable mining*, vol. 15, no. 1, pp. 8--25, 2016.
+
+[43]  A. Ennin and E. A. Wiafe, "The impact of mining foreign direct investment on economic growth in Ghana," *Cogent Economics & Finance*, vol. 11, no. 2, p. 2251800, Oct. 2023, doi: 10.1080/23322039.2023.2251800.
+
+[44]  D. Shiquan, F. Amuakwa-Mensah, X. Deyi, C. Yue, and C. Yue, "The impact of mineral resource extraction on communities: How the vulnerable are harmed," *The Extractive Industries and Society*, vol. 10, p. 101090, Jun. 2022, doi: 10.1016/j.exis.2022.101090.
+
+[45]  Y. Sun, Y. Li, T. Yu, X. Zhang, L. Liu, and P. Zhang, "Resource extraction, environmental pollution and economic development: Evidence from prefecture-level cities in China," *Resources Policy*, vol. 74, p. 102330, Dec. 2021, doi: 10.1016/j.resourpol.2021.102330.
+
+[46]  Y. Xiong, H. Guo, D. D. M. M. Nor, A. Song, and L. Dai, "Mineral resources depletion, environmental degradation, and exploitation of natural resources: COVID-19 aftereffects," *Resources Policy*, vol. 85, p. 103907, Aug. 2023, doi: 10.1016/j.resourpol.2023.103907.
+
+[47]  I. Keay, "Immunity from the resource curse? The long run impact of commodity price volatility: evidence from Canada, 1900--2005," *Cliometrica*, vol. 9, no. 3, pp. 333--358, Sep. 2015, doi: 10.1007/s11698-014-0118-6.
+
+[48]  I. Nunoo, D. Boansi, and V. Owusu, "Does the use of cocoa farmlands for artisanal small-scale gold mining really increase household food insecurity? Evidence from Ghana," *Resources Policy*, vol. 87, p. 104329, Dec. 2023, doi: 10.1016/j.resourpol.2023.104329.
+
+[49]  D. Siaw, G. Ofosu, and D. Sarpong, "Cocoa production, farmlands, and the *galamsey*: Examining current and emerging trends in the ASM-agriculture nexus," *Journal of Rural Studies*, vol. 101, p. 103044, Jul. 2023, doi: 10.1016/j.jrurstud.2023.103044.
+
+[50]  G. Hilson, "Why is there a large-scale mining 'bias' in sub-Saharan Africa?," *Land use policy*, vol. 81, pp. 852--861, 2019.
+
+[51]  G. Hilson, "An overview of land use conflicts in mining communities," *Land use policy*, vol. 19, no. 1, pp. 65--73, 2002.
+
+[52]  F. Tsiboe, "Nationally Representative Farm/Household Level Dataset on Crop Production in Ghana from 1987-2017," SSRN. \[Online\]. Available: https://papers.ssrn.com/sol3/papers.cfm?abstract\_id=4134518
+
+[53]  F. Tsiboe, J. Asravor, and E. Osei, "Vegetable Production Technical Efficiency and Technology Gaps in Ghana," *African Journal of Agricultural and Resource Economics*, vol. 14, no. 4, 2019.
+
+[54]  F. Tsiboe, I. S. Egyir, and G. Anaman, "Effect of fertilizer subsidy on household level cereal production in Ghana," *Scientific African*, vol. 13, p. e00916, Sep. 2021, doi: 10.1016/j.sciaf.2021.e00916.
+
+[55]  F. Tsiboe, P. Aseete, and J. G. Djokoto, "Spatiotemporal Comparison of Dry Beans and Groundnut Production Technology and Inefficiency in Ghana," *Review of Agricultural and Applied Economics*, vol. 24, no. 1, pp. 76--87, 2021, doi: 10.15414/raae.2021.24.01.76-87.
+
+[56]  F. Tsiboe, "Chronic sources of low cocoa production in Ghana: new insights from meta-analysis of old survey data," *Agricultural and Resource Economics Review*, pp. 1--26, Mar. 2021, doi: 10.1017/age.2021.3.
+
+[57]  F. Tsiboe, J. Asravor, V. Owusu, and A. Mensah-Bonsu, "Production technology, efficiency, and productivity of cereal farms: Prospects for enhancing farm performance in Ghana," *Agricultural and Resource Economics Review*, pp. 1--31, Aug. 2022, doi: 10.1017/age.2022.16.
+
+[58]  S. Gaku, "Are Children From Financially Included Households Less Likely to Work?," *African Review of Economics and Finance*, vol. 15, no. 2, pp. 64--82, Dec. 2023, doi: 10.10520/ejc-aref\_v15\_n2\_a4.
+
+[59]  S. Gaku and E. S. Tsyawo, "Neighbourhood effects and the incidence of child labour," *Lett Spat Resour Sci*, vol. 14, no. 3, pp. 247--259, Dec. 2021, doi: 10.1007/s12076-021-00276-3.
+
+[60]  S. D. Jnr, G. Cieem, A. Ayensu-Ntim, B. Twumasi-Ankrah, and P. T. Barimah, "Effects of loss of agricultural land due to large-scale gold mining on agriculture in Ghana: the case of the Western Region," *Br. J. Res*, vol. 2, no. 6, 2016.
+
+[61]  S. K. Appiah, C. Osei, K. Amankwah, E. K. Tham-Agyekum, J.-E. A. Bakang, and F. Ankuyi, "GALAMSEY'S GRIP: UNRAVELLING THE IMPACT OF ILLEGAL SMALL-SCALE MINING ON COCOA FARMING AND LIVELIHOODS," *Agricultural Socio-Economics Journal*, vol. 24, no. 1, pp. 49--58, Jan. 2024, doi: 10.21776/ub.agrise.2024.024.1.5.
+
+[62]  A. Adams, E. T. Jumpah, and L. D. Caesar, "The nexuses between technology adoption and socioeconomic changes among farmers in Ghana," *Technological Forecasting and Social Change*, vol. 173, p. 121133, Dec. 2021, doi: 10.1016/j.techfore.2021.121133.
+
+[63]  A. A. Adaku, F. Tsiboe, and J. Clottey, "Taking stock of gender gaps in crop production technology adoption and technical efficiency in Ghana," *Agrekon*, vol. 62, no. 1, pp. 31--48, Jan. 2023, doi: 10.1080/03031853.2022.2150664.
+
+[64]  Gaia, "UnderMining Agriculture - New Report from The Gaia Foundation." Accessed: May 24, 2025. \[Online\]. Available: https://grain.org/en/article/5016-undermining-agriculture-new-report-from-the-gaia-foundation
+
+[65]  A. Y. Emmanuel, C. S. Jerry, and D. A. Dzigbodi, "Review of Environmental and Health Impacts of Mining in Ghana," *Journal of Health and Pollution*, vol. 8, no. 17, pp. 43--52, Mar. 2018, doi: 10.5696/2156-9614-8.17.43.
+
+[66]  B. T. Anang, S. Bäckman, and T. Sipiläinen, "Technical efficiency and its determinants in smallholder rice production in northern Ghana," *The Journal of Developing Areas*, vol. 50, no. 2, pp. 311--328, 2016, doi: 10.1353/jda.2016.0072.
+
+[67]  V. Owusu, E. Donkor, and E. Owusu-Sekyere, "Accounting for the Gender Technology Gap Amongst Smallholder Rice Farmers in Northern Ghana," *Journal of Agricultural Economics*, vol. 69, no. 2, pp. 439--457, Jun. 2018, doi: 10.1111/1477-9552.12236.
+
+[68]  J. Asravor, A. Wiredu, K. Siddig, and E. Onumah, "Evaluating the Environmental-Technology Gaps of Rice Farms in Distinct Agro-Ecological Zones of Ghana," *Sustainability*, vol. 11, no. 7, p. 2072, Apr. 2019, doi: 10.3390/su11072072.
+
+[69]  J. Asravor, F. Tsiboe, A. Adetoyinbo, and J. Ankamah, "Charting the path to increased oi palm out in Ghana beyond area expansion: Technology or managerial capacity," 2025.
+
+[70]  I. G. K. Ansah, M. Appiah-Twumasi, and F. Tsiboe, "Starchy staples production shortfalls in Ghana: Technical inefficiency effects outweigh technological differences across ecologies," *PLOS ONE*, vol. 18, no. 4, p. e0284780, Apr. 2023, doi: 10.1371/journal.pone.0284780.
+
+[71]  A. Henningsen and C. H. C. A. Henning, "Imposing regional monotonicity on translog stochastic production frontiers with a simple three-step procedure," *Journal of Productivity Analysis*, vol. 32, no. 3, pp. 217--229, Dec. 2009, doi: 10.1007/s11123-009-0142-x.
+
+[72]  B. Koebel, M. Falk, and F. Laisney, "Imposing and Testing Curvature Conditions on a Box-Cox Cost Function," *Journal of Business & Economic Statistics*, vol. 21, no. 2, pp. 319--335, 2003.
+
+[73]  J. Asravor, F. Tsiboe, R. K. Asravor, A. N. Wiredu, and M. Zeller, "Technology and managerial performance of farm operators by age in Ghana," *J Prod Anal*, May 2023, doi: 10.1007/s11123-023-00679-y.
+
+[74]  F. Belotti, S. Daidone, G. Ilardi, and V. Atella, "Stochastic frontier analysis using Stata," *The Stata Journal*, vol. 13, no. 4, pp. 719--758, 2013.
+
+[75]  R. G. Gutierrez, S. Carter, and D. M. Drukker, "On boundary-value likelihood-ratio tests," *Stata Technical Bulletin*, vol. 10, no. 60, 2001, Accessed: Oct. 21, 2017. \[Online\]. Available: https://econpapers.repec.org/article/tsjstbull/y\_3a2001\_3av\_3a10\_3ai\_3a60\_3asg160.htm
+
+[76]  P. Schmidt and T.-F. Lin, "Simple tests of alternative specifications in stochastic frontier models," *Journal of Econometrics*, vol. 24, no. 3, pp. 349--361, Mar. 1984, doi: 10.1016/0304-4076(84)90058-7.
+
+[77]  T. Coelli, "Estimators and hypothesis tests for a stochastic frontier function: A Monte Carlo analysis," *Journal of Productivity Analysis*, vol. 6, no. 3, pp. 247--268, Sep. 1995, doi: 10.1007/BF01076978.
+
+[78]  F. Tsiboe, E. Martey, and J. Asravor, "Production Gaps Among Farmers With Disabilities Are Associated With Limited Technology," *Agricultural Economics*, vol. 57, no. 4, p. e70115, Jul. 2026, doi: 10.1111/agec.70115.
+
+[79]  R. Villano, B. O. Asante, and B. Bravo-Ureta, "Farming systems and productivity gaps: Opportunities for improving smallholder performance in the forest-savannah transition zone of Ghana," *Land use policy*, vol. 82, pp. 220--227, 2019.
+
+[80]  J. Asravor, F. Tsiboe, R. K. Asravor, A. N. Wiredu, and M. Zeller, "Technology and managerial performance of farm operators by age in Ghana," *Journal of Productivity Analysis*, May 2023, doi: 10.1007/s11123-023-00679-y.
+
+[81]  A. A. Adaku, F. Tsiboe, and J. Clottey, "Taking stock of gender gaps in crop production technology adoption and technical efficiency in Ghana," *Agrekon*, pp. 1--18, Jan. 2023, doi: 10.1080/03031853.2022.2150664.
+
+[82]  E. Martey, J. K. Kuwornu, and J. Adjebeng-Danquah, "Estimating the effect of mineral fertilizer use on Land productivity and income: Evidence from Ghana," *Land Use Policy*, vol. 85, pp. 463--475, 2019.
+
+[83]  B. O. Asante, D. A. Ankrah, and S. Akutinga, "Does the choice of multiple agricultural labour packages influence farm productivity and food (in)-security? Evidence from lowland rice farmers in southern Ghana," *Land Use Policy*, vol. 158, p. 107737, 2025.
+
+[84]  H. Alem, E. T. Jumpah, and M. Bavorova, "Sustainable intensification and land use efficiency among smallholder maize farmers in northern Ghana," *Land Use Policy*, vol. 165, p. 108002, 2026.
+
+[85]  A. Awotwi, G. K. Anornu, J. A. Quaye‐Ballard, and T. Annor, "Monitoring land use and land cover changes due to extensive gold mining, urban expansion, and agriculture in the Pra River Basin of Ghana, 1986--2025," *Land Degrad Dev*, vol. 29, no. 10, pp. 3331--3343, Oct. 2018, doi: 10.1002/ldr.3093.
+
+<div id="refs"></div>

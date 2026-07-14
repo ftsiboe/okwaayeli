@@ -10,6 +10,7 @@ study_setup <- function(
     project_name,
     local_directories = list(
       home             = file.path("replications", project_name),
+      data             = file.path("replications", project_name, "data"),
       output           = file.path("replications", project_name, "output"),
       matching         = file.path("replications", project_name, "output", "matching"),
       treatment_effects= file.path("replications", project_name, "output", "treatment_effects"),

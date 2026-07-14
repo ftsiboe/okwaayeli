@@ -1,0 +1,3 @@
+# 5. Discussion
+
+<!-- In the source manuscript, discussion is integrated into Section 5 (Results and discussion), migrated in 04_results.Rmd. This file is retained per the scaffold convention; extended standalone discussion can be added here. -->

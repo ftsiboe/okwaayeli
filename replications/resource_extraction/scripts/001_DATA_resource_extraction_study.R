@@ -65,5 +65,5 @@ study_environment$study_raw_data <- study_data
 # for reproducibility and to simplify subsequent scripts.
 saveRDS(
   study_environment,
-  file.path(study_environment$wd$output, paste0(project_name,"_study_environment.rds"))
+  file.path(study_environment$wd$data, paste0(project_name,"_study_environment.rds"))
 )

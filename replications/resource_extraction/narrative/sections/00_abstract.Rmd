@@ -1,0 +1,9 @@
+# Abstract
+
+<!-- Migrated from r2_AE_ResourceExtractionCropProdGhana.docx (latest draft). -->
+
+Extractive land uses contribute to much-needed revenue and employment in developing countries, but they may also compete with agriculture for land, water, labour, and policy attention. This paper examines how gold and bauxite mining, sand winning, and stone quarrying affect crop production technology and efficiency in Ghana. Using four waves of the Ghana Living Standards Survey, matching, and a meta-stochastic frontier framework, we decompose farm performance into technology gaps, technical efficiency, and overall efficiency relative to a common production frontier. Farmers in extraction communities have weaker production technology than comparable farmers in non-extraction communities, but they use available technologies more efficiently. Consequently, their overall performance remains slightly lower, suggesting that efficiency gains do not fully offset weaker production conditions. Disaggregated results show that mineral mining and quarrying reduce overall performance mainly through technology gaps, while informal or small-scale mining reduces both technology access and technical efficiency. Sand winning is associated with weaker technology access but stronger technical efficiency. These findings show that extractive land uses should not be governed as a single policy problem. Policies should tailor agricultural support, land rehabilitation, mining regulation, and protection of water resources to the specific extraction activity through its dominant productivity channel to ensure a win-win between economic development goals and sustainable environmental management.
+
+**Keywords:** Agricultural productivity; Galamsey; Ghana; Meta-stochastic frontier analysis; Natural resource extraction; Technology gap ratio
+
+**JEL Classification: C21, Q12, Q14, Q31**

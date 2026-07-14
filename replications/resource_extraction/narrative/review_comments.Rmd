@@ -1,0 +1,12 @@
+---
+title: "Review Comments — Extractive Land Uses and Farm Performance"
+output: html_document
+---
+
+This document tracks reviewer comments and the proposed fixes as the manuscript
+matures. Add one subsection per review round; log each comment, the response,
+and the location of the change.
+
+## Round 0 (pre-submission)
+
+<!-- No entries yet. -->
