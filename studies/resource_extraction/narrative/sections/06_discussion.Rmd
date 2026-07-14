@@ -1,3 +1,4 @@
 <!-- In the source manuscript, discussion is integrated into Section 5 (Results and
 discussion), migrated in 05_results.Rmd. No standalone Discussion heading is emitted
-here, to avoid a duplicate/empty "Section 5". Add an extended discussion secti
+here, to avoid a duplicate/empty "Section 5". Add an extended discussion section here
+if the target journal wants Results and Discussion separated. -->

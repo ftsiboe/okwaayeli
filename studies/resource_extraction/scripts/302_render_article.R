@@ -10,8 +10,14 @@ if (!exists("NARRATIVE")) source("studies/resource_extraction/scripts/300_articl
 #   IEEE (numbered):                               "csl/ieee.csl"
 Sys.setenv(ARTICLE_CSL = Sys.getenv("ARTICLE_CSL", unset = "csl/elsevier-harvard.csl"))
 
+# officedown::rdocx_document replaces word_document so that the wide exhibits can
+# be wrapped in landscape sections (see the BLOCK_LANDSCAPE markers in 98/99).
+if (!requireNamespace("officedown", quietly = TRUE))
+  stop("302_render_article.R needs 'officedown': install.packages(\"officedown\")",
+       call. = FALSE)
+
 rmarkdown::render(
   input         = file.path(NARRATIVE, "resource-extraction.Rmd"),
-  output_format = c("word_document", "html_document"),
+  output_format = c("officedown::rdocx_document", "html_document"),
   knit_root_dir = normalizePath(NARRATIVE)
 )

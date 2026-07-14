@@ -2,9 +2,21 @@
 # Assemble the numbers the narrative pulls from and write article_objects.json.
 # Working directory is always the okwaayeli repo root.
 #
-# The aggregate technology-gap / efficiency figures are extracted from the same
-# pooled meta-stochastic-frontier object that scripts/100_exhibits.R uses, so the
-# manuscript numbers stay in sync with the exhibits.
+# Everything is extracted from the same pooled meta-stochastic-frontier objects
+# that scripts/100_exhibits.R uses, so the manuscript text and the exhibits
+# cannot drift apart.
+#
+# Keying (verified against the results workbook, which is the published source):
+#   TCHLvel identifies the frontier: "National" (naive), "0" (No extraction),
+#   "1" (Some extraction), "Meta" (meta-frontier). `Tech` is only an analysis
+#   label and must NOT be used to split groups.
+#
+# The two tables are keyed DIFFERENTLY -- this is the trap:
+#   Table 4 (efficiency)  : MATCHED sample (opt_sample), TCHLvel "0"/"1".
+#   Table 3 (elasticities,
+#            gamma)       : UNMATCHED sample for the group frontiers;
+#                           the meta-frontier is on the matched sample.
+# The exported workbook relabels TCHLvel as Tech = -999/1/2/999.
 if (!exists("OBJECTS_JSON")) source("studies/resource_extraction/scripts/300_article_helpers.R")
 suppressPackageStartupMessages(library(jsonlite))
 
@@ -15,58 +27,123 @@ se_path <- file.path(DATA, "resource_extraction_study_environment.rds")
 mspecs  <- if (file.exists(se_path)) readRDS(se_path)$match_specification_optimal else NULL
 opt_sample <- if (!is.null(mspecs)) ifelse(is.na(mspecs$link), mspecs$distance, mspecs$link) else NA
 
-pooled <- readRDS(file.path(EST, "CropID_Pooled_extraction_any_TL_hnormal_optimal.rds"))
+read_est <- function(tag)
+  readRDS(file.path(EST, sprintf("CropID_Pooled_%s_TL_hnormal_optimal.rds", tag)))
 
-# --- Aggregate group-level TGR / TE / MTE by extraction status -----------------
-# ef_mean rows: estType (teBC), stat (wmean), Survey (GLSS0 = pooled),
-# restrict (Restricted), sample (matched), type (TGR/TE/MTE),
-# CoefName ("efficiency" = level; "efficiencyGap_lvl" = difference).
-# The extraction GROUP is coded in TCHLvel (0 = No extraction, 1 = Some extraction),
-# matching 100_exhibits.R: factor(TCHLvel, 0:1, c("No extraction","Any extraction")).
-# NB: `Tech` in the extraction_any object is the analysis label ("Any extraction")
-# on every row, so we must split on TCHLvel, not Tech.
-ef <- pooled$ef_mean
-ef <- ef[ef$estType %in% "teBC" & ef$stat %in% "wmean" &
-         ef$Survey  %in% "GLSS0" & ef$restrict %in% "Restricted" &
-         ef$CoefName %in% "efficiency", ]
-if (!is.na(opt_sample) && "sample" %in% names(ef)) ef <- ef[ef$sample %in% opt_sample, ]
+NONE <- c("0", "No extraction", "No")
+ANY  <- c("1", "Any extraction", "Some extraction", "Some")
 
-grp_col <- intersect(c("TCHLvel", "Tech"), names(ef))[1]
-grp <- as.character(ef[[grp_col]])
-
-grab <- function(metric, g) {
-  v <- ef$Estimate[ef$type %in% metric & grp %in% g]
+grp_of <- function(df) {
+  col <- intersect(c("TCHLvel", "Tech"), names(df))[1]
+  as.character(df[[col]])
+}
+pick <- function(df, keep, value = "Estimate") {
+  v <- df[[value]][keep]
   if (length(v) == 0) NA_real_ else as.numeric(v[1])
 }
-mk <- function(metric) {
-  none <- grab(metric, c("0", "No extraction", "No"))
-  any  <- grab(metric, c("1", "Any extraction", "Some extraction", "Some"))
-  list(none = none, any = any,
-       gap = if (is.na(any) || is.na(none)) NA_real_ else any - none)
-}
-eff <- list(tgr = mk("TGR"), te = mk("TE"), mte = mk("MTE"))
+gap_of <- function(a, n) if (is.na(a) || is.na(n)) NA_real_ else a - n
 
-# Diagnostics: if anything did not resolve, print the available group / type codes
-# so the filter can be adjusted; also flag an implausible TGR ordering (extraction
-# communities should have the LOWER technology gap ratio).
-if (anyNA(unlist(eff)))
-  message("301: unresolved values. Group column '", grp_col, "' = {",
-          paste(unique(grp), collapse = ", "), "}; type = {",
-          paste(unique(as.character(ef$type)), collapse = ", "), "}.")
+# --- 1) Efficiency: aggregate + per activity (Table 4) ------------------------
+ACTIVITIES <- c(any       = "extraction_any",
+                mining    = "mining_any",
+                informal  = "mining_gala",
+                quarrying = "quarrying",
+                sand      = "sand")
+
+eff_for <- function(tag) {
+  ef <- read_est(tag)$ef_mean
+  ef <- ef[ef$estType %in% "teBC" & ef$stat %in% "wmean" &
+           ef$Survey  %in% "GLSS0" & ef$restrict %in% "Restricted" &
+           ef$CoefName %in% "efficiency", ]
+  if (!is.na(opt_sample) && "sample" %in% names(ef)) ef <- ef[ef$sample %in% opt_sample, ]
+  g <- grp_of(ef)
+  mk <- function(metric) {
+    n <- pick(ef, ef$type %in% metric & g %in% NONE)
+    a <- pick(ef, ef$type %in% metric & g %in% ANY)
+    list(none = n, any = a, gap = gap_of(a, n))
+  }
+  list(tgr = mk("TGR"), te = mk("TE"), mte = mk("MTE"))
+}
+activities <- lapply(ACTIVITIES, function(tg)
+  tryCatch(eff_for(tg), error = function(e) { warning("301: ", tg, ": ", conditionMessage(e)); NULL }))
+
+eff <- activities$any   # objs$eff stays the aggregate (narrative already uses it)
+
+# --- 2) Elasticities and returns to scale (Table 3) ---------------------------
+# input_variables = c("Area","SeedKg","HHLaborAE","HirdHr","FertKg","PestLt")
+# => el1..el6 are those inputs; el7 is the summed elasticity = returns to scale.
+#
+# IMPORTANT: Table 3 is keyed DIFFERENTLY from Table 4. It reports the frontier
+# parameters on the UNMATCHED sample, identified by Tech:
+#   TCHLvel = "National" naive | "0" No extraction | "1" Some extraction
+#   TCHLvel = "Meta" meta-frontier (reported on the matched sample)
+#   (the exported workbook relabels these as Tech = -999 / 1 / 2 / 999)
+# Table 4 (efficiency, above) instead uses the matched sample and TCHLvel 0/1.
+EL <- c(el1 = "land", el2 = "planting_materials", el3 = "family_labour",
+        el4 = "hired_labour", el5 = "fertilizer", el6 = "pesticide", el7 = "rts")
+
+pooled <- read_est("extraction_any")
+el <- pooled$el_mean
+el <- el[el$stat %in% "wmean" & el$Survey %in% "GLSS0" & el$restrict %in% "Restricted", ]
+if ("CoefName" %in% names(el) && any(el$CoefName %in% "elasticity"))
+  el <- el[el$CoefName %in% "elasticity", ]          # levels (not Gap_lvl)
+el_at <- function(inp, lv, samp)
+  pick(el, el$input %in% inp & as.character(el$TCHLvel) %in% lv & el$sample %in% samp)
+elasticities <- stats::setNames(lapply(names(EL), function(i) {
+  n <- el_at(i, "0", "unmatched")
+  a <- el_at(i, "1", "unmatched")
+  list(naive = el_at(i, "National", "unmatched"),
+       none  = n,
+       any   = a,
+       meta  = el_at(i, "Meta", opt_sample),
+       gap   = gap_of(a, n))
+}), unname(EL))
+
+# --- 3) Diagnostics: gamma variance ratio (Table 3) ---------------------------
+# Same TCHLvel keying as the elasticities: groups on the unmatched sample, the
+# meta-frontier on the matched sample.
+sf  <- pooled$sf_estm
+sfg <- sf[sf$CoefName %in% "Gamma" & sf$restrict %in% "Restricted", ]
+g_at <- function(lv, samp)
+  pick(sfg, as.character(sfg$TCHLvel) %in% lv & sfg$sample %in% samp)
+gamma <- list(naive = g_at("National", "unmatched"),
+              none  = g_at("0",        "unmatched"),
+              any   = g_at("1",        "unmatched"),
+              meta  = g_at("Meta",     opt_sample))
+
+# --- 4) Sample size -----------------------------------------------------------
+# NOT extracted here: sf_estm's Nobs is the estimating model's N (e.g. 10,431),
+# not the 26,811 analysis sample quoted in the text. That figure belongs to the
+# Tier 2 extraction (analysis dataset / Table 1), so it is deliberately omitted
+# rather than emitted incorrectly.
+
+# --- Diagnostics --------------------------------------------------------------
+if (anyNA(unlist(eff)) || anyNA(unlist(elasticities)) ||
+    anyNA(unlist(gamma))) {
+  message("301 diagnostics (unresolved values above; codes actually present):")
+  message("  ef_mean TCHLvel : {", paste(unique(grp_of(pooled$ef_mean)), collapse = ", "), "}")
+  message("  el_mean input   : {", paste(unique(el$input), collapse = ", "), "}")
+  message("  el_mean CoefName: {", paste(unique(pooled$el_mean$CoefName), collapse = ", "), "}")
+  message("  sf_estm Tech    : {", paste(unique(sfg$Tech), collapse = ", "), "}")
+  message("  sf_estm sample  : {", paste(unique(sfg$sample), collapse = ", "), "}")
+  message("  el_mean Tech    : {", paste(unique(el$Tech), collapse = ", "), "}")
+  message("  el_mean sample  : {", paste(unique(el$sample), collapse = ", "), "}")
+}
 if (!is.na(eff$tgr$none) && !is.na(eff$tgr$any) && eff$tgr$any > eff$tgr$none)
   warning("301: TGR(any) > TGR(none) - extraction group may be swapped; check TCHLvel coding.")
 
 objs <- list(
   meta = list(
     generated      = as.character(Sys.time()),
-    source         = "output/estimations/CropID_Pooled_extraction_any_TL_hnormal_optimal.rds",
+    source         = "output/estimations/CropID_Pooled_<activity>_TL_hnormal_optimal.rds",
     matched_sample = opt_sample
   ),
-  eff = eff
-  # TODO next object groups:
-  #   elasticities  -> Table 3 (input elasticities / returns to scale)
-  #   activities    -> Table 4 (mining / quarrying / sand winning MTE channels)
-  #   heterogeneity -> Figures 2-3 (gender, age, education, crop, region)
+  eff          = eff,           # aggregate (Table 4, "Any type of resource extraction")
+  activities   = activities,    # Table 4 rows: any/mining/informal/quarrying/sand
+  elasticities = elasticities,  # Table 3: el1..el6 inputs + el7 = returns to scale
+  diagnostics  = list(gamma = gamma)
+  # TODO Tier 2: Table 1 descriptives / Table 2 prevalence come from the
+  #   Stata-built sheets and analysis dataset, not these estimation objects.
 )
 
 jsonlite::write_json(objs, OBJECTS_JSON, auto_unbox = TRUE, pretty = TRUE, na = "null")
