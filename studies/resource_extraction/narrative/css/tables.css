@@ -1,0 +1,48 @@
+/* tables.css — HTML-only table styling for the article.
+   Self-contained: targets tables directly, so it needs no JavaScript.
+   The .docx output is unaffected (Word styling comes from reference.docx). */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100%;
+  font-size: 0.82em;
+  line-height: 1.35;
+  margin: 1.2em 0;
+}
+
+/* Compact cells: these tables run to 49 rows x 8-9 cols. */
+th, td {
+  padding: 4px 8px;
+  vertical-align: top;
+}
+
+/* Sticky header keeps column labels visible on the long appendix tables. */
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #ffffff;
+  border-bottom: 2px solid #444;
+  text-align: left;
+  font-weight: 600;
+}
+
+/* Zebra striping makes it possible to track a row across 8 columns. */
+tbody tr:nth-child(odd) { background: #fafafa; }
+tbody tr:hover          { background: #f0f4f8; }
+tbody td                { border-bottom: 1px solid #ececec; }
+
+/* Row labels stay left-aligned and readable; estimate columns right-align
+   so decimal points line up. */
+tbody td:first-child {
+  text-align: left;
+  min-width: 11em;
+}
+tbody td:not(:first-child) { text-align: right; }
+
+/* Table captions are rendered as #### headings; tighten the gap. */
+h4 { margin-bottom: 0.3em; }
+
+/* Figures */
+img { max-width: 100%; height: auto; }

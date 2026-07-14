@@ -11,6 +11,8 @@ output:
   html_document:
     toc: true
     toc_depth: 2
+    toc_float: true
+    css: css/tables.css
 bibliography: references.bib
 # Citation style — switch by changing the `csl:` line below (files live in csl/):
 #   Food Policy (Elsevier Harvard, author-date):  csl/elsevier-harvard.csl

@@ -13,8 +13,8 @@ study_setup(
     "matching"), treatment_effects = file.path("studies", project_name, "output",
     "treatment_effects"), estimations = file.path("studies", project_name, "output",
     "estimations"), figure_data = file.path("studies", project_name, "output",
-    "figure_data"), figure = file.path("studies", 
-     project_name, "output",
+    "figure_data"), figure = file.path("studies", project_name, 
+     "output",
     "figure"))
 )
 }
