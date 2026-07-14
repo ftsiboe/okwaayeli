@@ -1,0 +1,336 @@
+# okwaayeli: Agricultural Productivity Analysis in Ghana
+
+*Collaborations with enthusiastic and committed graduate students are
+welcomed. For more details see the wiki on [Graduate Student Opportunity
+to Lead Research on Agricultural Productivity in
+Ghana](https://github.com/ftsiboe/okwaayeli/wiki/Graduate-Student-Opportunity-to-Lead-Research-on-Agricultural-Productivity-in-Ghana).*
+
+## Contents
+
+- [Overview](#id_-overview)
+- [At a glance](#id_-at-a-glance)
+- [Data](#id_-data)
+- [Methods](#id_-methods)
+- [Pipeline](#id_-pipeline)
+- [Published studies](#id_-published-studies)
+- [Work in progress](#id_-work-in-progress)
+- [Scheduled studies](#id_-scheduled-studies)
+- [Installation](#id_-installation)
+- [Quick start](#id_-quick-start)
+- [Contributing](#id_-contributing)
+- [Citation](#id_-citation)
+- [Data and code availability](#id_-data-and-code-availability)
+- [Contact](#id_-contact)
+- [Funding](#id_-funding)
+
+## 📘 Overview
+
+The primary objective of this project is to determine whether
+agricultural production shortfalls in Ghana are driven by farmer
+technical inefficiency, technology gaps, or a combination of both.
+
+It compiles a series of research articles that assess farmer-specific
+and institutional factors, exploring how they influence technical
+inefficiency and the adoption of advanced agricultural technologies.
+
+By identifying the root causes of production shortfalls, this project
+provides empirical evidence crucial for policy discussions aimed at
+enhancing agricultural productivity in contexts with limited access to
+new technologies.
+
+## 📌 At a glance
+
+|  |  |
+|----|----|
+| **Published outputs** | 9 (7 peer-reviewed articles + 1 data paper + 1 conference paper) |
+| **Active manuscript streams** | 8 (disability, education, resource extraction, financial inclusion, land tenure, conflict/peace, income transfer, agricultural services) |
+| **Harmonized datasets released** | 11 farmer- and community-level GLSS datasets |
+| **GLSS rounds covered** | GLSS1 (1987/88) – GLSS7 (2016/17) |
+| **License** | GPL-3 |
+
+## 📊 Data
+
+The project utilizes farm-level data from the Ghana Living Standards
+Surveys (GLSS), which are population-based surveys conducted
+periodically, approximately every five years, in Ghana:
+[GLSS1](https://microdata.statsghana.gov.gh/index.php/catalog/7),
+[GLSS2](https://microdata.statsghana.gov.gh/index.php/catalog/4),
+[GLSS3](https://microdata.statsghana.gov.gh/index.php/catalog/12),
+[GLSS4](https://microdata.statsghana.gov.gh/index.php/catalog/14),
+[GLSS5](https://microdata.statsghana.gov.gh/index.php/catalog/5),
+[GLSS6](https://microdata.statsghana.gov.gh/index.php/catalog/72), and
+[GLSS7](https://microdata.statsghana.gov.gh/index.php/catalog/97).
+
+The harmonized data products are documented in
+[data-raw/releases/harmonized_data/codebook.md](https://ftsiboe.github.io/okwaayeli/data-raw/releases/harmonized_data/codebook.md)
+and distributed through the [`hh_data`
+release](https://github.com/ftsiboe/okwaayeli/releases/tag/hh_data).
+
+## 🧪 Methods
+
+- The Meta-Stochastic Frontier (MSF) model, as introduced by [Huang,
+  Huang, & Liu (2014)](https://doi.org/10.1007/s11123-014-0402-2), is
+  employed to capture technological heterogeneity and technical
+  inefficiencies across farmers.
+- To minimize self-selection bias and to reduce model dependency, a
+  matching approach is also utilized where applicable ([Abadie and
+  Imbens 2006](https://doi.org/10.1111/j.1468-0262.2006.00655.x);
+  [Abadie and Imbens 2016](https://doi.org/10.3982/ECTA11293)).
+
+For a worked walkthrough of the full pipeline, see the [methodology
+vignette](https://ftsiboe.github.io/okwaayeli/vignettes/msf-and-matching.Rmd).
+
+## 🔗 Pipeline
+
+Every active study follows the same five-stage pipeline. Each stage is a
+numbered R script whose output feeds the next.
+
+``` mermaid
+flowchart LR
+    A[Harmonized GLSS data<br/>get_household_data()] --> B[001_DATA<br/>sample &amp; covariates]
+    B --> C[002_MATCHING<br/>specs &amp; balance]
+    C --> D[003_TREATMENT<br/>treatment effects]
+    D --> E[004_MSF<br/>frontier estimation]
+    E --> F[100_FIGTAB<br/>results.xlsx + figures]
+```
+
+## 📄 Published studies
+
+- [Technology and managerial performance of farm operators by age in
+  Ghana](https://doi.org/10.1007/s11123-023-00679-y) \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
+- [Taking stock of gender gaps in crop production technology adoption
+  and technical efficiency in
+  Ghana](https://doi.org/10.1080/03031853.2022.2150664) \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
+- [Starchy Staples Production Shortfall in Ghana is influenced by
+  Technical Inefficiency than by Ecological Technology
+  Gaps](https://doi.org/10.1371/journal.pone.0284780) \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
+- [Production Technology, Efficiency, and Productivity of Cereal
+  Farms](https://doi.org/10.1017/age.2022.16) \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
+- [Chronic Sources of Low Cocoa Production in
+  Ghana](https://doi.org/10.1017/age.2021.3) \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
+- [Effect of Fertilizer Subsidy on Household Level Cereal Production in
+  Ghana](https://doi.org/10.1016/j.sciaf.2021.e00916) \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
+- [Spatiotemporal Evaluation of Dry Beans and Groundnut Production
+  Technology and Inefficiency in
+  Ghana](https://ageconsearch.umn.edu/record/310316/?ln=en&v=pdf) \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
+- [Vegetable Production Technical Efficiency and Technology Gaps in
+  Ghana](https://ageconsearch.umn.edu/record/301046/?ln=en&v=pdf) \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
+- [Nationally Representative Farm/Household Level Dataset on Crop
+  Production in Ghana from
+  1987-2017](http://dx.doi.org/10.2139/ssrn.4134518) \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/releases/tag/legacy_studies)
+
+## 🛠 Work in progress
+
+- [Technology Gaps Drive Inequality in Production for Farmers with
+  Disabilities](https://github.com/ftsiboe/okwaayeli/blob/main/replications/disability/DisabilityAgricProdGapGhana_public_version.pdf)
+  \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/disability)
+  — *under review (Agricultural Economics)*
+- [Heterogeneous Impacts of Farmer Education on Technology Access and
+  Technical Efficiency in
+  Ghana](https://github.com/ftsiboe/okwaayeli/tree/main/replications/education)
+  \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/education)
+  — *revise & resubmit (JAE)*
+- [Digging into the Linkages Between Resource Extraction and Farm
+  Performance](https://github.com/ftsiboe/okwaayeli/tree/main/replications/resource_extraction)
+  \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/resource_extraction)
+  — *submitted (Land Use Policy)*
+- Societal Peace and Cohesion Improve Farm Technology and Technical
+  Efficiency in Ghana \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/societal_peace_and_cohesion)
+  — *drafting*
+- Financial Inclusion and Credit Impacts on Crop Production in Ghana \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/financial_inclusion)
+  — *drafting*
+- Land Ownership Appears Neither Necessary nor Sufficient for Superior
+  Agricultural Performance in Ghana \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/land_tenure)
+  — *drafting*
+- The Association Between Income Transfers and Crop Production in Ghana
+  \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/) —
+  *concept*
+- Agricultural Service Delivery and Smallholder Farm Performance in
+  Ghana \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/ag_services)
+  — *drafting*
+
+## 📅 Scheduled studies
+
+- The link between extension services and Farm Technology Endowment and
+  its Efficient Use — *planned*
+- Input-dealer density and farm performance \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/input_dealers)
+  — *code-only, manuscript pending*
+- Time poverty and farm output gaps in Ghana \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/replications/time_poverty)
+  — *code-only, manuscript pending*
+
+## ⬇️ Installation
+
+``` r
+
+# install.packages("devtools")
+devtools::install_github("ftsiboe/okwaayeli")
+```
+
+`okwaayeli` requires R ≥ 4.1 and a working C/Fortran toolchain for the
+econometric back-ends (`frontier`, `micEcon`, `rgenoud`, `quadprog`,
+`optmatch`, `dbarts`, `CBPS`).
+
+## 🚀 Quick start
+
+``` r
+
+library(okwaayeli)
+
+# 1. scaffold a project tree under replications/<project_name>/
+env <- study_setup(project_name = "tutorial")
+
+# 2. pull a harmonized dataset (cached locally after first call)
+farmer_data <- get_household_data("harmonized_crop_farmer_data")
+
+# 3. follow the standard 001 -> 100 pipeline; see the methodology vignette
+vignette("msf-and-matching", package = "okwaayeli")
+```
+
+## 🤝 Contributing
+
+Please read
+[CONTRIBUTING.md](https://ftsiboe.github.io/okwaayeli/CONTRIBUTING.md)
+for the standard study pipeline, the “how to add a new study” template,
+and the coding conventions. New issues, study proposals and data
+requests have dedicated [issue
+templates](https://ftsiboe.github.io/okwaayeli/.github/ISSUE_TEMPLATE/).
+Methodology questions are best asked under
+[Discussions](https://github.com/ftsiboe/okwaayeli/discussions).
+
+This project follows the [Contributor
+Covenant](https://ftsiboe.github.io/okwaayeli/code_of_conduct.md).
+Security disclosures: see
+[SECURITY.md](https://ftsiboe.github.io/okwaayeli/SECURITY.md).
+
+## 📚 Citation
+
+To cite the package itself:
+
+``` r
+
+citation("okwaayeli")
+```
+
+For the harmonized dataset underlying every study:
+
+> Tsiboe, F. (2022). *Nationally Representative Farm/Household Level
+> Dataset on Crop Production in Ghana from 1987–2017.* SSRN Electronic
+> Journal. <https://doi.org/10.2139/ssrn.4134518>
+
+Please also cite the specific paper(s) whose data or method you use; the
+full list is in [Published studies](#id_-published-studies).
+
+## 🔓 Data and code availability
+
+The datasets and code used in this project are openly available to
+facilitate replication and further research. They may also be used
+freely for related studies. To help track the usage and impact of these
+resources, please inform us if you intend to use them beyond direct
+replication.
+
+## 📬 Contact
+
+Constructive feedback is highly appreciated, and collaborations using
+the available codes and data are actively encouraged. Please reach out
+by sending emails to Francis Tsiboe (<ftsiboe@hotmail.com>).
+
+## 💰 Funding
+
+This project did not receive any external funding.
+
+See the [LICENSE](https://ftsiboe.github.io/okwaayeli/LICENSE) file in
+the repository’s root for details.
+
+*Maintained by [ftsiboe](https://github.com/ftsiboe)*
+
+# Package index
+
+## Study setup
+
+Helpers to scaffold and configure a new study.
+
+- [`study_setup()`](https://ftsiboe.github.io/okwaayeli/reference/study_setup.md)
+  : Initialize Study Environment and Directory Structure
+- [`okwaayeli_control()`](https://ftsiboe.github.io/okwaayeli/reference/okwaayeli_control.md)
+  : Control Settings (Internal)
+- [`run_only_for()`](https://ftsiboe.github.io/okwaayeli/reference/run_only_for.md)
+  : Restrict Execution of an R Script to Allowed SLURM Job Conditions
+
+## Data access
+
+Download and prepare the harmonized GLSS datasets.
+
+- [`get_household_data()`](https://ftsiboe.github.io/okwaayeli/reference/get_household_data.md)
+  : Download and Load Harmonized Household Data from the
+  GHAgricProductivityLab Repository
+- [`harmonized_data_prep()`](https://ftsiboe.github.io/okwaayeli/reference/harmonized_data_prep.md)
+  : Prepare Data for Agricultural Productivity Analysis
+- [`get_crop_area_list()`](https://ftsiboe.github.io/okwaayeli/reference/get_crop_area_list.md)
+  : Extract Matching Crop Area Columns from a Dataset
+
+## Matching
+
+Build, draw and balance matched samples.
+
+- [`write_match_formulas()`](https://ftsiboe.github.io/okwaayeli/reference/write_match_formulas.md)
+  : Construct Matching Formulas for Exact and General Matching
+- [`match_sample_specifications()`](https://ftsiboe.github.io/okwaayeli/reference/match_sample_specifications.md)
+  : Draw / Match Sample Specifications
+- [`draw_matched_samples()`](https://ftsiboe.github.io/okwaayeli/reference/draw_matched_samples.md)
+  : Draw matched samples (stratified bootstrap + matching)
+- [`covariate_balance()`](https://ftsiboe.github.io/okwaayeli/reference/covariate_balance.md)
+  : Compute Covariate Balance Summaries Across Matching Specs
+
+## Stochastic frontier
+
+The MSF estimation engine.
+
+- [`msf_workhorse()`](https://ftsiboe.github.io/okwaayeli/reference/msf_workhorse.md)
+  : Meta stochastic frontier (MSF) workhorse
+- [`sf_workhorse()`](https://ftsiboe.github.io/okwaayeli/reference/sf_workhorse.md)
+  : Stochastic frontier workhorse
+- [`draw_msf_estimations()`](https://ftsiboe.github.io/okwaayeli/reference/draw_msf_estimations.md)
+  : Run a single MSF draw and summarize stochastic frontier results
+- [`draw_msf_summary()`](https://ftsiboe.github.io/okwaayeli/reference/draw_msf_summary.md)
+  : Summarize multi-draw Meta Stochastic Frontier (MSF) results
+
+## Treatment effects
+
+- [`treatment_effect_calculation()`](https://ftsiboe.github.io/okwaayeli/reference/treatment_effect_calculation.md)
+  : Compute log-linear treatment effects (ATE/ATET/ATEU) for multiple
+  outcomes
+- [`treatment_effect_summary()`](https://ftsiboe.github.io/okwaayeli/reference/treatment_effect_summary.md)
+  : Summarize Treatment Effect Estimates Across Matching Specifications
+
+## Utilities
+
+- [`compute_jenks_binned_shares()`](https://ftsiboe.github.io/okwaayeli/reference/compute_jenks_binned_shares.md)
+  : Compute Jenks-Binned Shares by Aggregation Groups
+- [`mode()`](https://ftsiboe.github.io/okwaayeli/reference/mode.md) :
+  Mode of a Vector (Internal)
+
+# Articles
+
+### Getting started
+
+- [Meta-stochastic frontiers and statistical matching: the okwaayeli
+  pipeline](https://ftsiboe.github.io/okwaayeli/articles/msf-and-matching.md):
