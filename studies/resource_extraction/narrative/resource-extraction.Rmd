@@ -40,6 +40,16 @@ if (file.exists("article_objects.json")) {
 if (file.exists("../scripts/305_tables.R")) source("../scripts/305_tables.R")
 ```
 
+Francis Tsiboe -- Agricultural Risk Policy Center, North Dakota State University, Fargo, ND 58102
+
+Mark Appiah-Twumasi[^corresp] -- Department of Agricultural and Food Economics, FoAFCS, University for Development Studies, Tamale, Ghana
+
+Antoinette Tsiboe-Darko -- Centre for Social Policy Studies (CSPS), University of Ghana, Legon
+
+Sylvanus Gaku -- Division of Extension, University of Wisconsin-Madison, Madison, WI 53705
+
+[^corresp]: Corresponding author. Email: mtwumasi@uds.edu.gh
+
 ```{r child = "sections/00_abstract.Rmd"}
 ```
 
@@ -62,6 +72,9 @@ if (file.exists("../scripts/305_tables.R")) source("../scripts/305_tables.R")
 ```
 
 ```{r child = "sections/07_conclusion.Rmd"}
+```
+
+```{r child = "sections/96_declarations.Rmd"}
 ```
 
 ```{r child = "sections/98_tables_and_figures.Rmd"}

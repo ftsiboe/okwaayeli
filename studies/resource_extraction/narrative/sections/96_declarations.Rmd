@@ -1,0 +1,27 @@
+# Declarations
+
+## CRediT authorship contribution statement
+
+<!-- AUTHOR ACTION: confirm/adjust role allocation before submission -->
+**Francis Tsiboe:** Conceptualization, Methodology, Software, Formal analysis, Data curation, Visualization, Writing -- original draft, Writing -- review & editing. **Mark Appiah-Twumasi:** Conceptualization, Writing -- original draft, Writing -- review & editing, Project administration. **Antoinette Tsiboe-Darko:** Writing -- original draft, Writing -- review & editing. **Sylvanus Gaku:** Formal analysis, Writing -- review & editing.
+
+## Declaration of competing interest
+
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+## Funding
+
+<!-- AUTHOR ACTION: confirm before submission -->
+This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors.
+
+## Data availability
+
+The study uses the fourth through seventh rounds of the Ghana Living Standards Survey (GLSS 4--7), collected by the Ghana Statistical Service and available from the Ghana Statistical Service microdata catalog. The community-level extraction indicators are constructed from the GLSS community questionnaires as described in Section 2.
+
+## Code availability
+
+The full replication pipeline (data assembly, matching, meta-stochastic frontier estimation, and exhibit generation) is available at <https://github.com/ftsiboe/okwaayeli/tree/main/studies/resource_extraction>.
+
+## Disclaimer
+
+The findings and conclusions in this manuscript are those of the authors and should not be construed to represent the views or policies of their respective institutions.

@@ -25,7 +25,7 @@ ft_table2()
 
 \newpage
 
-#### Table 3. Natural resource extraction impact on input elasticities and variability in crop production metrics in Ghana
+#### Table 3. Association between natural resource extraction and input elasticities and variability in crop production metrics in Ghana
 
 ```{r tab3, echo=FALSE}
 ft_table3()

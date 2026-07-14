@@ -84,7 +84,7 @@ ft_tableA8()
 sec_landscape()
 ```
 
-#### Figure A2. Different model specification generally shows decreasing impact of natural resource extraction on crop production output for Ghanaian farmers (2012-2017)
+#### Figure A2. Alternative model specifications generally show a smaller negative association between natural resource extraction and crop production output for Ghanaian farmers (2012-2017)
 
 ![](../output/figure/robustness.png){width=6.3in}
 
