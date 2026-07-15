@@ -1,15 +1,15 @@
 
 
-use "$GitHub\my_packages\GHAgricProductivityLab\data-raw\releases\harmonized_data\harmonized_education_data",clear
-merg 1:m Surveyx EaId HhId Mid using "$GitHub\my_packages\GHAgricProductivityLab\data-raw\releases\harmonized_data\harmonized_crop_farmer_data"
+use "$GitHub\ghana\okwaayeli\data-raw\releases\harmonized_data\harmonized_education_data",clear
+merg 1:m Surveyx EaId HhId Mid using "$GitHub\ghana\okwaayeli\data-raw\releases\harmonized_data\harmonized_crop_farmer_data"
 keep if _merge==3
 keep if inlist(Surveyx,"GLSS6","GLSS7")
 compress
-saveold "$GitHub\my_packages\GHAgricProductivityLab\studies\disability\output\education_study_data",replace ver(12)
+saveold "$GitHub\ghana\okwaayeli\studies\disability\output\education_study_data",replace ver(12)
 
 
 
-use "$GitHub\my_packages\GHAgricProductivityLab\studies\disability\output\education_study_data",clear
+use "$GitHub\ghana\okwaayeli\studies\disability\output\education_study_data",clear
 decode CropID,gen(CropIDx)
 keep if CropIDx == "Pooled"
 qui levelsof CropIDx, local(levels)
@@ -24,14 +24,14 @@ sca drop _all
 loc ApID0 = 0
 tempfile Summaries DATA
 
-use "$GitHub\my_packages\GHAgricProductivityLab\studies\disability\output\education_study_data",clear
+use "$GitHub\ghana\okwaayeli\studies\disability\output\education_study_data",clear
 decode CropID,gen(CropIDx)
 qui levelsof CropIDx, local(levels)
 
 qui foreach crop in `levels'{
   
 *loc crop "Pooled"
-use "$GitHub\my_packages\GHAgricProductivityLab\studies\disability\output\education_study_data",clear
+use "$GitHub\ghana\okwaayeli\studies\disability\output\education_study_data",clear
 decode CropID,gen(CropIDx)
 keep if CropIDx == "`crop'"
 gen disagCat = `edu'
@@ -167,7 +167,7 @@ qui foreach Var of var disagCat0 disagCat1{
 		mat drop B
 	}
 	mat rownames A = Trend_`Var' Mean_`Var'
-	mat roweq A= Female
+	mat roweq A= `Var'  // FIX 2026-07-15: was hardcoded "Female"; this loop runs over disagCat0/disagCat1, so its rows were tagged Equ=="Female" and collided with the real Female outcome rows in the means sheet.
 	mat li A
 	mat Means = A\Means
 
@@ -184,7 +184,7 @@ qui foreach Var of var disagCat0 disagCat1{
 			mat drop B
 		}
 		mat rownames A = `sx'_miss `sx'_Pooled
-		mat roweq A= Female
+		mat roweq A= `Var'  // FIX 2026-07-15: was hardcoded "Female"; this loop runs over disagCat0/disagCat1, so its rows were tagged Equ=="Female" and collided with the real Female outcome rows in the means sheet.
 		mat Means = A\Means	
 		mat drop A
 	}
@@ -219,7 +219,7 @@ loc ApID0=`ApID0'+1
 use `Summaries', clear
 
 export excel CropIDx Equ Coef Beta SE Tv Pv Min Max SD N /*
-*/ using "$GitHub\my_packages\GHAgricProductivityLab\studies\education\output\education_results_means.xlsx", /*
+*/ using "$GitHub\ghana\okwaayeli\studies\education\output\education_results_means.xlsx", /*
 */ sheet("`edu'") sheetmodify firstrow(variables) 
 
 }
@@ -227,7 +227,7 @@ export excel CropIDx Equ Coef Beta SE Tv Pv Min Max SD N /*
 
 mat drop _all
 sca drop _all
-use "$GitHub\my_packages\GHAgricProductivityLab\studies\disability\output\education_study_data",clear
+use "$GitHub\ghana\okwaayeli\studies\disability\output\education_study_data",clear
 keep if inlist(Surveyx,"GLSS6","GLSS7")
 decode CropID,gen(CropIDx)
 gen Trend=Season-r(min)
@@ -295,7 +295,7 @@ keep Variable crop mesure Beta SE Tv Pv Min Max SD N
 order Variable crop mesure Beta SE Tv Pv Min Max SD N
 
 export excel Variable crop mesure Beta SE Tv Pv Min Max SD N /*
-*/ using "$GitHub\my_packages\GHAgricProductivityLab\studies\education\output\education_results_means.xlsx", /*
+*/ using "$GitHub\ghana\okwaayeli\studies\education\output\education_results_means.xlsx", /*
 */ sheet("education_state") sheetmodify firstrow(variables) 
 
 

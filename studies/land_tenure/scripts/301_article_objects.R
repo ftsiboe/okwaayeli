@@ -170,12 +170,73 @@ if (anyNA(unlist(eff)) || anyNA(unlist(elasticities)) || anyNA(unlist(gamma))) {
   message("  el_mean sample  : {", paste(unique(el$sample), collapse = ", "), "}")
 }
 
+# --- Ownership prevalence by wave (sampling-frame break) ----------------------
+# Feeds the frame caveat in 02_data.Rmd and 05_results.Rmd. Emitted here rather
+# than hardcoded in the prose so the text cannot drift from the analysis data.
+#
+# WHY THIS IS IN THE PAPER AT ALL: measured ownership jumps from ~32% (GLSS4) to
+# ~79% (GLSS5). That is not our construction -- the Section 8b ownership question
+# is unchanged across the break, and the same jump appears independently in
+# Section 8A ("does any member own land", +24pp). GSS changed the sampling frame
+# at exactly this boundary: GLSS3/GLSS4 were drawn from the 1984 census EAs (the
+# GLSS4 report calls that frame "quite old" and "inadequate"), GLSS5 onward from
+# the 2000 PHC. Each wave stays internally representative, so all five are kept
+# in the pooled estimation, but comparisons spanning GLSS4/GLSS5 are not drawn
+# from a common population -- hence the trend analysis is restricted to GLSS5-7.
+# Full verification trail: narrative/diagnostics/tenure_variable_documentation.md
+frame <- local({
+  se <- if (file.exists(se_path)) readRDS(se_path) else NULL
+  # estimation_data is attached by 002_MATCHING; study_raw_data by 001_DATA.
+  # Accept either: running 001 alone re-saves the environment WITHOUT
+  # estimation_data (002 has not re-attached it yet), and the ownership
+  # prevalence is identical in both -- 002's harmonized_data_prep() transforms
+  # and adds columns but drops no rows and no tenure variables.
+  d <- if (is.null(se)) NULL
+       else if (!is.null(se$estimation_data)) se$estimation_data
+       else se$study_raw_data
+  if (is.null(d)) {
+    message("301: no estimation_data or study_raw_data in the study environment; ",
+            "objs$frame not emitted. Run 001 (and ideally 002) first.")
+    return(NULL)
+  }
+  wv <- intersect(c("Surveyx", "Survey"), names(d))[1]
+  if (is.na(wv) || !"OwnLnd" %in% names(d)) {
+    message("301: need OwnLnd + Surveyx/Survey for objs$frame; found: ",
+            paste(intersect(c("Surveyx", "Survey", "OwnLnd"), names(d)), collapse = ", "))
+    return(NULL)
+  }
+  # THE ANALYSIS SAMPLE IS CropID == "Pooled" -- 35,185 rows, matching Table 1's
+  # header and N_ALL. Do NOT de-duplicate on (wave, EaId, HhId, Mid): that key is
+  # not unique within Pooled (28,411 distinct keys vs 35,185 rows), so deduping
+  # silently drops 6,774 observations and biases the wave prevalences by 1-2pp.
+  # Verified against output/land_tenure_results.xlsx sheet "means": the
+  # GLSS*_OwnLnd0/1 group sizes sum to 13,099 / 22,086 / 35,185 exactly.
+  dd <- d[as.character(d$CropID) %in% "Pooled", ]
+  if (!nrow(dd)) {
+    message("301: no CropID == 'Pooled' rows; objs$frame not emitted.")
+    return(NULL)
+  }
+  p <- tapply(as.numeric(dd$OwnLnd), as.character(dd[[wv]]), mean, na.rm = TRUE)
+  # Expected against the workbook (sheet "means", CropIDx=="Pooled"):
+  #   GLSS3 .4319 (1509/3494) | GLSS4 .3206 (1584/4941) | GLSS5 .8114 (5766/7106)
+  #   GLSS6 .7099 (8708/12266) | GLSS7 .6125 (4519/7378)
+  # Frame gaps the narrative quotes: GLSS4->GLSS5 = 49pp; GLSS5->GLSS6 = 10pp.
+  list(
+    own_prev = as.list(round(p, 4)),                       # share owning, by wave
+    n        = as.list(table(as.character(dd[[wv]]))),
+    census   = list(GLSS3 = "1984", GLSS4 = "1984",
+                    GLSS5 = "2000", GLSS6 = "2010", GLSS7 = "2010"),
+    trend_waves = c("GLSS5", "GLSS6", "GLSS7")             # common-frame subset
+  )
+})
+
 objs <- list(
   meta = list(
     generated      = as.character(Sys.time()),
     source         = "output/estimations/CropID_Pooled_<tenure>_TL_hnormal_optimal.rds",
     matched_sample = opt_sample
   ),
+  frame        = frame,         # ownership prevalence by wave + census frame
   eff          = eff,           # aggregate ownership comparison (Table 4)
   tenures      = tenures,       # Table 4 blocks: ownership/documents/rights
   elasticities = elasticities,  # Table 3: el1..el6 inputs + el7 = returns to scale

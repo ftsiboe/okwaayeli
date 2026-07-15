@@ -90,13 +90,12 @@ set_flextable_defaults(font.family = "Times New Roman")
   ft
 }
 
-# Generic builder: label + value columns from CSV, labels from *_header.csv,
-# optional top spanner row.
-.ft_csv <- function(csv, hdr_csv, first_lab = "Variable", size = 8,
-                    spanner = NULL, spanwidths = NULL, notes = NULL) {
-  d <- .read_tbl(csv)
+# Generic builder: label + value columns from a data.frame (label, header, c1..cN)
+# plus a character vector of column headers. Kept separate from .ft_csv so the
+# same styling serves both the curated CSVs and the live workbook builders.
+.ft_build <- function(d, cols, first_lab = "Variable", size = 8,
+                      spanner = NULL, spanwidths = NULL, notes = NULL) {
   hdr <- which(d$header == "1")
-  cols <- .read_hdr(hdr_csv)
   vcols <- paste0("c", seq_along(cols))
   m <- d[, c("label", vcols)]
   ft <- flextable(m)
@@ -115,25 +114,198 @@ set_flextable_defaults(font.family = "Times New Roman")
   ft
 }
 
+# Back-compat wrapper: curated-CSV path (still used by the S-tables).
+.ft_csv <- function(csv, hdr_csv, ...) .ft_build(.read_tbl(csv), .read_hdr(hdr_csv), ...)
+
+# ---- Live workbook layer ------------------------------------------------------
+# Tables 1 and 2 are built from output/land_tenure_results.xlsx, written by
+# scripts/100_exhibits.do. Two sheets are tidy VALUE sheets (export excel ...
+# firstrow(variables)) and are the source of truth:
+#
+#   means        CropIDx, Equ, Coef, Beta, SE, Tv, Pv, Min, Max, SD, N   -> Table 1
+#   land_tenure  Variable, crop, mesure, Beta, SE, Tv, Pv, Min, Max, SD, N -> Table 2
+#
+# The workbook also carries hand-built display sheets (Table1, Table2, ...) whose
+# formulas cache #N/A. Those are NOT used. Only the first 11 columns of each tidy
+# sheet are real; trailing columns are display-formula spill and are dropped.
+#
+# NB requires the 2026-07-15 fix to 100_exhibits.do (`mat roweq A= `Var'`). Before
+# it, the OwnLnd0/OwnLnd1 rows were mis-tagged Equ=="Female", so Equ=="Female"
+# carried two Mean_OwnLnd0 rows and a lookup could silently return the ownership
+# share instead of the Female mean. .xl_pick() below errors on any such duplicate
+# rather than guessing.
+# The reading/lookup/formatting layer is packaged: see R/exhibits-workbook.R
+#   read_exhibit_sheet()  exhibit_value()  exhibit_stars()
+#   exhibit_group_sizes() exhibit_cell()
+# Only the land-specific row maps live in this script.
+.xl_sheet <- local({
+  cache <- new.env(parent = emptyenv())
+  function(sheet) {
+    key <- paste0("s_", sheet)
+    if (is.null(cache[[key]]))
+      cache[[key]] <- okwaayeli::read_exhibit_sheet(RESULTS_XLSX, sheet)
+    cache[[key]]
+  }
+})
+.xl_pick <- okwaayeli::exhibit_value
+.stars   <- okwaayeli::exhibit_stars
+
 .SRC_NOTE <- "Data source: Ghana Living Standards Survey [waves 3-7]."
 .SIG_NOTE <- "Significance levels: * p<0.10, ** p<0.05, *** p<0.01."
 
 # ---- Main-text tables --------------------------------------------------------
+# Table 1 row map: display label -> (Equ, CropIDx) in the means sheet.
+# header == 1 marks a bold section row with no values.
+.T1_MAP <- data.frame(
+  label = c("Farmer a",
+            "Female farmer (dummy)", "Age (years)", "Education (years)",
+            "Selected crop production (real GH₵/ha)",
+            "All crops", "Maize", "Rice", "Millet", "Sorghum", "Beans", "Peanut",
+            "Cassava", "Yam", "Cocoyam", "Plantain", "Pepper", "Okra", "Tomato",
+            "Cocoa", "Palm",
+            "Land (ha)", "Crop diversification (index)", "Seed (maize kg/ha)",
+            "Household labor (AE)", "Hired labor (man-days/ha)",
+            "Fertilizer (kg/ha)", "Pesticide (liter/ha)",
+            "Mechanization (dummy)", "Irrigation (dummy)", "Credit (dummy)",
+            "Extension (dummy)",
+            "Household b",
+            "Size (AE)", "Dependency (ratio)"),
+  header = c(1, 0,0,0, 1, rep(0, 16), rep(0, 11), 1, 0,0),
+  Equ = c(NA,
+          "Female", "AgeYr", "YerEdu",
+          NA,
+          rep("Yield", 16),
+          "Area", "CrpMix", "SeedKg", "HHLaborAE", "HirdHr", "FertKg", "PestLt",
+          "EqipMech", "EqipIrig", "Credit", "Extension",
+          NA,
+          "HHSizeAE", "Depend"),
+  crop = c(NA,
+           "Pooled", "Pooled", "Pooled",
+           NA,
+           "Pooled", "Maize", "Rice", "Millet", "Sorghum", "Beans", "Peanut",
+           "Cassava", "Yam", "Cocoyam", "Plantain", "Pepper", "Okra",
+           "Tomatoe",          # sheet spelling
+           "Cocoa", "Palm",
+           rep("Pooled", 11),
+           NA,
+           "Pooled", "Pooled"),
+  stringsAsFactors = FALSE)
+
+# Dagger convention. The footnote reads "a statistically significant difference
+# from the pooled sample". With two groups this is the group contrast from the
+# c.Trend##i.OwnLnd regression: CATDif (testparm i.OwnLnd -> level difference at
+# Trend==0) flags the mean columns, TrendDif (testparm c.Trend#i.OwnLnd) flags
+# the trend columns. Both group columns are flagged together, since with two
+# groups the contrast is symmetric.
+# VERIFY at first knit: Equ=="Female" has CATDif p=0.983 and TrendDif p=0.480,
+# so the Female row should carry no daggers at all.
+.T1_DAG <- 0.05
+
+.tbl1_live <- function() {
+  m <- .xl_sheet("means")
+  fmt_mean <- function(eq, cr, g, dag) {
+    k <- list(Equ = eq, CropIDx = cr, Coef = paste0("Mean_", g))
+    b <- .xl_pick(m, k, "Beta"); s <- .xl_pick(m, k, "SD")
+    if (is.na(b)) return("")
+    sprintf("%.2f (%.2f)%s", b, s, if (isTRUE(dag)) " †" else "")
+  }
+  fmt_trend <- function(eq, cr, g, dag) {
+    k <- list(Equ = eq, CropIDx = cr, Coef = paste0("Trend_", g))
+    b <- .xl_pick(m, k, "Beta"); s <- .xl_pick(m, k, "SE"); p <- .xl_pick(m, k, "Pv")
+    if (is.na(b)) return("")
+    sprintf("%.2f%s [%.2f]%s", b, .stars(p), s, if (isTRUE(dag)) " †" else "")
+  }
+  out <- .T1_MAP
+  for (cc in paste0("c", 1:6)) out[[cc]] <- ""
+  for (i in seq_len(nrow(out))) {
+    if (out$header[i] == 1) next
+    eq <- out$Equ[i]; cr <- out$crop[i]
+    dcat <- .xl_pick(m, list(Equ = eq, CropIDx = cr, Coef = "CATDif"),   "Pv")
+    dtrd <- .xl_pick(m, list(Equ = eq, CropIDx = cr, Coef = "TrendDif"), "Pv")
+    dcat <- !is.na(dcat) && dcat < .T1_DAG
+    dtrd <- !is.na(dtrd) && dtrd < .T1_DAG
+    out$c1[i] <- fmt_mean(eq, cr, "Pooled",  FALSE)
+    out$c2[i] <- fmt_mean(eq, cr, "OwnLnd0", dcat)
+    out$c3[i] <- fmt_mean(eq, cr, "OwnLnd1", dcat)
+    out$c4[i] <- fmt_trend(eq, cr, "Pooled",  FALSE)
+    out$c5[i] <- fmt_trend(eq, cr, "OwnLnd0", dtrd)
+    out$c6[i] <- fmt_trend(eq, cr, "OwnLnd1", dtrd)
+  }
+  out$header <- as.character(out$header)
+  out[, c("label", "header", paste0("c", 1:6))]
+}
+
+# Group sizes, live. Supersedes the hardcoded N_ALL/N_OWN/N_NON.
+.tbl1_n <- function() {
+  n <- okwaayeli::exhibit_group_sizes(.xl_sheet("means"),
+                                      groups = c("Pooled", "OwnLnd0", "OwnLnd1"))
+  c(all = n[["Pooled"]], non = n[["OwnLnd0"]], own = n[["OwnLnd1"]])
+}
+
+.tbl1_hdr <- function() {
+  n <- .tbl1_n()
+  lab <- c(sprintf("Pooled (n=%s)", format(n[["all"]], big.mark = ",")),
+           sprintf("Land not owned (n=%s)", format(n[["non"]], big.mark = ",")),
+           sprintf("Land partly or fully owned (n=%s)", format(n[["own"]], big.mark = ",")))
+  c(lab, lab)
+}
+
 ft_table1 <- function()
-  .ft_csv("table1.csv", "table1_header.csv", size = 8,
+  .ft_build(.tbl1_live(), .tbl1_hdr(), size = 8,
     spanner = c("", "Sample means (sample standard deviation)",
                 "Annual trend from 1991 to 2017 (%)"),
     spanwidths = c(1, 3, 3),
     notes = c(.SIG_NOTE,
       "Standard deviations in parentheses; standard errors in brackets. A dagger denotes a statistically significant difference from the pooled sample.",
       "The trend was estimated as the annual percentage change via a generalised linear model.",
+      "Trends span the 1984-frame rounds (GLSS3-GLSS4) and the 2000/2010-frame rounds (GLSS5-GLSS7); see Section 2 on comparability across that boundary.",
       .SRC_NOTE))
 
+# Table 2 row map: display label -> Variable in the land_tenure sheet.
+# Value labels are set in data-raw/okwaayeli_DATA.do:
+#   LndOwn 1 "Not owned" 2 "Owned w/o deed" 3 "Owned w/ deed"
+#   LndAq  1 Free 2 Sharecropping 3 Rented 4 Purchased 5 Kinship 6 Other
+#   LndRgt 1 None 2 Security 3 Sell 4 Both
+#   ShrCrpCat 1 "0" 2 "1-49" 3 "50-100"
+# LndAq_6 ("Other") is absent from the sheet: it exists only in GLSS3/GLSS4 and
+# this block keeps GLSS6/GLSS7, so its logit fails and the cap{} swallows it.
+.T2_MAP <- data.frame(
+  label = c("Land ownership status",
+            "Not owned", "Owned without documentation", "Owned with documentation",
+            "Farmland mode of acquisition",
+            "Distributed by village/family", "Use free of charge", "Sharecropping",
+            "Rented (cash or in kind)", "Purchased",
+            "Farmland ownership rights",
+            "No rights", "Can be used as collateral security", "Can be sold",
+            "Can be used as collateral security and sold",
+            "Sharecropping agreement percentage",
+            "0", "1-49", "50-100"),
+  header = c(1, 0,0,0, 1, 0,0,0,0,0, 1, 0,0,0,0, 1, 0,0,0),
+  Variable = c(NA, "LndOwn_1", "LndOwn_2", "LndOwn_3",
+               NA, "LndAq_5", "LndAq_1", "LndAq_2", "LndAq_3", "LndAq_4",
+               NA, "LndRgt_1", "LndRgt_2", "LndRgt_3", "LndRgt_4",
+               NA, "ShrCrpCat_1", "ShrCrpCat_2", "ShrCrpCat_3"),
+  stringsAsFactors = FALSE)
+
+.tbl2_live <- function()
+  okwaayeli::exhibit_wave_table(.xl_sheet("land_tenure"), .T2_MAP,
+                                waves = c("GLSS6", "GLSS7"), trend = "Trend")
+
+.tbl2_hdr <- function() {
+  d <- .xl_sheet("land_tenure")
+  n <- function(w) .xl_pick(d, list(Variable = "LndOwn_1", crop = "Pooled",
+                                    mesure = w), "N")
+  f <- function(x) format(round(x), big.mark = ",")
+  c(sprintf("GLSS6 (2012/13) (n=%s)", f(n("GLSS6"))),
+    sprintf("GLSS7 (2016/17) (n=%s)", f(n("GLSS7"))),
+    sprintf("Trend (2012-2017) (%%) (n=%s)", f(n("GLSS0"))))
+}
+
 ft_table2 <- function()
-  .ft_csv("table2.csv", "table2_header.csv", first_lab = "Outcome", size = 8,
+  .ft_build(.tbl2_live(), .tbl2_hdr(), first_lab = "Outcome", size = 8,
     spanner = c("", "Mean (standard deviation)", ""),
     spanwidths = c(1, 2, 1),
-    notes = c("Standard deviations in parentheses.",
+    notes = c("Standard deviations in parentheses; standard errors in brackets.",
       "Ownership detail modules are only administered in GLSS6 and GLSS7.",
       "Data source: Ghana Living Standards Survey [waves 6-7]."))
 
@@ -411,8 +583,92 @@ ft_table4 <- function()
               "Ownership detail modules are only administered in GLSS6 and GLSS7.",
               "Data source: Ghana Living Standards Survey [waves 6-7].")
 
+# Table S0: construction of the tenure indicators.
+# Unlike every other exhibit here, this one is NOT extracted from the v001 draft
+# and has no fallback -- it is built from the GLSS3-7 Section 8b files and the
+# questionnaire instruments read directly. GLSS3 carries no variable or value
+# labels and GLSS4 carries no value labels, so both waves' codes were verified
+# against G3QPartB.pdf / G4QPartB.pdf; all hand-coded mappings in
+# data-raw/okwaayeli_DATA.do check out. Provenance and the full verification
+# trail: narrative/diagnostics/tenure_variable_documentation.md
+ft_tableS0 <- function() {
+  d <- .read_tbl("tableS0.csv")
+  ft <- flextable(d)
+  ft <- set_header_labels(ft,
+                          round = "Survey round", frame = "Census frame",
+                          source = "Source variables", question = "Question wording",
+                          options = "Response options", mapping = "Mapping / comparability")
+  ft <- bold(ft, part = "header")
+  ft <- align(ft, align = "left", part = "all")
+  ft <- valign(ft, valign = "top", part = "body")
+  ft <- padding(ft, padding.top = 2, padding.bottom = 2, part = "all")
+  ft <- fontsize(ft, size = 7, part = "all")
+  ft <- width(ft, j = 1, width = 0.85)
+  ft <- width(ft, j = 2, width = 0.60)
+  ft <- width(ft, j = 3, width = 1.60)
+  ft <- width(ft, j = 4, width = 1.90)
+  ft <- width(ft, j = 5, width = 2.35)
+  ft <- width(ft, j = 6, width = 1.90)
+  ft <- add_footer_lines(ft, values = c(
+    "Farmer-level tenure is the category holding the largest share of cultivated area across the farmer's plots, not 'owns any land'. Ties resolve toward the more secure category and affect under 0.5% of farmers in every wave.",
+    "Non-owners are skipped past the rights question in every wave, so 'no right' is assigned to them by construction rather than measured.",
+    "Purchase is not a response option in GLSS3 or GLSS4; 'inherited' is unique to GLSS7 and is folded into kinship.",
+    "Poles and Ropes are local, respondent-defined units. GSS instructs interviewers to record them as given and publishes no conversion; the hectare equivalents used here are analyst assumptions covering 11-36% of plots by wave.",
+    "GSS drew GLSS3 and GLSS4 from the 1984 census frame, which the GLSS4 report describes as 'quite old' and 'inadequate', and GLSS5 onward from the 2000 Population and Housing Census frame. Each wave is internally representative; comparisons spanning the GLSS4/GLSS5 boundary are not drawn from a common population.",
+    "Data source: Ghana Living Standards Survey [waves 3-7], Part B Section 8b, and the corresponding questionnaire instruments."))
+  ft <- fontsize(ft, size = 6, part = "footer")
+  ft
+}
+
+# ---- Tables S1-S4: the crop-disaggregated analogues of Table 2 ----------------
+# Same sheet as Table 2, sliced by crop instead of restricted to "Pooled".
+#   S1 LndOwn_1..3     ownership status
+#   S2 LndAq_1..5      mode of acquisition   (LndAq_6 "Other" is GLSS3/4 only)
+#   S3 LndRgt_1..4     ownership rights
+#   S4 ShrCrpCat_1..3  sharecropping intensity
+#
+# Row order is editorial. The v001 CSVs used two different arbitrary orders and
+# buried "All crops listed" mid-table; we sort by the first column descending and
+# put the pooled row last, which is at least a stated rule.
+#
+# NB the v001 CSVs carried a second block headed "Percentage change in Headcount
+# ratio from 2012/13 to 2016/17" whose values were an exact copy of the headcount
+# block -- the trend was never populated. Rebuilt here from mesure=="Trend".
+# 03_land_tenure_context.Rmd reads the headcount block only (tbl_pct takes the
+# first match), so its numbers were unaffected.
+.S_CROPS <- c(Millet = "Millet", Sorghum = "Sorghum", Rice = "Rice", Okra = "Okra",
+              Maize = "Maize", Beans = "Beans", Peanut = "Peanut", Cocoa = "Cocoa",
+              Cassava = "Cassava", Banana = "Banana", Plantain = "Plantain",
+              Pepper = "Pepper", Yam = "Yam", Cocoyam = "Cocoyam",
+              Tomato = "Tomatoe",   # display label -> sheet spelling
+              Eggplant = "Eggplant", Palm = "Palm")
+
+.tblS_live <- function(vars) {
+  d <- .xl_sheet("land_tenure")
+  one <- function(meas, digits) {
+    t <- okwaayeli::exhibit_crop_table(d, variables = vars,
+                                       crops = unname(.S_CROPS),
+                                       measure = meas, digits = digits)
+    t$label <- c(names(.S_CROPS), "All crops listed")
+    ord <- order(suppressWarnings(as.numeric(sub(" .*", "", t$c1[-nrow(t)]))),
+                 decreasing = TRUE, na.last = TRUE)
+    rbind(t[-nrow(t), ][ord, ], t[nrow(t), ])
+  }
+  hc <- one("GLSS0", 3)
+  tr <- one("Trend", 2)
+  sep <- hc[1, ]; sep$label <- "Percentage change in headcount ratio, 2012/13 to 2016/17"
+  sep$header <- "1"; sep[paste0("c", seq_along(vars))] <- ""
+  out <- rbind(hc, sep, tr)
+  rownames(out) <- NULL
+  out
+}
+
+.S_HDR <- function(labs) labs
+
 ft_tableS1 <- function()
-  .ft_csv("tableS1.csv", "tableS1_header.csv", first_lab = "Crop", size = 8,
+  .ft_build(.tblS_live(c("LndOwn_1", "LndOwn_2", "LndOwn_3")),
+    c("Not owned", "Owned without documentation", "Owned with documentation"),
+    first_lab = "Crop", size = 8,
     spanner = c("", "Headcount ratio over 2012/13-2016/17"), spanwidths = c(1, 3),
     notes = .HC_NOTE)
 ft_tableS2 <- function()
@@ -506,10 +762,28 @@ trend_range <- function(metric, waves, fun) {
   100 * fun(as.numeric(v))
 }
 
-# Sample sizes (single-sourced; from the analysis dataset / Table 1 header).
-N_ALL <- 35185
-N_OWN <- 22086
-N_NON <- 13099
+# Sample sizes -- now read live from the workbook rather than hardcoded, so the
+# prose in 00_abstract / 01_introduction / 02_data / 06_conclusion cannot drift
+# from the analysis sample.
+#
+# These count CropID=="Pooled" ROWS (the analysis sample), not distinct farmers:
+# (Surveyx, EaId, HhId, Mid) is NOT unique within Pooled -- 28,411 distinct keys
+# against 35,185 rows -- because a farmer can appear in more than one season.
+# The wave group sizes in the means sheet sum to exactly 13,099 / 22,086 / 35,185.
+# "observations of farm households" in 02_data.Rmd is therefore the accurate
+# phrasing; "35,185 farm households" is not.
+.N <- local({
+  n <- tryCatch(.tbl1_n(), error = function(e) NULL)
+  if (is.null(n) || any(is.na(n))) {
+    warning("305_tables.R: could not read sample sizes from ", RESULTS_XLSX,
+            "; falling back to the 2026-07-15 values. Re-run 100_exhibits.do.",
+            call. = FALSE)
+    c(all = 35185, non = 13099, own = 22086)
+  } else n
+})
+N_ALL <- .N[["all"]]
+N_NON <- .N[["non"]]
+N_OWN <- .N[["own"]]
 
 # ---- Page sections ----------------------------------------------------------
 # Ported from resource_extraction: officer::block_section with type="nextPage"

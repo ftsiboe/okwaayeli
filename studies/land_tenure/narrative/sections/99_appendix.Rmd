@@ -9,6 +9,22 @@
 <!-- TODO: the v001 draft has this heading with no body text (see Table S7 for the
      underlying results). Write the note, modeled on resource_extraction's Note A1. -->
 
+```{r, echo=FALSE, results='asis'}
+sec_landscape()
+```
+
+#### Table S0. Construction of the farmland tenure indicators from the GLSS Section 8b plot rosters
+
+```{r tabS0, echo=FALSE}
+ft_tableS0()
+```
+
+```{r, echo=FALSE, results='asis'}
+sec_portrait()
+```
+
+\newpage
+
 #### Table S1. Farmland ownership status amongst Ghanaian crop farmers (2012-2017)
 
 ```{r tabS1, echo=FALSE}

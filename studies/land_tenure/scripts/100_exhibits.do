@@ -1,3 +1,17 @@
+*------------------------------------------------------------------------------
+* $GitHub was referenced throughout this file without being defined here, so it
+* depended on an ambient global from the user's Stata profile. Defined below so
+* the file runs standalone. The working repository is GitHub\ghana\okwaayeli;
+* data-raw/okwaayeli_DATA.do writes the harmonized extracts there ($LabGitHub).
+*------------------------------------------------------------------------------
+if "$GitHub" == "" gl GitHub "C:/Users/ftsib/Dropbox (Personal)/GitHub"
+
+capture confirm file "$GitHub/ghana/okwaayeli/data-raw/releases/harmonized_data/nul"
+if _rc {
+  di as err "harmonized_data not found under: $GitHub/ghana/okwaayeli"
+  di as err "Check the \$GitHub global, and that okwaayeli_DATA.do has been run."
+  exit 601
+}
 
 mat drop _all
 sca drop _all
@@ -158,7 +172,13 @@ qui foreach Var of var OwnLnd0 OwnLnd1{
 		mat drop B
 	}
 	mat rownames A = Trend_`Var' Mean_`Var'
-	mat roweq A= Female
+	* BUG FIX 2026-07-15: roweq was hardcoded to "Female". This loop runs over
+	* the OwnLnd0/OwnLnd1 dummies, so its rows were being written to the means
+	* sheet tagged Equ=="Female", colliding with the real Female outcome rows.
+	* Symptom: Equ=="Female" carried TWO Mean_OwnLnd0 rows -- 0.3723 (N=35,185,
+	* actually the ownership share) and 0.2705 (N=13,099, the real Female mean) --
+	* so any lookup by (Equ, Coef) could silently return the wrong number.
+	mat roweq A= `Var'
 	mat li A
 	mat Means = A\Means
 
@@ -175,8 +195,9 @@ qui foreach Var of var OwnLnd0 OwnLnd1{
 			mat drop B
 		}
 		mat rownames A = `sx'_miss `sx'_Pooled
-		mat roweq A= Female
-		mat Means = A\Means	
+		* BUG FIX 2026-07-15: see note above -- roweq was hardcoded to "Female".
+		mat roweq A= `Var'
+		mat Means = A\Means
 		mat drop A
 	}
 }

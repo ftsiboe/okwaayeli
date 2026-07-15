@@ -75,7 +75,7 @@ model_specifications <- sf_model_specifications(
   distforms = distforms,
   fxnforms = fxnforms,
   data = study_environment$estimation_data,
-  technology_variables = c("OwnLnd","LndOwn","LndRgt"))
+  technology_variables = c("OwnLnd","LndOwn","LndRgt","OwnLndAny","OwnLndMaj","OwnLndFull"))
 
 # Drop specifications that use disaggregation variables you do NOT want
 #model_specifications <- model_specifications[model_specifications$disasg %in% c("Female","Region","Ecozon","EduCat","EduLevel","AgeCat"),]
