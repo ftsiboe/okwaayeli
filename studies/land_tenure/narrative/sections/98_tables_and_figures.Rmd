@@ -1,0 +1,75 @@
+# Tables and Figures
+
+<!-- Layout mirrors studies/resource_extraction/narrative/sections/98_tables_and_figures.Rmd.
+     Tables are built by scripts/305_tables.R; figures by scripts/100_exhibits.R into output/figure/.
+     Exhibit titles are markdown headings (not flextable captions) so they appear in the Word navigation pane.
+     Landscape exhibits are grouped into ONE section: emitting sec_landscape() then sec_portrait() back to back
+     creates an empty portrait section, which Word renders as a blank page.
+     A section's properties apply to the content BEFORE it: sec_portrait() closes a portrait run,
+     sec_landscape() closes a landscape run. -->
+
+```{r, echo=FALSE, results='asis'}
+sec_portrait()
+```
+
+#### Table 1. Summary statistics of crop producers in Ghana (1991-2017)
+
+```{r tab1, echo=FALSE}
+ft_table1()
+```
+
+\newpage
+
+#### Table 2. Farmland ownership details amongst Ghanaian crop farmers (2012-2017)
+
+```{r tab2, echo=FALSE}
+ft_table2()
+```
+
+\newpage
+
+#### Table 3. Land ownership impact on input elasticities and variability in crop production in Ghana (1991-2017)
+
+```{r tab3, echo=FALSE}
+ft_table3()
+```
+
+```{r, echo=FALSE, results='asis'}
+sec_landscape()
+```
+
+#### Table 4. Parity in technology level and technical efficiency by farmland ownership details in Ghana (1991-2017)
+
+```{r tab4, echo=FALSE}
+ft_table4()
+```
+
+\newpage
+
+#### Figure 1. Crop production input and output gaps associated with farmland ownership in Ghana (1991-2017)
+
+![](../output/figure/input_TE.png){width=6.3in}
+
+\newpage
+
+#### Figure 2. The association between farmland ownership and farm productivity from 1991-2017
+
+![](../output/figure/score_trend.png){width=6.3in}
+
+```{r, echo=FALSE, results='asis'}
+sec_portrait()
+```
+
+#### Figure 3. Farmland ownership parity in crop production technology adoption and technical efficiency by farmer gender, age, and education in Ghana (1991-2017)
+
+![](../output/figure/heterogeneity_genderAge.png){width=9.3in}
+
+\newpage
+
+#### Figure 4. Farmland ownership parity in crop production technology adoption and technical efficiency by major crops and administrative regions in Ghana (1991-2017)
+
+![](../output/figure/heterogeneity_crop_region.png){width=9.3in}
+
+```{r, echo=FALSE, results='asis'}
+sec_landscape()
+```

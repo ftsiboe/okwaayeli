@@ -1,0 +1,86 @@
+# Supplementary material
+
+<!-- Layout mirrors studies/resource_extraction/narrative/sections/99_appendix.Rmd.
+     Tables built by scripts/305_tables.R from data/tables/*.csv (curated from the
+     v001 draft); figures by scripts/100_exhibits.R into output/figure/. -->
+
+## Note S1. Drivers of technical inefficiency
+
+<!-- TODO: the v001 draft has this heading with no body text (see Table S7 for the
+     underlying results). Write the note, modeled on resource_extraction's Note A1. -->
+
+#### Table S1. Farmland ownership status amongst Ghanaian crop farmers (2012-2017)
+
+```{r tabS1, echo=FALSE}
+ft_tableS1()
+```
+
+\newpage
+
+#### Table S2. Farmland mode of acquisition amongst Ghanaian crop farmers (2012-2017)
+
+```{r tabS2, echo=FALSE}
+ft_tableS2()
+```
+
+\newpage
+
+#### Table S3. Farmland ownership rights amongst Ghanaian crop farmers (2012-2017)
+
+```{r tabS3, echo=FALSE}
+ft_tableS3()
+```
+
+\newpage
+
+#### Table S4. Farmland sharecropping agreements amongst Ghanaian crop farmers (2012-2017)
+
+```{r tabS4, echo=FALSE}
+ft_tableS4()
+```
+
+```{r, echo=FALSE, results='asis'}
+sec_portrait()
+```
+
+#### Table S5. Mean meta stochastic frontier analysis results for Ghanaian crop producers from 1991-2017
+
+```{r tabS5, echo=FALSE}
+ft_tableS5()
+```
+
+```{r, echo=FALSE, results='asis'}
+sec_landscape()
+```
+
+#### Table S6. Parity in technology level and technical efficiency by farmland ownership details in Ghana (1991-2017) - unmatched estimates
+
+```{r tabS6, echo=FALSE}
+ft_tableS6()
+```
+
+\newpage
+
+#### Table S7. Determinants of crop production technical inefficiency and land-ownership-driven technology gaps in Ghana (1991-2017)
+
+```{r tabS7, echo=FALSE}
+ft_tableS7()
+```
+
+\newpage
+
+#### Figure S1. Covariate balancing summary
+
+![](../output/figure/Covariate_balance_variance.png){width=9.3in}
+
+```{r, echo=FALSE, results='asis'}
+sec_landscape()
+```
+
+#### Figure S2. Alternative model specifications generally show a decreasing impact of land ownership on crop production output for Ghanaian farmers (1991-2017)
+
+![](../output/figure/robustness.png){width=6.3in}
+
+```{r, echo=FALSE, results='asis'}
+sec_portrait()
+```

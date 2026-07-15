@@ -1,0 +1,71 @@
+---
+title: "Landownership Appears Neither Necessary nor Sufficient for Superior Agricultural Performance in Ghana"
+output:
+  # officedown (not word_document) so exhibits can sit in landscape sections;
+  # word_document has no mechanism for page orientation.
+  officedown::rdocx_document:
+    reference_docx: reference.docx
+    fig_width: 6.3
+    fig_height: 4.5
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    css: css/tables.css
+bibliography: references.bib
+# Citation style — switch by changing ARTICLE_CSL (files live in csl/):
+#   Elsevier Harvard (author-date):  csl/elsevier-harvard.csl
+#   IEEE (numbered):                 csl/ieee.csl
+csl: "`r Sys.getenv('ARTICLE_CSL', 'csl/elsevier-harvard.csl')`"
+link-citations: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+if (file.exists("article_objects.json")) {
+  objs <- jsonlite::fromJSON("article_objects.json")
+}
+# Formatting helpers + assert_present() guards.
+if (file.exists("../scripts/300_article_helpers.R")) source("../scripts/300_article_helpers.R")
+# Table builders (flextable); paths are narrative-relative.
+if (file.exists("../scripts/305_tables.R")) source("../scripts/305_tables.R")
+```
+
+Gilbert Addae; Jacob Asravor; Francis Tsiboe
+
+```{r child = "sections/00_abstract.Rmd"}
+```
+
+```{r child = "sections/01_introduction.Rmd"}
+```
+
+```{r child = "sections/02_data.Rmd"}
+```
+
+```{r child = "sections/03_land_tenure_context.Rmd"}
+```
+
+```{r child = "sections/04_methods.Rmd"}
+```
+
+```{r child = "sections/05_results.Rmd"}
+```
+
+```{r child = "sections/06_conclusion.Rmd"}
+```
+
+```{r child = "sections/96_declarations.Rmd"}
+```
+
+```{r child = "sections/97_references.Rmd"}
+```
+
+\newpage
+
+```{r child = "sections/98_tables_and_figures.Rmd"}
+```
+
+\newpage
+
+```{r child = "sections/99_appendix.Rmd"}
+```

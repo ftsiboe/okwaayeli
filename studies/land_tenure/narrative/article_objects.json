@@ -1,0 +1,136 @@
+{
+  "meta": {
+    "generated": "2026-07-15 08:02:32.425112",
+    "source": "output/estimations/CropID_Pooled_<tenure>_TL_hnormal_optimal.rds",
+    "matched_sample": "robust_mahalanobis"
+  },
+  "eff": {
+    "tgr": {
+      "none": 0.8555,
+      "any": 0.8474,
+      "gap": -0.0081
+    },
+    "te": {
+      "none": 0.4789,
+      "any": 0.4851,
+      "gap": 0.0062
+    },
+    "mte": {
+      "none": 0.4145,
+      "any": 0.4066,
+      "gap": -0.0079
+    }
+  },
+  "tenures": {
+    "ownership": {
+      "tgr": {
+        "none": 0.8555,
+        "any": 0.8474,
+        "gap": -0.0081
+      },
+      "te": {
+        "none": 0.4789,
+        "any": 0.4851,
+        "gap": 0.0062
+      },
+      "mte": {
+        "none": 0.4145,
+        "any": 0.4066,
+        "gap": -0.0079
+      }
+    },
+    "documents": {
+      "tgr": {
+        "none": null,
+        "any": 0.8684,
+        "gap": null
+      },
+      "te": {
+        "none": null,
+        "any": 0.4908,
+        "gap": null
+      },
+      "mte": {
+        "none": null,
+        "any": 0.4331,
+        "gap": null
+      }
+    },
+    "rights": {
+      "tgr": {
+        "none": null,
+        "any": 0.9181,
+        "gap": null
+      },
+      "te": {
+        "none": null,
+        "any": 0.4674,
+        "gap": null
+      },
+      "mte": {
+        "none": null,
+        "any": 0.4316,
+        "gap": null
+      }
+    }
+  },
+  "elasticities": {
+    "land": {
+      "naive": 0.6832,
+      "none": 0.6697,
+      "any": 0.6922,
+      "meta": 0.6603,
+      "gap": 0.0225
+    },
+    "planting_materials": {
+      "naive": 0.0477,
+      "none": 0.043,
+      "any": 0.0507,
+      "meta": 0.0441,
+      "gap": 0.0077
+    },
+    "family_labour": {
+      "naive": 0.1981,
+      "none": 0.1662,
+      "any": 0.2134,
+      "meta": 0.198,
+      "gap": 0.0472
+    },
+    "hired_labour": {
+      "naive": 0.0234,
+      "none": 0.0151,
+      "any": 0.0284,
+      "meta": 0.0233,
+      "gap": 0.0134
+    },
+    "fertilizer": {
+      "naive": 0.0095,
+      "none": 0.0104,
+      "any": 0.0098,
+      "meta": 0.0114,
+      "gap": -0.0006
+    },
+    "pesticide": {
+      "naive": 0.0182,
+      "none": 0.0254,
+      "any": 0.0207,
+      "meta": 0.0242,
+      "gap": -0.0046
+    },
+    "rts": {
+      "naive": 0.9801,
+      "none": 0.9297,
+      "any": 1.0153,
+      "meta": 0.9612,
+      "gap": 0.0856
+    }
+  },
+  "diagnostics": {
+    "gamma": {
+      "naive": 0.7522,
+      "none": 0.7701,
+      "any": 0.7107,
+      "meta": 0.8111
+    }
+  }
+}

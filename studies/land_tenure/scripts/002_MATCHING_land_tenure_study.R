@@ -43,7 +43,7 @@ run_only_for(id = 5, allowed_jobnames = "run_all")
 project_name <- "land_tenure"
 
 study_environment <- readRDS(
-  file.path(paste0("studies/", project_name, "/output"),
+  file.path(paste0("studies/", project_name, "/data"),
             paste0(project_name,"_study_environment.rds")))
 
 # --- Data ingest & harmonization
@@ -145,5 +145,5 @@ study_environment[["balance_table"]]               <- res$bal_tab
 # Save environment snapshot for downstream stages
 saveRDS(
   study_environment,
-  file.path(study_environment$wd$output, paste0(project_name,"_study_environment.rds"))
+  file.path(study_environment$wd$data, paste0(project_name,"_study_environment.rds"))
 )

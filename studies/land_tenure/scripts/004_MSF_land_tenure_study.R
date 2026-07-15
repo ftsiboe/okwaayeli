@@ -61,7 +61,7 @@ sysname <- toupper(as.character(Sys.info()[["sysname"]]))
 
 # Load saved study environment (directories, specifications, etc.)
 study_environment <- readRDS(
-  file.path(paste0("studies/", project_name, "/output"),
+  file.path(paste0("studies/", project_name, "/data"),
             paste0(project_name,"_study_environment.rds")))
 
 # Data ingest & basic harmonization
