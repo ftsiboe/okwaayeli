@@ -1,6 +1,6 @@
 # Declarations {-}
 
-The authors extend their sincere gratitude to the institutions granting access to the crucial household datasets that underpinned this study. It is crucial to understand that the analyses, findings, and conclusions presented in this publication reflect solely the perspectives and interpretations of the authors. As such, they should not be considered as reflecting the official stance, policies, or determinations of the institutions of the authors.
+The authors extend their sincere gratitude to the institutions granting access to the crucial household datasets that underpinned this study. The analyses, findings, and conclusions presented in this publication reflect solely the perspectives and interpretations of the authors. As such, they should not be considered as reflecting the official stance, policies, or determinations of the institutions of the authors.
 
 **Competing interests**: The author(s) declare none
 

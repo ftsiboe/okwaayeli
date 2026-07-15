@@ -2,12 +2,12 @@
 
 Secure land tenure is widely assumed to stimulate investment and raise agricultural productivity, yet rigorous evidence from sub-Saharan Africa remains inconclusive. Leveraging six rounds of the Ghana Living Standards Survey (GLSS 3-7), this study links land-ownership status to production outcomes for 35,185 farm households. We use statistical matching within a meta-stochastic frontier framework to isolate ownership effects on input elasticities, returns to scale, technology gaps, and technical efficiency.
 
-Across the matched sample, all inputs significantly boost output, but fertilizer and pesticide use generate larger marginal gains for non-landowners, consistent with more intensive management when land is scarce. Landholders register slightly higher returns to scale (Δ = 0.088), implying stronger output growth from expanded input bundles. However, at the aggregate level, we detect statistically significant but economically small differences in both technology use and technical efficiency between landowners and non-owners. Across ownership types, secure landowners show no consistent advantage over non-owners in both technology endowment and production efficiency.
+Across the matched sample, all inputs significantly boost output, but fertilizer and pesticide use generate larger marginal gains for non-landowners, consistent with more intensive management when land is scarce. Landholders register slightly higher returns to scale (Δ = 0.088), implying stronger output growth from expanded input bundles. However, at the aggregate level, we detect statistically significant but economically small differences in both technology use and technical efficiency between landowners and non-owners. Across ownership types, secure landowners show no consistent advantage over non-owners in either technology endowment or production efficiency.
 
 These findings challenge the conventional narrative that the security of land tenure automatically translates into productivity gains. In Ghana, secure landownership appears neither necessary nor sufficient for superior farm performance; its benefits materialize only when coupled with complementary measures, such as extension, credit access, and input-market reforms, that enable farmers to convert secure rights into tangible efficiency and technological gains.
 
 Our results contribute to the ongoing debate on whether land titling alone lifts yields, prompting closer scrutiny of tenure reform versus complementary support, and advancing evidence-based strategies for converting land policy into tangible productivity gains.
 
-**Keywords**:
+**Keywords**: land tenure; ownership; meta-stochastic frontier; technical efficiency; technology gap; Ghana
 
-**JEL Classification**: Q15, Q12, O55, R14
+**JEL Classification**: Q15, Q12, O13, O55
