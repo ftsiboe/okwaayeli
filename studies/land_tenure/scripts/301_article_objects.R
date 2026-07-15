@@ -90,15 +90,69 @@ elasticities <- stats::setNames(lapply(names(EL), function(i) {
        gap   = gap_of(a, n))
 }), unname(EL))
 
+# --- 2b) Matched stored gaps (published Table 3 gap column) -------------------
+# The stored Gap_lvl carries its own SE/p-value on the MATCHED sample; this is
+# the figure the text quotes (e.g. RTS delta = 0.088), not any(un) - none(un).
+elg <- pooled$el_mean
+elg <- elg[elg$stat %in% "wmean" & elg$Survey %in% "GLSS0" &
+           elg$restrict %in% "Restricted", ]
+.gcoef <- unique(as.character(elg$CoefName))
+.gcoef <- .gcoef[grepl("Gap_lvl$", .gcoef)][1]
+for (i in names(EL)) {
+  b <- elg[elg$input %in% i & elg$CoefName %in% .gcoef &
+           as.character(elg$TCHLvel) %in% "1" & elg$sample %in% opt_sample, ]
+  elasticities[[EL[[i]]]]$gapm <- if (nrow(b)) as.numeric(b$Estimate[1]) else NA_real_
+}
+
 # --- 3) Diagnostics: gamma variance ratio (Table 3) ---------------------------
 sf  <- pooled$sf_estm
 sfg <- sf[sf$CoefName %in% "Gamma" & sf$restrict %in% "Restricted", ]
 g_at <- function(lv, samp)
   pick(sfg, as.character(sfg$TCHLvel) %in% lv & sfg$sample %in% samp)
-gamma <- list(naive = g_at("National", "unmatched"),
-              none  = g_at("0",        "unmatched"),
-              any   = g_at("1",        "unmatched"),
-              meta  = g_at("Meta",     opt_sample))
+gamma <- list(naive  = g_at("National", "unmatched"),
+              none   = g_at("0",        "unmatched"),
+              any    = g_at("1",        "unmatched"),
+              meta   = g_at("Meta",     opt_sample),
+              meta_u = g_at("Meta",     "unmatched"))
+
+# --- 3b) Theoretical-property satisfaction rates (Table 3 diagnostics) --------
+sfr <- sf[sf$restrict %in% "Restricted" & sf$Survey %in% "GLSS0", ]
+r_at <- function(coef, lv, samp)
+  pick(sfr, sfr$CoefName %in% coef & as.character(sfr$TCHLvel) %in% lv &
+            sfr$sample %in% samp)
+rates <- function(coef) list(
+  naive  = r_at(coef, "National", "unmatched"),
+  none   = r_at(coef, "0",        "unmatched"),
+  any    = r_at(coef, "1",        "unmatched"),
+  meta_m = r_at(coef, "Meta",     opt_sample),
+  meta_u = r_at(coef, "Meta",     "unmatched"))
+mono <- rates("mono")
+curv <- rates("curv")
+
+# --- 3c) Ownership gaps within acquisition / sharecropping categories --------
+# disag_efficiencyGap_lvl, matched sample: (no ownership minus some ownership)
+# within each category. Labels per data-raw/okwaayeli_DATA.do.
+dg <- pooled$disagscors
+dg$disasg <- as.character(dg$disagscors_var)
+dg$level  <- as.character(dg$disagscors_level)
+dg <- dg[dg$estType %in% "teBC" & dg$Survey %in% "GLSS0" &
+         dg$restrict %in% "Restricted" & dg$stat %in% "mean" &
+         !dg$sample %in% "unmatched" &
+         dg$CoefName %in% "disag_efficiencyGap_lvl", ]
+.dgv <- function(var, lv, metric)
+  pick(dg, dg$disasg %in% var & dg$level %in% lv & dg$input %in% metric)
+.dgset <- function(var, lv) list(tgr = .dgv(var, lv, "TGR"),
+                                 te  = .dgv(var, lv, "TE"),
+                                 mte = .dgv(var, lv, "MTE"))
+acq <- list(free      = .dgset("LndAq", "1"),
+            sharecrop = .dgset("LndAq", "2"),
+            rented    = .dgset("LndAq", "3"),
+            purchased = .dgset("LndAq", "4"),
+            kinship   = .dgset("LndAq", "5"),
+            other     = .dgset("LndAq", "6"))
+shrcrp <- list(none = .dgset("ShrCrpCat", "1"),
+               low  = .dgset("ShrCrpCat", "2"),
+               high = .dgset("ShrCrpCat", "3"))
 
 # --- 4) Sample size -----------------------------------------------------------
 # NOT extracted here: sf_estm's Nobs is the estimating model's N, not the
@@ -125,7 +179,9 @@ objs <- list(
   eff          = eff,           # aggregate ownership comparison (Table 4)
   tenures      = tenures,       # Table 4 blocks: ownership/documents/rights
   elasticities = elasticities,  # Table 3: el1..el6 inputs + el7 = returns to scale
-  diagnostics  = list(gamma = gamma)
+  acq          = acq,           # ownership gap within acquisition modes
+  shrcrp       = shrcrp,        # ownership gap by sharecropping intensity
+  diagnostics  = list(gamma = gamma, mono = mono, curv = curv)
 )
 
 jsonlite::write_json(objs, OBJECTS_JSON, auto_unbox = TRUE, pretty = TRUE, na = "null")

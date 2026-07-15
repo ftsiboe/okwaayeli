@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-07-15 09:46:56.296224",
+    "generated": "2026-07-15 10:28:58.862961",
     "source": "output/estimations/CropID_Pooled_<tenure>_TL_hnormal_optimal.rds",
     "matched_sample": "robust_mahalanobis"
   },
@@ -80,49 +80,105 @@
       "none": 0.6697,
       "any": 0.6922,
       "meta": 0.6603,
-      "gap": 0.0225
+      "gap": 0.0225,
+      "gapm": 0.0248
     },
     "planting_materials": {
       "naive": 0.0477,
       "none": 0.043,
       "any": 0.0507,
       "meta": 0.0441,
-      "gap": 0.0077
+      "gap": 0.0077,
+      "gapm": 0.0052
     },
     "family_labour": {
       "naive": 0.1981,
       "none": 0.1662,
       "any": 0.2134,
       "meta": 0.198,
-      "gap": 0.0472
+      "gap": 0.0472,
+      "gapm": 0.0505
     },
     "hired_labour": {
       "naive": 0.0234,
       "none": 0.0151,
       "any": 0.0284,
       "meta": 0.0233,
-      "gap": 0.0134
+      "gap": 0.0134,
+      "gapm": 0.013
     },
     "fertilizer": {
       "naive": 0.0095,
       "none": 0.0104,
       "any": 0.0098,
       "meta": 0.0114,
-      "gap": -0.0006
+      "gap": -0.0006,
+      "gapm": -0.0016
     },
     "pesticide": {
       "naive": 0.0182,
       "none": 0.0254,
       "any": 0.0207,
       "meta": 0.0242,
-      "gap": -0.0046
+      "gap": -0.0046,
+      "gapm": -0.0044
     },
     "rts": {
       "naive": 0.9801,
       "none": 0.9297,
       "any": 1.0153,
       "meta": 0.9612,
-      "gap": 0.0856
+      "gap": 0.0856,
+      "gapm": 0.0875
+    }
+  },
+  "acq": {
+    "free": {
+      "tgr": 0.0286,
+      "te": 0.0131,
+      "mte": 0.0217
+    },
+    "sharecrop": {
+      "tgr": 0.0492,
+      "te": -0.0248,
+      "mte": -0.0024
+    },
+    "rented": {
+      "tgr": 0.0144,
+      "te": -0.0827,
+      "mte": -0.0695
+    },
+    "purchased": {
+      "tgr": 0.0647,
+      "te": -0.1121,
+      "mte": -0.0677
+    },
+    "kinship": {
+      "tgr": 0.022,
+      "te": -0.067,
+      "mte": -0.0531
+    },
+    "other": {
+      "tgr": -0.036,
+      "te": 0.2572,
+      "mte": 0.2007
+    }
+  },
+  "shrcrp": {
+    "none": {
+      "tgr": -0.0016,
+      "te": -0.0192,
+      "mte": -0.0229
+    },
+    "low": {
+      "tgr": 0.0256,
+      "te": -0.0361,
+      "mte": -0.0249
+    },
+    "high": {
+      "tgr": 0.0599,
+      "te": -0.0732,
+      "mte": -0.0384
     }
   },
   "diagnostics": {
@@ -130,7 +186,22 @@
       "naive": 0.7522,
       "none": 0.7701,
       "any": 0.7107,
-      "meta": 0.8111
+      "meta": 0.8111,
+      "meta_u": 0.8562
+    },
+    "mono": {
+      "naive": 0.7541,
+      "none": 0.7862,
+      "any": 0.7104,
+      "meta_m": 0.998,
+      "meta_u": 0.9993
+    },
+    "curv": {
+      "naive": 0.1998,
+      "none": 0.2561,
+      "any": 0.3748,
+      "meta_m": 0.5433,
+      "meta_u": 0.5771
     }
   }
 }

@@ -316,6 +316,13 @@ ft_table3 <- function()
 # sharecropping) read from the disaggregated gap scores of the OwnLnd object,
 # blocks as in the draft. VERIFY at first knit; falls back to table4.csv.
 .ft_table4_est <- function() {
+  # Category labels per data-raw/okwaayeli_DATA.do (lab define LndAq / ShrCrpCat).
+  .T4_LAB <- list(
+    LndAq = c("1" = "Use free of charge", "2" = "Sharecropping",
+              "3" = "Rented (cash or in kind)", "4" = "Purchased",
+              "5" = "Distributed by village/family", "6" = "Other (GLSS3-4 only)"),
+    ShrCrpCat = c("1" = "0%", "2" = "1-49%", "3" = "50-100%"))
+
   res <- .read_est("OwnLnd")$disagscors
   res$disasg <- as.character(res$disagscors_var)
   res$level  <- as.character(res$disagscors_level)
@@ -324,23 +331,35 @@ ft_table3 <- function()
              !res$sample %in% "unmatched" &
              res$CoefName %in% "disag_efficiencyGap_lvl", ]
   if (nrow(res) == 0) stop("table4 keying unresolved (no disagscors rows)")
-  DIMS <- c("Land ownership status" = "LndOwn",
-            "Farmland ownership rights" = "LndRgt",
-            "Farmland mode of acquisition" = "LndAq",
-            "Sharecropping share" = "ShrCrpCat")
+  DIMS <- c("Farmland mode of acquisition" = "LndAq",
+            "Sharecropping share of land (%)" = "ShrCrpCat")
   METS <- c("TGR", "TE", "MTE")
   rows <- list()
+
+  # Documentation and rights blocks: published Table 4 (source of record;
+  # these categories are not in the OwnLnd disaggregation object).
+  pub <- .read_tbl("table4.csv")
+  cut <- which(pub$label %in% "GLSS7")[1]
+  if (!is.na(cut)) pub <- pub[seq_len(cut - 1), ]
+  pub <- pub[!pub$label %in% "GLSS3-GLSS7", ]
+  for (i in seq_len(nrow(pub)))
+    rows[[length(rows) + 1]] <- c(pub$label[i], pub$c1[i], pub$c2[i], pub$c3[i])
+
+  # Acquisition and sharecropping blocks: ownership gap within each category
+  # (no ownership minus some ownership), from the estimation objects.
   for (dn in names(DIMS)) {
     d <- res[res$disasg %in% DIMS[[dn]], ]
     if (nrow(d) == 0) next
     rows[[length(rows) + 1]] <- c(dn, "", "", "")
-    for (lv in unique(d$level)) {
+    labs <- .T4_LAB[[DIMS[[dn]]]]
+    for (lv in sort(unique(d$level))) {
       dd <- d[d$level %in% lv, ]
       v <- vapply(METS, function(mm) {
         b <- dd[dd$input %in% mm, ]
         .cell(b$Estimate[1], b$Estimate.sd[1], b$jack_pv[1])
       }, character(1))
-      rows[[length(rows) + 1]] <- c(lv, v)
+      lab <- if (lv %in% names(labs)) labs[[lv]] else lv
+      rows[[length(rows) + 1]] <- c(lab, v)
     }
   }
   if (length(rows) < 3) stop("table4 keying unresolved (no dimension blocks)")
@@ -366,7 +385,8 @@ ft_table3 <- function()
   ft <- set_table_properties(ft, layout = "autofit", width = 1)
   ft <- add_footer_lines(ft, values = c(
     paste(.SIG_NOTE, "Jackknife standard errors in parentheses."),
-    "Cells are matched-sample level differences (no ownership minus some ownership) in each metric.",
+    "Documentation and rights blocks: level difference of each ownership category relative to matched non-owners (published Table 4).",
+    "Acquisition and sharecropping blocks: matched-sample ownership gap (no ownership minus some ownership) within each category, from the disaggregated estimation objects.",
     "Meta Stochastic Frontier Analysis jointly performed on Ghana Living Standards Survey [waves 3-7]."))
   ft <- fontsize(ft, size = 7, part = "footer")
   ft
@@ -431,6 +451,65 @@ ft_tableS7 <- function()
     notes = c(paste(.SIG_NOTE, "Jackknife standard errors in parentheses."),
       "A positive coefficient means the variable moves the farm away from its efficient frontier.",
       "Data source: Ghana Living Standards Survey [waves 3-7]."))
+
+# ---- Inline text lookups (Tier 2) --------------------------------------------
+# Pull single numbers out of the curated table CSVs and figure-data CSVs so the
+# narrative can cite descriptive values without hard-coding them.
+# tbl_num("table1.csv", "Age (years)", "c1")          -> 46.64  (leading number)
+# tbl_num("table1.csv", "Age (years)", "c1", "paren") -> 15.09  (inside (...))
+# tbl_num(..., "bracket")                             -> value inside [...]
+tbl_num <- function(csv, label, col, part = c("first", "paren", "bracket")) {
+  d <- .read_tbl(csv)
+  r <- d[trimws(d$label) == label & d$header != "1", , drop = FALSE]
+  if (nrow(r) == 0) stop("tbl_num: label not found: ", label, " in ", csv, call. = FALSE)
+  s <- as.character(r[[col]][1])
+  part <- match.arg(part)
+  pat <- switch(part,
+    first   = "^\\s*(-?[0-9][0-9.,]*).*$",
+    paren   = "^.*\\((-?[0-9][0-9.,]*)\\).*$",
+    bracket = "^.*\\[(-?[0-9][0-9.,]*)\\].*$")
+  if (!grepl(pat, s)) stop("tbl_num: no ", part, " number in '", s, "'", call. = FALSE)
+  as.numeric(gsub(",", "", sub(pat, "\\1", s)))
+}
+# Percentage view of a proportion cell (Table 2 / S1-S4 store shares).
+tbl_pct <- function(csv, label, col, digits = 1)
+  fmt_num(100 * tbl_num(csv, label, col), digits)
+
+# Matched input/output gaps behind Figure 1 (output/figure_data/input_TE_data.csv).
+.FIGDAT <- file.path(.STUDY_ROOT, "output", "figure_data")
+fig1_est <- function(outcome, level = "Full sample") {
+  d <- utils::read.csv(file.path(.FIGDAT, "input_TE_data.csv"))
+  v <- d$est[d$outC == outcome & d$level == level]
+  if (length(v) == 0) stop("fig1_est: not found: ", outcome, " / ", level, call. = FALSE)
+  as.numeric(v[1])
+}
+fig1_range <- function(outcomes, fun) {
+  d <- utils::read.csv(file.path(.FIGDAT, "input_TE_data.csv"))
+  v <- d$est[d$outC %in% outcomes]
+  if (length(v) == 0) stop("fig1_range: no rows", call. = FALSE)
+  fun(as.numeric(v))
+}
+
+# Ownership gap trend behind Figure 2 (output/figure_data/score_trend.csv).
+# trend_gap("TGR", "GLSS 3") -> gap in percentage points (no-own minus own).
+trend_gap <- function(metric, wave) {
+  d <- utils::read.csv(file.path(.FIGDAT, "score_trend.csv"))
+  v <- d$Estimate[d$CoefName == metric & grepl(wave, d$Survey, fixed = TRUE)]
+  if (length(v) == 0) stop("trend_gap: not found: ", metric, " / ", wave, call. = FALSE)
+  100 * as.numeric(v[1])
+}
+trend_range <- function(metric, waves, fun) {
+  d <- utils::read.csv(file.path(.FIGDAT, "score_trend.csv"))
+  keep <- d$CoefName == metric & Reduce(`|`, lapply(waves, function(w) grepl(w, d$Survey, fixed = TRUE)))
+  v <- d$Estimate[keep]
+  if (length(v) == 0) stop("trend_range: no rows", call. = FALSE)
+  100 * fun(as.numeric(v))
+}
+
+# Sample sizes (single-sourced; from the analysis dataset / Table 1 header).
+N_ALL <- 35185
+N_OWN <- 22086
+N_NON <- 13099
 
 # ---- Page sections ----------------------------------------------------------
 # Ported from resource_extraction: officer::block_section with type="nextPage"
