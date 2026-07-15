@@ -1,6 +1,6 @@
 # Appendix
 ## Note A1. Drivers of technical inefficiency
-Table A8 presents the key characteristics influencing whether farm households move closer or farther from their technically efficient production frontiers. Our analysis shows that a complex interaction of underlying factors determines whether a farm household operates near or farther from its efficient production frontier. Demographic factors including age, education, and gender explain technical inefficiency among Ghanaian farm households [@tsiboe2022; @asravor2023]; however, their contributions to technical inefficiency are not uniform across several frontiers. For instance, age drives farm households away from their meta-frontier for the matched sample yet it drives them towards their group frontier. Location, crop diversification, access to credit and extension are also underlying drivers of technical inefficiency.
+Table A9 presents the key characteristics influencing whether farm households move closer or farther from their technically efficient production frontiers. Our analysis shows that a complex interaction of underlying factors determines whether a farm household operates near or farther from its efficient production frontier. Demographic factors including age, education, and gender explain technical inefficiency among Ghanaian farm households [@tsiboe2022; @asravor2023]; however, their contributions to technical inefficiency are not uniform across several frontiers. For instance, age drives farm households away from their meta-frontier for the matched sample yet it drives them towards their group frontier. Location, crop diversification, access to credit and extension are also underlying drivers of technical inefficiency.
 
 Focusing on the group frontier, we find that age tends to exert a uniform influence on the two farm groups (farmers in extraction areas and those in non-extraction areas). However, the influence of credit access depends on the farm group: farmers with credit access in non-extraction areas tend to move away from their efficient frontiers, while their counterparts with credit access in extraction areas tend to move closer to their efficient production frontier. Using the coastal savanna ecological zone as our reference category, we find that location matters greatly in explaining technical inefficiency for farmers in extraction areas although it (location) has no significant association with technical inefficiency for farmers in non-extraction areas. For example, Ghanaian farmers in forest and transitional ecological zones with extractive activities tend to move away from their respective technically efficient frontiers compared to their counterparts in the coastal savanna zone. Farmers in guinea savanna zones with extractive activities tend to move towards their technically efficient frontiers compared to their coastal savanna counterparts.
 
@@ -8,7 +8,7 @@ Focusing on the group frontier, we find that age tends to exert a uniform influe
 sec_portrait()
 ```
 
-#### Table A1. Summary statistics of crop producers in Ghana by extraction activity
+#### Table A1. Construction of the community-level extraction indicators from the GLSS community questionnaires
 
 ```{r tabA1, echo=FALSE}
 ft_tableA1()
@@ -16,25 +16,25 @@ ft_tableA1()
 
 \newpage
 
-#### Table A2. Trends in the characteristics of crop producers in Ghana by extraction activity
+#### Table A2. Summary statistics of crop producers in Ghana by extraction activity
 
 ```{r tabA2, echo=FALSE}
 ft_tableA2()
+```
+
+\newpage
+
+#### Table A3. Trends in the characteristics of crop producers in Ghana by extraction activity
+
+```{r tabA3, echo=FALSE}
+ft_tableA3()
 ```
 
 ```{r, echo=FALSE, results='asis'}
 sec_landscape()
 ```
 
-#### Table A3. Meta stochastic frontier analysis results for Ghanaian crop producers for 1998/99
-
-```{r tabA3, echo=FALSE}
-ft_tableA3()
-```
-
-\newpage
-
-#### Table A4. Meta stochastic frontier analysis results for Ghanaian crop producers for 2005/06
+#### Table A4. Meta stochastic frontier analysis results for Ghanaian crop producers for 1998/99
 
 ```{r tabA4, echo=FALSE}
 ft_tableA4()
@@ -42,7 +42,7 @@ ft_tableA4()
 
 \newpage
 
-#### Table A5. Meta stochastic frontier analysis results for Ghanaian crop producers for 2012/13
+#### Table A5. Meta stochastic frontier analysis results for Ghanaian crop producers for 2005/06
 
 ```{r tabA5, echo=FALSE}
 ft_tableA5()
@@ -50,7 +50,7 @@ ft_tableA5()
 
 \newpage
 
-#### Table A6. Meta stochastic frontier analysis results for Ghanaian crop producers for 2016/17
+#### Table A6. Meta stochastic frontier analysis results for Ghanaian crop producers for 2012/13
 
 ```{r tabA6, echo=FALSE}
 ft_tableA6()
@@ -58,20 +58,28 @@ ft_tableA6()
 
 \newpage
 
-#### Table A7. Average meta stochastic frontier analysis results for Ghanaian crop producers, 1998/99-2016/17
+#### Table A7. Meta stochastic frontier analysis results for Ghanaian crop producers for 2016/17
 
 ```{r tabA7, echo=FALSE}
 ft_tableA7()
+```
+
+\newpage
+
+#### Table A8. Average meta stochastic frontier analysis results for Ghanaian crop producers, 1998/99-2016/17
+
+```{r tabA8, echo=FALSE}
+ft_tableA8()
 ```
 
 ```{r, echo=FALSE, results='asis'}
 sec_portrait()
 ```
 
-#### Table A8. Determinants of crop production technical inefficiency and extraction-driven technology gaps in Ghana
+#### Table A9. Determinants of crop production technical inefficiency and extraction-driven technology gaps in Ghana
 
-```{r tabA8, echo=FALSE}
-ft_tableA8()
+```{r tabA9, echo=FALSE}
+ft_tableA9()
 ```
 
 \newpage

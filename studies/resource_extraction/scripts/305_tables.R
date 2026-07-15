@@ -23,6 +23,10 @@ if (!isTRUE(.ft_ok))
        call. = FALSE)
 suppressPackageStartupMessages(library(flextable))
 
+# Manuscript font: Times New Roman for every table (docx + html), matching the
+# document body (reference.docx theme + css/tables.css).
+set_flextable_defaults(font.family = "Times New Roman")
+
 # Self-contained path resolution: this file is sourced BOTH from the repo root
 # (via run_article.R) and from narrative/ (the Rmd's knit_root_dir), so it must
 # not rely on 300_article_helpers.R's repo-root-relative paths.
@@ -407,23 +411,23 @@ ft_table2 <- function()
       "Data source: Ghana Living Standards Survey [waves 4-7]."),
     first_lab = "Crop")
 
-ft_tableA1 <- function()
-  .ft_wide("tableA1.csv", "tableA1_header.csv", size = 7,
-    "Table A1. Summary statistics of crop producers in Ghana by extraction activity",
+ft_tableA2 <- function()
+  .ft_wide("tableA2.csv", "tableA2_header.csv", size = 7,
+    "Table A2. Summary statistics of crop producers in Ghana by extraction activity",
     c("Standard deviations in parentheses.",
       "A dagger denotes a statistically significant difference from the pooled sample.",
       "Data source: Ghana Living Standards Survey [waves 4-7]."))
 
-ft_tableA2 <- function()
-  .ft_wide("tableA2.csv", "tableA2_header.csv", size = 7,
-    "Table A2. Trends in the characteristics of crop producers in Ghana by extraction activity",
+ft_tableA3 <- function()
+  .ft_wide("tableA3.csv", "tableA3_header.csv", size = 7,
+    "Table A3. Trends in the characteristics of crop producers in Ghana by extraction activity",
     c("Significance levels: * p<0.10, ** p<0.05, *** p<0.01. Standard errors in brackets.",
       "A dagger denotes a statistically significant difference from the pooled sample.",
       "Data source: Ghana Living Standards Survey [waves 4-7]."))
 
-# ---- Appendix Tables A3-A8 --------------------------------------------------
+# ---- Appendix Tables A4-A9 --------------------------------------------------
 # Extracted from the workbook's TableS3-S7 / TableS8 sheets into data/tables/.
-# A3-A7 are one wave each (A7 = the GLSS0 average); columns are
+# A4-A8 are one wave each (A8 = the GLSS0 average); columns are
 # Naive | No extraction | Some extraction | Meta Matched | Meta Unmatched.
 #
 # The fertilizer/pesticide rows are RELABELLED relative to the sheet: it pairs
@@ -453,26 +457,55 @@ ft_tableA2 <- function()
   "Significance levels: * p<0.10, ** p<0.05, *** p<0.01. Jackknife standard errors in parentheses.",
   "Fertilizer is lnI5 and pesticide is lnI6, following input_variables order in 004_MSF_resource_extraction_study.R.")
 
-ft_tableA3 <- function() .ft_msf("tableA3.csv",
-  "Table A3. Meta stochastic frontier analysis results for Ghanaian crop producers for 1998/99",
-  c(.MSF_NOTE, "Data source: Ghana Living Standards Survey [wave 4]."))
 ft_tableA4 <- function() .ft_msf("tableA4.csv",
-  "Table A4. Meta stochastic frontier analysis results for Ghanaian crop producers for 2005/06",
-  c(.MSF_NOTE, "Data source: Ghana Living Standards Survey [wave 5]."))
+  "Table A4. Meta stochastic frontier analysis results for Ghanaian crop producers for 1998/99",
+  c(.MSF_NOTE, "Data source: Ghana Living Standards Survey [wave 4]."))
 ft_tableA5 <- function() .ft_msf("tableA5.csv",
-  "Table A5. Meta stochastic frontier analysis results for Ghanaian crop producers for 2012/13",
-  c(.MSF_NOTE, "Data source: Ghana Living Standards Survey [wave 6]."))
+  "Table A5. Meta stochastic frontier analysis results for Ghanaian crop producers for 2005/06",
+  c(.MSF_NOTE, "Data source: Ghana Living Standards Survey [wave 5]."))
 ft_tableA6 <- function() .ft_msf("tableA6.csv",
-  "Table A6. Meta stochastic frontier analysis results for Ghanaian crop producers for 2016/17",
-  c(.MSF_NOTE, "Data source: Ghana Living Standards Survey [wave 7]."))
+  "Table A6. Meta stochastic frontier analysis results for Ghanaian crop producers for 2012/13",
+  c(.MSF_NOTE, "Data source: Ghana Living Standards Survey [wave 6]."))
 ft_tableA7 <- function() .ft_msf("tableA7.csv",
-  "Table A7. Average meta stochastic frontier analysis results for Ghanaian crop producers, 1998/99-2016/17",
+  "Table A7. Meta stochastic frontier analysis results for Ghanaian crop producers for 2016/17",
+  c(.MSF_NOTE, "Data source: Ghana Living Standards Survey [wave 7]."))
+ft_tableA8 <- function() .ft_msf("tableA8.csv",
+  "Table A8. Average meta stochastic frontier analysis results for Ghanaian crop producers, 1998/99-2016/17",
   c(.MSF_NOTE, "Data source: Ghana Living Standards Survey [waves 4-7]."))
-ft_tableA8 <- function() .ft_msf("tableA8.csv", size = 10,
-  "Table A8. Determinants of crop production technical inefficiency and extraction-driven technology gaps in Ghana",
+ft_tableA9 <- function() .ft_msf("tableA9.csv", size = 10,
+  "Table A9. Determinants of crop production technical inefficiency and extraction-driven technology gaps in Ghana",
   c("Significance levels: * p<0.10, ** p<0.05, *** p<0.01. Jackknife standard errors in parentheses.",
     "A positive coefficient means the variable moves the farm away from its efficient frontier.",
     "Data source: Ghana Living Standards Survey [waves 4-7]."))
+
+# ---- Table A1: construction of the extraction indicators --------------------
+# Question-level mapping (wave x source variables x wording x options), mirroring
+# the disability study's Table S1. Content sourced from data-raw/okwaayeli_DATA.do
+# (lines 1488-1649) and the foundational GLSS community files' variable/value labels.
+ft_tableA1 <- function() {
+  d <- .read_tbl("tableA1.csv")
+  ft <- flextable(d)
+  ft <- set_header_labels(ft, round = "Survey round", source = "Source variables",
+                          question = "Question", options = "Extractive response options",
+                          mapping = "Mapping to analysis categories")
+  ft <- bold(ft, part = "header")
+  ft <- align(ft, align = "left", part = "all")
+  ft <- valign(ft, valign = "top", part = "body")
+  ft <- padding(ft, padding.top = 2, padding.bottom = 2, part = "all")
+  ft <- fontsize(ft, size = 8, part = "all")
+  ft <- width(ft, j = 1, width = 1.0)
+  ft <- width(ft, j = 2, width = 1.5)
+  ft <- width(ft, j = 3, width = 1.7)
+  ft <- width(ft, j = 4, width = 2.4)
+  ft <- width(ft, j = 5, width = 2.4)
+  ft <- add_footer_lines(ft, values = c(
+    "In each community, the questionnaire is administered to up to 20 opinion leaders selected to reflect the community's occupational, ethnic, gender, and religious diversity.",
+    "An enumeration area is classified into an extraction category if any listed variable records a corresponding extractive response; indicators are aggregated to the enumeration-area level (maximum).",
+    "GLSS4 and GLSS5 record only undifferentiated mining, so commercial versus informal or small-scale mining is distinguished only in GLSS6 and GLSS7.",
+    "Salt mining enters the aggregate extraction indicator but is too rare to support separate analysis (Table 2)."))
+  ft <- fontsize(ft, size = 7, part = "footer")
+  ft
+}
 
 # ---- Page sections ----------------------------------------------------------
 # officedown's <!---BLOCK_LANDSCAPE_START---> markers emit type="oddPage", which

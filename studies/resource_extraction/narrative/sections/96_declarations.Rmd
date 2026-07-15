@@ -2,7 +2,6 @@
 
 ## CRediT authorship contribution statement
 
-<!-- AUTHOR ACTION: confirm/adjust role allocation before submission -->
 **Francis Tsiboe:** Conceptualization, Methodology, Software, Formal analysis, Data curation, Visualization, Writing -- original draft, Writing -- review & editing. **Mark Appiah-Twumasi:** Conceptualization, Writing -- original draft, Writing -- review & editing, Project administration. **Antoinette Tsiboe-Darko:** Writing -- original draft, Writing -- review & editing. **Sylvanus Gaku:** Formal analysis, Writing -- review & editing.
 
 ## Declaration of competing interest
@@ -11,7 +10,6 @@ The authors declare that they have no known competing financial interests or per
 
 ## Funding
 
-<!-- AUTHOR ACTION: confirm before submission -->
 This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors.
 
 ## Data availability

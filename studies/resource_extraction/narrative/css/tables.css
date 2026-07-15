@@ -2,6 +2,11 @@
    Self-contained: targets tables directly, so it needs no JavaScript.
    The .docx output is unaffected (Word styling comes from reference.docx). */
 
+/* Manuscript font: Times New Roman throughout (matches reference.docx theme). */
+body, h1, h2, h3, h4, h5, h6, table, th, td, .caption, p, li, blockquote {
+  font-family: "Times New Roman", Times, serif;
+}
+
 table {
   border-collapse: collapse;
   width: 100%;

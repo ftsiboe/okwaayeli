@@ -1,10 +1,5 @@
 ---
 title: "Digging into the Linkages Between Resource Extraction and Farm Performance"
-author:
-  - Francis Tsiboe
-  - Mark Appiah-Twumasi
-  - Antoinette Tsiboe-Darko
-  - Sylvanus Gaku
 output:
   # officedown (not word_document) so exhibits can sit in landscape sections;
   # word_document has no mechanism for page orientation.

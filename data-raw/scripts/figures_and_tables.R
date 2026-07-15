@@ -345,8 +345,9 @@ fig_robustness <- function(y_title, res_list,colset=c("orange", "darkgreen"),stu
   dataF <- doBy::summaryBy(Estimate + Estimate.sd ~ dimension + options + type, data = dataF, FUN = mean, keep.names = TRUE, na.rm = TRUE)
   dataF <- dplyr::inner_join(dataF, mainest, by = c("type"))
   
-  # Save data
+  # Save data (rds + csv so figure claims can be machine-checked)
   saveRDS(dataF, file =  file.path(study_environment$wd$output,"figure_data","robustness.rds"))
+  write.csv(dataF, file = file.path(study_environment$wd$output,"figure_data","robustness.csv"), row.names = FALSE)
  
   # Prepare x-axis labels
   xlab <- doBy::summaryBy(Estimate ~ dimension + options, data = dataF[dataF$type %in% "MTE", ], FUN = mean)
@@ -574,7 +575,11 @@ fig_covariate_balance <- function(colset=c("darkgreen", "orange", "blue"),study_
   # Filter out rows with NA values in 'value' or 'Coef' columns
   CovBalDATA <- CovBalDATA[!CovBalDATA$value %in% NA, ]
   CovBalDATA <- CovBalDATA[!CovBalDATA$Coef %in% NA, ]
-  
+
+  # Save the plotted data (rds + csv so figure claims can be machine-checked)
+  saveRDS(CovBalDATA, file = file.path(study_environment$wd$output,"figure_data","covariate_balance.rds"))
+  write.csv(CovBalDATA, file = file.path(study_environment$wd$output,"figure_data","covariate_balance.csv"), row.names = FALSE)
+
   # Generate the ggplot object
   balance <- ggplot(
     data = CovBalDATA,

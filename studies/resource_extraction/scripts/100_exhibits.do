@@ -168,7 +168,7 @@ qui foreach Var of var disagCat0 disagCat1{
 		mat drop B
 	}
 	mat rownames A = Trend_`Var' Mean_`Var'
-	mat roweq A= Female
+	mat roweq A= ExtractionShare  // was "Female": collided with the real Female rows and corrupted Table 1/A1/A2 lookups
 	mat li A
 	mat Means = A\Means
 
@@ -185,7 +185,7 @@ qui foreach Var of var disagCat0 disagCat1{
 			mat drop B
 		}
 		mat rownames A = `sx'_miss `sx'_Pooled
-		mat roweq A= Female
+		mat roweq A= ExtractionShare  // was "Female": collided with the real Female rows and corrupted Table 1/A1/A2 lookups
 		mat Means = A\Means	
 		mat drop A
 	}

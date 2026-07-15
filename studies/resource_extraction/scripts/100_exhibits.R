@@ -69,6 +69,10 @@ ef_mean$Survey <- factor(ef_mean$Survey, levels = c("GLSS3","GLSS4","GLSS5","GLS
                          labels = c("1991/1992\n(GLSS 3)","1998/1999\n(GLSS4)","2005/2006\n(GLSS5)",
                                     "2012/2013\n(GLSS6)","2016/2017\n(GLSS7)"))
 
+# Save the plotted data (rds + csv so Figure 1 claims can be machine-checked)
+saveRDS(ef_mean, file = file.path(study_environment$wd$output,"figure_data","score_trend.rds"))
+write.csv(ef_mean, file = file.path(study_environment$wd$output,"figure_data","score_trend.csv"), row.names = FALSE)
+
 fig <- ggplot(
   data = ef_mean,
   aes(x = Survey, y = Estimate*100, group = type, fill = type, color = type, shape = type)) +
@@ -125,6 +129,11 @@ dataFrq <- dataFrq[dataFrq$Survey %in% "GLSS0",]
 dataFrq <- dataFrq[dataFrq$stat %in% "estimate_weight",]
 dataFrq <- dataFrq[dataFrq$restrict %in% "Restricted",]
 dataFrq$Tech <- factor(as.numeric(as.character(dataFrq$TCHLvel)),levels = 0:1,labels = c("No extraction","Any extraction"))
+
+# Save the plotted data (rds + csv so distribution-figure claims can be machine-checked)
+saveRDS(dataFrq, file = file.path(study_environment$wd$output,"figure_data","score_distributions.rds"))
+write.csv(dataFrq, file = file.path(study_environment$wd$output,"figure_data","score_distributions.csv"), row.names = FALSE)
+
 fig_dsistribution(dataFrq,study_environment=study_environment)
 
 
@@ -139,8 +148,12 @@ res <- res[res$restrict %in% "Restricted",]
 res <- res[res$stat %in% "mean",]
 res <- res[!res$sample %in% "unmatched",]
 res <- res[res$CoefName %in% "disag_efficiencyGap_pct",]
-res <- res[res$CoefName %in% "disag_efficiencyGap_pct",]
 res <- res[res$input %in% "MTE",]
+
+# Save the percent-gap ranking data (csv so crop/region claims can be machine-checked)
+write.csv(res[c("disasg","level","Survey","input","CoefName","Estimate","Estimate.sd","jack_pv")],
+          file = file.path(study_environment$wd$output,"figure_data","mte_gap_pct_crop_region.csv"),
+          row.names = FALSE)
 
 reg <- res[res$disagscors_var %in% "Region",]
 reg <- reg[order(reg$Estimate),]
