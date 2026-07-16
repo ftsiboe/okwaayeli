@@ -15,10 +15,10 @@ devtools::document()
 # STAGES
 # ============================================================================
 INITIALIZE  <- TRUE  # 000  study scaffolding                                  fast
-DATA        <- FALSE  # 001  harmonized releases -> study_raw_data              fast
-MATCHING    <- FALSE  # 002  -> estimation_data, matched samples                EXPENSIVE
-TREATMENT   <- FALSE  # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
-MSF         <- FALSE  # 004  -> output/estimations/                             HPC, hours
+DATA        <- TRUE  # 001  harmonized releases -> study_raw_data              fast
+MATCHING    <- TRUE  # 002  -> estimation_data, matched samples                EXPENSIVE
+TREATMENT   <- TRUE  # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
+MSF         <- TRUE  # 004  -> output/estimations/                             HPC, hours
 DESCRIPTIVE <- TRUE  # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
 FIGURES     <- TRUE  # 101  -> output/figures/ (png + data), output/tables/    moderate
 WORKBOOK    <- TRUE  # 102  -> output/tables/land_tenure_tables.xlsx           fast

@@ -270,20 +270,27 @@ draw_msf_estimations <- function(
                         score.data0$Survey <- "GLSS0"
                         score.data <- rbind(score.data0, score.data)
                         rm(score.data0)
-                        score.data <- doBy::summaryBy(
-                          list("value", c("Survey", "disagscors_level")),
-                          FUN=function(x) {
-                            w <- score.data$Weight
-                            wmean <- sum(x * w) / sum(w)
-                            mode <- function(x, na.rm=T) {ux <- unique(x); ux[which.max(tabulate(match(x, ux)))]}
-                            mean <- mean(x, na.rm=T)
-                            median <- median(x, na.rm=T)
-                            mode <- mode(x, na.rm=T)
-                            stat <- c(wmean, mean, median, mode)
-                            names(stat) <- c("wmean", "mean", "median", "mode")
-                            return(stat)
-                          }, data=score.data)
-                        names(score.data) <- gsub("value.", "", names(score.data))
+                        # Group-aware summaries. NOTE: the previous implementation
+                        # pulled `w <- score.data$Weight` (the ENTIRE weight vector)
+                        # inside summaryBy's per-group FUN while `x` was only the
+                        # current group's values, so `sum(x * w)` multiplied
+                        # mismatched-length vectors (silent recycling) and the
+                        # weighted mean was wrong for every group. Compute each
+                        # statistic with weights aligned to its own group instead.
+                        mode_stat <- function(x, na.rm = TRUE) {
+                          if (na.rm) x <- x[!is.na(x)]
+                          ux <- unique(x)
+                          ux[which.max(tabulate(match(x, ux)))]
+                        }
+                        score.data <- dplyr::group_by(score.data, .data$Survey, .data$disagscors_level) |>
+                          dplyr::summarise(
+                            wmean  = sum(.data$value * .data$Weight) / sum(.data$Weight),
+                            mean   = mean(.data$value, na.rm = TRUE),
+                            median = stats::median(.data$value, na.rm = TRUE),
+                            mode   = mode_stat(.data$value, na.rm = TRUE),
+                            .groups = "drop"
+                          )
+                        score.data <- as.data.frame(score.data)
                         score.data <- data.frame(worklist[kk,], score.data)
                         return(score.data)
                       }, worklist=worklist, disagscors=disagscors), fill = TRUE))
@@ -509,7 +516,7 @@ draw_msf_summary <- function(res, technology_legend) {
     doBy::summaryBy(list(c("Estimate"), 
                          c("Survey", "sample", "Tech", "type", "estType", "binned_range_name", "binned_range_level", "stat", "restrict")),
                     data=ef_dist[ef_dist$draw %in% 0,], FUN=mean, keep.names = T),
-    doBy::summaryBy(list(c("Estimate"), c("Surveyy", "Survey", "sample", "Tech", "type", "estType", "binned_range_name", "binned_range_level", "stat", "restrict")),
+    doBy::summaryBy(list(c("Estimate"), c("Survey", "sample", "Tech", "type", "estType", "binned_range_name", "binned_range_level", "stat", "restrict")),
                     data=ef_dist, FUN=c(mean, sd, length)),
     by=c("Survey", "sample", "Tech", "type", "estType", "binned_range_name", "binned_range_level", "stat", "restrict"))
   
@@ -559,7 +566,7 @@ draw_msf_summary <- function(res, technology_legend) {
   #---------------------------------------------------
   # Summary- Risk                                  ####
   rk_mean <- NULL
-  if(!is.null(res[[1]]$rk_mean) & !nrow(res[[1]]$rk_mean) %in% 0) {
+  if(!is.null(res[[1]]$rk_mean) && !nrow(res[[1]]$rk_mean) %in% 0) {
     rk_mean <- as.data.frame(data.table::rbindlist(lapply(1:length(res), function(draw) { return(res[[draw]]$rk_mean) }), fill = TRUE)) 
     rk_mean <- rk_mean[!rk_mean$Estimate %in% c(NA, Inf, -Inf, NaN),]
     
@@ -582,7 +589,7 @@ draw_msf_summary <- function(res, technology_legend) {
   #---------------------------------------------------
   # Distribution bars- Risk                        ####
   rk_dist <- NULL
-  if(!is.null(res[[1]]$rk_dist) & !nrow(res[[1]]$rk_dist) %in% 0) {
+  if(!is.null(res[[1]]$rk_dist) && !nrow(res[[1]]$rk_dist) %in% 0) {
     rk_dist <- as.data.frame(data.table::rbindlist(lapply(1:length(res), function(draw) { return(res[[draw]]$rk_dist) }), fill = TRUE)) |> 
       tidyr::gather(stat, Estimate, c("estimate_count","estimate_weight")) 
     rk_dist <- rk_dist[!rk_dist$Estimate %in% c(NA, Inf, -Inf, NaN),]
