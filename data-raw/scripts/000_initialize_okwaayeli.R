@@ -4,7 +4,7 @@ rm(list = ls(all = TRUE)); gc()
 # Clean generated artifacts
 unlink(c(
   "NAMESPACE",
-  #list.files("./data", full.names = TRUE),
+  list.files("./data", full.names = TRUE),
   list.files("./man",  full.names = TRUE)
 ))
 

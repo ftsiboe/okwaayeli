@@ -172,7 +172,7 @@ descriptive_prepare <- function(data, season_var = "Season",
 #'
 #' @details
 #' Guards against `as.numeric(factor)`, which silently returns the level index.
-#' See the *Season must be a year* section of [descriptive_prepare()].
+#' See the *Season must be a year* section of `descriptive_prepare()`.
 #'
 #' @param x Numeric, factor or character season column.
 #'
@@ -307,7 +307,7 @@ descriptive_group_summary <- function(data, outcome, treatment = NULL,
 #'   \item{`trend_pct`}{Average semi-elasticity of `outcome` with respect to
 #'     `trend`, times 100 -- i.e. the annual percentage change. Stata computes
 #'     this as `margins <g>, eydx(Trend)` followed by `nlcom (_b[...] * 100)`;
-#'     here it is [marginaleffects::avg_slopes()] with `slope = "eydx"`. Emitted
+#'     here it is `marginaleffects::avg_slopes()` with `slope = "eydx"`. Emitted
 #'     per group and pooled.}
 #'   \item{`cat_diff`}{`testparm i.g` -- the treatment main effect, i.e. the
 #'     group level difference **at `trend == 0`**, not the difference in overall
@@ -319,7 +319,7 @@ descriptive_group_summary <- function(data, outcome, treatment = NULL,
 #' Only `p` is populated for the two Wald rows, matching the sheet, where
 #' `CATDif` / `TrendDif` carry a p-value and nothing else.
 #'
-#' @param data `data.frame` from [descriptive_prepare()], subset to one crop.
+#' @param data `data.frame` from `descriptive_prepare()`, subset to one crop.
 #' @param outcome Character. Outcome column.
 #' @param treatment Character or `NULL`. Binary treatment column.
 #' @param family `"gaussian"` (default) or `"binomial"` for a dummy outcome.
@@ -338,7 +338,7 @@ descriptive_group_summary <- function(data, outcome, treatment = NULL,
 #'
 #' @section Refusing an unestimable trend:
 #' A trend is only fitted where the data can carry it. Both guards return `NULL`
-#' rather than a number, and [descriptive_workhorse()] logs the refusal.
+#' rather than a number, and `descriptive_workhorse()` logs the refusal.
 #'
 #' This is a deliberate divergence from the Stata path, and the only one in this
 #' file. Every `100_*.do` wraps its estimation in `cap{ }`, which swallows a
@@ -532,9 +532,9 @@ descriptive_expand_category <- function(data, category_var) {
 #' Mixing them up yields plausible numbers on the wrong scale -- percent per year
 #' versus percentage points -- so `trend` has no default.
 #'
-#' @param data `data.frame` from [descriptive_prepare()], subset to one crop.
+#' @param data `data.frame` from `descriptive_prepare()`, subset to one crop.
 #' @param indicators Character vector of binary columns. Use
-#'   [descriptive_expand_category()] first for a categorical source.
+#'   `descriptive_expand_category()` first for a categorical source.
 #' @param trend `"continuous"`, `"wave_diff"` or `"none"`. See *Two trend flavors*.
 #' @param waves Character vector of length 2, `c(from, to)`, required when
 #'   `trend = "wave_diff"`.
@@ -596,13 +596,13 @@ descriptive_indicator_shares <- function(data, indicators,
 
 #' Run One Descriptive Specification
 #'
-#' @param spec_row One row of [descriptive_specifications()].
+#' @param spec_row One row of `descriptive_specifications()`.
 #' @param data `data.frame` of the merged analysis sample.
 #' @param crop_var,wave_var,season_var,cluster_vars Column names.
 #' @param weights Character or `NULL`.
-#' @param family Passed to [descriptive_trend_model()]. Ignored when `spec_row`
-#'   carries a `family` column, which [descriptive_specifications()] emits.
-#' @param ssc Passed to [descriptive_trend_model()].
+#' @param family Passed to `descriptive_trend_model()`. Ignored when `spec_row`
+#'   carries a `family` column, which `descriptive_specifications()` emits.
+#' @param ssc Passed to `descriptive_trend_model()`.
 #' @param quiet Logical. If `FALSE` (default) a specification that yields nothing
 #'   emits a message. The Stata path wrapped every specification in `cap{ }`,
 #'   which swallowed failures silently -- `LndAq_6` is missing from the land sheet
@@ -669,10 +669,10 @@ descriptive_workhorse <- function(spec_row, data, crop_var = "CropID",
 #' `attr(x, "weights")` records whether weights were applied, so a downstream
 #' table can state it rather than assume it.
 #'
-#' @param specifications From [descriptive_specifications()].
+#' @param specifications From `descriptive_specifications()`.
 #' @param data `data.frame`, normally `study_environment$study_raw_data`.
 #' @param study Character. Study name, emitted as a column.
-#' @param ... Passed to [descriptive_workhorse()].
+#' @param ... Passed to `descriptive_workhorse()`.
 #'
 #' @return A long `data.frame`: `study`, `treatment`, `crop`, `outcome`, `wave`,
 #'   `group`, `statistic`, `estimate`, `se`, `t`, `p`, `min`, `max`, `sd`, `n`.

@@ -928,7 +928,7 @@ msf_workhorse <- function(
 #' shape-constrained (restricted) frontier using minimum-distance methods.
 #' The function wraps the underlying \code{sfaR} estimation routines and a set
 #' helper utilities (e.g., \code{sf_functional_forms()}, \code{equation_editor()},
-#' \code{fit_organizer()}, \code{translogEla()}, curvature/monotonicity
+#' \code{fit_organizer()}, \code{micEcon::translogEla()}, curvature/monotonicity
 #' checks) to produce:
 #' \enumerate{
 #'   \item Unrestricted stochastic frontier estimates and diagnostics.
@@ -1011,20 +1011,20 @@ msf_workhorse <- function(
 #'     output.
 #'
 #'   \item \strong{Elasticities and regularity checks:}
-#'     Using \code{fit_organizer()} and \code{translogEla()}, the function
+#'     Using \code{fit_organizer()} and \code{micEcon::translogEla()}, the function
 #'     computes elasticities and returns-to-scale-type measures, and evaluates
-#'     monotonicity and curvature via \code{translogCheckMono()} and
-#'     \code{translogCheckCurvature()} (or a coefficient-sign check for CD/LN
+#'     monotonicity and curvature via \code{micEcon::translogCheckMono()} and
+#'     \code{micEcon::translogCheckCurvature()} (or a coefficient-sign check for CD/LN
 #'     forms).
 #'
 #'   \item \strong{Shape-constrained frontier (if needed):}
 #'     If the monotonicity measure \code{mono} falls below 0.80, the function
-#'     constructs a set of linear restrictions using \code{translogMonoRestr()}
+#'     constructs a set of linear restrictions using \code{micEcon::translogMonoRestr()}
 #'     and solves a quadratic programming problem (via \code{quadprog::solve.QP}
 #'     and fall-back matrix inversions using \pkg{Matrix}, \pkg{MASS},
 #'     \pkg{corpcor}) to obtain constrained coefficients. For TL/QD forms a
 #'     constrained frontier (\code{lcFitted}) is computed with
-#'     \code{translogCalc()}; for CD/LN forms, constrained coefficients are
+#'     \code{micEcon::translogCalc()}; for CD/LN forms, constrained coefficients are
 #'     obtained via a SEM representation using \pkg{lavaan}.
 #'
 #'   \item \strong{Re-estimation under constraints:}
@@ -1152,7 +1152,7 @@ sf_workhorse <- function(
   est_coef <- fit_organizer_out$est_coef
   est_vcov <- fit_organizer_out$est_vcov
   est_list <- fit_organizer_out$est_list
-  el <- translogEla(xNames=xNames, data=data, coef=est_coef, dataLogged=logDepVar)
+  el <- micEcon::translogEla(xNames=xNames, data=data, coef=est_coef, dataLogged=logDepVar)
   names(el) <- paste0("el", 1:ncol(el))
   if(!include_trend) { el[, paste0("el", (ncol(el)+1))] <- rowSums(el) }
   if(include_trend) { el[, paste0("el", (ncol(el)+1))] <- rowSums(el[1:(ncol(el)-1)]) }
@@ -1160,8 +1160,8 @@ sf_workhorse <- function(
   
   # Check curvature and monotonicity for different functional forms
   if(names(FXN) %in% c("TL", "QD")) {
-    mono_obs <- translogCheckMono(xNames = xNames, data=data, coef=est_coef, dataLogged=logDepVar)$obs
-    curv_obs <- translogCheckCurvature(xNames = xNames, data=data, est_coef, convexity=F, quasi=TRUE, dataLogged=logDepVar)$obs
+    mono_obs <- micEcon::translogCheckMono(xNames = xNames, data=data, coef=est_coef, dataLogged=logDepVar)$obs
+    curv_obs <- micEcon::translogCheckCurvature(xNames = xNames, data=data, est_coef, convexity=F, quasi=TRUE, dataLogged=logDepVar)$obs
     curv <- mean(curv_obs, na.rm=T)
     mono <- mean(mono_obs, na.rm=T)
   }
@@ -1175,7 +1175,7 @@ sf_workhorse <- function(
   if(mono < 0.80) {
     # Use minimum distance estimation of restricted production function coefficients
     if(names(FXN) %in% c("TL", "QD")) {
-      monoRestr <- translogMonoRestr(xNames=xNames, data=data, dataLogged=logDepVar)
+      monoRestr <- micEcon::translogMonoRestr(xNames=xNames, data=data, dataLogged=logDepVar)
       monoRestr <- monoRestr[rowMeans(is.finite(monoRestr)) %in% 1,]
       sf_minDist <- NULL
       
@@ -1233,7 +1233,7 @@ sf_workhorse <- function(
       est_coefc <- sf_minDist$solution + est_coef
       
       # Fitted frontier output of the restricted model (assuming efficiency == 1)
-      lcFitted <- translogCalc(xNames=xNames, data=data, coef=est_coefc, dataLogged=logDepVar)
+      lcFitted <- micEcon::translogCalc(xNames=xNames, data=data, coef=est_coefc, dataLogged=logDepVar)
     }
     
     if(names(FXN) %in% c("CD", "LN")) {
@@ -1301,7 +1301,7 @@ sf_workhorse <- function(
     rkc$risk <- sqrt(rkc$vrbr) / rkc$ybar
     rkc <- rkc[c(identifiers, "weights", "risk")]
     
-    elc <- translogEla(xNames=xNames, data=data, coef=est_coefca, dataLogged=logDepVar)
+    elc <- micEcon::translogEla(xNames=xNames, data=data, coef=est_coefca, dataLogged=logDepVar)
     names(elc) <- paste0("el", 1:ncol(elc))
     if(!include_trend %in% TRUE){elc[,paste0("el",(ncol(elc)+1))] <- rowSums(elc)}
     if(include_trend %in% TRUE ){elc[,paste0("el",(ncol(elc)+1))] <- rowSums(elc[1:(ncol(elc)-1)])}
@@ -1315,8 +1315,8 @@ sf_workhorse <- function(
     names(sfc_res) <- c("CoefName","Estimate","Pvalue")
     
     if(names(FXN) %in% c("TL","QD")){
-      curv_c <- mean(translogCheckCurvature(xNames = xNames,data=data, est_coefca, convexity = F, quasi = TRUE ,dataLogged =logDepVar)$obs,na.rm=T)
-      mono_c <- mean(translogCheckMono(xNames = xNames,data = data, coef = est_coefca,dataLogged =logDepVar)$obs,na.rm=T)
+      curv_c <- mean(micEcon::translogCheckCurvature(xNames = xNames,data=data, est_coefca, convexity = F, quasi = TRUE ,dataLogged =logDepVar)$obs,na.rm=T)
+      mono_c <- mean(micEcon::translogCheckMono(xNames = xNames,data = data, coef = est_coefca,dataLogged =logDepVar)$obs,na.rm=T)
     }
     
     if(names(FXN) %in% c("CD","LN")){

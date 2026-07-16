@@ -15,10 +15,10 @@ descriptive_indicator_shares(
 )
 }
 \arguments{
-\item{data}{\code{data.frame} from \code{\link[=descriptive_prepare]{descriptive_prepare()}}, subset to one crop.}
+\item{data}{\code{data.frame} from \code{descriptive_prepare()}, subset to one crop.}
 
 \item{indicators}{Character vector of binary columns. Use
-\code{\link[=descriptive_expand_category]{descriptive_expand_category()}} first for a categorical source.}
+\code{descriptive_expand_category()} first for a categorical source.}
 
 \item{trend}{\code{"continuous"}, \code{"wave_diff"} or \code{"none"}. See \emph{Two trend flavors}.}
 

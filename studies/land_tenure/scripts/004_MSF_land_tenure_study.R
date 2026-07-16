@@ -47,7 +47,9 @@
 # This workflow produces the full library of MSF frontier estimations used in
 # the empirical analysis.
 # =============================================================================
-rm(list = ls(all = TRUE)); gc()  
+tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
+  rm(list = ls(all = TRUE)); gc()
+})  
 
 library(dplyr);library(sfaR) ;library(micEcon);library(frontier)
 library(rgenoud);library(quadprog);library(car)

@@ -14,7 +14,7 @@
 #   Efficiency comparisons use the MATCHED sample (opt_sample); frontier
 #   parameters (elasticities, gamma) use the UNMATCHED sample for group
 #   frontiers, the matched sample for the meta-frontier.
-if (!exists("OBJECTS_JSON")) source("studies/land_tenure/scripts/300_article_helpers.R")
+if (!exists("OBJECTS_JSON")) source("studies/land_tenure/scripts/article_helpers.R")
 suppressPackageStartupMessages(library(jsonlite))
 
 EST <- file.path(OUTPUT, "estimations")
@@ -40,13 +40,29 @@ pick <- function(df, keep, value = "Estimate") {
 }
 gap_of <- function(a, n) if (is.na(a) || is.na(n)) NA_real_ else a - n
 
-# --- 1) Efficiency: aggregate + per tenure dimension (Table 4) ----------------
-# OwnLnd = landownership status (main specification)
-# LndOwn = ownership documentation forms
-# LndRgt = ownership rights forms
-TENURES <- c(ownership = "OwnLnd",
-             documents = "LndOwn",
-             rights    = "LndRgt")
+# --- 1) Efficiency: the aggregate ownership comparison ------------------------
+# OwnLnd = landownership status (main specification). TCHLvel is 0/1 here:
+# 0 = no ownership, 1 = some ownership. That binary coding is what NONE/ANY and
+# gap_of() below assume.
+#
+# ONLY OwnLnd. Until 2026-07-16 this also emitted objs$tenures$documents (LndOwn)
+# and $rights (LndRgt), and both were WRONG rather than merely unused. Those
+# frontiers are not binary: TCHLvel is 1 = reference, 2/3/4 = the documentation
+# or rights categories. Applying OwnLnd's coding to them meant
+#
+#   none -> NA                 (no level "0" exists)
+#   any  -> TCHLvel == "1"     i.e. the REFERENCE category, labelled "any"
+#   gap  -> NA
+#
+# so `any` carried a real number meaning the opposite of its name, serialized
+# into article_objects.json looking authoritative. Nothing read it -- the
+# narrative only ever used objs$eff -- but it was a loaded gun: anyone citing
+# objs$tenures$rights$mte$any would have got the reference level and no error.
+#
+# Documentation and rights are now covered live by Table 4 (see .tbl4_data() in
+# exhibit_helpers_tables.R), which keys them correctly against their own
+# reference level and serves the same numbers to the prose via .LIVE_IDS. There
+# is nothing for this block to add.
 
 eff_for <- function(tag) {
   ef <- read_est(tag)$ef_mean
@@ -62,10 +78,12 @@ eff_for <- function(tag) {
   }
   list(tgr = mk("TGR"), te = mk("TE"), mte = mk("MTE"))
 }
-tenures <- lapply(TENURES, function(tg)
-  tryCatch(eff_for(tg), error = function(e) { warning("301: ", tg, ": ", conditionMessage(e)); NULL }))
 
-eff <- tenures$ownership   # objs$eff is the aggregate ownership comparison
+# objs$eff is the aggregate ownership comparison.
+eff <- tryCatch(eff_for("OwnLnd"),
+                error = function(e) {
+                  warning("301: OwnLnd: ", conditionMessage(e)); NULL
+                })
 
 # --- 2) Elasticities and returns to scale (Table 3) ---------------------------
 # input_variables = c("Area","SeedKg","HHLaborAE","HirdHr","FertKg","PestLt")
@@ -238,7 +256,11 @@ objs <- list(
   ),
   frame        = frame,         # ownership prevalence by wave + census frame
   eff          = eff,           # aggregate ownership comparison (Table 4)
-  tenures      = tenures,       # Table 4 blocks: ownership/documents/rights
+  # `tenures` (ownership/documents/rights) removed 2026-07-16 -- see the note at
+  # eff_for(). Documentation and rights are keyed 1/2/3, not 0/1, so this object
+  # reported the reference category under the "any" label. Table 4 covers them
+  # live and correctly; the prose reaches them through tbl_num("table4.csv", ...)
+  # -> .live_table() -> .tbl4_data(), which is the same build the exhibit prints.
   elasticities = elasticities,  # Table 3: el1..el6 inputs + el7 = returns to scale
   acq          = acq,           # ownership gap within acquisition modes
   shrcrp       = shrcrp,        # ownership gap by sharecropping intensity

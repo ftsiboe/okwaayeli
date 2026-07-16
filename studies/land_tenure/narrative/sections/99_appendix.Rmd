@@ -1,10 +1,10 @@
 # Supplementary material
 
 <!-- Layout mirrors studies/resource_extraction/narrative/sections/99_appendix.Rmd.
-     Tables S1-S4 are built by scripts/110_exhibit_tables.R from
+     Tables S1-S4 are built by scripts/exhibit_helpers_tables.R from
      data/descriptive_exhibits.rds (written by scripts/100_exhibit_descriptive_stats.R).
      Tables S5-S7 are frontier results and still read curated CSVs in data/tables/.
-     Figures come from scripts/101_exhibit_figures.R into output/figure/.
+     Figures come from scripts/101_exhibit_figures.R into output/figures/.
      See scripts/README.md for the naming convention. -->
 
 ## Note S1. Drivers of technical inefficiency
@@ -90,7 +90,7 @@ ft_tableS7()
 
 #### Figure S1. Covariate balancing summary
 
-![](../output/figure/Covariate_balance_variance.png){width=9.3in}
+![](../output/figures/Covariate_balance_variance.png){width=9.3in}
 
 ```{r, echo=FALSE, results='asis'}
 sec_landscape()
@@ -98,7 +98,7 @@ sec_landscape()
 
 #### Figure S2. Alternative model specifications generally show a decreasing impact of land ownership on crop production output for Ghanaian farmers (1991-2017)
 
-![](../output/figure/robustness.png){width=6.3in}
+![](../output/figures/robustness.png){width=6.3in}
 
 ```{r, echo=FALSE, results='asis'}
 sec_portrait()

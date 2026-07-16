@@ -26,8 +26,8 @@ A \pkg{ggplot2} object.
 \description{
 Plots the matched-sample gaps in input use and output between treatment
 groups. Also writes \code{output/figure_data/input_TE_data.csv}, which
-\verb{110_exhibit_tables.R} reads for the \code{fig1_range()} inline lookups -- so this
-builder must run before the article is knitted.
+\code{exhibit_helpers_tables.R} reads for the \code{fig1_range()} inline lookups -- so
+this builder must run before the article is knitted.
 }
 \seealso{
 Other exhibit figures: 

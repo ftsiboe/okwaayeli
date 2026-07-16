@@ -66,8 +66,16 @@ study_environment <- study_setup(project_name = "tutorial")
 ```
 
 `study_setup()` creates the standard folder tree under
-`studies/<project_name>/output/` and returns the resolved paths plus
-a reproducible seed (default `11122025`, set via `okwaayeli_control()`).
+`studies/<project_name>/output/` and returns the resolved paths (`wd`), the
+layout, and a reproducible seed. The tree is defined once, in `study_dirs()`;
+pass `layout = "v2"` for the newer arrangement, in which a figure and the data
+behind it share `output/figures/` and table data goes to `output/tables/`.
+
+`wd` is a snapshot: it gets written into the study's `.rds`, so a stage that
+reads that file later sees the tree as it was when the environment was built.
+Call `study_dirs()` on a restored environment to recompute the paths and create
+any missing folders, and reach for `study_dir_figures()` / `study_dir_tables()`
+rather than pasting directory names next to `wd$output`.
 
 ## Step 1 — pull harmonized data (001_DATA)
 

@@ -21,7 +21,7 @@ Plots the distribution of the efficiency scores by treatment group.
 }
 \section{Renamed from \code{fig_dsistribution()}}{
 
-The original was misspelled. \code{\link[=fig_dsistribution]{fig_dsistribution()}} is retained as a deprecated
+The original was misspelled. \code{fig_dsistribution()} is retained as a deprecated
 alias so the six studies that still call it keep working; it warns and
 forwards here. Use \code{fig_distribution()} in new code, and drop the alias once
 no study calls it.

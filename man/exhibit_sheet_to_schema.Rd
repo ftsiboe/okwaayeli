@@ -12,7 +12,7 @@ exhibit_sheet_to_schema(
 )
 }
 \arguments{
-\item{sheet}{A \code{data.frame} from \code{\link[=read_exhibit_sheet]{read_exhibit_sheet()}}.}
+\item{sheet}{A \code{data.frame} from \code{read_exhibit_sheet()}.}
 
 \item{group_tag}{Character. The treatment tag used in the sheet's \code{Coef}
 strings. Every do-file writes \verb{gen disagCat = \\}disag'\verb{and names its matrix rows from that, so this is usually the literal}"disagCat"\verb{-- **not** the treatment's name. land_tenure is the exception and uses}"OwnLnd"`.}
@@ -27,8 +27,8 @@ A \code{data.frame} with \code{treatment}, \code{crop}, \code{outcome}, \code{wa
 \code{statistic}, \code{estimate}, \code{se}, \code{t}, \code{p}, \code{min}, \code{max}, \code{sd}, \code{n}.
 }
 \description{
-Converts a sheet from \code{\link[=read_exhibit_sheet]{read_exhibit_sheet()}} into the same long, keyed frame
-\code{\link[=draw_descriptive_summary]{draw_descriptive_summary()}} emits, so that the Stata workbook and the R
+Converts a sheet from \code{read_exhibit_sheet()} into the same long, keyed frame
+\code{draw_descriptive_summary()} emits, so that the Stata workbook and the R
 engine speak one vocabulary and every downstream table builder can consume
 either.
 }
@@ -61,14 +61,14 @@ them only on the \code{tabstat}-derived mean rows, where they mean what they say
 \section{Trend flavor}{
 
 Engine B's trend is not the same estimator in every study, and the sheet does
-not record which was used (see \code{\link[=descriptive_indicator_shares]{descriptive_indicator_shares()}}). Pass
+not record which was used (see \code{descriptive_indicator_shares()}). Pass
 \code{trend_statistic = "trend_pct"} for a \verb{margins ... eydx} semi-elasticity
 (resource_extraction) or \code{"change_pp"} for a wave difference in percentage
 points (land_tenure). Getting it wrong mislabels percent as percentage points.
 }
 
 \seealso{
-\code{\link[=read_exhibit_sheet]{read_exhibit_sheet()}}, \code{\link[=draw_descriptive_summary]{draw_descriptive_summary()}}
+\code{read_exhibit_sheet()}, \code{draw_descriptive_summary()}
 
 Other exhibits: 
 \code{\link{exhibit_cell}()},

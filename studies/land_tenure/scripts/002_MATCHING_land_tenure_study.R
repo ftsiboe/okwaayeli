@@ -34,7 +34,9 @@
 # =============================================================================
 
 # --- Session hygiene
-rm(list = ls(all = TRUE)); gc()              
+tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
+  rm(list = ls(all = TRUE)); gc()
+})            
 
 devtools::document()                         
 

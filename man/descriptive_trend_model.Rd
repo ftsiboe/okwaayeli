@@ -16,7 +16,7 @@ descriptive_trend_model(
 )
 }
 \arguments{
-\item{data}{\code{data.frame} from \code{\link[=descriptive_prepare]{descriptive_prepare()}}, subset to one crop.}
+\item{data}{\code{data.frame} from \code{descriptive_prepare()}, subset to one crop.}
 
 \item{outcome}{Character. Outcome column.}
 
@@ -58,7 +58,7 @@ Emitted statistics:
 \item{\code{trend_pct}}{Average semi-elasticity of \code{outcome} with respect to
 \code{trend}, times 100 -- i.e. the annual percentage change. Stata computes
 this as \verb{margins <g>, eydx(Trend)} followed by \verb{nlcom (_b[...] * 100)};
-here it is \code{\link[marginaleffects:slopes]{marginaleffects::avg_slopes()}} with \code{slope = "eydx"}. Emitted
+here it is \code{marginaleffects::avg_slopes()} with \code{slope = "eydx"}. Emitted
 per group and pooled.}
 \item{\code{cat_diff}}{\verb{testparm i.g} -- the treatment main effect, i.e. the
 group level difference \strong{at \code{trend == 0}}, not the difference in overall
@@ -73,7 +73,7 @@ Only \code{p} is populated for the two Wald rows, matching the sheet, where
 \section{Refusing an unestimable trend}{
 
 A trend is only fitted where the data can carry it. Both guards return \code{NULL}
-rather than a number, and \code{\link[=descriptive_workhorse]{descriptive_workhorse()}} logs the refusal.
+rather than a number, and \code{descriptive_workhorse()} logs the refusal.
 
 This is a deliberate divergence from the Stata path, and the only one in this
 file. Every \verb{100_*.do} wraps its estimation in \verb{cap\{ \}}, which swallows a

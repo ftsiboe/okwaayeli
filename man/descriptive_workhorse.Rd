@@ -18,7 +18,7 @@ descriptive_workhorse(
 )
 }
 \arguments{
-\item{spec_row}{One row of \code{\link[=descriptive_specifications]{descriptive_specifications()}}.}
+\item{spec_row}{One row of \code{descriptive_specifications()}.}
 
 \item{data}{\code{data.frame} of the merged analysis sample.}
 
@@ -26,10 +26,10 @@ descriptive_workhorse(
 
 \item{weights}{Character or \code{NULL}.}
 
-\item{family}{Passed to \code{\link[=descriptive_trend_model]{descriptive_trend_model()}}. Ignored when \code{spec_row}
-carries a \code{family} column, which \code{\link[=descriptive_specifications]{descriptive_specifications()}} emits.}
+\item{family}{Passed to \code{descriptive_trend_model()}. Ignored when \code{spec_row}
+carries a \code{family} column, which \code{descriptive_specifications()} emits.}
 
-\item{ssc}{Passed to \code{\link[=descriptive_trend_model]{descriptive_trend_model()}}.}
+\item{ssc}{Passed to \code{descriptive_trend_model()}.}
 
 \item{quiet}{Logical. If \code{FALSE} (default) a specification that yields nothing
 emits a message. The Stata path wrapped every specification in \verb{cap\{ \}},

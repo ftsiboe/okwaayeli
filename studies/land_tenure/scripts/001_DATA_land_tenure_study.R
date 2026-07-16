@@ -14,7 +14,9 @@
 # =============================================================================
 
 # ---- Housekeeping: clear workspace and run garbage collection
-rm(list = ls(all = TRUE)); gc()              
+tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
+  rm(list = ls(all = TRUE)); gc()
+})         
 
 # ---- Rebuild package documentation (if this is part of a package) 
 # This calls roxygen2 via devtools to regenerate .Rd docs and NAMESPACE.
@@ -25,12 +27,23 @@ run_only_for(id = 5, allowed_jobnames = "run_all")
 # ---- Define study name and initialize study environment
 project_name <- "land_tenure"
 
-# study_setup() is assumed to:
-#   - create / verify directories,
-#   - define paths (e.g., wd$home, wd$data, wd$output),
-#   - and return a list-like "study_environment" object
+# study_setup():
+#   - creates / verifies directories,
+#   - defines paths (e.g., wd$home, wd$data, wd$output),
+#   - and returns a list-like "study_environment" object
 #     containing configuration for this specific project.
-study_environment <- study_setup(project_name = project_name)
+#
+# layout = "v2": plots and their underlying data share output/figures/, table
+# data goes to output/tables/. The six sibling studies are still on "legacy"
+# (output/figure/ + output/figure_data/), which is why the layout is a parameter
+# rather than a rename. Reach for study_dir_figures() / study_dir_figure_data()
+# / study_dir_tables() downstream -- never a "figure" literal next to wd$output,
+# which is the duplication that made this a breaking change in the first place.
+#
+# NB wd is written into the .rds below and is therefore a SNAPSHOT. Stages that
+# readRDS() it should call study_dirs() to recompute the paths and create the
+# folders; see the note in ?study_dirs.
+study_environment <- study_setup(project_name = project_name, layout = "v2")
 
 # ---- Load harmonized household / farmer-level data
 # Wrapper that downloads (via piggyback) and caches Stata .dta files from

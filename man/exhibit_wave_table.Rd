@@ -38,7 +38,7 @@ per survey wave, plus a trend column. This is the shape of the land tenure
 study's Table 2.
 }
 \seealso{
-\code{\link[=exhibit_crop_table]{exhibit_crop_table()}}
+\code{exhibit_crop_table()}
 
 Other exhibits: 
 \code{\link{exhibit_cell}()},

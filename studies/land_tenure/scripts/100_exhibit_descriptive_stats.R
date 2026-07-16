@@ -19,8 +19,11 @@
 #
 # Run from the repo root:  Rscript studies/land_tenure/scripts/100_exhibit_descriptive_stats.R
 
-if (!requireNamespace("okwaayeli", quietly = TRUE)) devtools::load_all(".")
-suppressPackageStartupMessages(library(okwaayeli))
+tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
+  rm(list = ls(all = TRUE)); gc()
+})  
+
+devtools::document()
 
 STUDY   <- "studies/land_tenure"
 SE_RDS  <- file.path(STUDY, "data", "land_tenure_study_environment.rds")
@@ -55,11 +58,43 @@ message("Table 1: ", nrow(spec), " specifications ...")
 t1 <- draw_descriptive_summary(spec, d, study = "land_tenure")
 
 # ---- Tables 2 and S1-S4 ------------------------------------------------------
-# The tenure detail modules are only administered in GLSS6/GLSS7, and
-# 100_exhibits.do restricts to them before expanding the categoricals.
+# Restricted to GLSS6/GLSS7. This is a COMPARABILITY restriction, not an
+# availability one.
+#
+# The comment here used to say "the tenure detail modules are only administered
+# in GLSS6/GLSS7". That is false, and data/tables/tableS0.csv -- built from the
+# questionnaires and printed in the same appendix -- contradicts it: all five
+# rounds carry all four items (GLSS3 q6/q7/q9/q11; GLSS4-GLSS7 q5/q6/q8/q10).
+# Non-missingness confirms it: LndOwn and ShrCrpCat are populated in every wave,
+# LndRgt and LndAq in every wave bar a handful of GLSS3/GLSS5 refusals.
+#
+# The real reasons to stop at GLSS6/GLSS7, per tableS0.csv:
+#   LndAq      No purchase option before GLSS5. "Inherited" exists only in
+#              GLSS7 and is folded into kinship, where it is the LARGER
+#              component (4,699 vs 2,037 plots) -- so kinship is not
+#              wave-comparable, as S0 states.
+#   ShrCrpCat  GLSS5's coded fractions are a narrower set (no 3/4, 1/10, 1/20
+#              or 0), so the bins do not line up with GLSS6/GLSS7.
+#   GLSS3/4    Fielded on the 1984 frame, which GSS itself calls inadequate;
+#              excluded from every temporal claim in this study (see 001).
+#
+# LndOwn and LndRgt ARE identically coded in all five rounds and could span
+# GLSS5-GLSS7 on their own. They are held at GLSS6/GLSS7 anyway so that Table 2
+# -- which puts all four variables in one table under a single pooled column --
+# means one thing on every row, and so that Table 2 and Tables S1/S3 cannot
+# report different shares for the same variable. A per-variable window would buy
+# one extra wave for two variables at the cost of a column header that is true
+# of only half its rows.
+#
 # Land's trend is the wave_diff flavor: logit on i.Survey, then
 # nlcom (b[GLSS6] - b[GLSS7]) * 100 -- percentage POINTS, earlier minus later.
-dt <- d[as.character(d$Surveyx) %in% c("GLSS6", "GLSS7"), , drop = FALSE]
+#
+# NB 001 defines study_data$TrendSample as GLSS5-GLSS7 ("waves used for temporal
+# claims"). The descriptives do not use it and are narrower, for the reasons
+# above. TrendSample governs the efficiency trend (Figure 2, which spans the
+# 2000->2010 re-basing); it is not the descriptive window.
+DESC_WAVES <- c("GLSS6", "GLSS7")
+dt <- d[as.character(d$Surveyx) %in% DESC_WAVES, , drop = FALSE]
 for (v in c("LndOwn", "LndRgt", "LndAq", "ShrCrpCat"))
   if (v %in% names(dt)) dt <- descriptive_expand_category(dt, v)
 
@@ -74,7 +109,7 @@ t2 <- do.call(rbind, lapply(crops_b, function(cr) {
   if (!nrow(dc)) return(NULL)
   r <- try(descriptive_indicator_shares(
     descriptive_prepare(dc), IND,
-    trend = "wave_diff", waves = c("GLSS6", "GLSS7"), per_wave = TRUE),
+    trend = "wave_diff", waves = DESC_WAVES, per_wave = TRUE),
     silent = TRUE)
   if (inherits(r, "try-error") || is.null(r)) {
     message("  no shares for crop: ", cr)

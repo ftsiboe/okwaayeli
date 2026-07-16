@@ -26,8 +26,8 @@ stars.}
 \item{style}{\code{"mean"} gives \code{"1.23 (4.56)"}; \code{"estimate"} gives
 \code{"1.23*** [4.56]"}.}
 
-\item{dagger}{Logical. Append \code{" †"} to flag a significant difference
-from the pooled sample.}
+\item{dagger}{Logical. Append a space and a dagger (U+2020) to flag a
+significant difference from the pooled sample.}
 }
 \value{
 A length-one \code{character}; \code{""} when \code{estimate} is \code{NA}.

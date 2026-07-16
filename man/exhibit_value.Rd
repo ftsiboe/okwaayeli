@@ -7,7 +7,7 @@
 exhibit_value(data, keys, col)
 }
 \arguments{
-\item{data}{\code{data.frame} from \code{\link[=read_exhibit_sheet]{read_exhibit_sheet()}}.}
+\item{data}{\code{data.frame} from \code{read_exhibit_sheet()}.}
 
 \item{keys}{Named \code{list} of column/value pairs identifying one row, e.g.
 \code{list(Equ = "Yield", CropIDx = "Pooled", Coef = "Mean_Pooled")}.}
@@ -19,7 +19,7 @@ exhibit_value(data, keys, col)
 A length-one \code{numeric}, or \code{NA_real_} if no row matches.
 }
 \description{
-Looks up exactly one value from a sheet returned by \code{\link[=read_exhibit_sheet]{read_exhibit_sheet()}},
+Looks up exactly one value from a sheet returned by \code{read_exhibit_sheet()},
 given a set of key/value pairs identifying the row.
 }
 \details{
@@ -28,7 +28,7 @@ cell blank for a quantity a study does not estimate. \strong{Errors} when more
 than one row matches: a duplicate key means the sheet is either malformed or
 predates the 2026-07-15 \code{roweq} fix, and silently taking the first match is
 how a lookup returns a plausible but wrong number. See the \emph{Duplicate rows}
-section of \code{\link[=read_exhibit_sheet]{read_exhibit_sheet()}}.
+section of \code{read_exhibit_sheet()}.
 }
 \examples{
 \dontrun{
@@ -39,7 +39,7 @@ exhibit_value(m, list(Equ = "Yield", CropIDx = "Pooled",
 
 }
 \seealso{
-\code{\link[=read_exhibit_sheet]{read_exhibit_sheet()}}
+\code{read_exhibit_sheet()}
 
 Other exhibits: 
 \code{\link{exhibit_cell}()},

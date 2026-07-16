@@ -12,7 +12,7 @@ fig_heterogeneity00(
 )
 }
 \arguments{
-\item{res}{\code{data.frame} from \code{\link[=tab_main_specification]{tab_main_specification()}}.}
+\item{res}{\code{data.frame} from \code{tab_main_specification()}.}
 
 \item{y_title}{Character. Y-axis title.}
 

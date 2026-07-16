@@ -154,26 +154,21 @@ draw_msf_estimations <- function(
     match_specification_optimal,
     match_path) {
   
-  tryCatch({ 
-    function(){
-      production_slope_shifters   = NULL
-      include_trend               = FALSE
-      technology_variable         = technology_variable
-      draw                        = 0
-      surveyy                     = FALSE
-      intercept_shifters          = list(scalar_variables=crop_area_list,factor_variables=c("Survey","Ecozon"))
-      intercept_shifters_meta     = list(scalar_variables=crop_area_list,factor_variables=c("Survey","Ecozon"))
-      weight_variable             = "Weight"
-      output_variable             = "HrvstKg"
-      risk_covariates             = NULL
-      input_variables             = c("Area", "SeedKg", "HHLaborAE","HirdHr","FertKg","PestLt")
-      inefficiency_covariates     = list(scalar_variables=c("lnAgeYr","lnYerEdu","CrpMix"),factor_variables=c("Female","Survey","Ecozon","Extension","Credit","EqipMech","OwnLnd"))
-      adoption_covariates         = list(scalar_variables=c("lnAgeYr","lnYerEdu","CrpMix"),factor_variables=c("Female","Survey","Ecozon","Extension","Credit","EqipMech","OwnLnd"))
-      identifiers                 = c("unique_identifier", "Survey", "CropID", "HhId", "EaId", "Mid")
-      match_specifications        = match_specifications
-      match_specification_optimal = study_environment$match_specification_optimal[c("ARRAY","method","distance","link")]
-      match_path                  = study_environment$wd$matching
-    }
+  tryCatch({
+    # An interactive-setup scratchpad lived here until 2026-07-16: a
+    # function(){...} defined inside this tryCatch and never called, assigning
+    # plausible values to production_slope_shifters, intercept_shifters,
+    # input_variables, match_specification_optimal and a dozen other names.
+    #
+    # None of it ever ran, so it could not affect results -- but it read as live
+    # setup and shadowed the actual parameters of this function (it "assigned"
+    # match_specifications = match_specifications and match_path =
+    # study_environment$wd$matching, neither of which took effect). It also
+    # referenced free variables -- crop_area_list, study_environment -- which is
+    # part of why codetools reported undefined globals in this function.
+    #
+    # If you want those defaults for an interactive session, take them from the
+    # calling script (004_MSF_*.R), which is where they actually live.
     #---------------------------------------------
     # Data Preparation                         ####
     # Filter out rows based on drawlist
@@ -311,8 +306,18 @@ draw_msf_estimations <- function(
                 disagscors$CoefName <- "disag_efficiency"
                 return(disagscors)
               }, error = function(e) { return(NULL) })
-              
-              return(DONE)
+
+              # Reached ONLY when the tryCatch above errored: its success path
+              # ends in return(disagscors), which returns from this anonymous
+              # function directly.
+              #
+              # This line read `return(DONE)` until 2026-07-16, and DONE is not
+              # defined anywhere -- so the error path did not return NULL as the
+              # handler intends, it threw "object 'DONE' not found" and defeated
+              # its own tryCatch. Latent because the disagscors block rarely
+              # errors; when it did, the failure named a phantom variable instead
+              # of the real problem.
+              return(NULL)
             }, scors=res$ef_samp, data=data), fill = TRUE))
       disagscors$draw <- draw
     }

@@ -1,7 +1,7 @@
 # 302_render_article.R
 # Knit the master narrative Rmd to .docx (+ .html).
 # Working directory is always the okwaayeli repo root.
-if (!exists("NARRATIVE")) source("studies/land_tenure/scripts/300_article_helpers.R")
+if (!exists("NARRATIVE")) source("studies/land_tenure/scripts/article_helpers.R")
 
 # ---- Citation style switch --------------------------------------------------
 # The master Rmd reads Sys.getenv("ARTICLE_CSL"). Set it here (or in the calling

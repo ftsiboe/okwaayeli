@@ -4,30 +4,41 @@
 \alias{study_setup}
 \title{Initialize Study Environment and Directory Structure}
 \usage{
-study_setup(
-  myseed = 1980632,
-  project_name,
-  local_directories = list(home = file.path("studies", project_name), data =
-    file.path("studies", project_name, "data"), output = file.path("studies",
-    project_name, "output"), matching = file.path("studies", project_name, "output",
-    "matching"), treatment_effects = file.path("studies", project_name, "output",
-    "treatment_effects"), estimations = file.path("studies", project_name, "output",
-    "estimations"), figure_data = file.path("studies", project_name, "output",
-    "figure_data"), figure = file.path("studies", project_name, 
-     "output",
-    "figure"))
-)
+study_setup(myseed = 1980632, project_name, layout = c("legacy", "v2"))
 }
 \arguments{
-\item{myseed}{Numeric/integer scalar seed. Will be coerced to integer. Default: 1980632.}
+\item{myseed}{Numeric/integer scalar seed. \code{NULL} takes
+\code{okwaayeli_control()$myseed}. Default: 1980632.}
 
 \item{project_name}{Length-1, non-NA character project name (required).}
 
-\item{local_directories}{Named list of character paths to create. Defaults use \code{project_name}.}
+\item{layout}{Output layout: \code{"legacy"} (\verb{figure/} + \verb{figure_data/}) or
+\code{"v2"} (\verb{figures/} holding plots and their data, plus \verb{tables/}).
+See \code{.study_layouts()}. Defaults to \code{"legacy"}; land_tenure passes \code{"v2"}.}
 }
 \value{
-List with \code{wd} (directories) and \code{seed}.
+List with \code{wd} (directories), \code{project_name}, \code{layout} and \code{myseed}.
 }
 \description{
-Initialize Study Environment and Directory Structure
+Creates the study's directory tree and returns the environment object every
+later stage reads from \verb{<project>_study_environment.rds}.
+}
+\details{
+A thin wrapper over \code{study_dirs()} plus the seed. The tree itself is defined
+once, in \code{.study_layouts()}.
+}
+\section{Directories}{
+
+\code{wd} travels inside the saved \code{.rds} and is therefore a snapshot of whatever
+this function produced on the run that wrote it. Stages that \code{readRDS()} the
+environment should call \code{study_dirs()} on it to recompute the paths and
+create the folders -- see the note in \code{study_dirs()} for why treating \code{wd} as
+authoritative caused a silent failure on 2026-07-16.
+
+Prefer \code{study_dir_figures()}, \code{study_dir_figure_data()} and
+\code{study_dir_tables()} over reaching into \code{wd} directly.
+}
+
+\seealso{
+\code{study_dirs()}, \code{study_dir_figures()}, \code{okwaayeli_control()}
 }

@@ -36,7 +36,7 @@
 #' written to the `means` sheet tagged `Equ == "Female"` and collided with the
 #' real `Female` outcome rows. Fixed 2026-07-15 (`mat roweq A = \`Var'`). Sheets
 #' produced before that fix contain duplicate `(Equ, CropIDx, Coef)` keys;
-#' [exhibit_value()] errors on them rather than silently returning the first
+#' `exhibit_value()` errors on them rather than silently returning the first
 #' match.
 #'
 #' @section Sheet naming across studies:
@@ -64,7 +64,7 @@
 #'
 #' @return A `data.frame` with eleven canonically named columns.
 #'
-#' @seealso [exhibit_value()], [exhibit_stars()], [exhibit_group_sizes()]
+#' @seealso `exhibit_value()`, `exhibit_stars()`, `exhibit_group_sizes()`
 #' @family exhibits
 #' @export
 read_exhibit_sheet <- function(path, sheet = "means",
@@ -116,8 +116,8 @@ read_exhibit_sheet <- function(path, sheet = "means",
 #' Translate a Stata Exhibit Sheet into the Engine Schema
 #'
 #' @description
-#' Converts a sheet from [read_exhibit_sheet()] into the same long, keyed frame
-#' [draw_descriptive_summary()] emits, so that the Stata workbook and the R
+#' Converts a sheet from `read_exhibit_sheet()` into the same long, keyed frame
+#' `draw_descriptive_summary()` emits, so that the Stata workbook and the R
 #' engine speak one vocabulary and every downstream table builder can consume
 #' either.
 #'
@@ -147,12 +147,12 @@ read_exhibit_sheet <- function(path, sheet = "means",
 #'
 #' @section Trend flavor:
 #' Engine B's trend is not the same estimator in every study, and the sheet does
-#' not record which was used (see [descriptive_indicator_shares()]). Pass
+#' not record which was used (see `descriptive_indicator_shares()`). Pass
 #' `trend_statistic = "trend_pct"` for a `margins ... eydx` semi-elasticity
 #' (resource_extraction) or `"change_pp"` for a wave difference in percentage
 #' points (land_tenure). Getting it wrong mislabels percent as percentage points.
 #'
-#' @param sheet A `data.frame` from [read_exhibit_sheet()].
+#' @param sheet A `data.frame` from `read_exhibit_sheet()`.
 #' @param group_tag Character. The treatment tag used in the sheet's `Coef`
 #'   strings. Every do-file writes `gen disagCat = \`disag'` and names its matrix
 #'   rows from that, so this is usually the literal `"disagCat"` -- **not** the
@@ -164,7 +164,7 @@ read_exhibit_sheet <- function(path, sheet = "means",
 #' @return A `data.frame` with `treatment`, `crop`, `outcome`, `wave`, `group`,
 #'   `statistic`, `estimate`, `se`, `t`, `p`, `min`, `max`, `sd`, `n`.
 #'
-#' @seealso [read_exhibit_sheet()], [draw_descriptive_summary()]
+#' @seealso `read_exhibit_sheet()`, `draw_descriptive_summary()`
 #' @family exhibits
 #' @export
 exhibit_sheet_to_schema <- function(sheet, group_tag = "disagCat",
@@ -293,7 +293,7 @@ exhibit_sheet_to_schema <- function(sheet, group_tag = "disagCat",
 #' Extract a Single Value from a Tidy Exhibit Sheet
 #'
 #' @description
-#' Looks up exactly one value from a sheet returned by [read_exhibit_sheet()],
+#' Looks up exactly one value from a sheet returned by `read_exhibit_sheet()`,
 #' given a set of key/value pairs identifying the row.
 #'
 #' @details
@@ -302,9 +302,9 @@ exhibit_sheet_to_schema <- function(sheet, group_tag = "disagCat",
 #' than one row matches: a duplicate key means the sheet is either malformed or
 #' predates the 2026-07-15 `roweq` fix, and silently taking the first match is
 #' how a lookup returns a plausible but wrong number. See the *Duplicate rows*
-#' section of [read_exhibit_sheet()].
+#' section of `read_exhibit_sheet()`.
 #'
-#' @param data `data.frame` from [read_exhibit_sheet()].
+#' @param data `data.frame` from `read_exhibit_sheet()`.
 #' @param keys Named `list` of column/value pairs identifying one row, e.g.
 #'   `list(Equ = "Yield", CropIDx = "Pooled", Coef = "Mean_Pooled")`.
 #' @param col Character. Name of the column to return (`"Beta"`, `"SE"`,
@@ -319,7 +319,7 @@ exhibit_sheet_to_schema <- function(sheet, group_tag = "disagCat",
 #'                       Coef = "Mean_Pooled"), "Beta")
 #' }
 #'
-#' @seealso [read_exhibit_sheet()]
+#' @seealso `read_exhibit_sheet()`
 #' @family exhibits
 #' @export
 exhibit_value <- function(data, keys, col) {
@@ -431,7 +431,7 @@ exhibit_group_sizes <- function(means, groups, equ = "Female", crop = "Pooled") 
 #' @return A `data.frame` with `label`, `header` and `c1`..`cN`, ready for a
 #'   flextable builder.
 #'
-#' @seealso [read_exhibit_sheet()], [exhibit_wave_table()]
+#' @seealso `read_exhibit_sheet()`, `exhibit_wave_table()`
 #' @family exhibits
 #' @export
 exhibit_crop_table <- function(sheet, variables, crops, measure = "GLSS0",
@@ -470,7 +470,7 @@ exhibit_crop_table <- function(sheet, variables, crops, measure = "GLSS0",
 #'
 #' @return A `data.frame` with `label`, `header` and `c1`..`cN`.
 #'
-#' @seealso [exhibit_crop_table()]
+#' @seealso `exhibit_crop_table()`
 #' @family exhibits
 #' @export
 exhibit_wave_table <- function(sheet, map, waves, trend = "Trend",
@@ -514,8 +514,8 @@ exhibit_wave_table <- function(sheet, map, waves, trend = "Trend",
 #' @param digits Integer. Decimal places. Default 2.
 #' @param style `"mean"` gives `"1.23 (4.56)"`; `"estimate"` gives
 #'   `"1.23*** [4.56]"`.
-#' @param dagger Logical. Append `" †"` to flag a significant difference
-#'   from the pooled sample.
+#' @param dagger Logical. Append a space and a dagger (U+2020) to flag a
+#'   significant difference from the pooled sample.
 #'
 #' @return A length-one `character`; `""` when `estimate` is `NA`.
 #'
@@ -530,5 +530,7 @@ exhibit_cell <- function(estimate, spread, p = NA_real_, digits = 2,
     sprintf(paste0(d, " (", d, ")"), estimate, spread)
   else
     sprintf(paste0(d, "%s [", d, "]"), estimate, exhibit_stars(p), spread)
-  paste0(body, if (isTRUE(dagger)) " †" else "")
+  # intToUtf8(8224) is the dagger, U+2020. Spelled this way so R/ stays pure
+  # ASCII -- see the note at the Naive label in exhibits-figures.R.
+  paste0(body, if (isTRUE(dagger)) paste0(" ", intToUtf8(8224L)) else "")
 }

@@ -60,7 +60,7 @@ The pooled row is emitted last, labelled \code{pooled_label}, and is the same
 which the module was administered, which is what the appendix tables report.
 }
 \seealso{
-\code{\link[=read_exhibit_sheet]{read_exhibit_sheet()}}, \code{\link[=exhibit_wave_table]{exhibit_wave_table()}}
+\code{read_exhibit_sheet()}, \code{exhibit_wave_table()}
 
 Other exhibits: 
 \code{\link{exhibit_cell}()},

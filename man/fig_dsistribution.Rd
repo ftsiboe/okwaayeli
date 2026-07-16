@@ -21,7 +21,7 @@ fig_dsistribution(
 A \pkg{ggplot2} object.
 }
 \description{
-Deprecated misspelling of \code{\link[=fig_distribution]{fig_distribution()}}. Warns and forwards.
+Deprecated misspelling of \code{fig_distribution()}. Warns and forwards.
 }
 \details{
 Retained because six studies still call it:

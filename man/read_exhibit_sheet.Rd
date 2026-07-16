@@ -53,8 +53,7 @@ quantity (\verb{Mean_<group>}, \verb{Trend_<group>}, \code{CATDif}, \code{TrendD
 Six of the seven study do-files shipped a bug in which \verb{mat roweq A = Female}
 was hardcoded inside the loop over the treatment dummies, so those rows were
 written to the \code{means} sheet tagged \code{Equ == "Female"} and collided with the
-real \code{Female} outcome rows. Fixed 2026-07-15 (\verb{mat roweq A = \\}Var'\verb{). Sheets produced before that fix contain duplicate }(Equ, CropIDx, Coef)` keys;
-\code{\link[=exhibit_value]{exhibit_value()}} errors on them rather than silently returning the first
+real \code{Female} outcome rows. Fixed 2026-07-15 (\verb{mat roweq A = \\}Var'\verb{). Sheets produced before that fix contain duplicate }(Equ, CropIDx, Coef)\code{keys;}exhibit_value()` errors on them rather than silently returning the first
 match.
 }
 
@@ -79,7 +78,7 @@ off the name would silently apply the wrong column names to
 }
 
 \seealso{
-\code{\link[=exhibit_value]{exhibit_value()}}, \code{\link[=exhibit_stars]{exhibit_stars()}}, \code{\link[=exhibit_group_sizes]{exhibit_group_sizes()}}
+\code{exhibit_value()}, \code{exhibit_stars()}, \code{exhibit_group_sizes()}
 
 Other exhibits: 
 \code{\link{exhibit_cell}()},

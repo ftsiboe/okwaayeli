@@ -26,9 +26,9 @@ if (file.exists("article_objects.json")) {
   objs <- jsonlite::fromJSON("article_objects.json")
 }
 # Formatting helpers + assert_present() guards.
-if (file.exists("../scripts/300_article_helpers.R")) source("../scripts/300_article_helpers.R")
+if (file.exists("../scripts/article_helpers.R")) source("../scripts/article_helpers.R")
 # Table builders (flextable); paths are narrative-relative.
-if (file.exists("../scripts/110_exhibit_tables.R")) source("../scripts/110_exhibit_tables.R")
+if (file.exists("../scripts/exhibit_helpers_tables.R")) source("../scripts/exhibit_helpers_tables.R")
 ```
 
 Gilbert Addae; Jacob Asravor; Francis Tsiboe

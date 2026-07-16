@@ -142,7 +142,7 @@ tab_main_specification <- function(
             res <- res[res$sample %in% c(ifelse(study_environment$match_specification_optimal$link %in% NA,study_environment$match_specification_optimal$distance,study_environment$match_specification_optimal$link),"unmatched"),]
             res <- res[res$restrict %in% c("Restricted"),]
             res$sample <- ifelse(res$sample %in% ifelse(study_environment$match_specification_optimal$link %in% NA,study_environment$match_specification_optimal$distance,study_environment$match_specification_optimal$link),"matched",res$sample)
-            #saveRDS(res, file = file.path(study_environment$wd$output,"figure_data","main_specification.rds"))
+            #saveRDS(res, file = file.path(study_dir_figure_data(study_environment),"main_specification.rds"))
             return(res)
           }, error = function(e) {
             return(NULL)
@@ -157,7 +157,7 @@ tab_main_specification <- function(
 #' Plots the treatment gap across farmer characteristics, crops and regions --
 #' the study's heterogeneity panel.
 #'
-#' @param res `data.frame` from [tab_main_specification()].
+#' @param res `data.frame` from `tab_main_specification()`.
 #' @param y_title Character. Y-axis title.
 #' @param colset Character vector of colours.
 #' @param study_environment The study environment list.
@@ -249,10 +249,10 @@ fig_heterogeneity00 <- function(res, y_title, colset = c("orange", "darkgreen", 
             strip.background = element_rect(fill = "white", colour = "black", size = 1))
     
     saveRDS(data[order(data$input), c("Tech", "input", "disasg", "level", "Estimate", "Estimate.sd", "jack_pv")],
-            file =   file.path(study_environment$wd$output,"figure_data",paste0(paste0(disasg, collapse = "_"), ".rds")))
+            file =   file.path(study_dir_figure_data(study_environment),paste0(paste0(disasg, collapse = "_"), ".rds")))
     
     write.csv(data[order(data$input), c("Tech", "input", "disasg", "level", "Estimate", "Estimate.sd", "jack_pv")],
-              file =   file.path(study_environment$wd$output,"figure_data",paste0(paste0(disasg, collapse = "_"), ".csv")))
+              file =   file.path(study_dir_figure_data(study_environment),paste0(paste0(disasg, collapse = "_"), ".csv")))
     return(fig)
   }
   
@@ -298,6 +298,23 @@ fig_heterogeneity00 <- function(res, y_title, colset = c("orange", "darkgreen", 
 #' @export
 fig_robustness <- function(y_title, res_list, colset = c("orange", "darkgreen"),
                            study_environment) {
+  # Resolve from the argument, not from the caller's workspace.
+  #
+  # This function referred to a free `mspecs_optimal` six times below. That
+  # worked only while it was source()d from data-raw/scripts/figures_and_tables.R
+  # into the global environment, where the study script's own `mspecs_optimal`
+  # happened to be visible by lexical scoping. Packaging it into R/ (2026-07-15)
+  # moved its enclosure to the namespace, and run_article.R's
+  # source(local = new.env(...)) put the script's variables somewhere the
+  # namespace cannot see either -- so the lookup failed with "object
+  # 'mspecs_optimal' not found". Every other builder here already took it from
+  # study_environment; this one was the holdout.
+  mspecs_optimal <- study_environment$match_specification_optimal
+  if (is.null(mspecs_optimal))
+    stop("fig_robustness(): study_environment$match_specification_optimal is ",
+         "NULL. It is attached by 002_MATCHING; running 001 alone strips it.",
+         call. = FALSE)
+
   data <- as.data.frame(
     data.table::rbindlist(
       lapply(
@@ -409,8 +426,8 @@ fig_robustness <- function(y_title, res_list, colset = c("orange", "darkgreen"),
   dataF <- dplyr::inner_join(dataF, mainest, by = c("type"))
   
   # Save data (rds + csv so figure claims can be machine-checked)
-  saveRDS(dataF, file =  file.path(study_environment$wd$output,"figure_data","robustness.rds"))
-  write.csv(dataF, file = file.path(study_environment$wd$output,"figure_data","robustness.csv"), row.names = FALSE)
+  saveRDS(dataF, file =  file.path(study_dir_figure_data(study_environment),"robustness.rds"))
+  write.csv(dataF, file = file.path(study_dir_figure_data(study_environment),"robustness.csv"), row.names = FALSE)
  
   # Prepare x-axis labels
   xlab <- doBy::summaryBy(Estimate ~ dimension + options, data = dataF[dataF$type %in% "MTE", ], FUN = mean)
@@ -465,7 +482,7 @@ fig_robustness <- function(y_title, res_list, colset = c("orange", "darkgreen"),
     coord_flip()
   
   # Save plot
-  ggsave(file.path(study_environment$wd$output,"figure","robustness.png"), fig, dpi = 600, width = 6.8, height = 7.8)
+  ggsave(file.path(study_dir_figures(study_environment),"robustness.png"), fig, dpi = 600, width = 6.8, height = 7.8)
 
   return("done-robustness")
 }
@@ -475,8 +492,8 @@ fig_robustness <- function(y_title, res_list, colset = c("orange", "darkgreen"),
 #' @description
 #' Plots the matched-sample gaps in input use and output between treatment
 #' groups. Also writes `output/figure_data/input_TE_data.csv`, which
-#' `110_exhibit_tables.R` reads for the `fig1_range()` inline lookups -- so this
-#' builder must run before the article is knitted.
+#' `exhibit_helpers_tables.R` reads for the `fig1_range()` inline lookups -- so
+#' this builder must run before the article is knitted.
 #'
 #' @param y_title Character. Y-axis title.
 #' @param tech_lable Character. Label for the technology/treatment groups.
@@ -564,9 +581,9 @@ fig_input_te <- function(y_title, tech_lable, colset = c("orange", "darkgreen", 
     coord_flip()  # Flip coordinates for better readability
   
   # Save the data and the plot
-  write.csv(data, file = file.path(study_environment$wd$output,"figure_data","input_TE_data.csv"))
-  saveRDS(data, file = file.path(study_environment$wd$output,"figure_data","input_TE_data.rds"))
-  ggsave(file.path(study_environment$wd$output,"figure","input_TE.png"), figTe, dpi = 600, width = 6, height = 5)
+  write.csv(data, file = file.path(study_dir_figure_data(study_environment),"input_TE_data.csv"))
+  saveRDS(data, file = file.path(study_dir_figure_data(study_environment),"input_TE_data.rds"))
+  ggsave(file.path(study_dir_figures(study_environment),"input_TE.png"), figTe, dpi = 600, width = 6, height = 5)
 
   return("done-input_TE")
 }
@@ -668,8 +685,8 @@ fig_covariate_balance <- function(colset = c("darkgreen", "orange", "blue"),
   CovBalDATA <- CovBalDATA[!CovBalDATA$Coef %in% NA, ]
 
   # Save the plotted data (rds + csv so figure claims can be machine-checked)
-  saveRDS(CovBalDATA, file = file.path(study_environment$wd$output,"figure_data","covariate_balance.rds"))
-  write.csv(CovBalDATA, file = file.path(study_environment$wd$output,"figure_data","covariate_balance.csv"), row.names = FALSE)
+  saveRDS(CovBalDATA, file = file.path(study_dir_figure_data(study_environment),"covariate_balance.rds"))
+  write.csv(CovBalDATA, file = file.path(study_dir_figure_data(study_environment),"covariate_balance.csv"), row.names = FALSE)
 
   # Generate the ggplot object
   balance <- ggplot(
@@ -709,7 +726,7 @@ fig_covariate_balance <- function(colset = c("darkgreen", "orange", "blue"),
           strip.background = element_rect(fill = "white", colour = "black", size = 1))
   
   # Save the plot
-  ggsave(file.path(study_environment$wd$output,"figure","Covariate_balance_variance.png"), balance, dpi = 600, width = 11, height = 7)
+  ggsave(file.path(study_dir_figures(study_environment),"Covariate_balance_variance.png"), balance, dpi = 600, width = 11, height = 7)
 
   return("done-Covariate_balance_variance")
 }
@@ -720,7 +737,7 @@ fig_covariate_balance <- function(colset = c("darkgreen", "orange", "blue"),
 #' Plots the distribution of the efficiency scores by treatment group.
 #'
 #' @section Renamed from `fig_dsistribution()`:
-#' The original was misspelled. [fig_dsistribution()] is retained as a deprecated
+#' The original was misspelled. `fig_dsistribution()` is retained as a deprecated
 #' alias so the six studies that still call it keep working; it warns and
 #' forwards here. Use `fig_distribution()` in new code, and drop the alias once
 #' no study calls it.
@@ -743,7 +760,13 @@ fig_distribution <- function(dataFrq, colset = c("orange", "darkgreen"),
   dataFrq$input <- ifelse(dataFrq$type %in% "TE", "(i) Technical efficiency", NA)
   dataFrq$input <- ifelse(dataFrq$type %in% "TGR", "(ii) Technology gap ratio", dataFrq$input)
   dataFrq$input <- ifelse(dataFrq$type %in% "MTE", "(iii) Meta-technical-efficiency", dataFrq$input)
-  dataFrq$input <- ifelse(dataFrq$type %in% "TE0", "(iv) Technical efficiency [Naïve]", dataFrq$input)
+  # intToUtf8(239) is i-diaeresis. The panel label still renders "Naive" with
+  # the diaeresis; the source file stays pure ASCII. A literal accented
+  # character in R/ draws a portability warning from R CMD check
+  # (tools::showNonASCIIfile flags it), because the file's encoding is not
+  # guaranteed to survive every locale the package is read in.
+  naive_lab <- paste0("(iv) Technical efficiency [Na", intToUtf8(239L), "ve]")
+  dataFrq$input <- ifelse(dataFrq$type %in% "TE0", naive_lab, dataFrq$input)
   
   # Update 'Survey' column based on its value
   dataFrq$Survey <- ifelse(dataFrq$Survey %in% "GLSS6", "(A) 2012/2013", dataFrq$Survey)
@@ -790,7 +813,7 @@ fig_distribution <- function(dataFrq, colset = c("orange", "darkgreen"),
           strip.background = element_rect(fill = "white", colour = "black", size = 1))
   
   # Save the plot
-  ggsave(file.path(study_environment$wd$output,"figure","score_distributions.png"), Fig, dpi = 600, width = 11, height = 7)
+  ggsave(file.path(study_dir_figures(study_environment),"score_distributions.png"), Fig, dpi = 600, width = 11, height = 7)
 
   return("done-score_distributions")
 }
@@ -798,7 +821,7 @@ fig_distribution <- function(dataFrq, colset = c("orange", "darkgreen"),
 #' Score Distribution Figure (deprecated spelling)
 #'
 #' @description
-#' Deprecated misspelling of [fig_distribution()]. Warns and forwards.
+#' Deprecated misspelling of `fig_distribution()`. Warns and forwards.
 #'
 #' @details
 #' Retained because six studies still call it:

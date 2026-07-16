@@ -18,7 +18,7 @@ number or as a labelled factor such as \code{"2016/17"}.
 }
 \details{
 Guards against \code{as.numeric(factor)}, which silently returns the level index.
-See the \emph{Season must be a year} section of \code{\link[=descriptive_prepare]{descriptive_prepare()}}.
+See the \emph{Season must be a year} section of \code{descriptive_prepare()}.
 }
 \examples{
 descriptive_season_year(factor(c("1997/98", "2016/17")))

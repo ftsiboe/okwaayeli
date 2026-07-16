@@ -7,13 +7,13 @@
 draw_descriptive_summary(specifications, data, study = NA_character_, ...)
 }
 \arguments{
-\item{specifications}{From \code{\link[=descriptive_specifications]{descriptive_specifications()}}.}
+\item{specifications}{From \code{descriptive_specifications()}.}
 
 \item{data}{\code{data.frame}, normally \code{study_environment$study_raw_data}.}
 
 \item{study}{Character. Study name, emitted as a column.}
 
-\item{...}{Passed to \code{\link[=descriptive_workhorse]{descriptive_workhorse()}}.}
+\item{...}{Passed to \code{descriptive_workhorse()}.}
 }
 \value{
 A long \code{data.frame}: \code{study}, \code{treatment}, \code{crop}, \code{outcome}, \code{wave},
