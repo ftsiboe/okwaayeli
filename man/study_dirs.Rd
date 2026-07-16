@@ -35,18 +35,15 @@ definition of the directory tree; \code{study_setup()} is a thin wrapper over it
 \section{Why this exists}{
 
 \code{wd} is written into \verb{<project>_study_environment.rds} by \code{study_setup()},
-which only \code{000}/\code{001} call. Every later stage reads that \code{.rds} -- so \code{wd}
-is a \emph{frozen snapshot}, and a directory added to the layout does not reach a
-stage until the environment is regenerated, which for most studies means
-re-running the expensive matching step. Worse, a stage reading an older
-\code{.rds} gets \code{NULL} for a new entry, and \code{file.path(NULL, "x.rds")} returns
-\code{character(0)} rather than erroring -- which surfaces much later, and far
-from its cause, as \code{gzfile()} failing to open a connection.
+which only \code{000}/\code{001} call, so it is a \emph{frozen snapshot}: a directory added
+to the layout does not reach later stages until the environment is
+regenerated -- for most studies, an expensive re-run of matching. A stage
+reading an older \code{.rds} gets \code{NULL} for a new entry, and
+\code{file.path(NULL, "x.rds")} returns \code{character(0)} rather than erroring, which
+surfaces far from its cause as a \code{gzfile()} connection failure.
 
-Calling \code{study_dirs()} after \code{readRDS()} makes \code{wd} advisory rather than
-authoritative: paths are recomputed from \code{project_name}, missing entries are
-filled, and the folders are created. A stage then cannot fail because an
-upstream run predates a rename.
+Calling \code{study_dirs()} after \code{readRDS()} makes \code{wd} advisory: paths are
+recomputed from \code{project_name}, missing entries filled, folders created.
 }
 
 \examples{

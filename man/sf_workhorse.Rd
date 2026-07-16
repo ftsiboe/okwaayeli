@@ -104,7 +104,7 @@ when monotonicity is sufficiently violated, re-estimates a
 shape-constrained (restricted) frontier using minimum-distance methods.
 The function wraps the underlying \code{sfaR} estimation routines and a set
 helper utilities (e.g., \code{sf_functional_forms()}, \code{equation_editor()},
-\code{fit_organizer()}, \code{translogEla()}, curvature/monotonicity
+\code{fit_organizer()}, \code{micEcon::translogEla()}, curvature/monotonicity
 checks) to produce:
 \enumerate{
 \item Unrestricted stochastic frontier estimates and diagnostics.
@@ -141,20 +141,20 @@ observation-level risk metric based on squared deviations from mean
 output.
 
 \item \strong{Elasticities and regularity checks:}
-Using \code{fit_organizer()} and \code{translogEla()}, the function
+Using \code{fit_organizer()} and \code{micEcon::translogEla()}, the function
 computes elasticities and returns-to-scale-type measures, and evaluates
-monotonicity and curvature via \code{translogCheckMono()} and
-\code{translogCheckCurvature()} (or a coefficient-sign check for CD/LN
+monotonicity and curvature via \code{micEcon::translogCheckMono()} and
+\code{micEcon::translogCheckCurvature()} (or a coefficient-sign check for CD/LN
 forms).
 
 \item \strong{Shape-constrained frontier (if needed):}
 If the monotonicity measure \code{mono} falls below 0.80, the function
-constructs a set of linear restrictions using \code{translogMonoRestr()}
+constructs a set of linear restrictions using \code{micEcon::translogMonoRestr()}
 and solves a quadratic programming problem (via \code{quadprog::solve.QP}
 and fall-back matrix inversions using \pkg{Matrix}, \pkg{MASS},
 \pkg{corpcor}) to obtain constrained coefficients. For TL/QD forms a
 constrained frontier (\code{lcFitted}) is computed with
-\code{translogCalc()}; for CD/LN forms, constrained coefficients are
+\code{micEcon::translogCalc()}; for CD/LN forms, constrained coefficients are
 obtained via a SEM representation using \pkg{lavaan}.
 
 \item \strong{Re-estimation under constraints:}

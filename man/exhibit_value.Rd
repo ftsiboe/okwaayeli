@@ -25,10 +25,9 @@ given a set of key/value pairs identifying the row.
 \details{
 Returns \code{NA_real_} when no row matches, which lets a table builder leave a
 cell blank for a quantity a study does not estimate. \strong{Errors} when more
-than one row matches: a duplicate key means the sheet is either malformed or
-predates the 2026-07-15 \code{roweq} fix, and silently taking the first match is
-how a lookup returns a plausible but wrong number. See the \emph{Duplicate rows}
-section of \code{read_exhibit_sheet()}.
+than one row matches: a duplicate key means the sheet is malformed, and
+silently taking the first match is how a lookup returns a plausible but wrong
+number. See the \emph{Duplicate rows} section of \code{read_exhibit_sheet()}.
 }
 \examples{
 \dontrun{

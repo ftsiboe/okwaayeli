@@ -27,9 +27,8 @@ descriptive_trend_model(
 \item{weights}{Character or \code{NULL}.}
 
 \item{ssc}{\code{fixest::ssc()} object controlling the small-sample correction.
-Defaults to \code{NULL} (fixest default). Validated against resource_extraction
-2026-07-15 with no tuning needed: point estimates and \code{testparm} p-values
-both matched Stata.}
+Defaults to \code{NULL} (fixest default), which needs no tuning to match the
+reference: point estimates and p-values both agree.}
 
 \item{min_events}{Integer. For \code{family = "binomial"}, the minimum number of
 observations in the rarer class -- overall and within each treatment group --
@@ -75,11 +74,9 @@ Only \code{p} is populated for the two Wald rows, matching the sheet, where
 A trend is only fitted where the data can carry it. Both guards return \code{NULL}
 rather than a number, and \code{descriptive_workhorse()} logs the refusal.
 
-This is a deliberate divergence from the Stata path, and the only one in this
-file. Every \verb{100_*.do} wraps its estimation in \verb{cap\{ \}}, which swallows a
-failed fit and leaves the exported cell at whatever it held. The consequences
-are in the shipped workbooks. From resource_extraction's own sheets on
-2026-07-15:
+This is a deliberate divergence from the reference implementation, and the
+only one in this file. Wrapping an estimation in a swallow-all handler leaves
+the exported cell at whatever it held, and the consequences reach the page:
 
 \preformatted{
 Pineapple Depend Trend_disagCat1   -669,487,338,753,097,984  (percent/year)

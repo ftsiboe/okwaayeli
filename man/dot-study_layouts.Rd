@@ -22,10 +22,9 @@ them. Used by ag_services, disability, education, financial_inclusion,
 input_dealers, resource_extraction and time_poverty.}
 \item{\code{v2}}{\verb{figures/} for plots AND the data behind them -- one folder per
 concept, so a \code{.png} and its \code{.csv} sit together -- plus \verb{tables/} for
-table data. Used by land_tenure since 2026-07-16.}
+table data. Used by land_tenure.}
 }
 
-\verb{tables/} exists in both: nothing wrote table data before, so there is no
-legacy name to preserve.
+\verb{tables/} is the same in both layouts.
 }
 \keyword{internal}

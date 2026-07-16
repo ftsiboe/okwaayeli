@@ -26,9 +26,9 @@ builders consume. This is the Stata-free, Excel-free replacement for a study's
 }
 \details{
 The returned frame is keyed, not positional. Builders filter it on
-\verb{(treatment, crop, outcome, wave, group, statistic)}. The Stata path addressed
-results by matrix row name and \code{roweq}, which is how the \code{Female} collision
-survived undetected in six of seven studies until 2026-07-15.
+\verb{(treatment, crop, outcome, wave, group, statistic)}. Addressing results
+positionally -- by row name or matrix equation -- lets two outcomes collide
+under one label and produces a plausible wrong number rather than an error.
 
 \code{attr(x, "weights")} records whether weights were applied, so a downstream
 table can state it rather than assume it.

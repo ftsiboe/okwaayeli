@@ -50,11 +50,12 @@ quantity (\verb{Mean_<group>}, \verb{Trend_<group>}, \code{CATDif}, \code{TrendD
 }
 \section{Duplicate rows}{
 
-Six of the seven study do-files shipped a bug in which \verb{mat roweq A = Female}
-was hardcoded inside the loop over the treatment dummies, so those rows were
-written to the \code{means} sheet tagged \code{Equ == "Female"} and collided with the
-real \code{Female} outcome rows. Fixed 2026-07-15 (\verb{mat roweq A = \\}Var'\verb{). Sheets produced before that fix contain duplicate }(Equ, CropIDx, Coef)\code{keys;}exhibit_value()` errors on them rather than silently returning the first
-match.
+Some workbooks contain duplicate \verb{(Equ, CropIDx, Coef)} keys, from a do-file
+that hardcoded \verb{mat roweq A = Female} inside the loop over treatment dummies:
+those rows land on the \code{means} sheet tagged \code{Equ == "Female"} and collide with
+the real \code{Female} outcome rows. Check for it in any workbook you read here.
+\code{exhibit_value()} errors on duplicates rather than silently returning the
+first match, which is what makes the collision visible at all.
 }
 
 \section{Sheet naming across studies}{
