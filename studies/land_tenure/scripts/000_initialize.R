@@ -15,17 +15,10 @@ if (requireNamespace("devtools", quietly = TRUE)) {
   library(okwaayeli)
 }
 
-# Create the directory tree.
-#
-# Delegated to study_dirs() rather than listed here. Until 2026-07-16 this file
-# held its own hardcoded vector, study_setup() held a second one, and ~40 call
-# sites pasted the folder names as literals a third time. The three drifted:
-# this file was migrated to output/figures + output/tables while study_setup()
-# went on creating output/figure + output/figure_data, so the tree looked right
-# and every write still went to the old names.
-#
-# One list, in ?study_dirs. layout = "v2" is land_tenure's; the six sibling
-# studies are on "legacy".
+# Create the directory tree. Delegated to study_dirs() -- do not list folders
+# here. This file, study_setup() and ~40 call sites each held their own copy of
+# the names once, and they drifted: the tree said output/figures while every
+# write went to output/figure. One list now, in ?study_dirs.
 invisible(study_dirs(project_name = "land_tenure", layout = "v2"))
 
 invisible(TRUE)

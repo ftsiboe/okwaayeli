@@ -1,27 +1,16 @@
 # 102_exhibit_table_workbook.R  (10x = compute/emit; see scripts/README.md)
-# Emit every manuscript table AS PRINTED into one workbook:
+# Emit every manuscript table AS PRINTED to output/tables/land_tenure_tables.xlsx,
+# one sheet per table -- a deliverable for co-authors and supplementary material.
 #
-#   output/tables/land_tenure_tables.xlsx   -- one sheet per table
+# "As printed" means the flextable objects the Rmd renders, not the data behind
+# them: stars, jackknife SEs in parentheses, sprintf rounding, "-" placeholders,
+# headers, spanners and footnotes. Same ft_*() call as the paper, so the two
+# cannot disagree.
 #
-# WHAT "AS PRINTED" MEANS. These are the flextable objects the Rmd renders, not
-# the data behind them: the cells carry the significance stars, the jackknife
-# standard errors in parentheses, the sprintf rounding and the "-" placeholders
-# exactly as they appear in the .docx. Headers, spanners and footnotes come
-# along. So a value here and the same value in the paper cannot drift -- both
-# come from one ft_*() call.
+# NOT A ROUND TRIP -- nothing reads this back. Excel as an output is fine; Excel
+# in the middle of the pipeline is what 101 was cleared of.
 #
-# The per-table CSVs in output/tables/ are the opposite deliverable: unformatted
-# numbers at full precision, for machine checks. Keep both; they answer different
-# questions.
-#
-# NOT A ROUND TRIP. Nothing reads this file back. It is a deliverable for
-# co-authors and for the submission's supplementary material. That distinction
-# is the whole point of the 2026-07-15 openxlsx removal from 101: the objection
-# was never to Excel as an *output*, it was to Excel sitting in the middle of the
-# pipeline as an undeclared, write-only, breakable dependency. Emitting a
-# workbook at the end is fine. Reading exhibits back out of one is not.
-#
-# Run from the repo root, AFTER 100 (descriptive cache) and 101 (figure data --
+# Run from the repo root, AFTER 100 (descriptive cache) and 101 (figure data:
 # fig1_range() and trend_gap() read output/figures/).
 
 tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
@@ -46,15 +35,13 @@ if (!requireNamespace("flextable", quietly = TRUE))
 if (!requireNamespace("openxlsx", quietly = TRUE))
   stop("102: package 'openxlsx' is required.", call. = FALSE)
 
-# Flatten a flextable to the character grid it prints: header rows, then body,
-# then footer lines. Written by hand rather than via flextable::save_as_xlsx(),
-# which this flextable version does not export.
+# Flatten a flextable to the character grid it prints: header, body, footer.
+# Hand-written because this flextable version does not export save_as_xlsx().
 #
-# This reads $header/$body/$footer $dataset, which are flextable internals. The
-# alternative was a per-table data builder plus a duplicate copy of every column
-# title -- two definitions of each header, i.e. the exact duplication that put
-# figure/ and figures/ out of sync. Internals it is; if a flextable upgrade
-# breaks this, the stop() below says so plainly rather than writing junk.
+# Reads flextable internals ($header/$body/$footer $dataset). The alternative was
+# a duplicate copy of every column title, which is how exhibits drift. If a
+# flextable upgrade breaks this, the stop() below says so rather than writing
+# junk.
 .ft_grid <- function(ft, nm) {
   part <- function(p) {
     d <- ft[[p]]$dataset

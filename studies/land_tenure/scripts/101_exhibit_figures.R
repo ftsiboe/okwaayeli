@@ -5,14 +5,10 @@
 # trend_gap() inline lookups.
 #
 # Paths come from study_dir_figures() / study_dir_figure_data() /
-# study_dir_tables(), never from a literal next to wd$output. land_tenure is on
-# the "v2" layout: plots and their data share output/figures/, table data goes to
-# output/tables/. The six sibling studies remain on "legacy" (figure/ +
-# figure_data/) and the same accessors resolve that for them.
-#
-# No Excel as of 2026-07-15. This script used to load and re-save
-# output/land_tenure_results.xlsx twice; both writes were dead (nothing read the
-# sheets back) but could still abort the stage. See the notes at each site.
+# study_dir_tables() -- never a literal next to wd$output. land_tenure is on the
+# "v2" layout (plots and their data share output/figures/, table data goes to
+# output/tables/); the sibling studies are on "legacy" and the same accessors
+# resolve it for them. See ?study_dirs.
 #
 # The figure builders (ers_theme, tab_main_specification, fig_heterogeneity00,
 # fig_robustness, fig_input_te, fig_covariate_balance, fig_distribution) are now
@@ -31,14 +27,10 @@ study_environment <- readRDS(
   file.path(paste0("studies/", project_name, "/data"),
             paste0(project_name,"_study_environment.rds")))
 
-# Repair wd in memory and create the folders. The .rds carries whatever wd
-# study_setup() built on the run that wrote it -- so without this, a stage picks
-# up the layout as of the last MATCHING run, and a directory that has since been
-# renamed or removed fails inside gzfile() with no mention of which directory or
-# which study. study_dirs() recomputes the paths from project_name.
-#
-# layout = "v2" is passed explicitly rather than read from the .rds so this
-# works before 001 next re-runs and bakes it in.
+# Repair wd in memory and create the folders. wd is a snapshot frozen into the
+# .rds by whichever run last called study_setup(), so without this a stage uses
+# the layout as of the last MATCHING run. layout is passed explicitly so this
+# works before 001 next re-runs and bakes it in. See ?study_dirs.
 study_environment <- study_dirs(study_environment, layout = "v2")
 
 mspecs_optimal <- study_environment$match_specification_optimal
@@ -53,15 +45,8 @@ res_list <- c(file.path(study_environment$wd$estimations,"CropID_Pooled_OwnLnd_T
 
 res <- tab_main_specification(res_list=res_list,study_environment=study_environment)
 
-# This is Table S5's source (mean MSF results). It was written to the "msf" sheet
-# of land_tenure_results.xlsx until 2026-07-15, where nothing read it back: the
-# workbook's display sheets consumed it to produce the v001 draft, and those
-# sheets now cache #N/A. The openxlsx round trip was therefore write-only, but
-# still able to fail the stage -- loadWorkbook() errors if the file is missing
-# and writeData() errors if the sheet is not there.
-#
-# Emitted as CSV instead. ft_tableS5() still reads the curated data/tables/
-# extract; wiring it to this file is what retires the last frozen table.
+# The stacked MSF results behind Table S5, emitted for inspection. ft_tableS5()
+# builds independently from sf_estm, so nothing reads this back.
 write.csv(res, file.path(study_dir_tables(study_environment), "msf_main_specification.csv"),
           row.names = FALSE)
 
@@ -83,9 +68,8 @@ fig[["genderAge"]] <- fig[["genderAge"]] + theme(axis.text.x = element_text(size
 ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_crop_region.png"), fig[["crop_region"]],dpi = 600,width = 8, height = 5)
 ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_genderAge.png"), fig[["genderAge"]],dpi = 600,width = 8, height = 5)
 
-# The acquisition / sharecropping slice of the heterogeneity figure's own input.
-# Was the "effects_by_right_share" sheet; write-only there too, and Table 4 now
-# reads these gaps live from disagscors rather than via the workbook.
+# The acquisition / sharecropping slice of the heterogeneity figure's input.
+# Emitted for inspection; Table 4 reads these gaps from disagscors itself.
 res <- res[(res$disasg %in% c("LndAq","ShrCrpCat")),c("disasg","level","input","Estimate","Estimate.sd","jack_pv")]
 write.csv(res, file.path(study_dir_figure_data(study_environment),"effects_by_right_share.csv"),
           row.names = FALSE)

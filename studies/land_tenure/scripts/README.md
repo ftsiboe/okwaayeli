@@ -13,43 +13,52 @@ number.**
 
 | Script | Reads | Writes |
 |---|---|---|
-| `000_initialize.R` | | |
+| `000_initialize.R` | | the directory tree (`study_dirs()`) |
 | `001_DATA_land_tenure_study.R` | harmonized releases | `study_raw_data` |
 | `002_MATCHING_land_tenure_study.R` | `study_raw_data` | `estimation_data`, matches |
 | `003_TREATMENT_land_tenure_study.R` | `estimation_data` | `te_summary.rds` |
 | `004_MSF_land_tenure_study.R` | `estimation_data` | `output/estimations/` (HPC) |
 | `100_exhibit_descriptive_stats.R` | `study_raw_data` | `data/descriptive_exhibits.rds` |
-| `101_exhibit_figures.R` | `output/estimations/` | `output/figure/`, `output/figure_data/` |
+| `101_exhibit_figures.R` | `output/estimations/` | `output/figures/`, `output/tables/` |
+| `102_exhibit_table_workbook.R` | the table builders | `output/tables/land_tenure_tables.xlsx` |
 | `301_article_objects.R` | estimations, environment | `narrative/article_objects.json` |
 | `302_render_article.R` | | `.docx` / `.html` |
-| `run_article.R` | | wraps `article_helpers` → 301 → 302 |
+| `run_article.R` | | the entry point; stage levers |
 
 ## Libraries — unnumbered, sourced by whatever needs them
 
 | File | Provides | Sourced by |
 |---|---|---|
 | `article_helpers.R` | paths, `fmt_*`, `assert_present()` | 301, 302, the Rmd |
-| `exhibit_helpers_tables.R` | flextable builders, `tbl_num()`, `tbl_pct()` | the Rmd |
+| `exhibit_helpers_tables.R` | flextable builders, `tbl_num()`, `tbl_pct()` | the Rmd, 102 |
 
-These define things; they do not do things. They have no position in a sequence,
-so a number on them is a false promise — and it invites exactly the wrong
-question. `110_exhibit_tables.R` and `300_article_helpers.R` were both numbered
-until 2026-07-15, and both were repeatedly asked "when do I run this?" The answer
-was always "you don't."
+These define things; they do not do things. A number on them is a false promise
+and invites the wrong question — both were numbered once, and both were
+repeatedly asked "when do I run this?" The answer was always "you don't."
 
-The tell: **if `run_article.R` or a runner would `source()` it and nothing would
-happen, it is a library.**
+The tell: **if a runner would `source()` it and nothing would happen, it is a
+library.**
 
 ## Run order
 
     001 → 002 → 003 → 004        estimation
-    100 → 101                    exhibit caches
-    run_article.R                301 → 302; the Rmd sources both libraries
+    100 → 101 → 102              exhibit caches and deliverables
+    301 → 302                    the article
 
-`run_article.R` does **not** source `100`/`101`. `100` fits a model per
-(treatment × crop × outcome) and `101` re-reads every estimation object; neither
-belongs in a render. Both libraries error with the name of the script to run if a
-cache is missing.
+`run_article.R` drives all of it behind stage levers. Set a stage `TRUE` to run
+it; the guards there explain the couplings that are not obvious (chiefly that
+`DATA` without `MATCHING` strips `estimation_data` from the environment).
+
+## Where exhibits come from
+
+Every table and figure is built from the pipeline. The single exception is
+`data/tables/tableS0.csv`, which documents how each GLSS round asked the tenure
+questions — transcribed from the questionnaires, not computable from any object.
+It is the only file in `data/tables/`.
+
+Stata's remaining job is upstream: `data-raw/okwaayeli_DATA.do` harmonizes the
+raw GLSS files. Nothing downstream of `001` touches Stata or Excel, except `102`,
+which *writes* an .xlsx as a deliverable and reads nothing back.
 
 ## Adding a file
 
@@ -59,19 +68,8 @@ cache is missing.
    `<domain>_helpers[_<what>].R`, no number.
 
 Pick the band by **contract, not subject**: a script that fits a model is `1##`
-even if it feels like a figure. Gaps are deliberate —
-`102_exhibit_robustness.R` slots in without renumbering.
+even if it feels like a figure. Gaps are deliberate — `103_exhibit_*.R` slots in
+without renumbering.
 
-## History
-
-`100_exhibits.do` (Stata) → `100_exhibit_descriptive_stats.R`; the workbook
-round-trip is gone. `300_article_helpers.R` → `article_helpers.R`,
-`305_tables.R` → `110_exhibit_tables.R` → `exhibit_helpers_tables.R`.
-`resource_extraction` is still on the old layout; the two studies will disagree
-until it is ported.
-
-## Retired
-
-`old-codes/` holds scripts nothing reads. See its README for why each was retired;
-`100_exhibits.do` in particular is worth reading before trusting any Stata-era
-workbook.
+`resource_extraction` is still on the pre-2026-07-15 layout (Stata workbook,
+numbered libraries); the two studies will disagree until it is ported.

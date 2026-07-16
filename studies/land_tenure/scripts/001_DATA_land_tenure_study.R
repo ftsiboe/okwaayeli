@@ -27,22 +27,16 @@ run_only_for(id = 5, allowed_jobnames = "run_all")
 # ---- Define study name and initialize study environment
 project_name <- "land_tenure"
 
-# study_setup():
-#   - creates / verifies directories,
-#   - defines paths (e.g., wd$home, wd$data, wd$output),
-#   - and returns a list-like "study_environment" object
-#     containing configuration for this specific project.
+# study_setup() creates the directory tree and returns the study_environment
+# (paths in $wd, seed, layout).
 #
-# layout = "v2": plots and their underlying data share output/figures/, table
-# data goes to output/tables/. The six sibling studies are still on "legacy"
-# (output/figure/ + output/figure_data/), which is why the layout is a parameter
-# rather than a rename. Reach for study_dir_figures() / study_dir_figure_data()
-# / study_dir_tables() downstream -- never a "figure" literal next to wd$output,
-# which is the duplication that made this a breaking change in the first place.
+# layout = "v2": plots and their data share output/figures/, table data goes to
+# output/tables/. Siblings are on "legacy" (figure/ + figure_data/), hence a
+# parameter rather than a rename. Downstream, reach for study_dir_figures() /
+# study_dir_tables(), never a directory literal next to wd$output.
 #
-# NB wd is written into the .rds below and is therefore a SNAPSHOT. Stages that
-# readRDS() it should call study_dirs() to recompute the paths and create the
-# folders; see the note in ?study_dirs.
+# NB wd is written into the .rds below and is a SNAPSHOT -- stages that readRDS()
+# it should call study_dirs() to recompute paths. See ?study_dirs.
 study_environment <- study_setup(project_name = project_name, layout = "v2")
 
 # ---- Load harmonized household / farmer-level data

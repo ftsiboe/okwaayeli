@@ -1,23 +1,17 @@
 # 100_exhibit_descriptive_stats.R
-# Compute the descriptive exhibits (Tables 1, 2 and S1-S4) from the analysis data
-# and cache them. Replaces the Stata half of 100_exhibits.do and the
-# land_tenure_results.xlsx round trip.
+# Compute Tables 1, 2 and S1-S4 from study_raw_data and cache them to
+# data/descriptive_exhibits.rds, which exhibit_helpers_tables.R reads at knit
+# time.
 #
-# WHY A SEPARATE STEP. The engine fits a model per (treatment x crop x outcome):
-# ~250s for the pooled sample alone, longer with crops. That cannot run inside
-# every knit, so this mirrors what 100_exhibits.do did -- compute when the data
-# changes, cache, and let 110_exhibit_tables.R read the cache.
+# WHY A SEPARATE STEP: the engine fits a model per (treatment x crop x outcome)
+# -- ~250s for the pooled sample alone, longer with crops. Too slow to run
+# inside every knit, hence compute-once-and-cache.
 #
-#   001 -> 002            build study_raw_data / estimation_data
-#   304 (this file)       -> data/descriptive_exhibits.rds
-#   run_article.R         300 -> 301 -> 302, reads the cache
+# The engine (R/descriptive-exhibits-core.R) is validated against the Stata
+# workbooks it replaced: resource_extraction (14,405 assertions) and land_tenure
+# (678). See tests/testthat/test-descriptive-exhibits-*.R.
 #
-# The engine is validated against BOTH studies' Stata workbooks:
-# resource_extraction (14,405 assertions; 7 treatments x 28 crops, both engines)
-# and land_tenure (678; two families in one table, the wave_diff trend flavor).
-# See tests/testthat/test-descriptive-exhibits-*.R.
-#
-# Run from the repo root:  Rscript studies/land_tenure/scripts/100_exhibit_descriptive_stats.R
+# Run from the repo root.
 
 tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
   rm(list = ls(all = TRUE)); gc()
@@ -34,9 +28,9 @@ d <- readRDS(SE_RDS)$study_raw_data
 message("study_raw_data: ", nrow(d), " rows")
 
 # ---- Table 1 -----------------------------------------------------------------
-# Two models, one table. 100_exhibits.do line 51 is `reg` over the continuous
-# outcomes; line 103 is `logit` over the binary ones. The sheet recorded no
-# distinction between them; the spec grid does.
+# Two models, one table: OLS over the continuous outcomes, logit over the binary
+# ones. The Stata workbook this replaced recorded no distinction between them;
+# the spec grid does, via `families`.
 CONT <- c("Yield", "Area", "SeedKg", "HHLaborAE", "HirdHr", "FertKg",
           "PestLt", "AgeYr", "YerEdu", "HHSizeAE", "Depend", "CrpMix")
 BIN  <- c("Female", "EqipMech", "Credit", "Extension", "EqipIrig")
@@ -58,41 +52,26 @@ message("Table 1: ", nrow(spec), " specifications ...")
 t1 <- draw_descriptive_summary(spec, d, study = "land_tenure")
 
 # ---- Tables 2 and S1-S4 ------------------------------------------------------
-# Restricted to GLSS6/GLSS7. This is a COMPARABILITY restriction, not an
-# availability one.
+# GLSS6/GLSS7 only. This is a COMPARABILITY restriction, not an availability
+# one: all five rounds administer all four items (see data/tables/tableS0.csv,
+# transcribed from the questionnaires). Per S0:
 #
-# The comment here used to say "the tenure detail modules are only administered
-# in GLSS6/GLSS7". That is false, and data/tables/tableS0.csv -- built from the
-# questionnaires and printed in the same appendix -- contradicts it: all five
-# rounds carry all four items (GLSS3 q6/q7/q9/q11; GLSS4-GLSS7 q5/q6/q8/q10).
-# Non-missingness confirms it: LndOwn and ShrCrpCat are populated in every wave,
-# LndRgt and LndAq in every wave bar a handful of GLSS3/GLSS5 refusals.
+#   LndAq      no purchase option before GLSS5; "Inherited" exists only in GLSS7
+#              and is folded into kinship, where it is the larger component
+#   ShrCrpCat  GLSS5's coded fractions are a narrower set than GLSS6/GLSS7's
+#   GLSS3/4    1984 frame; excluded from every temporal claim (see 001)
 #
-# The real reasons to stop at GLSS6/GLSS7, per tableS0.csv:
-#   LndAq      No purchase option before GLSS5. "Inherited" exists only in
-#              GLSS7 and is folded into kinship, where it is the LARGER
-#              component (4,699 vs 2,037 plots) -- so kinship is not
-#              wave-comparable, as S0 states.
-#   ShrCrpCat  GLSS5's coded fractions are a narrower set (no 3/4, 1/10, 1/20
-#              or 0), so the bins do not line up with GLSS6/GLSS7.
-#   GLSS3/4    Fielded on the 1984 frame, which GSS itself calls inadequate;
-#              excluded from every temporal claim in this study (see 001).
+# LndOwn and LndRgt are identically coded in all five rounds and could span
+# GLSS5-GLSS7 alone. They are held here anyway: Table 2 puts all four variables
+# under one pooled column, so a per-variable window would give it a header true
+# of only half its rows, and would let Table 2 and S1/S3 report different shares
+# for the same variable.
 #
-# LndOwn and LndRgt ARE identically coded in all five rounds and could span
-# GLSS5-GLSS7 on their own. They are held at GLSS6/GLSS7 anyway so that Table 2
-# -- which puts all four variables in one table under a single pooled column --
-# means one thing on every row, and so that Table 2 and Tables S1/S3 cannot
-# report different shares for the same variable. A per-variable window would buy
-# one extra wave for two variables at the cost of a column header that is true
-# of only half its rows.
+# NB 001's study_data$TrendSample (GLSS5-GLSS7) governs the EFFICIENCY trend,
+# not this window. The descriptives are deliberately narrower.
 #
-# Land's trend is the wave_diff flavor: logit on i.Survey, then
-# nlcom (b[GLSS6] - b[GLSS7]) * 100 -- percentage POINTS, earlier minus later.
-#
-# NB 001 defines study_data$TrendSample as GLSS5-GLSS7 ("waves used for temporal
-# claims"). The descriptives do not use it and are narrower, for the reasons
-# above. TrendSample governs the efficiency trend (Figure 2, which spans the
-# 2000->2010 re-basing); it is not the descriptive window.
+# Trend flavor is wave_diff: logit on i.Survey, then nlcom (GLSS6 - GLSS7) * 100
+# -- percentage POINTS, earlier minus later.
 DESC_WAVES <- c("GLSS6", "GLSS7")
 dt <- d[as.character(d$Surveyx) %in% DESC_WAVES, , drop = FALSE]
 for (v in c("LndOwn", "LndRgt", "LndAq", "ShrCrpCat"))

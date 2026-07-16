@@ -1,39 +1,31 @@
 # exhibit_helpers_tables.R
-# Build manuscript tables as flextable objects.
+# Build the manuscript tables as flextable objects.
 #
-# A LIBRARY, NOT A STEP: it defines builders and has no position in a sequence,
-# which is why it carries no number. Sourced by narrative/land-tenure.Rmd at knit
-# time. See scripts/README.md.
+# A LIBRARY, NOT A STEP: no position in a sequence, hence no number. Sourced by
+# narrative/land-tenure.Rmd at knit time and by 102. See scripts/README.md.
 #
-# Architecture ported from studies/resource_extraction/scripts/305_tables.R,
-# which is still on the pre-2026-07-15 layout (Stata workbook, numbered library).
+# SOURCES
+#   Tables 1, 2, S1-S4   data/descriptive_exhibits.rds        (100)
+#   Table 3              sf_estm / el_mean / ef_mean, OwnLnd
+#   Table 4              ef_mean (LndOwn, LndRgt) + disagscors (OwnLnd)
+#   Table S5             sf_estm, production + risk function
+#   Table S6             Table 4's blocks, unmatched, per wave
+#   Table S7             sf_estm, Zu_ (inefficiency)
+#   Table S0             data/tables/tableS0.csv -- curated permanently, a
+#                        questionnaire transcription, not computable
 #
-# SOURCES, as of 2026-07-16:
-#   Tables 1, 2, S1-S4   live  -- data/descriptive_exhibits.rds (100_*.R)
-#   Table 3              live  -- output/estimations/*_OwnLnd_*.rds
-#   Table 4              live  -- *_OwnLnd_*, *_LndOwn_*, *_LndRgt_*.rds
-#   Table S5             live  -- sf_estm production + risk function coefficients
-#   Table S6             live  -- same as Table 4, unmatched sample, per wave
-#   Table S7             live  -- sf_estm Zu_ (inefficiency) coefficients
-#   Table S0             curated, permanently -- questionnaire transcription,
-#                              not computable from any object
+# tableS0.csv is the ONLY file in data/tables/ that anything reads.
 #
-# data/tables/ therefore holds exactly one file that is read: tableS0.csv. The
-# rest are orphaned; scripts/old-codes/retire_curated_tables.R deletes them once
-# a clean render confirms the live path.
+# NO FALLBACKS. Every builder errors rather than degrading to a stored value.
+# Tables 3 and 4 once fell back to a frozen CSV on a keying error: the knit
+# "succeeded" while printing last year's numbers beside prose citing this
+# year's. A failed render is the cheaper failure.
 #
-# NO FALLBACKS. Tables 3 and 4 each used to wrap their estimation-object build
-# in tryCatch() and drop back to data/tables/table{3,4}.csv on error. Both are
-# gone (2026-07-15). The fallback printed a message and carried on, so a keying
-# break silently downgraded the table to the v001 draft's numbers while the knit
-# still reported success -- the prose beside it would then cite a live figure the
-# table did not print. A failed render is the cheaper failure.
-#
-# If a keying assumption breaks, these now stop. That is the point.
-#
-# Keying reminder (see 301): ownership group is TCHLvel
-#   "0" = no ownership, "1" = some ownership, "National", "Meta".
-# Table 4 uses the MATCHED sample (opt_sample).
+# KEYING. Ownership group is TCHLvel, not Tech -- sf_estm carries both for the
+# same concept and they disagree (Tech 1 == TCHLvel "0" == non-owners). Key on
+# TCHLvel:
+#   "0" = no ownership, "1" = some ownership, "National" = naive, "Meta"
+# Tables 4 and S6 differ only by sample: matched (opt_sample) vs unmatched.
 .ft_ok <- tryCatch({ loadNamespace("flextable"); TRUE },
                    error = function(e) conditionMessage(e))
 if (!isTRUE(.ft_ok))
@@ -61,25 +53,13 @@ set_flextable_defaults(font.family = "Times New Roman")
 }
 
 # ---- Memoization --------------------------------------------------------------
-# Everything below is a pure function of files on disk that do not change during
-# a render, so each distinct result is computed once.
+# The Rmd makes 138 tbl_num()/tbl_pct() calls resolving to 7 distinct tables,
+# and each build reads estimation objects that are ~50 MB compressed. Uncached,
+# the 27 table4 lookups alone re-read 137 MB apiece -- gigabytes of gzip to
+# produce numbers that cannot change mid-render.
 #
-# WHY THIS IS NOT PREMATURE. The Rmd makes 138 tbl_num()/tbl_pct() calls, and
-# each one goes through .live_table() -> a data builder. Without a cache the 27
-# tbl_num("table4.csv", ...) calls in sections 1, 5 and 6 each re-run
-# .tbl4_data(), which reads THREE estimation objects totalling ~137 MB --
-# compressed, so every read is a full gzip decompress. That is ~3.7 GB of
-# decompression to produce numbers that cannot change mid-render. ft_tableS6()
-# is worse per build: .tenure_rows() reads an object per wave per tag, eight
-# reads of ~44 MB each.
-#
-# This cost arrived with the fix that routed tbl_num() through .live_table() so
-# prose and exhibits share one build. That fix is right; paying for it 138 times
-# was an oversight.
-#
-# The cache lives for the session. Stale results are not a risk during a render
-# -- 004 cannot rewrite the estimations while knitr is reading them -- but in an
-# interactive session after re-running a stage, call exhibit_cache_clear().
+# Session-lived. Nothing can rewrite the estimations while knitr reads them, but
+# in an interactive session after re-running a stage, call exhibit_cache_clear().
 .CACHE <- new.env(parent = emptyenv())
 
 .memo <- function(key, f) {
@@ -96,14 +76,9 @@ exhibit_cache_clear <- function() {
 
 .EST <- file.path(.STUDY_ROOT, "output", "estimations")
 
-# Cached: ~50 MB compressed each, and Table 3, Table 4, S5, S6 and S7 all want
-# the same three files.
-#
-# Only the four summary components are kept. The estimation objects also carry
-# the score-level frames (ef_samp, ef_dist -- one row per farmer per draw), which
-# dwarf everything else and which no table here touches; fig_distribution() reads
-# them in 101 from the *_fullset* file instead. Caching the whole object would
-# hold hundreds of MB per tag to serve four small data frames.
+# Keep only the four summary components. The objects also carry ef_samp/ef_dist
+# (one row per farmer per draw), which dwarf everything else and which no table
+# here touches -- fig_distribution() reads those from the *_fullset* file in 101.
 .EST_PARTS <- c("ef_mean", "el_mean", "sf_estm", "disagscors")
 
 .read_est <- function(tag)
@@ -133,8 +108,7 @@ exhibit_cache_clear <- function() {
 }
 
 # ---- Curated CSVs -----------------------------------------------------------
-# Only tableS0.csv is still read. Everything else in data/tables/ is orphaned;
-# see the SOURCES block above and old-codes/retire_curated_tables.R.
+# tableS0.csv is the only file here, and the only one read. See SOURCES above.
 .TBL_DIR <- file.path(.STUDY_ROOT, "data", "tables")
 
 .read_tbl <- function(nm) {
@@ -188,31 +162,15 @@ exhibit_cache_clear <- function() {
 }
 
 # ---- Descriptive layer --------------------------------------------------------
-# Tables 1, 2 and S1-S4 come from scripts/100_exhibit_descriptive_stats.R, which
-# computes them in R from study_raw_data and caches them here.
+# Tables 1, 2 and S1-S4 come from 100_exhibit_descriptive_stats.R, which computes
+# them in R from study_raw_data. The engine is validated against the Stata
+# workbooks it replaced -- ~15,000 assertions across both studies; see
+# tests/testthat/test-descriptive-exhibits-*.R.
 #
-# This block used to describe reading output/land_tenure_results.xlsx, written by
-# 100_exhibits.do -- the tidy `means` / `land_tenure` sheets, which display sheets
-# were real, which columns were formula spill, and the `roweq` collision that let
-# a lookup return the ownership share where the Female mean belonged. None of it
-# applies: that path is gone, and so is the workbook.
-#
-# NB use .STUDY_ROOT, NOT the constants in article_helpers.R. Those are
-# repo-root-relative, but knitr sets the working directory to narrative/ during
-# the render, so they resolve to nothing there. .STUDY_ROOT is probed above for
-# exactly this reason.
+# NB use .STUDY_ROOT, NOT article_helpers.R's constants: those are
+# repo-root-relative, and knitr's working directory is narrative/ during a
+# render. .STUDY_ROOT is probed above for exactly this reason.
 .DESC <- file.path(.STUDY_ROOT, "data", "descriptive_exhibits.rds")
-
-# Tables 1, 2 and S1-S4 come from scripts/100_exhibit_descriptive_stats.R, which
-# computes them in R from study_raw_data. Stata and Excel are out of this path:
-# no land_tenure_results.xlsx, and none of the failure modes that came with it --
-# the `mat roweq A = Female` collision, `cap{ }` writing collapsed fits as
-# estimates, or `export excel ... sheetmodify` leaving stale rows behind.
-#
-# The engine is validated against both studies' Stata workbooks: ~15,000
-# assertions across resource_extraction (7 treatments x 28 crops, both engines)
-# and land_tenure (two families in one table, the wave_diff trend).
-# See tests/testthat/test-descriptive-exhibits-*.R.
 .desc <- local({
   cache <- NULL
   function() {
@@ -649,19 +607,15 @@ ft_table3 <- function() {
 .T4_STAT_DISA <- "mean"    # acquisition / sharecrop  (disagscors; only option)
 
 # Table 4 as DATA: label + tgr/te/mte cells, panel headers as rows with empty
-# cells. ft_table4() formats this; .live_table("table4") serves it to tbl_num()
-# so the inline numbers in sections 1, 5 and 6 come from the same build as the
-# printed table. Until 2026-07-16 they did not: table4 was absent from
-# .LIVE_IDS, so 27 tbl_num("table4.csv", ...) calls read the frozen v001 CSV
-# while the exhibit beside them printed live estimates. Nothing errored -- the
-# two numbers merely disagreed.
+# cells. ft_table4() formats this; .live_table("table4") serves the same build
+# to tbl_num(), so the 27 inline citations in sections 1, 5 and 6 cannot drift
+# from the printed table.
 # Category labels per data-raw/okwaayeli_DATA.do (lab define LndOwn / LndRgt /
 # LndAq / ShrCrpCat). Level 1 is the reference in the two frontier blocks and
 # therefore has no row.
 #
-# File scope, not a closure inside .tbl4_data(): Table S6 is the same blocks on
-# the unmatched sample, and a second copy of these strings is how the two tables
-# would drift apart.
+# File scope, not a closure: Table S6 reuses these, and a second copy is how the
+# two tables would drift apart.
 .T4_LAB <- list(
   LndOwn = c("2" = "Owned without documentation", "3" = "Owned with documentation"),
   LndRgt = c("2" = "Can be used as collateral security", "3" = "Can be sold",
@@ -1013,23 +967,20 @@ ft_tableS4 <- function()
   list(lab = "Intercept",      cf = "Zu_(Intercept)")
 )
 
-# Column keying. This is .T3COLS minus the `gap` column, and it is VERIFIED
-# rather than inferred: for CoefName "lnI1" at Survey GLSS0 / Restricted the
-# object gives
+# Column keying: .T3COLS minus the `gap` column. Verified against the data, not
+# inferred -- for CoefName "lnI1" at GLSS0/Restricted the five columns take five
+# distinct values, which pins the mapping:
 #
-#   TCHLvel   sample               Estimate     draft S5 prints
-#   National  unmatched            0.7560089    0.756***  (naive)
-#   0         unmatched            0.7212759    0.721***  (no land ownership)
-#   1         unmatched            0.7797309    0.780***  (some land ownership)
-#   Meta      robust_mahalanobis   0.7267899    0.727***  (matched)
-#   Meta      unmatched            0.7292953    0.729***  (unmatched)
+#   TCHLvel   sample               Estimate
+#   National  unmatched            0.7560089   naive
+#   0         unmatched            0.7212759   no land ownership
+#   1         unmatched            0.7797309   some land ownership
+#   Meta      robust_mahalanobis   0.7267899   matched
+#   Meta      unmatched            0.7292953   unmatched
 #
-# all five distinct, so the mapping is pinned by the data. Note sf_estm carries
-# BOTH `Tech` (-999/1/2/999) and `TCHLvel` (National/0/1/Meta) for the same
-# concept: Tech 1 is TCHLvel "0", i.e. the NON-owners. Keying on Tech and
-# assuming 1 = first listed column would transpose "no ownership" and "some
-# ownership" -- every cell populated, every star right, the table saying the
-# opposite. Key on TCHLvel.
+# Key on TCHLvel, never Tech. Tech 1 is TCHLvel "0" (non-owners), so keying on
+# Tech and assuming 1 = first column transposes "no" and "some ownership" --
+# every cell populated, every star right, the table saying the opposite.
 .S57_COLS <- list(
   naive  = list(samp = "unmatched", lv = "National"),
   none   = list(samp = "unmatched", lv = "0"),
@@ -1045,15 +996,10 @@ ft_tableS4 <- function()
   .cell(b$Estimate[1], b$Estimate.sd[1], b$jack_pv[1])
 }
 
-# Coefficients the model estimates that this table does not print.
-#
-# As of 2026-07-16 the answer should be NONE: the draft's three omissions
-# (Area_Palm, Area_Pepper in S5; Zu_factor(Credit)1 in S7) are now printed. So
-# this has stopped being a report of known gaps and become a DRIFT DETECTOR -- if
-# it names anything, the frontier gained a regressor and .S5_ROWS/.S7_ROWS have
-# not kept up, which means the table is quietly incomplete. That is precisely how
-# the draft lost Palm and Pepper: a coefficient appeared and no one noticed the
-# display had not followed.
+# Drift detector: coefficients the model estimates that this table does not
+# print. Should name NOTHING. If it does, the frontier gained a regressor and
+# .S5_ROWS/.S7_ROWS have not kept up -- which is how the v001 draft silently
+# lost Area_Palm, Area_Pepper and Zu_factor(Credit)1.
 .s57_report_omitted <- function(sf, rowspec, pattern, label) {
   mapped <- vapply(Filter(function(r) !is.null(r$cf), rowspec),
                    function(r) r$cf, character(1))

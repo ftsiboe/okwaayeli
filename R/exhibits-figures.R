@@ -298,17 +298,9 @@ fig_heterogeneity00 <- function(res, y_title, colset = c("orange", "darkgreen", 
 #' @export
 fig_robustness <- function(y_title, res_list, colset = c("orange", "darkgreen"),
                            study_environment) {
-  # Resolve from the argument, not from the caller's workspace.
-  #
-  # This function referred to a free `mspecs_optimal` six times below. That
-  # worked only while it was source()d from data-raw/scripts/figures_and_tables.R
-  # into the global environment, where the study script's own `mspecs_optimal`
-  # happened to be visible by lexical scoping. Packaging it into R/ (2026-07-15)
-  # moved its enclosure to the namespace, and run_article.R's
-  # source(local = new.env(...)) put the script's variables somewhere the
-  # namespace cannot see either -- so the lookup failed with "object
-  # 'mspecs_optimal' not found". Every other builder here already took it from
-  # study_environment; this one was the holdout.
+  # Resolve from the argument, never the caller's workspace. This referred to a
+  # free `mspecs_optimal` six times below, which only worked while the file was
+  # source()d into globalenv; packaging it broke the lookup.
   mspecs_optimal <- study_environment$match_specification_optimal
   if (is.null(mspecs_optimal))
     stop("fig_robustness(): study_environment$match_specification_optimal is ",

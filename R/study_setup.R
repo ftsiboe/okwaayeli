@@ -1,14 +1,9 @@
 # Study scaffolding: directory layouts, path resolution, environment setup.
 #
-# ONE LIST, ONE PLACE. Until 2026-07-16 the directory names lived in three
-# places that drifted apart: study_setup()'s `local_directories` default,
-# 000_initialize.R's own vector, and ~40 literals pasted next to `wd$output`
-# across seven studies. land_tenure's 000 was migrated to figures/ + tables/
-# while study_setup() went on creating figure/ + figure_data/, so the tree
-# looked correct and every write still went to the old names -- surfacing only
-# as an unattributable "cannot open the connection" from gzfile().
-#
-# Everything below derives from .study_layouts(). Add a directory there.
+# ONE LIST, ONE PLACE -- everything here derives from .study_layouts(). Add a
+# directory there and nowhere else. The names previously lived in three places
+# (this file, each study's 000, and ~40 literals next to wd$output); they
+# drifted, and the symptom was an unattributable gzfile() failure.
 
 #' Study output layouts
 #'
@@ -60,18 +55,15 @@
 #'
 #' @section Why this exists:
 #' `wd` is written into `<project>_study_environment.rds` by `study_setup()`,
-#' which only `000`/`001` call. Every later stage reads that `.rds` -- so `wd`
-#' is a *frozen snapshot*, and a directory added to the layout does not reach a
-#' stage until the environment is regenerated, which for most studies means
-#' re-running the expensive matching step. Worse, a stage reading an older
-#' `.rds` gets `NULL` for a new entry, and `file.path(NULL, "x.rds")` returns
-#' `character(0)` rather than erroring -- which surfaces much later, and far
-#' from its cause, as `gzfile()` failing to open a connection.
+#' which only `000`/`001` call, so it is a *frozen snapshot*: a directory added
+#' to the layout does not reach later stages until the environment is
+#' regenerated -- for most studies, an expensive re-run of matching. A stage
+#' reading an older `.rds` gets `NULL` for a new entry, and
+#' `file.path(NULL, "x.rds")` returns `character(0)` rather than erroring, which
+#' surfaces far from its cause as a `gzfile()` connection failure.
 #'
-#' Calling `study_dirs()` after `readRDS()` makes `wd` advisory rather than
-#' authoritative: paths are recomputed from `project_name`, missing entries are
-#' filled, and the folders are created. A stage then cannot fail because an
-#' upstream run predates a rename.
+#' Calling `study_dirs()` after `readRDS()` makes `wd` advisory: paths are
+#' recomputed from `project_name`, missing entries filled, folders created.
 #'
 #' @param study_environment A study environment from `study_setup()`, or `NULL`
 #'   to build a fresh `wd` from `project_name` alone.
