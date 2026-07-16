@@ -422,7 +422,13 @@ covariate_balance <- function(
   
   # Summarize the balance statistics by method, distance, link, and sample.
   rate <- doBy::summaryBy(rate + Diff + V_Ratio + KS ~ ARRAY + method + distance + link + sample, data = rate, FUN = mean, na.rm = T)
-  
+
+  # doBy::summaryBy() appends the function name to each response column
+  # (rate -> rate.mean, Diff -> Diff.mean, etc.). Strip that suffix so the
+  # composite column is addressable as `rate` again; without this, the order()
+  # call below referenced a non-existent `rate$rate` and errored.
+  names(rate) <- sub("\\.mean$", "", names(rate))
+
   # Order the rate table by the composite balance rate.
   rate <- rate[order(-rate$rate, rate$ARRAY),]
   
@@ -586,9 +592,14 @@ treatment_effect_calculation <- function(
   md <- dplyr::inner_join(data, md, by = "unique_identifier")
   
   # 3. Normalize key variables by area (e.g, per-hectare metrics)
-  if(normalize){
+  # NOTE: cache the denominator BEFORE the loop. Dividing each outcome by
+  # md[, outcome_variables[1]] inside the loop overwrote that column to all 1s
+  # on the first iteration, so every subsequent outcome was divided by 1
+  # (i.e. left un-normalized). Using isTRUE() also guards the default NULL.
+  if (isTRUE(normalize)) {
+    denom <- md[[outcome_variables[1]]]
     for (oc in outcome_variables) {
-      md[,oc] <- md[,oc]/md[,outcome_variables[1]]
+      md[[oc]] <- md[[oc]] / denom
     }
   }
   
