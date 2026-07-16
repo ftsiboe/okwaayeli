@@ -5,6 +5,10 @@
 .DS_Store
 .Renviron
 
+# Per-study agent prompts: working notes for the next session on that study,
+# not part of the published repo.
+studies/**/AGENT_PROMPT.md
+
 # Study outputs (large; download from GitHub release instead).
 studies/**/*.dta
 studies/**/*.rds
