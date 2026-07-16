@@ -113,6 +113,183 @@ read_exhibit_sheet <- function(path, sheet = "means",
   d
 }
 
+#' Translate a Stata Exhibit Sheet into the Engine Schema
+#'
+#' @description
+#' Converts a sheet from [read_exhibit_sheet()] into the same long, keyed frame
+#' [draw_descriptive_summary()] emits, so that the Stata workbook and the R
+#' engine speak one vocabulary and every downstream table builder can consume
+#' either.
+#'
+#' @details
+#' The workbook addresses results by matrix position; the engine keys them. The
+#' mapping:
+#'
+#' \tabular{ll}{
+#'   `Mean_<tag>0` / `Mean_<tag>1` / `Mean_Pooled` \tab `statistic = "mean"`, `wave = "all"` \cr
+#'   `GLSS6_<tag>0` (etc.) \tab `statistic = "mean"`, `wave = "GLSS6"` \cr
+#'   `Trend_<tag>0` (etc.) \tab `statistic = "trend_pct"`, `wave = "all"` \cr
+#'   `CATDif` \tab `statistic = "cat_diff"`, `group = NA` \cr
+#'   `TrendDif` \tab `statistic = "trend_diff"`, `group = NA`
+#' }
+#'
+#' Rows that carry no result -- `<wave>_miss`, `r1`, `_` -- are dropped.
+#'
+#' @section Why `sd` and `n` are dropped on the model rows:
+#' The do-files build the model rows from `mat A = r(table)'`, whose first eight
+#' columns are `b, se, t, p, ll, ul, df, crit`. They are then given the column
+#' names `Beta SE Tv Pv Min Max SD N`. So on a `Trend_*` / `CATDif` / `TrendDif`
+#' row the `SD` column actually holds the **degrees of freedom** and `N` holds
+#' the **critical value** -- which is why those rows show `N = 1.959964`
+#' throughout the sheets. Mapping them to `sd` and `n` would silently pass off a
+#' z-value as a sample size, so this function sets both to `NA` there and keeps
+#' them only on the `tabstat`-derived mean rows, where they mean what they say.
+#'
+#' @section Trend flavor:
+#' Engine B's trend is not the same estimator in every study, and the sheet does
+#' not record which was used (see [descriptive_indicator_shares()]). Pass
+#' `trend_statistic = "trend_pct"` for a `margins ... eydx` semi-elasticity
+#' (resource_extraction) or `"change_pp"` for a wave difference in percentage
+#' points (land_tenure). Getting it wrong mislabels percent as percentage points.
+#'
+#' @param sheet A `data.frame` from [read_exhibit_sheet()].
+#' @param group_tag Character. The treatment tag used in the sheet's `Coef`
+#'   strings. Every do-file writes `gen disagCat = \`disag'` and names its matrix
+#'   rows from that, so this is usually the literal `"disagCat"` -- **not** the
+#'   treatment's name. land_tenure is the exception and uses `"OwnLnd"`.
+#' @param treatment Character. Value for the emitted `treatment` column.
+#' @param trend_statistic `"trend_pct"` or `"change_pp"`. See *Trend flavor*.
+#'   Applies to the Engine B (study) layout only.
+#'
+#' @return A `data.frame` with `treatment`, `crop`, `outcome`, `wave`, `group`,
+#'   `statistic`, `estimate`, `se`, `t`, `p`, `min`, `max`, `sd`, `n`.
+#'
+#' @seealso [read_exhibit_sheet()], [draw_descriptive_summary()]
+#' @family exhibits
+#' @export
+exhibit_sheet_to_schema <- function(sheet, group_tag = "disagCat",
+                                    treatment = NA_character_,
+                                    trend_statistic = c("trend_pct", "change_pp")) {
+  trend_statistic <- match.arg(trend_statistic)
+  layout <- attr(sheet, "layout")
+  if (is.null(layout))
+    layout <- if (all(c("CropIDx", "Equ", "Coef") %in% names(sheet))) "means" else "study"
+
+  na_row <- function(n) rep(NA_real_, n)
+
+  if (layout == "means") {
+    grp <- function(s)
+      ifelse(s == "Pooled", "pooled",
+        ifelse(s == paste0(group_tag, "0"), "0",
+          ifelse(s == paste0(group_tag, "1"), "1", NA_character_)))
+    co <- as.character(sheet$Coef)
+    out <- data.frame(
+      treatment = treatment,
+      crop      = as.character(sheet$CropIDx),
+      outcome   = as.character(sheet$Equ),
+      wave      = NA_character_,
+      group     = NA_character_,
+      statistic = NA_character_,
+      estimate  = suppressWarnings(as.numeric(sheet$Beta)),
+      se        = suppressWarnings(as.numeric(sheet$SE)),
+      t         = suppressWarnings(as.numeric(sheet$Tv)),
+      p         = suppressWarnings(as.numeric(sheet$Pv)),
+      min       = suppressWarnings(as.numeric(sheet$Min)),
+      max       = suppressWarnings(as.numeric(sheet$Max)),
+      sd        = suppressWarnings(as.numeric(sheet$SD)),
+      n         = suppressWarnings(as.numeric(sheet$N)),
+      stringsAsFactors = FALSE)
+
+    is_mean  <- grepl("^Mean_", co)
+    is_trend <- grepl("^Trend_", co)
+    is_wave  <- grepl("^GLSS[0-9]_", co)
+    is_cat   <- co == "CATDif"
+    is_trd   <- co == "TrendDif"
+
+    # A wrong group_tag must not degrade quietly. "Pooled" resolves whatever the
+    # tag is, so a mismatched tag would drop every GROUP row and keep every
+    # pooled one -- leaving a frame that looks fine and is missing half its
+    # content. Every do-file writes `gen disagCat = `disag'`, so the tag is
+    # usually the literal "disagCat" and NOT the treatment's name; land_tenure is
+    # the exception at "OwnLnd". Fail with what the sheet actually uses.
+    suffix <- unique(c(sub("^Mean_", "", co[is_mean]),
+                       sub("^Trend_", "", co[is_trend]),
+                       sub("^GLSS[0-9]_", "", co[is_wave])))
+    suffix <- setdiff(suffix, c("Pooled", "miss", NA))
+    if (length(suffix) && !any(paste0(group_tag, c("0", "1")) %in% suffix))
+      stop("exhibit_sheet_to_schema(): group_tag '", group_tag,
+           "' matches no group in this sheet. It tags groups: ",
+           paste(sort(suffix), collapse = ", "),
+           ".\n  Every do-file writes `gen disagCat = `disag'`, so the tag is ",
+           "normally the literal \"disagCat\", not the treatment name.",
+           call. = FALSE)
+
+    out$statistic[is_mean]  <- "mean"
+    out$wave[is_mean]       <- "all"
+    out$group[is_mean]      <- grp(sub("^Mean_", "", co[is_mean]))
+
+    out$statistic[is_trend] <- "trend_pct"
+    out$wave[is_trend]      <- "all"
+    out$group[is_trend]     <- grp(sub("^Trend_", "", co[is_trend]))
+
+    out$statistic[is_wave]  <- "mean"
+    out$wave[is_wave]       <- sub("_.*$", "", co[is_wave])
+    out$group[is_wave]      <- grp(sub("^GLSS[0-9]_", "", co[is_wave]))
+
+    out$statistic[is_cat] <- "cat_diff"; out$wave[is_cat] <- "all"
+    out$statistic[is_trd] <- "trend_diff"; out$wave[is_trd] <- "all"
+
+    # r(table)' columns 7 and 8 are df and crit on the model rows, not sd and n.
+    model <- is_trend | is_cat | is_trd
+    out$sd[model] <- NA_real_
+    out$n[model]  <- NA_real_
+
+    # Keep rows that carry a result. `<wave>_miss`, `r1` and `_` do not, and
+    # neither does a mean/trend row whose group tag did not resolve -- that means
+    # the sheet used a different tag than `group_tag`. The Wald rows legitimately
+    # have no group.
+    needs_group <- out$statistic %in% c("mean", "trend_pct")
+    out <- out[!is.na(out$statistic) & (!needs_group | !is.na(out$group)), ,
+               drop = FALSE]
+
+  } else {
+    me <- as.character(sheet$mesure)
+    out <- data.frame(
+      treatment = treatment,
+      crop      = as.character(sheet$crop),
+      outcome   = as.character(sheet$Variable),
+      wave      = NA_character_,
+      group     = NA_character_,
+      statistic = NA_character_,
+      estimate  = suppressWarnings(as.numeric(sheet$Beta)),
+      se        = suppressWarnings(as.numeric(sheet$SE)),
+      t         = suppressWarnings(as.numeric(sheet$Tv)),
+      p         = suppressWarnings(as.numeric(sheet$Pv)),
+      min       = suppressWarnings(as.numeric(sheet$Min)),
+      max       = suppressWarnings(as.numeric(sheet$Max)),
+      sd        = suppressWarnings(as.numeric(sheet$SD)),
+      n         = suppressWarnings(as.numeric(sheet$N)),
+      stringsAsFactors = FALSE)
+
+    is_pool  <- me == "GLSS0"
+    is_wave  <- grepl("^GLSS[1-9]$", me)
+    is_trend <- me == "Trend"
+
+    out$statistic[is_pool]  <- "mean"; out$wave[is_pool] <- "pooled"
+    out$statistic[is_wave]  <- "mean"; out$wave[is_wave] <- me[is_wave]
+    out$statistic[is_trend] <- trend_statistic; out$wave[is_trend] <- "trend"
+    out$sd[is_trend] <- NA_real_
+    out$n[is_trend]  <- NA_real_
+
+    out <- out[!is.na(out$statistic), , drop = FALSE]
+  }
+
+  out <- out[!(is.na(out$outcome) | out$outcome %in% c("_", "NA")), , drop = FALSE]
+  rownames(out) <- NULL
+  attr(out, "source") <- "workbook"
+  out
+}
+
 #' Extract a Single Value from a Tidy Exhibit Sheet
 #'
 #' @description

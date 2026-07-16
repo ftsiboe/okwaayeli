@@ -36,6 +36,7 @@ not "farm households".
 Other exhibits: 
 \code{\link{exhibit_cell}()},
 \code{\link{exhibit_crop_table}()},
+\code{\link{exhibit_sheet_to_schema}()},
 \code{\link{exhibit_stars}()},
 \code{\link{exhibit_value}()},
 \code{\link{exhibit_wave_table}()},

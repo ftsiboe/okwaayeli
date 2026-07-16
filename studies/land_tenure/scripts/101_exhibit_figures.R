@@ -1,7 +1,18 @@
-rm(list = ls(all = TRUE)); gc()  
-library('magrittr');library(ggplot2);library(gridExtra)
-library(dplyr);library(gtable);library(stringr);library(cowplot)
-devtools::document()  
+# 101_exhibit_figures.R  (10x = compute; see scripts/README.md)
+# Builds output/figure/*.png and output/figure_data/*.csv from the estimation
+# objects. Must run BEFORE the article is knitted: 110_exhibit_tables.R reads
+# output/figure_data/ for the fig1_range() / trend_gap() inline lookups.
+#
+# The figure builders (ers_theme, tab_main_specification, fig_heterogeneity00,
+# fig_robustness, fig_input_te, fig_covariate_balance, fig_distribution) are now
+# packaged in R/exhibits-figures.R and reached through the namespace. They were
+# source()d from data-raw/scripts/figures_and_tables.R until 2026-07-15, which
+# also attached ggplot2 and friends as a side effect -- hence the library() calls
+# that used to sit here. The package declares them in DESCRIPTION instead.
+rm(list = ls(all = TRUE)); gc()
+
+if (!requireNamespace("okwaayeli", quietly = TRUE)) devtools::load_all(".")
+suppressPackageStartupMessages(library(okwaayeli))
 
 project_name = "land_tenure"
 study_environment <- readRDS(
@@ -9,8 +20,6 @@ study_environment <- readRDS(
             paste0(project_name,"_study_environment.rds")))
 
 mspecs_optimal <- study_environment$match_specification_optimal
-
-source("data-raw/scripts/figures_and_tables.R")
 
 Keep.List<-c("Keep.List",ls())
 
@@ -137,7 +146,7 @@ dataFrq$Tech <- factor(as.numeric(as.character(dataFrq$TCHLvel)),levels = 0:1,la
 saveRDS(dataFrq, file = file.path(study_environment$wd$output,"figure_data","score_distributions.rds"))
 write.csv(dataFrq, file = file.path(study_environment$wd$output,"figure_data","score_distributions.csv"), row.names = FALSE)
 
-fig_dsistribution(dataFrq,study_environment=study_environment)
+fig_distribution(dataFrq,study_environment=study_environment)
 
 
 # Fig - Region and crop ranking text

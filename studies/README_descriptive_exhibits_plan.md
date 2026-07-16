@@ -1,6 +1,149 @@
-# Plan: `R/descriptive-exhibits-core.R` — descriptive exhibits without Stata or Excel
+# Plan: descriptive exhibits without Stata or Excel
 
-Date: 2026-07-15 · Status: **draft for approval**
+Date: 2026-07-15 · Status: **engine delivered and validated; consolidation approved, not yet done**
+
+---
+
+# PART II — Consolidation (approved 2026-07-15, do NOT start before land renders)
+
+The engine is built and validated (Part I below). This part removes the
+duplication that building it in two passes created.
+
+## 1. Naming: by functionality, never by table number
+
+`.tbl2_live()` is a bad name: land's Table 2 is resource_extraction's Table 3, and
+the appendix numbering differs again. A function is named for the **shape it
+produces**, not the exhibit it happens to feed.
+
+    exhibit_<what-it-is>_table()
+
+## 2. One schema
+
+The duplication has a single cause — two vocabularies for the same thing:
+
+    workbook   CropIDx, Equ, Coef      ("Mean_disagCat0", "Trend_Pooled", "CATDif")
+    engine     crop, outcome, group, statistic, wave
+
+Rather than parameterise every builder over both, **`read_exhibit_sheet()`
+translates into the engine schema on read**. The Stata workbook becomes just
+another source; one vocabulary survives. This also collapses `parse_coef()`,
+currently duplicated in both parity test files, into the adapter.
+
+## 3. Target layout
+
+| File | Exports |
+|---|---|
+| `R/exhibits-cells.R` | `exhibit_value()` · `exhibit_stars()` · `exhibit_cell()` |
+| `R/exhibits-tables.R` | `exhibit_group_summary_table()` · `exhibit_wave_share_table()` · `exhibit_crop_share_table()` · `exhibit_group_sizes()` |
+| `R/descriptive-exhibits-core.R` | the engine — unchanged |
+| `R/exhibits-figures.R` | figures — unchanged |
+| `R/exhibits-workbook.R` | `read_exhibit_sheet()` only — legacy adapter, deleted with the last Stata study |
+
+| Shape | Rows | Columns | Feeds |
+|---|---|---|---|
+| `exhibit_group_summary_table()` | outcomes | group × {mean, trend} + diff tests | land T1; RE T1/A2/A3 |
+| `exhibit_wave_share_table()` | indicators | waves + change | land T2 |
+| `exhibit_crop_share_table()` | crops | one indicator family | land S1–S4; RE appendix |
+
+Study scripts keep **only** row maps, labels and `ft_*` wrappers. Deleted from
+`110_exhibit_tables.R`: `.pick`, `.tbl1_live`, `.tbl2_live`, `.tblS_live`,
+`.tbl1_n`, `.tbl1_hdr`, `.tbl2_hdr`.
+
+## 4. Output layout
+
+Everything a study emits goes under `output/`, one directory per artefact kind.
+A figure and the data behind it live together — they are one exhibit.
+
+    output/figures/     *.png AND the *.csv / *.rds behind them
+    output/tables/      *.rds AND *.csv          (see below)
+    output/estimations/ frontier objects        (unchanged)
+    output/matching/    match objects           (unchanged)
+    output/treatment_effects/                   (unchanged)
+
+Retired: `output/figure/` (singular) and `output/figure_data/` merge into
+`output/figures/`. `data/descriptive_exhibits.rds` moves to `output/tables/`.
+
+**`data/tables/*.csv` stays put** — those are hand-curated *inputs* (Table 3,
+Table 4, S5–S7), not emissions. Inputs live in `data/`, outputs in `output/`.
+That distinction is the point of the split.
+
+### Every table emits `.rds` and `.csv`
+
+Matching the figure builders, which already write `.rds` **and** `.csv` for the
+data behind each plot. Two kinds of CSV, and they answer different questions:
+
+    output/tables/descriptive_exhibits.rds     the cache 110_exhibit_tables.R reads
+    output/tables/descriptive_exhibits.csv     the same long frame, inspectable
+    output/tables/rendered/table1.csv          the built table, as it appears in the paper
+    output/tables/rendered/table2.csv
+    output/tables/rendered/tableS1.csv ...
+
+- **The long frame** (`descriptive_exhibits.csv`) is the audit trail: one row per
+  number, keyed, greppable, diffable without R. This is what you open when you
+  want to know why a cell is what it is.
+- **The rendered tables** (`rendered/*.csv`) are the manuscript's cells —
+  `label, c1..cN`, formatted, daggers and all. This is what you diff between runs
+  to see what actually moved in the paper.
+
+The second is worth having for its own sake. `data/tables/table1.csv` existed
+because somebody needed the table as data and the only way to get it was to
+extract it from a Word draft by hand. Emitting it closes that loop: the same
+artefact, generated rather than transcribed, and never able to disagree with the
+table beside it.
+
+`110_exhibit_tables.R` gains a small writer for this — it already builds the
+`label/header/c1..cN` frames, so it is a `fwrite()` per builder, not new logic.
+Guard it so a knit does not write: emit only when sourced from
+`100_exhibit_descriptive_stats.R` or an explicit call, never mid-render.
+
+### Route through `wd$`, don't just rename
+
+`study_setup()` already defines `wd$figure` and `wd$figure_data` — and **every
+builder ignores them**, hardcoding `file.path(wd$output, "figure_data", ...)`
+instead. Twelve literals across `R/exhibits-figures.R` where there should be one
+lookup. So:
+
+```r
+# study_setup()
+figures = file.path("studies", project_name, "output", "figures"),
+tables  = file.path("studies", project_name, "output", "tables"),
+```
+
+and every write becomes `file.path(study_environment$wd$figures, "robustness.png")`.
+Renaming the directories without this leaves the same trap for the next rename.
+
+Also update: the Rmd image paths (`../output/figure/*.png` → `../output/figures/`),
+`100_exhibit_descriptive_stats.R`'s `OUT_RDS`, and `110_exhibit_tables.R`'s
+`.DESC` / `.FIGDAT`.
+
+## 5. Order
+
+1. **`read_exhibit_sheet()` emits engine schema.** Land this ALONE and confirm
+   both parity suites stay green before touching anything else — it changes what
+   ~15,000 assertions compare against, so a bug here converts them into false
+   confidence.
+2. `exhibit_value/stars/cell` → `R/exhibits-cells.R`.
+3. The three shapes, engine schema → `R/exhibits-tables.R`.
+4. `wd$figures` / `wd$tables` in `study_setup()`; route all writes through them.
+5. Point land's `110` at the packaged shapes; delete the locals.
+6. Port RE's `305`.
+7. Delete `R/exhibits-workbook.R`.
+
+## 6. Risks
+
+- **Step 1 is the dangerous one** — see above. Alone, verified, then stop.
+- Step 4 moves files that already exist. Old `output/figure*/` contents are not
+  migrated automatically; re-run `101_exhibit_figures.R` rather than moving PNGs
+  by hand, or the figure data and the figures drift apart.
+- Step 5 churns `110` a third time in one session. Do it once, deliberately.
+
+## 7. Not today
+
+Land's §2–4 has not rendered yet. This is the next work, not the current work.
+
+---
+
+# PART I — the engine (delivered 2026-07-15)
 
 ## 1. Objective
 

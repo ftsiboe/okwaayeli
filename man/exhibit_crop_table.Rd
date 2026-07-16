@@ -65,6 +65,7 @@ which the module was administered, which is what the appendix tables report.
 Other exhibits: 
 \code{\link{exhibit_cell}()},
 \code{\link{exhibit_group_sizes}()},
+\code{\link{exhibit_sheet_to_schema}()},
 \code{\link{exhibit_stars}()},
 \code{\link{exhibit_value}()},
 \code{\link{exhibit_wave_table}()},
