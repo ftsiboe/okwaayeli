@@ -10,10 +10,10 @@
   # NSE column names used by data.table / dplyr / ggplot2, so R CMD check does
   # not report them as undefined globals.
   #
-  # ONLY column names belong here. This list once carried micEcon's translog*
-  # FUNCTIONS, which silenced the check instead of declaring the dependency --
-  # they are micEcon:: qualified now, and their absence here means the check
-  # catches a bare call.
+  # ONLY column names belong here. Never add a FUNCTION name: that silences the
+  # check instead of declaring the dependency, and the call then works only
+  # where something else happens to have attached the package. Qualify it
+  # (pkg::fn) and declare pkg in Imports.
   if (getRversion() >= "2.15.1") {
     utils::globalVariables(
       strsplit(

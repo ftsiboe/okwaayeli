@@ -31,13 +31,12 @@
 #' `<wave>_<group>`), and `CropIDx` the crop (`"Pooled"` for all crops).
 #'
 #' @section Duplicate rows:
-#' Six of the seven study do-files shipped a bug in which `mat roweq A = Female`
-#' was hardcoded inside the loop over the treatment dummies, so those rows were
-#' written to the `means` sheet tagged `Equ == "Female"` and collided with the
-#' real `Female` outcome rows. Fixed 2026-07-15 (`mat roweq A = \`Var'`). Sheets
-#' produced before that fix contain duplicate `(Equ, CropIDx, Coef)` keys;
-#' `exhibit_value()` errors on them rather than silently returning the first
-#' match.
+#' Some workbooks contain duplicate `(Equ, CropIDx, Coef)` keys, from a do-file
+#' that hardcoded `mat roweq A = Female` inside the loop over treatment dummies:
+#' those rows land on the `means` sheet tagged `Equ == "Female"` and collide with
+#' the real `Female` outcome rows. Check for it in any workbook you read here.
+#' `exhibit_value()` errors on duplicates rather than silently returning the
+#' first match, which is what makes the collision visible at all.
 #'
 #' @section Sheet naming across studies:
 #' Sheet names are **not** consistent, because each study's do-file names them
@@ -299,10 +298,9 @@ exhibit_sheet_to_schema <- function(sheet, group_tag = "disagCat",
 #' @details
 #' Returns `NA_real_` when no row matches, which lets a table builder leave a
 #' cell blank for a quantity a study does not estimate. **Errors** when more
-#' than one row matches: a duplicate key means the sheet is either malformed or
-#' predates the 2026-07-15 `roweq` fix, and silently taking the first match is
-#' how a lookup returns a plausible but wrong number. See the *Duplicate rows*
-#' section of `read_exhibit_sheet()`.
+#' than one row matches: a duplicate key means the sheet is malformed, and
+#' silently taking the first match is how a lookup returns a plausible but wrong
+#' number. See the *Duplicate rows* section of `read_exhibit_sheet()`.
 #'
 #' @param data `data.frame` from `read_exhibit_sheet()`.
 #' @param keys Named `list` of column/value pairs identifying one row, e.g.

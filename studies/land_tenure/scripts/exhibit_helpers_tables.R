@@ -16,10 +16,9 @@
 #
 # tableS0.csv is the ONLY file in data/tables/ that anything reads.
 #
-# NO FALLBACKS. Every builder errors rather than degrading to a stored value.
-# Tables 3 and 4 once fell back to a frozen CSV on a keying error: the knit
-# "succeeded" while printing last year's numbers beside prose citing this
-# year's. A failed render is the cheaper failure.
+# NO FALLBACKS. Every builder errors rather than degrading to a stored value. A
+# builder that falls back to a frozen CSV lets the knit "succeed" while printing
+# stale numbers beside prose citing live ones. A failed render is cheaper.
 #
 # KEYING. Ownership group is TCHLvel, not Tech -- sf_estm carries both for the
 # same concept and they disagree (Tech 1 == TCHLvel "0" == non-owners). Key on
@@ -117,10 +116,9 @@ exhibit_cache_clear <- function() {
   utils::read.csv(p, check.names = FALSE, colClasses = "character",
                   encoding = "UTF-8")
 }
-# .read_hdr() and .ft_csv() lived here until 2026-07-16 and are gone. Every
-# table that had a *_header.csv is built live now, and its column titles are
-# set_header_labels() calls inside the builder. Reaching for a header CSV means
-# reintroducing a frozen exhibit.
+# There is no header-CSV reader here on purpose. Column titles are
+# set_header_labels() calls inside each builder; a header CSV would be a frozen
+# exhibit.
 
 # Shared look for the descriptive tables: bold section rows, indent the rest,
 # zero vertical padding so title + table + notes fit one page.
@@ -163,9 +161,8 @@ exhibit_cache_clear <- function() {
 
 # ---- Descriptive layer --------------------------------------------------------
 # Tables 1, 2 and S1-S4 come from 100_exhibit_descriptive_stats.R, which computes
-# them in R from study_raw_data. The engine is validated against the Stata
-# workbooks it replaced -- ~15,000 assertions across both studies; see
-# tests/testthat/test-descriptive-exhibits-*.R.
+# them from study_raw_data. The engine carries ~15,000 assertions across two
+# studies; see tests/testthat/test-descriptive-exhibits-*.R.
 #
 # NB use .STUDY_ROOT, NOT article_helpers.R's constants: those are
 # repo-root-relative, and knitr's working directory is narrative/ during a
@@ -186,8 +183,8 @@ exhibit_cache_clear <- function() {
 })
 
 # Single value from the long frame. Errors on duplicates: a keyed schema should
-# never produce two rows for one cell, and silently taking the first is how the
-# v001 extraction survived the roweq collision -- by luck rather than by design.
+# never produce two rows for one cell, and taking the first silently turns a
+# schema bug into a plausible wrong number.
 .pick <- function(d, keys, col) {
   ok <- rep(TRUE, nrow(d))
   for (k in names(keys)) ok <- ok & !is.na(d[[k]]) & d[[k]] == keys[[k]]
@@ -206,20 +203,16 @@ exhibit_cache_clear <- function() {
 
 # Why the tenure-detail tables stop at GLSS6/GLSS7.
 #
-# This footnote used to read "Ownership detail modules are only administered in
-# GLSS6 and GLSS7." That is FALSE, and Table S0 -- printed in the same appendix,
-# transcribed from the questionnaires -- contradicted it on its face: all five
-# rounds carry ownership, rights, acquisition and sharecropping (GLSS3 q6/q7/q9/
-# q11; GLSS4-GLSS7 q5/q6/q8/q10). A reviewer reading the appendix would have
-# found the contradiction immediately.
+# COMPARABILITY, NOT AVAILABILITY -- and the footnote must say so, because all
+# five rounds do administer these modules and Table S0 prints the question
+# numbers proving it (GLSS3 q6/q7/q9/q11; GLSS4-GLSS7 q5/q6/q8/q10). A footnote
+# claiming otherwise contradicts the appendix of its own paper.
 #
-# The restriction itself is sound; only its stated reason was wrong. The real
-# constraint is comparability, documented in Table S0: acquisition has no
-# purchase option before GLSS5 and an "Inherited" option unique to GLSS7 that is
-# folded into kinship (where it is the larger component), and GLSS5's
-# sharecropping fractions are a narrower coded set than GLSS6/GLSS7's. The
-# GLSS3/GLSS4 rounds are additionally excluded from every temporal claim in the
-# study because they were fielded on the 1984 frame.
+# The real constraint, per Table S0: acquisition has no purchase option before
+# GLSS5 and an "Inherited" option unique to GLSS7 that is folded into kinship
+# (where it is the larger component); GLSS5's sharecropping fractions are a
+# narrower coded set. GLSS3/GLSS4 are excluded from temporal claims anyway, being
+# on the 1984 frame.
 #
 # See 100_exhibit_descriptive_stats.R for why documentation and rights -- which
 # ARE identically coded in all five rounds -- are held to the same window.
@@ -230,7 +223,7 @@ exhibit_cache_clear <- function() {
   "earlier rounds, and GLSS3-GLSS4 were fielded on the 1984 census frame.")
 
 # ---- Main-text tables --------------------------------------------------------
-# Table 1 row map: display label -> (Equ, CropIDx) in the means sheet.
+# Table 1 row map: display label -> (outcome, crop) in the engine's schema.
 # header == 1 marks a bold section row with no values.
 .T1_MAP <- data.frame(
   label = c("Farmer a",
@@ -260,7 +253,7 @@ exhibit_cache_clear <- function() {
            NA,
            "Pooled", "Maize", "Rice", "Millet", "Sorghum", "Beans", "Peanut",
            "Cassava", "Yam", "Cocoyam", "Plantain", "Pepper", "Okra",
-           "Tomatoe",          # sheet spelling
+           "Tomatoe",          # data spelling
            "Cocoa", "Palm",
            rep("Pooled", 11),
            NA,
@@ -269,16 +262,13 @@ exhibit_cache_clear <- function() {
 
 # Dagger convention. The footnote reads "a statistically significant difference
 # from the pooled sample". With two groups this is the group contrast from the
-# c.Trend##i.OwnLnd regression: CATDif (testparm i.OwnLnd -> level difference at
-# Trend==0) flags the mean columns, TrendDif (testparm c.Trend#i.OwnLnd) flags
-# the trend columns. Both group columns are flagged together, since with two
-# groups the contrast is symmetric.
-# VERIFY at first knit: Equ=="Female" has CATDif p=0.983 and TrendDif p=0.480,
-# so the Female row should carry no daggers at all.
+# trend x treatment interaction: the level difference at Trend == 0 flags the
+# mean columns, the interaction flags the trend columns. Both group columns are
+# flagged together -- with two groups the contrast is symmetric.
 .T1_DAG <- 0.05
 
-# Group labels in the engine's schema are the treatment's own levels ("0"/"1"),
-# not the sheet's Mean_OwnLnd0 / Mean_OwnLnd1 strings.
+# Group labels in the engine's schema are the treatment's own levels: "0"/"1",
+# plus "pooled".
 .tbl1_live <- function() {
   m <- .desc()$table1
   fmt_mean <- function(eq, cr, g, dag) {
@@ -344,14 +334,14 @@ ft_table1 <- function()
       "Trends span the 1984-frame rounds (GLSS3-GLSS4) and the 2000/2010-frame rounds (GLSS5-GLSS7); see Section 2 on comparability across that boundary.",
       .SRC_NOTE))
 
-# Table 2 row map: display label -> Variable in the land_tenure sheet.
+# Table 2 row map: display label -> indicator name.
 # Value labels are set in data-raw/okwaayeli_DATA.do:
 #   LndOwn 1 "Not owned" 2 "Owned w/o deed" 3 "Owned w/ deed"
 #   LndAq  1 Free 2 Sharecropping 3 Rented 4 Purchased 5 Kinship 6 Other
 #   LndRgt 1 None 2 Security 3 Sell 4 Both
 #   ShrCrpCat 1 "0" 2 "1-49" 3 "50-100"
-# LndAq_6 ("Other") is absent from the sheet: it exists only in GLSS3/GLSS4 and
-# this block keeps GLSS6/GLSS7, so its logit fails and the cap{} swallows it.
+# No LndAq_6 ("Other") row: that level exists only in GLSS3/GLSS4, and this
+# table keeps GLSS6/GLSS7, so the fit has nothing to estimate.
 .T2_MAP <- data.frame(
   label = c("Land ownership status",
             "Not owned", "Owned without documentation", "Owned with documentation",
@@ -385,9 +375,8 @@ ft_table1 <- function()
     b <- .pick(s, list(outcome = v, crop = "Pooled", wave = "trend"), "estimate")
     out$c1[i] <- sh("GLSS6")
     out$c2[i] <- sh("GLSS7")
-    # wave_diff: percentage POINTS, GLSS6 - GLSS7. No SE -- Stata's nlcom
-    # reported one, but it is a difference of two margins, and the sheet's
-    # bracket was never used by the narrative.
+    # wave_diff: percentage POINTS, GLSS6 - GLSS7. Point estimate only; the
+    # narrative cites no dispersion for this difference of two margins.
     out$c3[i] <- if (is.na(b)) "" else sprintf("%.3f", b)
   }
   out$header <- as.character(out$header)
@@ -413,7 +402,7 @@ ft_table2 <- function()
       "Data source: Ghana Living Standards Survey [waves 6-7]."))
 
 # ---- Table 3: elasticities / variability (estimation objects) ----------------
-# Column layout (mirrors RE's Table 3 and the draft's Table 3):
+# Column layout:
 #   naive | none [A] | any [B] | gap [B-A] | meta matched | meta unmatched
 .samp_id <- function(s) if (identical(s, "matched")) .opt else "unmatched"
 .T3COLS <- list(
@@ -482,7 +471,9 @@ ft_table2 <- function()
   .f_nm(sum(b$Estimate, na.rm = TRUE), 0)
 }
 # input_variables = c("Area","SeedKg","HHLaborAE","HirdHr","FertKg","PestLt")
-# => el5 = fertilizer, el6 = pesticide (code mapping, not the workbook's).
+# in 004, so el5/lnI5 = FERTILIZER and el6/lnI6 = PESTICIDE. The index order is
+# the only thing that fixes these labels; get it backwards and the table is
+# plausible and wrong.
 .T3_EL <- c("Land" = "el1", "Planting material" = "el2", "Family labor" = "el3",
             "Hired labor" = "el4", "Fertilizer" = "el5", "Pesticide" = "el6",
             "Returns to scale" = "el7")
@@ -534,9 +525,8 @@ ft_table3 <- function() {
 
   m <- as.data.frame(do.call(rbind, rows), stringsAsFactors = FALSE)
   names(m) <- c("item", "naive", "none", "any", "gap", "meta_m", "meta_u")
-  # If the keying is off, nearly every cell is "-". That used to fall back to the
-  # v001 CSV; it now stops the knit, because a table that silently prints last
-  # year's numbers is worse than a render that fails.
+  # If the keying is off, nearly every cell is "-" -- an empty table rather than
+  # an error. Stop instead.
   vals <- unlist(m[, -1])
   if (mean(vals %in% c("-", "")) > 0.9)
     stop("ft_table3: keying unresolved -- >90% of cells are empty. ",
@@ -593,16 +583,12 @@ ft_table3 <- function() {
 #   acquisition / sharecrop  DISAGGREGATIONS WITHIN the OwnLnd frontier, in
 #                            `disagscors`, keyed by disagscors_var / _level.
 #
-# WEIGHTING IS NOT UNIFORM, AND CANNOT BE (2026-07-15):
+# WEIGHTING IS NOT UNIFORM, AND CANNOT BE:
 #   ef_mean      stat = mean | median | mode | WMEAN
 #   disagscors   stat = mean | median | mode          <- no weighted variant
-# The v001 draft used `wmean` for documentation/rights (reproduced exactly:
-# LndOwn TCHLvel=2 MTE teBC/Restricted/robust_mahalanobis/wmean = -0.005220
-# (0.002938), p = 0.0787 -> the draft's "-0.005* (0.003)"), and `mean` for
-# acquisition, because that is the only statistic disagscors carries. So the
-# table mixes weighted and unweighted blocks. That was true of the published
-# draft too; it is now stated in the footnote rather than left implicit.
-# To make it uniform, 004 would have to emit wmean into disagscors.
+# So the two halves of this table are weighted differently. That is forced by
+# what 004 emits, not chosen, and the footnote says so rather than leaving it
+# implicit. To make it uniform, 004 would have to emit wmean into disagscors.
 .T4_STAT_EF   <- "wmean"   # documentation / rights   (ef_mean)
 .T4_STAT_DISA <- "mean"    # acquisition / sharecrop  (disagscors; only option)
 
@@ -670,13 +656,9 @@ ft_table3 <- function() {
   METS <- c("TGR", "TE", "MTE")
   rows <- list()
 
-  # Documentation and rights: from their OWN frontiers, not from the draft.
-  # These were read out of data/tables/table4.csv until 2026-07-15 on the stated
-  # grounds that "these categories are not in the OwnLnd disaggregation object"
-  # -- true, but they are in CropID_Pooled_LndOwn_*.rds and
-  # CropID_Pooled_LndRgt_*.rds, which nothing was reading. 301 hit the same wall,
-  # which is why objs$tenures$documents / $rights carried nulls for `none` and
-  # `gap` while section 5 narrated them from the draft.
+  # Documentation and rights come from their OWN frontiers -- these categories
+  # are not in the OwnLnd disaggregation object, they are in
+  # CropID_Pooled_LndOwn_*.rds and CropID_Pooled_LndRgt_*.rds.
   for (blk in list(.tenure_rows("LndOwn", "Farmland ownership documentation"),
                    .tenure_rows("LndRgt", "Farmland ownership rights")))
     if (!is.null(blk)) rows <- c(rows, blk)
@@ -741,14 +723,13 @@ ft_table4 <- function() {
               .TENURE_WINDOW_NOTE,
               "Data source: Ghana Living Standards Survey [waves 6-7].")
 
-# Table S0: construction of the tenure indicators.
-# Unlike every other exhibit here, this one is NOT extracted from the v001 draft
-# and has no fallback -- it is built from the GLSS3-7 Section 8b files and the
-# questionnaire instruments read directly. GLSS3 carries no variable or value
-# labels and GLSS4 carries no value labels, so both waves' codes were verified
-# against G3QPartB.pdf / G4QPartB.pdf; all hand-coded mappings in
-# data-raw/okwaayeli_DATA.do check out. Provenance and the full verification
-# trail: narrative/diagnostics/tenure_variable_documentation.md
+# Table S0: construction of the tenure indicators. The one curated exhibit, and
+# necessarily so -- it transcribes each round's Section 8b question wording,
+# response options and per-wave mappings, which no object can compute.
+#
+# GLSS3 carries no variable or value labels and GLSS4 carries no value labels,
+# so both waves' codes are verified against G3QPartB.pdf / G4QPartB.pdf.
+# Verification trail: narrative/diagnostics/tenure_variable_documentation.md
 ft_tableS0 <- function() {
   d <- .read_tbl("tableS0.csv")
   ft <- flextable(d)
@@ -779,26 +760,21 @@ ft_tableS0 <- function() {
 }
 
 # ---- Tables S1-S4: the crop-disaggregated analogues of Table 2 ----------------
-# Same sheet as Table 2, sliced by crop instead of restricted to "Pooled".
+# Same indicators as Table 2, sliced by crop instead of restricted to "Pooled".
 #   S1 LndOwn_1..3     ownership status
 #   S2 LndAq_1..5      mode of acquisition   (LndAq_6 "Other" is GLSS3/4 only)
 #   S3 LndRgt_1..4     ownership rights
 #   S4 ShrCrpCat_1..3  sharecropping intensity
 #
-# Row order is editorial. The v001 CSVs used two different arbitrary orders and
-# buried "All crops listed" mid-table; we sort by the first column descending and
-# put the pooled row last, which is at least a stated rule.
-#
-# NB the v001 CSVs carried a second block headed "Percentage change in Headcount
-# ratio from 2012/13 to 2016/17" whose values were an exact copy of the headcount
-# block -- the trend was never populated. Rebuilt here from mesure=="Trend".
-# 03_land_tenure_context.Rmd reads the headcount block only (tbl_pct takes the
-# first match), so its numbers were unaffected.
+# Each is two stacked blocks: headcount ratios, then the GLSS6->GLSS7 change.
+# Row order is editorial -- sort by the first column descending, pooled row last.
+# 03_land_tenure_context.Rmd cites the headcount block, which tbl_pct() reaches
+# by first match; pass block = "change" for the lower one.
 .S_CROPS <- c(Millet = "Millet", Sorghum = "Sorghum", Rice = "Rice", Okra = "Okra",
               Maize = "Maize", Beans = "Beans", Peanut = "Peanut", Cocoa = "Cocoa",
               Cassava = "Cassava", Banana = "Banana", Plantain = "Plantain",
               Pepper = "Pepper", Yam = "Yam", Cocoyam = "Cocoyam",
-              Tomato = "Tomatoe",   # display label -> sheet spelling
+              Tomato = "Tomatoe",   # display label -> data spelling
               Eggplant = "Eggplant", Palm = "Palm")
 
 .tblS_live <- function(vars) {
@@ -816,9 +792,7 @@ ft_tableS0 <- function() {
                             b, .pick(s, k, "sd"))
         else sprintf(paste0("%.", digits, "f"), b)
       }, character(1))
-    # Row order is editorial. The v001 CSVs used two different arbitrary orders
-    # and buried "All crops listed" mid-table; sort by the first column
-    # descending with the pooled row last, which is at least a stated rule.
+    # First column descending, pooled row last.
     ord <- order(suppressWarnings(as.numeric(sub(" .*", "", t$c1[-nrow(t)]))),
                  decreasing = TRUE, na.last = TRUE)
     rbind(t[-nrow(t), ][ord, ], t[nrow(t), ])
@@ -868,14 +842,13 @@ ft_tableS4 <- function()
   "Data source: Ghana Living Standards Survey [waves 3-7].")
 
 # ---- Tables S5 / S7: frontier coefficients ----------------------------------
-# Row vocabulary, recovered from unique(sf_estm$CoefName) on 2026-07-16. These
-# maps are display-label -> CoefName and are exact; the only thing standing
-# between them and a live S5/S7 is the column keying (see .S57_COLS below).
+# Display label -> sf_estm$CoefName. Check against unique(sf_estm$CoefName) if
+# the model specification changes; .s57_report_omitted() flags anything
+# estimated but unmapped.
 #
-# Row ORDER reproduces the v001 draft, including its quirk of listing the lnI6
-# cross-term before lnI5 within each block (lnI1*lnI6 then lnI1*lnI5, and so on).
-# That ordering is arbitrary but published; preserving it keeps the tables
-# diffable against the draft.
+# Row order within each block lists the lnI6 cross-term before lnI5 (lnI1*lnI6,
+# then lnI1*lnI5). Arbitrary, but fixed -- do not "tidy" it without reprinting
+# the whole table.
 .S5_ROWS <- list(
   list(hdr = "Production function"),
   list(lab = "Land [lnI1]",              cf = "lnI1"),
@@ -905,12 +878,9 @@ ft_tableS4 <- function()
   list(lab = "1/2 * lnI5 * lnI5", cf = "I(1/2 * lnI5 * lnI5)"),
   list(lab = "lnI5*lnI6", cf = "lnI5:lnI6"),
   list(lab = "1/2 * lnI6 * lnI6", cf = "I(1/2 * lnI6 * lnI6)"),
-  # base = maize, hence no Area_Maize row.
-  #
-  # Palm and Pepper ARE printed here; the v001 draft omitted them with no stated
-  # reason. Both are estimated, both are in the crop_list the frontier was fitted
-  # over, and a reader comparing this block to Table 1's crop rows would notice
-  # two missing. "Other" last so the residual category reads as a residual.
+  # base = maize, hence no Area_Maize row. Every other crop the frontier was
+  # fitted over gets one, so this block and Table 1's crop rows agree. "Other"
+  # last, so the residual category reads as a residual.
   list(hdr = "Proportion of area under listed crop (base=maize)"),
   list(lab = "Cassava",  cf = "Area_Cassava"),
   list(lab = "Peanut",   cf = "Area_Peanut"),
@@ -938,19 +908,10 @@ ft_tableS4 <- function()
 
 # S7: determinants of technical inefficiency -- the Zu_ block.
 #
-# TWO DEPARTURES FROM THE v001 DRAFT, both corrections:
-#
-#   Age / education labels. The draft called Zu_lnAgeYr "Age (years)" and
-#   Zu_lnYerEdu "Education (years)". Both regressors are lnAgeYr and lnYerEdu --
-#   LOGGED -- so the coefficients are elasticities, not per-year effects, and the
-#   draft's labels invite the reader to interpret 0.110 as "a year of age raises
-#   inefficiency by 0.11". Relabelled to say the unit, with a footnote as well.
-#
-#   Credit. Zu_factor(Credit)1 is estimated and the draft did not print it. It is
-#   printed here, beside the other access dummies where it belongs.
-#
-# .s57_report_omitted() should now be silent for this table. If it names
-# something, the model gained a regressor and this map has not kept up.
+# Age and education are lnAgeYr / lnYerEdu -- LOGGED -- so their coefficients are
+# elasticities, not per-year effects. The labels say "log years" for that reason;
+# "Age (years)" would invite reading 0.110 as "a year of age raises inefficiency
+# by 0.11". The footnote says it too.
 .S7_ROWS <- list(
   list(lab = "Female farmer (dummy)",         cf = "Zu_factor(Female)1"),
   list(lab = "Age (log years)",               cf = "Zu_lnAgeYr"),
@@ -998,8 +959,7 @@ ft_tableS4 <- function()
 
 # Drift detector: coefficients the model estimates that this table does not
 # print. Should name NOTHING. If it does, the frontier gained a regressor and
-# .S5_ROWS/.S7_ROWS have not kept up -- which is how the v001 draft silently
-# lost Area_Palm, Area_Pepper and Zu_factor(Credit)1.
+# .S5_ROWS/.S7_ROWS have not kept up, so the table is quietly incomplete.
 .s57_report_omitted <- function(sf, rowspec, pattern, label) {
   mapped <- vapply(Filter(function(r) !is.null(r$cf), rowspec),
                    function(r) r$cf, character(1))
@@ -1007,7 +967,7 @@ ft_tableS4 <- function()
   extra  <- setdiff(grep(pattern, have, value = TRUE), c(mapped, "Area_Maize"))
   if (length(extra))
     message(label, ": ", length(extra), " coefficient(s) estimated but not ",
-            "printed (the v001 draft omitted them): ",
+            "printed -- add them to the row map: ",
             paste(extra, collapse = ", "))
   invisible(extra)
 }
@@ -1074,11 +1034,8 @@ ft_tableS5 <- function() {
 # repeated per wave. Same .tenure_rows() as Table 4 -- only `matched` and
 # `survey` differ -- so the two tables cannot drift in labels or keying.
 #
-# Waves: the pooled block plus GLSS5-GLSS7. The v001 draft carried exactly these
-# four and no GLSS3/GLSS4, which is consistent with the tenure-detail modules
-# (Section 8b's documentation and rights questions) not being administered in the
-# earlier rounds. We emit whichever of the four the estimation object actually
-# has rather than asserting the list.
+# Waves: the pooled block plus GLSS5-GLSS7, and whichever of those the
+# estimation object actually carries -- the list is not asserted.
 .S6_WAVES <- c("GLSS3-GLSS7" = "GLSS0", "GLSS7" = "GLSS7",
                "GLSS6" = "GLSS6", "GLSS5" = "GLSS5")
 
@@ -1157,25 +1114,15 @@ ft_tableS7 <- function() {
 # tbl_num("table1.csv", "Age (years)", "c1", "paren") -> 15.09  (inside (...))
 # tbl_num(..., "bracket")                             -> value inside [...]
 #
-# THE `csv` ARGUMENT IS NOW A TABLE ID, NOT A FILE. It still reads "table1.csv"
-# etc. so the ~90 call sites in 02_data.Rmd and 03_land_tenure_context.Rmd did
-# not have to change, but the numbers come from the SAME built table the exhibit
-# renders -- .tbl1_live(), .tbl2_live(), .tblS_live() -- which in turn read
-# data/descriptive_exhibits.rds from 100_exhibit_descriptive_stats.R.
-#
-# WHY. Until 2026-07-15 these lookups read data/tables/*.csv, curated by hand
-# from the v001 Word draft, while the exhibits were rebuilt from the pipeline.
-# The prose could then describe a number the table beside it did not print, and
-# nothing would flag it. Routing both through one builder makes prose and exhibit
-# agree by construction rather than by coincidence.
+# THE `csv` ARGUMENT IS A TABLE ID, NOT A FILE. It reads like "table1.csv"
+# because the ~140 call sites spell it that way, but .live_table() intercepts it
+# and returns the SAME build the exhibit renders. Prose and table therefore agree
+# by construction; a lookup that read a stored file could not promise that.
 #
 # The S-tables are stacked: a headcount block, a bold separator, then a change
-# block, with the SAME crop labels in both. Lookups therefore take the FIRST
-# match, i.e. the headcount block -- which is what 03_land_tenure_context.Rmd has
-# always cited. Pass block = "change" for the lower one.
-# Tables 1, 2 and S1-S4 are rebuilt from data/descriptive_exhibits.rds; table4
-# is rebuilt from the estimation objects via .tbl4_data(). Only S5-S7 still read
-# a curated CSV -- and S0, which is curated by design.
+# block, with the SAME crop labels in both. Lookups take the FIRST match -- the
+# headcount block, which is what 03_land_tenure_context.Rmd cites. Pass
+# block = "change" for the lower one.
 .LIVE_IDS <- c("table1", "table2", "table4",
                "tableS1", "tableS2", "tableS3", "tableS4")
 
@@ -1217,14 +1164,11 @@ tbl_num <- function(csv, label, col, part = c("first", "paren", "bracket"),
     stop("tbl_num: label not found: ", label, " in ", csv, call. = FALSE)
   block <- match.arg(block)
   i <- if (block == "change" && nrow(r) > 1) nrow(r) else 1L
-  # Strict ONLY for the rebuilt tables. Their rows come from a keyed schema, so a
-  # duplicate label means a bug -- and taking the first silently is how the
-  # `roweq` collision survived for years. The curated CSVs (S5-S7) are a
-  # different case: first-match has always been the contract there.
-  #
-  # table4 is now rebuilt too. Its labels are unique across the four panels --
-  # .T4_LAB gives each category its own string -- so the guard should never fire.
-  # If it does, two panels have collided and the table is wrong.
+  # Strict for the .LIVE_IDS tables: their rows come from a keyed schema, so a
+  # duplicate label is a bug, and taking the first silently would turn it into a
+  # plausible wrong number. Labels are unique across table4's four panels
+  # (.T4_LAB gives each category its own string), so this should never fire; if
+  # it does, two panels have collided.
   if (live && nrow(r) > 2)
     stop("tbl_num: ", nrow(r), " rows for '", label, "' in ", csv,
          "; expected at most 2 (headcount + change).", call. = FALSE)
@@ -1279,24 +1223,21 @@ trend_range <- function(metric, waves, fun) {
   100 * fun(as.numeric(v))
 }
 
-# Sample sizes -- now read live from the workbook rather than hardcoded, so the
-# prose in 00_abstract / 01_introduction / 02_data / 06_conclusion cannot drift
-# from the analysis sample.
+# Sample sizes for the prose in 00_abstract / 01_introduction / 02_data /
+# 06_conclusion. Read from the same build as Table 1's header, so the two cannot
+# disagree.
 #
-# These count CropID=="Pooled" ROWS (the analysis sample), not distinct farmers:
-# (Surveyx, EaId, HhId, Mid) is NOT unique within Pooled -- 28,411 distinct keys
-# against 35,185 rows -- because a farmer can appear in more than one season.
-# The wave group sizes in the means sheet sum to exactly 13,099 / 22,086 / 35,185.
-# "observations of farm households" in 02_data.Rmd is therefore the accurate
-# phrasing; "35,185 farm households" is not.
+# These count CropID == "Pooled" ROWS -- the analysis sample -- not distinct
+# farmers: (Surveyx, EaId, HhId, Mid) is not unique within Pooled, because a
+# farmer can appear in more than one season. So "observations of farm
+# households" is the accurate phrasing in 02_data.Rmd; "N farm households" is
+# not.
 .N <- local({
-  n <- tryCatch(.tbl1_n(), error = function(e) NULL)
-  if (is.null(n) || any(is.na(n))) {
-    warning("exhibit_helpers_tables.R: could not read sample sizes from ", .XLSX,
-            "; falling back to the 2026-07-15 values. Re-run 100_exhibits.do.",
-            call. = FALSE)
-    c(all = 35185, non = 13099, own = 22086)
-  } else n
+  n <- .tbl1_n()
+  if (is.null(n) || any(is.na(n)))
+    stop("exhibit_helpers_tables.R: could not read sample sizes from ", .DESC,
+         ". Run 100_exhibit_descriptive_stats.R.", call. = FALSE)
+  n
 })
 N_ALL <- .N[["all"]]
 N_NON <- .N[["non"]]

@@ -1,16 +1,9 @@
 # exhibits-figures.R
 # Figure and table builders shared by every study's exhibit script.
 #
-# Promoted from data-raw/scripts/figures_and_tables.R on 2026-07-15. It was
-# source()d by seven studies, which meant seven copies of a path that had to stay
-# correct, no documentation, no NAMESPACE, and `library()` calls that attached
-# packages into whatever session happened to source it. One of the seven
-# (financial_inclusion/101_heterogeneity_*.R) still points at a path that no
-# longer exists: `paste0(getwd(), "/codes/figures_and_tables.R")`.
-#
-# The library() calls are gone: a package declares its dependencies in
-# DESCRIPTION and reaches them through @importFrom, rather than attaching them
-# for the caller.
+# Package code: no library() calls, and everything a builder needs arrives as an
+# argument. Dependencies are declared in DESCRIPTION and reached via @importFrom,
+# not attached for the caller.
 
 #' ERS ggplot2 Theme
 #'
@@ -298,9 +291,8 @@ fig_heterogeneity00 <- function(res, y_title, colset = c("orange", "darkgreen", 
 #' @export
 fig_robustness <- function(y_title, res_list, colset = c("orange", "darkgreen"),
                            study_environment) {
-  # Resolve from the argument, never the caller's workspace. This referred to a
-  # free `mspecs_optimal` six times below, which only worked while the file was
-  # source()d into globalenv; packaging it broke the lookup.
+  # Resolve from the argument, never the caller's workspace: package code cannot
+  # see a study script's variables.
   mspecs_optimal <- study_environment$match_specification_optimal
   if (is.null(mspecs_optimal))
     stop("fig_robustness(): study_environment$match_specification_optimal is ",

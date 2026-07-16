@@ -1,9 +1,9 @@
 # Study scaffolding: directory layouts, path resolution, environment setup.
 #
 # ONE LIST, ONE PLACE -- everything here derives from .study_layouts(). Add a
-# directory there and nowhere else. The names previously lived in three places
-# (this file, each study's 000, and ~40 literals next to wd$output); they
-# drifted, and the symptom was an unattributable gzfile() failure.
+# directory there and nowhere else. A second copy of these names, in a study's
+# 000 or as a literal next to wd$output, drifts silently: the tree looks right
+# and the writes go elsewhere, surfacing as an unattributable gzfile() failure.
 
 #' Study output layouts
 #'
@@ -17,11 +17,10 @@
 #'     input_dealers, resource_extraction and time_poverty.}
 #'   \item{`v2`}{`figures/` for plots AND the data behind them -- one folder per
 #'     concept, so a `.png` and its `.csv` sit together -- plus `tables/` for
-#'     table data. Used by land_tenure since 2026-07-16.}
+#'     table data. Used by land_tenure.}
 #' }
 #'
-#' `tables/` exists in both: nothing wrote table data before, so there is no
-#' legacy name to preserve.
+#' `tables/` is the same in both layouts.
 #'
 #' @return Named list of layouts, each a list of `figures`, `figure_data` and
 #'   `tables` directory names.
@@ -110,14 +109,12 @@ study_dirs <- function(study_environment = NULL, project_name = NULL,
     figure_data       = file.path(output, L$figure_data),
     tables            = file.path(output, L$tables)
   )
-  # Legacy alias. Six studies' scripts predate the rename; `wd$figure` keeps
-  # them resolving without a re-run. Do not add new uses.
+  # Alias for scripts that spell it `wd$figure`. Do not add new uses.
   wd$figure <- wd$figures
 
   # MERGE, do not replace. Studies add their own entries -- resource_extraction's
   # wd carries `exhibits`, `releases` and `summary` -- and overwriting wd
-  # wholesale would silently drop them, reproducing this bug one directory over.
-  # Recomputed entries win; extras survive.
+  # wholesale would silently drop them. Recomputed entries win; extras survive.
   if (!is.null(study_environment$wd))
     wd <- utils::modifyList(as.list(study_environment$wd), wd)
 

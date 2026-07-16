@@ -11,11 +11,9 @@
 # resolve it for them. See ?study_dirs.
 #
 # The figure builders (ers_theme, tab_main_specification, fig_heterogeneity00,
-# fig_robustness, fig_input_te, fig_covariate_balance, fig_distribution) are now
-# packaged in R/exhibits-figures.R and reached through the namespace. They were
-# source()d from data-raw/scripts/figures_and_tables.R until 2026-07-15, which
-# also attached ggplot2 and friends as a side effect -- hence the library() calls
-# that used to sit here. The package declares them in DESCRIPTION instead.
+# fig_robustness, fig_input_te, fig_covariate_balance, fig_distribution) live in
+# R/exhibits-figures.R and are reached through the namespace. No library() calls
+# here: the package declares its dependencies in DESCRIPTION.
 tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
   rm(list = ls(all = TRUE)); gc()
 })  

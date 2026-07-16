@@ -50,7 +50,7 @@ CITATION_STYLE <- "elsevier"   # "elsevier" (Harvard, author-date) or "ieee"
 
 .SCRIPTS <- "studies/land_tenure/scripts"
 
-# ---- Guards: the failure modes that cost time on 2026-07-15 -----------------
+# ---- Guards: the couplings that are not obvious ------------------------------
 
 # 001 saves a FRESH study_environment holding study_raw_data but NOT
 # estimation_data -- 002 is what attaches that. So running DATA without MATCHING

@@ -59,18 +59,10 @@ documentation, transfer rights, mode of acquisition, and sharecropping
 intensity.
 
 <!--
-NO ABSTRACT HERE, DELIBERATELY.
-
-This file used to carry a hand-copied abstract with hard-coded figures. It
-drifted: it claimed six GLSS rounds (there are five), froze N at 35,185 and the
-returns-to-scale gap at 0.0154, listed JEL K11 where the paper lists O55, and
-reported "no statistically significant difference" where the manuscript reports
-"statistically significant but economically small differences" -- the opposite
-conclusion, on the study's headline result.
-
-The abstract lives in narrative/sections/00_abstract.Rmd, where its numbers are
-inline R against the pipeline and cannot go stale. A README is not the place to
-keep a second copy of a result. Link to it; do not restate it.
+NO ABSTRACT HERE, DELIBERATELY. It lives in narrative/sections/00_abstract.Rmd,
+where every figure is inline R against the pipeline. A second copy here would be
+hand-typed and would drift from the paper -- silently, and on the headline
+result. Link to it; do not restate it.
 -->
 
 The abstract, full text, tables and figures are in

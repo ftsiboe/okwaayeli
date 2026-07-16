@@ -6,11 +6,11 @@
 # that scripts/101_exhibit_figures.R uses, so the manuscript text and
 # the exhibits cannot drift apart.
 #
-# Keying (mirrors the resource_extraction study; VERIFY against the results
-# workbook before first use -- the TCHLvel codes below are the expected ones):
+# Keying:
 #   TCHLvel identifies the frontier: "National" (naive), "0" (non-owner),
 #   "1" (owner), "Meta" (meta-frontier). `Tech` is only an analysis label and
-#   must NOT be used to split groups.
+#   must NOT be used to split groups -- it carries a different coding for the
+#   same concept, so it silently transposes the groups.
 #   Efficiency comparisons use the MATCHED sample (opt_sample); frontier
 #   parameters (elasticities, gamma) use the UNMATCHED sample for group
 #   frontiers, the matched sample for the meta-frontier.
@@ -221,7 +221,7 @@ frame <- local({
     return(NULL)
   }
   p <- tapply(as.numeric(dd$OwnLnd), as.character(dd[[wv]]), mean, na.rm = TRUE)
-  # Expected against the workbook (sheet "means", CropIDx=="Pooled"):
+  # Expected shares owning, by wave:
   #   GLSS3 .4319 (1509/3494) | GLSS4 .3206 (1584/4941) | GLSS5 .8114 (5766/7106)
   #   GLSS6 .7099 (8708/12266) | GLSS7 .6125 (4519/7378)
   # Frame gaps the narrative quotes: GLSS4->GLSS5 = 49pp; GLSS5->GLSS6 = 10pp.

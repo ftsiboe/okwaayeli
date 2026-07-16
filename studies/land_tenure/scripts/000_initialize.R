@@ -16,9 +16,8 @@ if (requireNamespace("devtools", quietly = TRUE)) {
 }
 
 # Create the directory tree. Delegated to study_dirs() -- do not list folders
-# here. This file, study_setup() and ~40 call sites each held their own copy of
-# the names once, and they drifted: the tree said output/figures while every
-# write went to output/figure. One list now, in ?study_dirs.
+# here. A second copy of the names drifts from the first, and the failure is
+# silent: the tree looks right while every write lands elsewhere.
 invisible(study_dirs(project_name = "land_tenure", layout = "v2"))
 
 invisible(TRUE)

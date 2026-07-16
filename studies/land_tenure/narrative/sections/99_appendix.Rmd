@@ -9,8 +9,8 @@
 
 ## Note S1. Drivers of technical inefficiency
 
-<!-- TODO: the v001 draft has this heading with no body text (see Table S7 for the
-     underlying results). Write the note, modeled on resource_extraction's Note A1. -->
+<!-- TODO: heading with no body text. Write the note from Table S7's results,
+     modeled on resource_extraction's Note A1. -->
 
 ```{r, echo=FALSE, results='asis'}
 sec_landscape()

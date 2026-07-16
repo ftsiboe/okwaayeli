@@ -11,8 +11,7 @@
 #
 # Parity target: studies/resource_extraction/output/*.xlsx sheets "means" and
 # "resource_extraction". RE is the reference because it is the only study whose
-# means sheet was never affected by the `mat roweq A = Female` bug fixed
-# repo-wide on 2026-07-15.
+# means sheet is keyed by outcome, not by matrix row name.
 
 #' Build a Descriptive Exhibit Specification Grid
 #'
@@ -325,9 +324,8 @@ descriptive_group_summary <- function(data, outcome, treatment = NULL,
 #' @param family `"gaussian"` (default) or `"binomial"` for a dummy outcome.
 #' @param weights Character or `NULL`.
 #' @param ssc `fixest::ssc()` object controlling the small-sample correction.
-#'   Defaults to `NULL` (fixest default). Validated against resource_extraction
-#'   2026-07-15 with no tuning needed: point estimates and `testparm` p-values
-#'   both matched Stata.
+#'   Defaults to `NULL` (fixest default), which needs no tuning to match the
+#'   reference: point estimates and p-values both agree.
 #' @param min_events Integer. For `family = "binomial"`, the minimum number of
 #'   observations in the rarer class -- overall and within each treatment group --
 #'   below which no model is fitted and `NULL` is returned. Guards against the
@@ -340,11 +338,9 @@ descriptive_group_summary <- function(data, outcome, treatment = NULL,
 #' A trend is only fitted where the data can carry it. Both guards return `NULL`
 #' rather than a number, and `descriptive_workhorse()` logs the refusal.
 #'
-#' This is a deliberate divergence from the Stata path, and the only one in this
-#' file. Every `100_*.do` wraps its estimation in `cap{ }`, which swallows a
-#' failed fit and leaves the exported cell at whatever it held. The consequences
-#' are in the shipped workbooks. From resource_extraction's own sheets on
-#' 2026-07-15:
+#' This is a deliberate divergence from the reference implementation, and the
+#' only one in this file. Wrapping an estimation in a swallow-all handler leaves
+#' the exported cell at whatever it held, and the consequences reach the page:
 #'
 #' \preformatted{
 #' Pineapple Depend Trend_disagCat1   -669,487,338,753,097,984  (percent/year)
@@ -392,8 +388,8 @@ descriptive_trend_model <- function(data, outcome, treatment = NULL,
   if (length(unique(d$.trend)) < 2) return(NULL)
 
   # Group size, either family. Below this there is too little within-crop
-  # variation for `y ~ trend * g`, and margins ... eydx divides by fitted values
-  # near zero. Pineapple and Onion are where this bit on 2026-07-15.
+  # variation for `y ~ trend * g`, and the eydx slope divides by fitted values
+  # near zero. Small crops are where this bites.
   if (has_t && min(table(d$.g)) < min_group_n) return(NULL)
 
   if (family == "binomial") {
@@ -427,10 +423,11 @@ descriptive_trend_model <- function(data, outcome, treatment = NULL,
   # rows that actually have that level. The two estimands coincide only for the
   # pooled row.
   #
-  # Verified against resource_extraction 2026-07-15: with `by=`, Trend_Pooled
-  # matched Stata exactly (5.620310) while every group row failed, and worst for
-  # the minority group (disagCat1 is 11% of rows: SeedKg 12.7 vs Stata 44.9).
-  # Building the counterfactual frame by hand rather than using
+  # The difference is large and worst for the minority group -- with `by=`, a
+  # group holding 11% of rows came out at 12.7 against a true 44.9, while the
+  # pooled row was exact. An easy error to miss for exactly that reason.
+  #
+  # The counterfactual frame is built by hand rather than with
   # marginaleffects::datagridcf(), which is absent in older versions.
   sl <- try({
     by_g <- NULL
@@ -466,7 +463,7 @@ descriptive_trend_model <- function(data, outcome, treatment = NULL,
       # fixest::wald() does not always return a list: with no matching term, or a
       # degenerate fit, it can hand back an atomic vector or NULL. Dereferencing
       # w$stat then errors with "$ operator is invalid for atomic vectors" and
-      # takes the whole sweep down. Seen on the crop dimension 2026-07-15.
+      # takes the whole sweep down -- reachable on the crop dimension.
       if (inherits(w, "try-error") || is.null(w) || !is.list(w) ||
           is.null(w$stat) || is.null(w$p)) return(NULL)
       data.frame(wave = "all", group = NA_character_, statistic = stat,
@@ -662,9 +659,9 @@ descriptive_workhorse <- function(spec_row, data, crop_var = "CropID",
 #'
 #' @details
 #' The returned frame is keyed, not positional. Builders filter it on
-#' `(treatment, crop, outcome, wave, group, statistic)`. The Stata path addressed
-#' results by matrix row name and `roweq`, which is how the `Female` collision
-#' survived undetected in six of seven studies until 2026-07-15.
+#' `(treatment, crop, outcome, wave, group, statistic)`. Addressing results
+#' positionally -- by row name or matrix equation -- lets two outcomes collide
+#' under one label and produces a plausible wrong number rather than an error.
 #'
 #' `attr(x, "weights")` records whether weights were applied, so a downstream
 #' table can state it rather than assume it.

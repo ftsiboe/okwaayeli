@@ -7,8 +7,8 @@
 # headers, spanners and footnotes. Same ft_*() call as the paper, so the two
 # cannot disagree.
 #
-# NOT A ROUND TRIP -- nothing reads this back. Excel as an output is fine; Excel
-# in the middle of the pipeline is what 101 was cleared of.
+# NOT A ROUND TRIP -- nothing reads this back, and nothing should. Excel is fine
+# as a final output; an exhibit that reads its numbers out of one is not.
 #
 # Run from the repo root, AFTER 100 (descriptive cache) and 101 (figure data:
 # fig1_range() and trend_gap() read output/figures/).
@@ -66,7 +66,7 @@ if (!requireNamespace("openxlsx", quietly = TRUE))
 # Sheet name -> builder. Sheet names are the manuscript's numbering because this
 # workbook is read by humans holding the paper; everything upstream is named by
 # functionality instead, on the reasoning that table numbers move.
-# NB not `TABLES`: article_helpers.R defines that as the output/tables path.
+# NB not `TABLES` -- article_helpers.R defines that as the output/tables path.
 TABLE_BUILDERS <- list(
   "Table 1"  = ft_table1,  "Table 2"  = ft_table2,
   "Table 3"  = ft_table3,  "Table 4"  = ft_table4,
@@ -75,9 +75,8 @@ TABLE_BUILDERS <- list(
   "Table S6" = ft_tableS6, "Table S7" = ft_tableS7
 )
 
-# Build every table before writing any of it. A partial workbook that silently
-# omits the table that failed is exactly the failure mode the Table 3 fallback
-# used to produce.
+# Build every table before writing any of it, so a failure cannot leave a
+# workbook that silently omits one.
 built <- list()
 for (nm in names(TABLE_BUILDERS)) {
   message("  building ", nm, " ...")

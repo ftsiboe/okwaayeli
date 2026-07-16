@@ -8,9 +8,6 @@
 # narrative/ during a render, so anything sourced by the Rmd must resolve its own
 # paths -- see .STUDY_ROOT in exhibit_helpers_tables.R. Do not reach for OUTPUT
 # from a file the Rmd sources.
-#
-# RESULTS_XLSX was removed on 2026-07-15: no exhibit reads the workbook any more,
-# and a defined-but-unused path is an invitation to reintroduce the dependency.
 
 STUDY        <- "studies/land_tenure"
 DATA         <- file.path(STUDY, "data")

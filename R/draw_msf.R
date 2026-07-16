@@ -155,9 +155,6 @@ draw_msf_estimations <- function(
     match_path) {
   
   tryCatch({
-    # An uncalled function(){...} of interactive defaults lived here. It never
-    # ran, but it shadowed this function's real parameters and referenced free
-    # variables. For interactive defaults, see the calling 004_MSF_*.R.
     #---------------------------------------------
     # Data Preparation                         ####
     # Filter out rows based on drawlist
@@ -298,8 +295,6 @@ draw_msf_estimations <- function(
 
               # Reached ONLY on error: the success path above ends in
               # return(disagscors), which returns from this function directly.
-              # (Read `return(DONE)` before 2026-07-16 -- DONE is undefined, so
-              # the error path threw instead of returning NULL as intended.)
               return(NULL)
             }, scors=res$ef_samp, data=data), fill = TRUE))
       disagscors$draw <- draw

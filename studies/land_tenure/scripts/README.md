@@ -32,9 +32,8 @@ number.**
 | `article_helpers.R` | paths, `fmt_*`, `assert_present()` | 301, 302, the Rmd |
 | `exhibit_helpers_tables.R` | flextable builders, `tbl_num()`, `tbl_pct()` | the Rmd, 102 |
 
-These define things; they do not do things. A number on them is a false promise
-and invites the wrong question — both were numbered once, and both were
-repeatedly asked "when do I run this?" The answer was always "you don't."
+These define things; they do not do things. A number on them would be a false
+promise, and invites the wrong question — "when do I run this?" You don't.
 
 The tell: **if a runner would `source()` it and nothing would happen, it is a
 library.**
@@ -71,5 +70,5 @@ Pick the band by **contract, not subject**: a script that fits a model is `1##`
 even if it feels like a figure. Gaps are deliberate — `103_exhibit_*.R` slots in
 without renumbering.
 
-`resource_extraction` is still on the pre-2026-07-15 layout (Stata workbook,
-numbered libraries); the two studies will disagree until it is ported.
+Sibling studies do not all follow this layout yet; `resource_extraction` is the
+closest and is worth reading before porting another.

@@ -7,9 +7,8 @@
 # -- ~250s for the pooled sample alone, longer with crops. Too slow to run
 # inside every knit, hence compute-once-and-cache.
 #
-# The engine (R/descriptive-exhibits-core.R) is validated against the Stata
-# workbooks it replaced: resource_extraction (14,405 assertions) and land_tenure
-# (678). See tests/testthat/test-descriptive-exhibits-*.R.
+# The engine is R/descriptive-exhibits-core.R, covered by ~15,000 assertions
+# across two studies. See tests/testthat/test-descriptive-exhibits-*.R.
 #
 # Run from the repo root.
 
@@ -29,8 +28,7 @@ message("study_raw_data: ", nrow(d), " rows")
 
 # ---- Table 1 -----------------------------------------------------------------
 # Two models, one table: OLS over the continuous outcomes, logit over the binary
-# ones. The Stata workbook this replaced recorded no distinction between them;
-# the spec grid does, via `families`.
+# ones. `families` is what carries that distinction into the spec grid.
 CONT <- c("Yield", "Area", "SeedKg", "HHLaborAE", "HirdHr", "FertKg",
           "PestLt", "AgeYr", "YerEdu", "HHSizeAE", "Depend", "CrpMix")
 BIN  <- c("Female", "EqipMech", "Credit", "Extension", "EqipIrig")
