@@ -1,8 +1,11 @@
 # Supplementary material
 
 <!-- Layout mirrors studies/resource_extraction/narrative/sections/99_appendix.Rmd.
-     Tables built by scripts/305_tables.R from data/tables/*.csv (curated from the
-     v001 draft); figures by scripts/100_exhibits.R into output/figure/. -->
+     Tables S1-S4 are built by scripts/110_exhibit_tables.R from
+     data/descriptive_exhibits.rds (written by scripts/100_exhibit_descriptive_stats.R).
+     Tables S5-S7 are frontier results and still read curated CSVs in data/tables/.
+     Figures come from scripts/101_exhibit_figures.R into output/figure/.
+     See scripts/README.md for the naming convention. -->
 
 ## Note S1. Drivers of technical inefficiency
 

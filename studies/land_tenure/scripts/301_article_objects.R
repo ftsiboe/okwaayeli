@@ -3,7 +3,7 @@
 # Working directory is always the okwaayeli repo root.
 #
 # Everything is extracted from the same pooled meta-stochastic-frontier objects
-# that scripts/100_exhibits.R uses, so the manuscript text and
+# that scripts/101_exhibit_figures.R uses, so the manuscript text and
 # the exhibits cannot drift apart.
 #
 # Keying (mirrors the resource_extraction study; VERIFY against the results

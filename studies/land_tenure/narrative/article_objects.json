@@ -1,23 +1,23 @@
 {
   "meta": {
-    "generated": "2026-07-15 14:09:47.64869",
+    "generated": "2026-07-16 04:01:51.947141",
     "source": "output/estimations/CropID_Pooled_<tenure>_TL_hnormal_optimal.rds",
     "matched_sample": "robust_mahalanobis"
   },
   "frame": {
     "own_prev": {
-      "GLSS3": 0.4505,
-      "GLSS4": 0.3171,
-      "GLSS5": 0.7897,
-      "GLSS6": 0.6809,
-      "GLSS7": 0.6349
+      "GLSS3": 0.4319,
+      "GLSS4": 0.3206,
+      "GLSS5": 0.8114,
+      "GLSS6": 0.7099,
+      "GLSS7": 0.6125
     },
     "n": {
-      "GLSS3": 2957,
-      "GLSS4": 3955,
-      "GLSS5": 5359,
-      "GLSS6": 9463,
-      "GLSS7": 6677
+      "GLSS3": 3494,
+      "GLSS4": 4941,
+      "GLSS5": 7106,
+      "GLSS6": 12266,
+      "GLSS7": 7378
     },
     "census": {
       "GLSS3": "1984",

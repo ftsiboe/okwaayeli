@@ -1,7 +1,9 @@
 # Tables and Figures
 
 <!-- Layout mirrors studies/resource_extraction/narrative/sections/98_tables_and_figures.Rmd.
-     Tables are built by scripts/305_tables.R; figures by scripts/100_exhibits.R into output/figure/.
+     Tables are built by scripts/110_exhibit_tables.R from data/descriptive_exhibits.rds
+     (written by scripts/100_exhibit_descriptive_stats.R); figures by
+     scripts/101_exhibit_figures.R into output/figure/. See scripts/README.md.
      Exhibit titles are markdown headings (not flextable captions) so they appear in the Word navigation pane.
      Landscape exhibits are grouped into ONE section: emitting sec_landscape() then sec_portrait() back to back
      creates an empty portrait section, which Word renders as a blank page.
