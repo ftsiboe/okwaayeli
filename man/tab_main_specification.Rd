@@ -26,13 +26,13 @@ estimation is skipped rather than aborting the run. If a figure comes back
 empty, check that every path in \code{res_list} exists before suspecting the plot.
 }
 \seealso{
-Other exhibit figures: 
-\code{\link{ers_theme}()},
-\code{\link{fig_covariate_balance}()},
-\code{\link{fig_distribution}()},
-\code{\link{fig_dsistribution}()},
-\code{\link{fig_heterogeneity00}()},
-\code{\link{fig_input_te}()},
-\code{\link{fig_robustness}()}
+Other exhibit figures:
+\code{\link[=ers_theme]{ers_theme()}},
+\code{\link[=fig_covariate_balance]{fig_covariate_balance()}},
+\code{\link[=fig_distribution]{fig_distribution()}},
+\code{\link[=fig_dsistribution]{fig_dsistribution()}},
+\code{\link[=fig_heterogeneity00]{fig_heterogeneity00()}},
+\code{\link[=fig_input_te]{fig_input_te()}},
+\code{\link[=fig_robustness]{fig_robustness()}}
 }
 \concept{exhibit figures}

@@ -40,11 +40,11 @@ The function returns both formulas as character strings that can be used
 in matching functions such as \code{MatchIt::matchit()} or \code{Matching::Match()}.
 }
 \seealso{
-Other matching: 
-\code{\link{covariate_balance}()},
-\code{\link{draw_matched_samples}()},
-\code{\link{match_sample_specifications}()},
-\code{\link{treatment_effect_calculation}()},
-\code{\link{treatment_effect_summary}()}
+Other matching:
+\code{\link[=covariate_balance]{covariate_balance()}},
+\code{\link[=draw_matched_samples]{draw_matched_samples()}},
+\code{\link[=match_sample_specifications]{match_sample_specifications()}},
+\code{\link[=treatment_effect_calculation]{treatment_effect_calculation()}},
+\code{\link[=treatment_effect_summary]{treatment_effect_summary()}}
 }
 \concept{matching}

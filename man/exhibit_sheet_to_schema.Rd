@@ -70,13 +70,13 @@ points (land_tenure). Getting it wrong mislabels percent as percentage points.
 \seealso{
 \code{read_exhibit_sheet()}, \code{draw_descriptive_summary()}
 
-Other exhibits: 
-\code{\link{exhibit_cell}()},
-\code{\link{exhibit_crop_table}()},
-\code{\link{exhibit_group_sizes}()},
-\code{\link{exhibit_stars}()},
-\code{\link{exhibit_value}()},
-\code{\link{exhibit_wave_table}()},
-\code{\link{read_exhibit_sheet}()}
+Other exhibits:
+\code{\link[=exhibit_cell]{exhibit_cell()}},
+\code{\link[=exhibit_crop_table]{exhibit_crop_table()}},
+\code{\link[=exhibit_group_sizes]{exhibit_group_sizes()}},
+\code{\link[=exhibit_stars]{exhibit_stars()}},
+\code{\link[=exhibit_value]{exhibit_value()}},
+\code{\link[=exhibit_wave_table]{exhibit_wave_table()}},
+\code{\link[=read_exhibit_sheet]{read_exhibit_sheet()}}
 }
 \concept{exhibits}

@@ -68,14 +68,14 @@ versus percentage points -- so \code{trend} has no default.
 }
 
 \seealso{
-Other descriptive exhibits: 
-\code{\link{descriptive_expand_category}()},
-\code{\link{descriptive_group_summary}()},
-\code{\link{descriptive_prepare}()},
-\code{\link{descriptive_season_year}()},
-\code{\link{descriptive_specifications}()},
-\code{\link{descriptive_trend_model}()},
-\code{\link{descriptive_workhorse}()},
-\code{\link{draw_descriptive_summary}()}
+Other descriptive exhibits:
+\code{\link[=descriptive_expand_category]{descriptive_expand_category()}},
+\code{\link[=descriptive_group_summary]{descriptive_group_summary()}},
+\code{\link[=descriptive_prepare]{descriptive_prepare()}},
+\code{\link[=descriptive_season_year]{descriptive_season_year()}},
+\code{\link[=descriptive_specifications]{descriptive_specifications()}},
+\code{\link[=descriptive_trend_model]{descriptive_trend_model()}},
+\code{\link[=descriptive_workhorse]{descriptive_workhorse()}},
+\code{\link[=draw_descriptive_summary]{draw_descriptive_summary()}}
 }
 \concept{descriptive exhibits}

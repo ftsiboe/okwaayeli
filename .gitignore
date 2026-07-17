@@ -4,11 +4,9 @@
 .Ruserdata
 .DS_Store
 .Renviron
-
 # Per-study agent prompts: working notes for the next session on that study,
 # not part of the published repo.
 studies/**/AGENT_PROMPT.md
-
 # Study outputs (large; download from GitHub release instead).
 studies/**/*.dta
 studies/**/*.rds
@@ -19,7 +17,6 @@ studies/**/*.png
 # !studies/**/narrative/resource-extraction.html
 # Package data slot kept lean.
 data/*
-
 # data-raw/ is private by default, but we track the documentation and
 # scripts that live alongside the harmonized release.
 data-raw/*
@@ -31,7 +28,6 @@ data-raw/releases/harmonized_data/*
 !data-raw/releases/harmonized_data/README.md
 !data-raw/releases/harmonized_data/README.Rmd
 !data-raw/releases/harmonized_data/codebook.md
-
 # Test fixtures (downloaded on demand).
 tests/**/*.dta
 tests/**/*.rds
@@ -39,13 +35,12 @@ tests/**/*.zip
 tests/**/*.csv
 tests/**/*.xlsx
 tests/**/*.png
-
 # Office lock files.
 ~$*
 *.tmp
-
 # pkgdown / R build artifacts.
 docs/
 inst/doc/
 *.Rcheck/
 *.tar.gz
+replications

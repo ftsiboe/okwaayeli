@@ -170,7 +170,7 @@ Unrestricted and restricted summaries are then stacked, with a
 downstream comparison.
 }
 \seealso{
-Other frontier analysis: 
-\code{\link{msf_workhorse}()}
+Other frontier analysis:
+\code{\link[=msf_workhorse]{msf_workhorse()}}
 }
 \concept{frontier analysis}
