@@ -62,13 +62,13 @@ which the module was administered, which is what the appendix tables report.
 \seealso{
 \code{read_exhibit_sheet()}, \code{exhibit_wave_table()}
 
-Other exhibits:
-\code{\link[=exhibit_cell]{exhibit_cell()}},
-\code{\link[=exhibit_group_sizes]{exhibit_group_sizes()}},
-\code{\link[=exhibit_sheet_to_schema]{exhibit_sheet_to_schema()}},
-\code{\link[=exhibit_stars]{exhibit_stars()}},
-\code{\link[=exhibit_value]{exhibit_value()}},
-\code{\link[=exhibit_wave_table]{exhibit_wave_table()}},
-\code{\link[=read_exhibit_sheet]{read_exhibit_sheet()}}
+Other exhibits: 
+\code{\link{exhibit_cell}()},
+\code{\link{exhibit_group_sizes}()},
+\code{\link{exhibit_sheet_to_schema}()},
+\code{\link{exhibit_stars}()},
+\code{\link{exhibit_value}()},
+\code{\link{exhibit_wave_table}()},
+\code{\link{read_exhibit_sheet}()}
 }
 \concept{exhibits}

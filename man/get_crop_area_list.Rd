@@ -30,8 +30,8 @@ for a specified set of crops. The function looks for column names that start wit
 and match any of the crops provided in \code{selected_crops}.
 }
 \seealso{
-Other helpers:
-\code{\link[=compute_jenks_binned_shares]{compute_jenks_binned_shares()}},
-\code{\link[=harmonized_data_prep]{harmonized_data_prep()}}
+Other helpers: 
+\code{\link{compute_jenks_binned_shares}()},
+\code{\link{harmonized_data_prep}()}
 }
 \concept{helpers}

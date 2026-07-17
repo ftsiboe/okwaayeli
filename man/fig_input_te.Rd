@@ -30,13 +30,13 @@ groups. Also writes \code{output/figure_data/input_TE_data.csv}, which
 this builder must run before the article is knitted.
 }
 \seealso{
-Other exhibit figures:
-\code{\link[=ers_theme]{ers_theme()}},
-\code{\link[=fig_covariate_balance]{fig_covariate_balance()}},
-\code{\link[=fig_distribution]{fig_distribution()}},
-\code{\link[=fig_dsistribution]{fig_dsistribution()}},
-\code{\link[=fig_heterogeneity00]{fig_heterogeneity00()}},
-\code{\link[=fig_robustness]{fig_robustness()}},
-\code{\link[=tab_main_specification]{tab_main_specification()}}
+Other exhibit figures: 
+\code{\link{ers_theme}()},
+\code{\link{fig_covariate_balance}()},
+\code{\link{fig_distribution}()},
+\code{\link{fig_dsistribution}()},
+\code{\link{fig_heterogeneity00}()},
+\code{\link{fig_robustness}()},
+\code{\link{tab_main_specification}()}
 }
 \concept{exhibit figures}

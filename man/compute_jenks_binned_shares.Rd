@@ -58,8 +58,8 @@ Internally the function:
 }
 }
 \seealso{
-Other helpers:
-\code{\link[=get_crop_area_list]{get_crop_area_list()}},
-\code{\link[=harmonized_data_prep]{harmonized_data_prep()}}
+Other helpers: 
+\code{\link{get_crop_area_list}()},
+\code{\link{harmonized_data_prep}()}
 }
 \concept{helpers}

@@ -63,11 +63,11 @@ formula is constructed as \code{Treat ~ Scle + Fixd}. When \code{distance == "gl
 \code{m.order = "largest"} is used; otherwise \code{"closest"}.
 }
 \seealso{
-Other matching:
-\code{\link[=covariate_balance]{covariate_balance()}},
-\code{\link[=match_sample_specifications]{match_sample_specifications()}},
-\code{\link[=treatment_effect_calculation]{treatment_effect_calculation()}},
-\code{\link[=treatment_effect_summary]{treatment_effect_summary()}},
-\code{\link[=write_match_formulas]{write_match_formulas()}}
+Other matching: 
+\code{\link{covariate_balance}()},
+\code{\link{match_sample_specifications}()},
+\code{\link{treatment_effect_calculation}()},
+\code{\link{treatment_effect_summary}()},
+\code{\link{write_match_formulas}()}
 }
 \concept{matching}
