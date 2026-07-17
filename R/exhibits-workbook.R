@@ -102,6 +102,15 @@ read_exhibit_sheet <- function(path, sheet = "means",
                         ".\n  Expected 'CropIDx, Equ, Coef' or ",
                         "'Variable, crop, mesure'. Pass layout= explicitly.",
                         call. = FALSE)
+  } else {
+    # A forced layout must not silently misname every column: every lookup
+    # would then return NA and the table would render blank with no diagnostic.
+    expected <- if (layout == "means") c("cropidx", "equ", "coef")
+                else c("variable", "crop", "mesure")
+    if (!identical(hdr, expected))
+      stop("read_exhibit_sheet(): sheet '", sheet, "' does not look like a '",
+           layout, "' sheet. First three headers are: ",
+           paste(names(d)[1:3], collapse = ", "), ".", call. = FALSE)
   }
   names(d) <- if (layout == "means")
     c("CropIDx", "Equ", "Coef", "Beta", "SE", "Tv", "Pv", "Min", "Max", "SD", "N")
@@ -201,9 +210,9 @@ exhibit_sheet_to_schema <- function(sheet, group_tag = "disagCat",
 
     is_mean  <- grepl("^Mean_", co)
     is_trend <- grepl("^Trend_", co)
-    is_wave  <- grepl("^GLSS[0-9]_", co)
-    is_cat   <- co == "CATDif"
-    is_trd   <- co == "TrendDif"
+    is_wave  <- grepl("^GLSS[0-9]+_", co)
+    is_cat   <- co %in% "CATDif"     # %in%, not ==: blank cells read as NA and
+    is_trd   <- co %in% "TrendDif"   # NA indices crash subscripted assignment
 
     # A wrong group_tag must not degrade quietly. "Pooled" resolves whatever the
     # tag is, so a mismatched tag would drop every GROUP row and keep every
@@ -213,7 +222,7 @@ exhibit_sheet_to_schema <- function(sheet, group_tag = "disagCat",
     # the exception at "OwnLnd". Fail with what the sheet actually uses.
     suffix <- unique(c(sub("^Mean_", "", co[is_mean]),
                        sub("^Trend_", "", co[is_trend]),
-                       sub("^GLSS[0-9]_", "", co[is_wave])))
+                       sub("^GLSS[0-9]+_", "", co[is_wave])))
     suffix <- setdiff(suffix, c("Pooled", "miss", NA))
     if (length(suffix) && !any(paste0(group_tag, c("0", "1")) %in% suffix))
       stop("exhibit_sheet_to_schema(): group_tag '", group_tag,
@@ -233,7 +242,7 @@ exhibit_sheet_to_schema <- function(sheet, group_tag = "disagCat",
 
     out$statistic[is_wave]  <- "mean"
     out$wave[is_wave]       <- sub("_.*$", "", co[is_wave])
-    out$group[is_wave]      <- grp(sub("^GLSS[0-9]_", "", co[is_wave]))
+    out$group[is_wave]      <- grp(sub("^GLSS[0-9]+_", "", co[is_wave]))
 
     out$statistic[is_cat] <- "cat_diff"; out$wave[is_cat] <- "all"
     out$statistic[is_trd] <- "trend_diff"; out$wave[is_trd] <- "all"
@@ -242,6 +251,10 @@ exhibit_sheet_to_schema <- function(sheet, group_tag = "disagCat",
     model <- is_trend | is_cat | is_trd
     out$sd[model] <- NA_real_
     out$n[model]  <- NA_real_
+    # r(table)' columns 5 and 6 are ll and ul on model rows -- confidence
+    # bounds, not sample min/max. Passing them through mislabeled them.
+    out$min[model] <- NA_real_
+    out$max[model] <- NA_real_
 
     # Keep rows that carry a result. `<wave>_miss`, `r1` and `_` do not, and
     # neither does a mean/trend row whose group tag did not resolve -- that means
@@ -270,15 +283,17 @@ exhibit_sheet_to_schema <- function(sheet, group_tag = "disagCat",
       n         = suppressWarnings(as.numeric(sheet$N)),
       stringsAsFactors = FALSE)
 
-    is_pool  <- me == "GLSS0"
-    is_wave  <- grepl("^GLSS[1-9]$", me)
-    is_trend <- me == "Trend"
+    is_pool  <- me %in% "GLSS0"      # %in%, not ==: NA-safe (blank spill rows)
+    is_wave  <- grepl("^GLSS[1-9][0-9]*$", me)
+    is_trend <- me %in% "Trend"
 
     out$statistic[is_pool]  <- "mean"; out$wave[is_pool] <- "pooled"
     out$statistic[is_wave]  <- "mean"; out$wave[is_wave] <- me[is_wave]
     out$statistic[is_trend] <- trend_statistic; out$wave[is_trend] <- "trend"
-    out$sd[is_trend] <- NA_real_
-    out$n[is_trend]  <- NA_real_
+    out$sd[is_trend]  <- NA_real_
+    out$n[is_trend]   <- NA_real_
+    out$min[is_trend] <- NA_real_  # ll/ul on model rows, not data min/max
+    out$max[is_trend] <- NA_real_
 
     out <- out[!is.na(out$statistic), , drop = FALSE]
   }
@@ -352,6 +367,7 @@ exhibit_value <- function(data, keys, col) {
 exhibit_stars <- function(p, levels = c("***" = 0.01, "**" = 0.05, "*" = 0.10)) {
   if (length(p) != 1) stop("exhibit_stars(): p must be length one.", call. = FALSE)
   if (is.na(p)) return("")
+  levels <- sort(levels)  # strictest first regardless of caller's ordering
   for (i in seq_along(levels)) if (p < levels[[i]]) return(names(levels)[i])
   ""
 }
@@ -478,7 +494,7 @@ exhibit_wave_table <- function(sheet, map, waves, trend = "Trend",
   ncol_out <- length(waves) + as.integer(!is.null(trend))
   for (j in seq_len(ncol_out)) out[[paste0("c", j)]] <- ""
   for (i in seq_len(nrow(map))) {
-    if (as.character(map$header[i]) == "1" || is.na(map$Variable[i])) next
+    if (isTRUE(as.character(map$header[i]) == "1") || is.na(map$Variable[i])) next
     v <- map$Variable[i]
     for (j in seq_along(waves)) {
       k <- list(Variable = v, crop = crop, mesure = waves[j])
@@ -489,10 +505,15 @@ exhibit_wave_table <- function(sheet, map, waves, trend = "Trend",
     }
     if (!is.null(trend)) {
       k <- list(Variable = v, crop = crop, mesure = trend)
-      b <- exhibit_value(sheet, k, "Beta")
-      out[[paste0("c", length(waves) + 1)]][i] <-
-        if (is.na(b)) "" else sprintf(paste0("%.", digits, "f [%.", digits, "f]"),
-                                      b, exhibit_value(sheet, k, "SE"))
+      b  <- exhibit_value(sheet, k, "Beta")
+      se <- exhibit_value(sheet, k, "SE")
+      out[[paste0("c", length(waves) + 1)]][i] <- if (is.na(b)) {
+        ""
+      } else if (is.na(se)) {
+        sprintf(paste0("%.", digits, "f"), b)
+      } else {
+        sprintf(paste0("%.", digits, "f [%.", digits, "f]"), b, se)
+      }
     }
   }
   out
@@ -524,10 +545,13 @@ exhibit_cell <- function(estimate, spread, p = NA_real_, digits = 2,
   style <- match.arg(style)
   if (is.na(estimate)) return("")
   d <- paste0("%.", digits, "f")
-  body <- if (style == "mean")
-    sprintf(paste0(d, " (", d, ")"), estimate, spread)
-  else
-    sprintf(paste0(d, "%s [", d, "]"), estimate, exhibit_stars(p), spread)
+  body <- if (style == "mean") {
+    if (is.na(spread)) sprintf(d, estimate)
+    else sprintf(paste0(d, " (", d, ")"), estimate, spread)
+  } else {
+    if (is.na(spread)) sprintf(paste0(d, "%s"), estimate, exhibit_stars(p))
+    else sprintf(paste0(d, "%s [", d, "]"), estimate, exhibit_stars(p), spread)
+  }
   # intToUtf8(8224) is the dagger, U+2020. Spelled this way so R/ stays pure
   # ASCII -- see the note at the Naive label in exhibits-figures.R.
   paste0(body, if (isTRUE(dagger)) paste0(" ", intToUtf8(8224L)) else "")

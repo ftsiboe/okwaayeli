@@ -258,7 +258,10 @@ descriptive_group_summary <- function(data, outcome, treatment = NULL,
     v  <- if (n > 1) sum(w * (y - m)^2) / (sum(w) - sum(w) / n) else NA_real_
     sd <- sqrt(v)
     data.frame(wave = wave, group = group, statistic = "mean",
-               estimate = m, se = if (n > 1) sd / sqrt(n) else NA_real_,
+               # sqrt(v * sum(w^2)) / sum(w) reduces exactly to sd/sqrt(n) when
+               # w == 1 (the parity case); with real weights, sd/sqrt(n)
+               # understated the SE by ignoring the weight structure.
+               estimate = m, se = if (n > 1) sqrt(v * sum(w^2)) / sum(w) else NA_real_,
                min = min(y), max = max(y), sd = sd, n = n,
                stringsAsFactors = FALSE)
   }
@@ -437,10 +440,12 @@ descriptive_trend_model <- function(data, outcome, treatment = NULL,
         z <- d; z$.g <- factor(l, levels = lv); z
       }))
       by_g <- marginaleffects::avg_slopes(fit, variables = ".trend", by = ".g",
-                                          slope = "eydx", newdata = cf)
+                                          slope = "eydx", newdata = cf,
+                                          wts = ".w")
     }
     all_g <- marginaleffects::avg_slopes(fit, variables = ".trend",
-                                         slope = "eydx", newdata = d)
+                                         slope = "eydx", newdata = d,
+                                         wts = ".w")
     list(by_g = by_g, all_g = all_g)
   }, silent = TRUE)
   if (inherits(sl, "try-error")) return(NULL)
@@ -494,9 +499,21 @@ descriptive_trend_model <- function(data, outcome, treatment = NULL,
 #' @export
 descriptive_expand_category <- function(data, category_var) {
   v <- as.character(data[[category_var]])
-  lv <- sort(unique(v[!is.na(v)]))
+  # Category order: preserve factor levels when the input is a factor (the
+  # get_household_data()/as_factor path); otherwise sort numeric codes
+  # numerically so "10" does not land before "2". Lexicographic only for text.
+  if (is.factor(data[[category_var]])) {
+    lv <- levels(droplevels(data[[category_var]]))
+  } else {
+    lv <- sort(unique(v[!is.na(v)]))
+    num <- suppressWarnings(as.numeric(lv))
+    if (!anyNA(num)) lv <- lv[order(num)]
+  }
   nm <- paste0(category_var, "_", seq_along(lv))
-  for (i in seq_along(lv)) data[[nm[i]]] <- as.numeric(!is.na(v) & v == lv[i])
+  # NA source values stay NA in every dummy, matching Stata's `tab, gen()`.
+  # Coding them 0 silently deflated shares under item nonresponse.
+  for (i in seq_along(lv))
+    data[[nm[i]]] <- ifelse(is.na(v), NA_real_, as.numeric(v == lv[i]))
   attr(data, "indicators") <- nm
   data
 }
@@ -563,6 +580,9 @@ descriptive_indicator_shares <- function(data, indicators,
                                    wave_var = wave_var, weights = weights)
     if (is.null(s)) next
     s$wave[s$wave == "all"] <- "pooled"
+    # Keep the per-wave rows for the wave_diff trend BEFORE any per_wave filter;
+    # filtering first silently suppressed change_pp when per_wave = FALSE.
+    s_waves <- s
     if (!per_wave) s <- s[s$wave == "pooled", , drop = FALSE]
     s$outcome <- v
     out[[length(out) + 1]] <- s
@@ -578,8 +598,8 @@ descriptive_indicator_shares <- function(data, indicators,
           sd = NA_real_, n = NA_real_, outcome = v, stringsAsFactors = FALSE)
       }
     } else if (trend == "wave_diff") {
-      a <- s$estimate[s$wave == waves[1]]
-      b <- s$estimate[s$wave == waves[2]]
+      a <- s_waves$estimate[s_waves$wave == waves[1]]
+      b <- s_waves$estimate[s_waves$wave == waves[2]]
       if (length(a) && length(b)) out[[length(out) + 1]] <- data.frame(
         wave = "trend", group = NA_character_, statistic = "change_pp",
         estimate = (a[1] - b[1]) * 100, se = NA_real_, min = NA_real_,
@@ -618,7 +638,7 @@ descriptive_workhorse <- function(spec_row, data, crop_var = "CropID",
   # is a reg for 12 outcomes and a logit for 5, in one table.
   if (!is.null(spec_row$family) && !is.na(spec_row$family))
     family <- as.character(spec_row$family)
-  d <- data[as.character(data[[crop_var]]) == spec_row$crop, , drop = FALSE]
+  d <- data[as.character(data[[crop_var]]) %in% spec_row$crop, , drop = FALSE]
   if (!nrow(d)) {
     if (!quiet) message("descriptive_workhorse(): no rows for crop '",
                         spec_row$crop, "'.")

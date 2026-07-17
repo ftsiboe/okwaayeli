@@ -177,7 +177,9 @@ lapply(
            disaggregate_variable %in% "CropID" & 
            f %in% 2 & d %in% 1){
           
-          disagscors_list <- c("Ecozon","Region","AgeCat","EduLevel","Female",
+          # "CropID" (constant "Pooled" in this sample) supplies the pooled
+          # benchmark that fig_heterogeneity00() anchors its panels on.
+          disagscors_list <- c("CropID","Ecozon","Region","AgeCat","EduLevel","Female",
                                names(data)[grepl("CROP_",names(data))],"LndAq","ShrCrpCat")
           disagscors_list <- unique(disagscors_list[disagscors_list %in% names(data)])
 
@@ -245,7 +247,9 @@ lapply(
         # Save full results for this model specification
         saveRDS(res,file=out_path)
         
-      }, error=function(e){ invisible()})
+      }, error=function(e){
+        message("004_MSF: estimation failed for ", est_name, ": ", conditionMessage(e))
+        invisible()})
     }
     invisible()
   })

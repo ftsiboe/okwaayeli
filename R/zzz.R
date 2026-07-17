@@ -18,7 +18,7 @@
     utils::globalVariables(
       strsplit(
         " .data EaId glss stat value . TE_OLS Treat DATA CoefName DONE Estimate Survey TGR Tech crop_area_list estType
-    group_by input restrict risk seed solve.QP summarise Estimate_mean GHAgricProductivityLab_control binned_range_level
+    input restrict risk seed Estimate_mean GHAgricProductivityLab_control binned_range_level
      binned_range_name count count_sum estimate_count estimate_weight
      weight_tmp weights_sum
     technology_variable type study_environment Surveyx Weight",

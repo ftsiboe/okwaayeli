@@ -107,7 +107,6 @@ tab_main_specification <- function(
             sf_estm$estm_type <- "sf_estm"
             sf_estm$level_type <- "level"
             sf_estm <- sf_estm[c("technology_variable", "fxnforms", "distforms", "estm_type", "level_type", "sample", "Survey", "restrict", "Tech", "CoefName", "Estimate", "Estimate.sd", "jack_pv")]
-            sf_estm[sf_estm$CoefName %in% "Nobs", ]
             # Process elasticities
             el_mean <- res$el_mean
             el_mean <- el_mean[el_mean$stat %in% "wmean", ]
@@ -138,10 +137,15 @@ tab_main_specification <- function(
             #saveRDS(res, file = file.path(study_dir_figure_data(study_environment),"main_specification.rds"))
             return(res)
           }, error = function(e) {
+            # Never drop an estimation silently: name the file and the reason.
+            message("tab_main_specification(): skipping '", file, "': ",
+                    conditionMessage(e))
             return(NULL)
           })
         }), fill = TRUE))
-  
+
+  if (!nrow(res)) warning("tab_main_specification(): no usable estimation files; ",
+                          "returning an empty table.", call. = FALSE)
   return(res)
 }
 #' Heterogeneity Figure
@@ -180,6 +184,16 @@ fig_heterogeneity00 <- function(res, y_title, colset = c("orange", "darkgreen", 
   eff_fig_fxn <- function(disasg, type = NULL, xsize = 7, title = "") {
     # Combine data based on disaggregation
     data <- unique(rbind(res[(res$disasg %in% "CropID" & res$level %in% "Pooled"), ], res[res$disasg %in% disasg, ]))
+    # The pooled benchmark only exists if "CropID" was included in the study's
+    # disagscors_list (it is a real data column, constant "Pooled" in the
+    # analysis sample). Do not let it vanish silently.
+    if (!any(res$disasg %in% "CropID" & res$level %in% "Pooled"))
+      warning("fig_heterogeneity00(): no pooled reference rows ",
+              "(disasg == 'CropID', level == 'Pooled'). Add \"CropID\" to ",
+              "disagscors_list in the study's 004 script to plot the pooled ",
+              "benchmark.", call. = FALSE)
+    # TE0 has no x2 slot below; keep it out rather than plotting an NA series.
+    data <- data[!data$input %in% "TE0", ]
     myrank <- data[data$input %in% "MTE", ]
     myrank <- myrank[as.integer(myrank$Tech) %in% min(as.integer(data$Tech), na.rm = TRUE), ]
     
@@ -216,7 +230,7 @@ fig_heterogeneity00 <- function(res, y_title, colset = c("orange", "darkgreen", 
     if (length(unique(as.character(data$Tech))) %in% 1) {
       fig <- ggplot(data = data, aes(x = x, y = Estimate, group = input, shape = input, colour = input, fill = input))
     } else {
-      fig <- ggplot(data = data, aes(x = x, y = Estimate, group = Tech, shape = Tech, colour = input, fill = input))
+      fig <- ggplot(data = data, aes(x = x, y = Estimate, group = Tech, shape = factor(Tech), colour = input, fill = input))
     }
     
     fig <- fig +
@@ -251,7 +265,16 @@ fig_heterogeneity00 <- function(res, y_title, colset = c("orange", "darkgreen", 
   
   # Generate legend and y-axis label for the plots
   grobs <- ggplotGrob(eff_fig_fxn(disasg = "CROP", xsize = 5.5, title = "(A) Major crops") + theme(legend.position = "bottom"))$grobs
-  legend <- grobs[[which(sapply(grobs, function(x) x$name) == "guide-box")]]
+  # ggplot2 >= 3.5 names legend grobs "guide-box-bottom" etc.; older versions
+  # use a single "guide-box". Match both, skipping empty placeholders.
+  gnames <- sapply(grobs, function(x) x$name)
+  gidx <- which(gnames == "guide-box")
+  if (!length(gidx)) {
+    gidx <- grep("^guide-box", gnames)
+    gidx <- gidx[!vapply(grobs[gidx], inherits, logical(1), "zeroGrob")]
+  }
+  if (!length(gidx)) stop("fig_heterogeneity00(): could not locate the legend grob.", call. = FALSE)
+  legend <- grobs[[gidx[1]]]
   Ylab <- ggplot() + geom_text(aes(x = 0, y = 0), label = y_title, size = 3, angle = 90) + theme_void()
   
   marg <- c(0.05, 0.5, -0.5, 0.5)
@@ -313,13 +336,16 @@ fig_robustness <- function(y_title, res_list, colset = c("orange", "darkgreen"),
             ef_mean <- ef_mean[ef_mean$Survey %in% c("GLSS0"), ]
             ef_mean$file <- file 
             return(ef_mean)
-          }, error = function(e) { return(NULL) })
+          }, error = function(e) {
+            message("fig_robustness(): skipping '", file, "': ", conditionMessage(e))
+            return(NULL)
+          })
         }), fill = TRUE))
   
   # Group and filter data
-  data <- data |> group_by(sample, Tech, type, estType, Survey, stat, CoefName, restrict, fxnforms, distforms, 
+  data <- data |> dplyr::group_by(sample, Tech, type, estType, Survey, stat, CoefName, restrict, fxnforms, distforms,
                            disaggregate_variable, disaggregate_level, technology_variable, TCHLvel) |>
-    mutate(Estimate.length_max = max(Estimate.length, na.rm = TRUE)) |> ungroup() |> as.data.frame(.)
+    dplyr::mutate(Estimate.length_max = max(Estimate.length, na.rm = TRUE)) |> dplyr::ungroup() |> as.data.frame()
   data <- data[data$Estimate.length_max == data$Estimate.length, ]
   
   # Process main estimates
@@ -328,6 +354,14 @@ fig_robustness <- function(y_title, res_list, colset = c("orange", "darkgreen"),
                             data$restrict %in% c("Restricted")), ])
   mainest <- mainest[c("type", "Estimate", "Estimate.sd")]
   names(mainest) <- c("type", "mainest", "mainest.sd")
+  # The optimal matched sample appears in BOTH the *_optimal and *_fullset RDS
+  # files; the `file` column defeated the unique() above, and duplicate mainest
+  # rows would double every output row through the inner_join below.
+  mainest <- unique(mainest)
+  if (any(duplicated(mainest$type)))
+    warning("fig_robustness(): preferred-spec estimates differ across source ",
+            "files (stale *_optimal vs *_fullset?); check the estimations ",
+            "folder.", call. = FALSE)
   
   # Process production data
   production <- unique(data[(data$distforms %in% "hnormal" & data$stat %in% "wmean" & data$estType %in% "teBC" & 
@@ -362,7 +396,7 @@ fig_robustness <- function(y_title, res_list, colset = c("orange", "darkgreen"),
   distribution$dimension <- "(B) distribution"
   
   # Process efficiency data
-  efficiency <- unique(data[(data$distforms %in% "hnormal" & data$stat %in% "wmean" & 
+  efficiency <- unique(data[(data$fxnforms %in% "TL" & data$distforms %in% "hnormal" & data$stat %in% "wmean" & 
                                data$sample %in% ifelse(mspecs_optimal$link %in% NA, mspecs_optimal$distance, mspecs_optimal$link) & 
                                data$restrict %in% c("Restricted")), ])
   efficiency$options <- ifelse(efficiency$estType %in% "teJLMS", "Jondrow et al. (1982) efficiency", NA)
@@ -372,7 +406,7 @@ fig_robustness <- function(y_title, res_list, colset = c("orange", "darkgreen"),
   efficiency$dimension <- "(C) efficiency"
   
   # Process tendency data
-  tendency <- unique(data[(data$distforms %in% "hnormal" & data$estType %in% "teBC" & 
+  tendency <- unique(data[(data$fxnforms %in% "TL" & data$distforms %in% "hnormal" & data$estType %in% "teBC" & 
                              data$sample %in% ifelse(mspecs_optimal$link %in% NA, mspecs_optimal$distance, mspecs_optimal$link) & 
                              data$restrict %in% c("Restricted")), ])
   tendency <- tendency[!tendency$stat %in% "mode", ]
@@ -533,9 +567,17 @@ fig_input_te <- function(y_title, tech_lable, colset = c("orange", "darkgreen", 
                         "Household labor (AE)",
                         "Hired labor (man-days/ha)",
                         "Extension",
-                        "OwnLnd",
+                        "Land ownership",
                         "Credit"))
-  
+
+  # Outcomes without a label mapping must not become an unlabeled NA series.
+  if (anyNA(data$outC)) {
+    warning("fig_input_te(): dropping outcomes with no label mapping: ",
+            paste(unique(data$outcome[is.na(data$outC)]), collapse = ", "),
+            call. = FALSE)
+    data <- data[!is.na(data$outC), ]
+  }
+
   # Create a dodge position for the plot
   dodge <- position_dodge(width = 0.75)
   
@@ -596,7 +638,9 @@ fig_covariate_balance <- function(colset = c("darkgreen", "orange", "blue"),
   mspecs  <- study_environment$match_specifications
   
   # Combine specific rows from bal_tab into CovBalDATA
-  CovBalDATA <- rbind(bal_tab[(bal_tab$sample %in% "Un" & bal_tab$ARRAY %in% 5), ],
+  # Unadjusted balance is identical across specs (same data pre-matching), so
+  # any ranked ARRAY serves; 5 was a hardcode that broke if that spec failed.
+  CovBalDATA <- rbind(bal_tab[(bal_tab$sample %in% "Un" & bal_tab$ARRAY %in% min(ranking$ARRAY)), ],
                       bal_tab[bal_tab$sample %in% "Adj", ])
   
   # Update the 'sample' column based on conditions

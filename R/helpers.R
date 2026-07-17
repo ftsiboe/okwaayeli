@@ -9,6 +9,8 @@
 #'
 #' @keywords internal
 mode <- function(x, na.rm = TRUE) {
+  if (na.rm) x <- x[!is.na(x)]
+  if (!length(x)) return(NA)
   ux <- unique(x)
   ux[which.max(tabulate(match(x, ux)))]
 }
@@ -59,6 +61,11 @@ harmonized_data_prep <- function(data){
   data$Ecozon <- as.character(data$Ecozon)
   data$Survey <- as.character(data$Survey)
   data$Region <- as.character(data$Region)
+  # WARNING: unique_identifier is the ROW NUMBER, so it is only stable while
+  # the frozen `estimation_data` inside the study environment is reused.
+  # Rebuilding it from re-ordered raw data silently remaps every observation
+  # in previously saved match_*.rds files -- never regenerate estimation_data
+  # without also re-running the matching stage.
   data$unique_identifier <- 1:nrow(data)
   # Return the cleaned and transformed data
   return(data)
@@ -242,8 +249,19 @@ compute_jenks_binned_shares <- function(
     weight_variable <- "weight_tmp"
   }
   
-  # 3. Bin numeric variable into Jenks categories
-  dt[, binned_range_name := cut(get(output_variable), jenks)]
+  # 3. Bin numeric variable into Jenks categories. include.lowest keeps values
+  # sitting exactly on the lowest break; values beyond the outer breaks (e.g.
+  # risk ratios above the top break) fall into an NA bin -- previously they
+  # were excluded from every named bar yet still counted in the denominators,
+  # so shares silently under-summed. Drop them loudly instead.
+  dt[, binned_range_name := cut(get(output_variable), jenks, include.lowest = TRUE)]
+  n_out <- sum(is.na(dt$binned_range_name) & !is.na(dt[[output_variable]]))
+  if (n_out > 0) {
+    warning("compute_jenks_binned_shares(): ", n_out, " observation(s) fall ",
+            "outside the bin breaks and are excluded from the shares.",
+            call. = FALSE)
+  }
+  dt <- dt[!is.na(binned_range_name)]
   dt[, count := 1]
   
   # 4. Counts/weights within each group by bin
