@@ -69,6 +69,7 @@ module load RStudio-Server/2023.09.1+494-foss-2023a-Java-11-R-4.3.2
 case "$SLURM_ARRAY_TASK_ID" in
   1)
     echo "Running Disability Study"
+    R --no-save -q < studies/disability/scripts/000_initialize.R
     R --no-save -q < studies/disability/scripts/001_DATA_disability_study.R
     R --no-save -q < studies/disability/scripts/002_MATCHING_disability_study.R
     R --no-save -q < studies/disability/scripts/003_TREATMENT_disability_study.R
@@ -76,6 +77,7 @@ case "$SLURM_ARRAY_TASK_ID" in
 
   2)
     echo "Running Resource Extraction Study"
+    R --no-save -q < studies/resource_extraction/scripts/000_initialize.R
     R --no-save -q < studies/resource_extraction/scripts/001_DATA_resource_extraction_study.R
     R --no-save -q < studies/resource_extraction/scripts/002_MATCHING_resource_extraction_study.R
     R --no-save -q < studies/resource_extraction/scripts/003_TREATMENT_resource_extraction_study.R
@@ -83,6 +85,7 @@ case "$SLURM_ARRAY_TASK_ID" in
 
   3)
     echo "Running Education Study"
+    R --no-save -q < studies/education/scripts/000_initialize.R
     R --no-save -q < studies/education/scripts/001_DATA_education_study.R
     R --no-save -q < studies/education/scripts/002_MATCHING_education_study.R
     R --no-save -q < studies/education/scripts/003_TREATMENT_education_study.R
@@ -90,6 +93,7 @@ case "$SLURM_ARRAY_TASK_ID" in
 
   4)
     echo "Running Financial Inclusion Study"
+    R --no-save -q < studies/financial_inclusion/scripts/000_initialize.R
     R --no-save -q < studies/financial_inclusion/scripts/001_DATA_financial_inclusion_study.R
     R --no-save -q < studies/financial_inclusion/scripts/002_MATCHING_financial_inclusion_study.R
     R --no-save -q < studies/financial_inclusion/scripts/003_TREATMENT_financial_inclusion_study.R
@@ -97,6 +101,7 @@ case "$SLURM_ARRAY_TASK_ID" in
 
   5)
     echo "Running Land Tenure Study"
+    R --no-save -q < studies/land_tenure/scripts/000_initialize.R
     R --no-save -q < studies/land_tenure/scripts/001_DATA_land_tenure_study.R
     R --no-save -q < studies/land_tenure/scripts/002_MATCHING_land_tenure_study.R
     R --no-save -q < studies/land_tenure/scripts/003_TREATMENT_land_tenure_study.R
@@ -104,6 +109,7 @@ case "$SLURM_ARRAY_TASK_ID" in
 
   6)
     echo "Running Societal Peace and Cohesion Study"
+    R --no-save -q < studies/societal_peace_and_cohesion/scripts/000_initialize.R
     R --no-save -q < studies/societal_peace_and_cohesion/scripts/001_DATA_societal_peace_and_cohesion_study.R
     R --no-save -q < studies/societal_peace_and_cohesion/scripts/002_MATCHING_societal_peace_and_cohesion_study.R
     R --no-save -q < studies/societal_peace_and_cohesion/scripts/003_TREATMENT_societal_peace_and_cohesion_study.R
@@ -111,6 +117,7 @@ case "$SLURM_ARRAY_TASK_ID" in
 
   7)
     echo "Running Time Poverty Study"
+    R --no-save -q < studies/time_poverty/scripts/000_initialize.R
     R --no-save -q < studies/time_poverty/scripts/001_DATA_time_poverty_study.R
     R --no-save -q < studies/time_poverty/scripts/002_MATCHING_time_poverty_study.R
     R --no-save -q < studies/time_poverty/scripts/003_TREATMENT_time_poverty_study.R
@@ -118,6 +125,7 @@ case "$SLURM_ARRAY_TASK_ID" in
 
   8)
     echo "Running Ag Services Study"
+    R --no-save -q < studies/ag_services/scripts/000_initialize.R
     R --no-save -q < studies/ag_services/scripts/001_DATA_ag_services_study.R
     R --no-save -q < studies/ag_services/scripts/002_MATCHING_ag_services_study.R
     R --no-save -q < studies/ag_services/scripts/003_TREATMENT_ag_services_study.R
@@ -125,6 +133,7 @@ case "$SLURM_ARRAY_TASK_ID" in
 
   9)
     echo "Running Input Dealers Study"
+    R --no-save -q < studies/input_dealers/scripts/000_initialize.R
     R --no-save -q < studies/input_dealers/scripts/001_DATA_input_dealers_study.R
     R --no-save -q < studies/input_dealers/scripts/002_MATCHING_input_dealers_study.R
     R --no-save -q < studies/input_dealers/scripts/003_TREATMENT_input_dealers_study.R
