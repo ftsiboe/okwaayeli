@@ -20,8 +20,11 @@ rm(list = ls(all = TRUE)); gc()
 # This calls roxygen2 via devtools to regenerate .Rd docs and NAMESPACE.
 devtools::document()                         
 
+# id must match this study's case number in studies/run_data_and_match_for_all.sbatch
+# (financial_inclusion is task 4). run_only_for() quits when they disagree, so a
+# wrong id makes the task exit 0 having done nothing.
 if(! as.numeric(Sys.getenv("SLURM_ARRAY_TASK_ID", NA)) %in% NA){
-  run_only_for(id = 6, allowed_jobnames = "run_all")
+  run_only_for(id = 4, allowed_jobnames = "run_all")
 }
 
 # ---- Define study name and initialize study environment

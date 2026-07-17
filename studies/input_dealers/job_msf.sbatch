@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-#SBATCH --job-name=msf_edu
+#SBATCH --job-name=msf_deal
 #SBATCH --time=0-40:00:00    
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=3
