@@ -470,7 +470,11 @@ msf_workhorse <- function(
  
   #---------------------------------------------------
   # Preliminaries                                  ####
-  data <- data[!data[,weight_variable] %in% 0,]
+  # Guard: with weight_variable = NULL, `data[, NULL] %in% 0` yields logical(0)
+  # and silently drops EVERY row. Only filter when a weight variable is given.
+  if (!is.null(weight_variable)) {
+    data <- data[!data[,weight_variable] %in% 0,]
+  }
   
   if(!is.null(technology_variable)){
     data$Tech <- as.numeric(as.integer(as.factor(as.character(data[,technology_variable]))))
@@ -679,9 +683,14 @@ msf_workhorse <- function(
     LL_Naive <- lrtest[(lrtest$CoefName %in% "mlLoglik" & lrtest$Tech %in% -999),c("restrict","Estimate")]
     DF_Naive <- lrtest[(lrtest$CoefName %in% "npar"     & lrtest$Tech %in% -999),c("restrict","Estimate")]
     
-    LL_Group <- doBy::summaryBy(Estimate~type+restrict,FUN=sum,keep.names = T,na.rm=T,
+    # NOTE: group log-likelihoods/df must be summed OVER Tech groups to a single
+    # value per `restrict` (LL1 = LL_Group + LL_Meta, joined by "restrict" below).
+    # The previous grouping `Estimate~type+restrict` referenced a `type` column
+    # that does not exist in `lrtest` (columns: Tech, CoefName, sample, restrict,
+    # Estimate), which errored on every run with a technology variable.
+    LL_Group <- doBy::summaryBy(Estimate~restrict,FUN=sum,keep.names = T,na.rm=T,
                                 data=lrtest[(lrtest$CoefName %in% "mlLoglik" & lrtest$Tech %in% TechList),])
-    DF_Group <- doBy::summaryBy(Estimate~type+restrict,FUN=sum,keep.names = T,na.rm=T,
+    DF_Group <- doBy::summaryBy(Estimate~restrict,FUN=sum,keep.names = T,na.rm=T,
                                 data=lrtest[(lrtest$CoefName %in% "npar" & lrtest$Tech %in% TechList),])
     
     LL_Meta <- lrtest[(lrtest$CoefName %in% "mlLoglik" & lrtest$Tech %in% 999),c("restrict","Estimate","sample")]
@@ -1290,13 +1299,15 @@ sf_workhorse <- function(
     data <- data[row.names(efc),]
     
     rkc <- data.frame(data[c(identifiers, "weights")])
+    # Use sfc's (restricted fit's) own dataTable: referencing sf$dataTable here
+    # risks silent recycling/misalignment if the two fits retain different rows.
     if(logDepVar) {
       rkc$ybar <- efc$mlFitted * exp(-efc$u)
-      rkc$vrbr <- (rkc$ybar - exp(sf$dataTable$lnY))^2
+      rkc$vrbr <- (rkc$ybar - exp(sfc$dataTable$lnY))^2
     }
     if(!logDepVar) {
       rkc$ybar <- efc$mlFitted - efc$u
-      rkc$vrbr <- (rkc$ybar - sf$dataTable$Y)^2
+      rkc$vrbr <- (rkc$ybar - sfc$dataTable$Y)^2
     }
     rkc$risk <- sqrt(rkc$vrbr) / rkc$ybar
     rkc <- rkc[c(identifiers, "weights", "risk")]
@@ -1498,8 +1509,13 @@ equation_editor <- function(
     }
   }
   
-  # If no intercept shifters are provided, create the production function formula using only the FXN
-  if(is.null(intercept_shifters$scalar_variables) & is.null(intercept_shifters$factor_variables)){
+  # If no intercept shifters are provided - or every candidate shifter was
+  # screened out by the CV/sparsity checks above (shifters still "~1") - create
+  # the production function formula using only the FXN. Without the second
+  # condition, the formula would be built as "<outcome> ~ <FXN> + ~1", a nested
+  # formula that fails at estimation time with a cryptic error.
+  if((is.null(intercept_shifters$scalar_variables) & is.null(intercept_shifters$factor_variables)) ||
+     identical(shifters, "~1")){
     prodfxn <- as.formula(paste0(outcome," ~",FXN[[1]]))
   } else {
     # Remove the initial intercept term if other shifters are present
