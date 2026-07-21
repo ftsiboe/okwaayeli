@@ -175,7 +175,7 @@ draw_msf_estimations <- function(
       unique(data$Surveyy),
       function(glss, draw) {
         tryCatch({ 
-          # glss <-"GLSS0"
+          # glss <-"GLSS7"
           res <- msf_workhorse(
             data=data[data[,"Surveyy"] %in% glss,], 
             output_variable=output_variable, 
@@ -216,7 +216,14 @@ draw_msf_estimations <- function(
           }
           
           return(res)
-        }, error = function(e) { return(NULL) })}, draw=draw)
+          # A survey that fails here contributes NULL to the survey list and the
+          # draw carries on without it -- so a partial result looks like a whole
+          # one. Name the survey.
+        }, error = function(e) {
+          message("draw_msf_estimations: draw ", draw, ", survey ", glss,
+                  " FAILED: ", conditionMessage(e))
+          return(NULL)
+        })}, draw=draw)
     
     res <- lapply(
       c("sf_estm", "el_mean", "ef_mean", "rk_mean", "ef_dist", "rk_dist", "el_samp", "ef_samp", "rk_samp"),
@@ -270,21 +277,27 @@ draw_msf_estimations <- function(
                         score.data0$Survey <- "GLSS0"
                         score.data <- rbind(score.data0, score.data)
                         rm(score.data0)
-                        # Group-aware summaries. NOTE: the previous implementation
-                        # pulled `w <- score.data$Weight` (the ENTIRE weight vector)
-                        # inside summaryBy's per-group FUN while `x` was only the
-                        # current group's values, so `sum(x * w)` multiplied
-                        # mismatched-length vectors (silent recycling) and the
-                        # weighted mean was wrong for every group. Compute each
-                        # statistic with weights aligned to its own group instead.
+                        # Group-aware summaries, each statistic computed with the
+                        # weights belonging to its own group.
+                        #
+                        # THE WEIGHT COLUMN IS `weights`, NOT `Weight`. sf_workhorse
+                        # renames it on the way in:
+                        #   names(score)[names(score) %in% weight_variable] <- "weights"
+                        # so ef_samp -- and therefore disagscors -- carries `weights`.
+                        # `score.data$Weight` returns NULL, and sum(x * NULL)/sum(NULL)
+                        # is 0/0 = NaN, which the NaN filters downstream then drop.
+                        # That is why disagscors appeared to have no weighted variant:
+                        # it computed one, and it was NaN every time.
                         mode_stat <- function(x, na.rm = TRUE) {
                           if (na.rm) x <- x[!is.na(x)]
                           ux <- unique(x)
                           ux[which.max(tabulate(match(x, ux)))]
                         }
+                        stopifnot("disagscors has no `weights` column" =
+                                    "weights" %in% names(score.data))
                         score.data <- dplyr::group_by(score.data, .data$Survey, .data$disagscors_level) |>
                           dplyr::summarise(
-                            wmean  = sum(.data$value * .data$Weight) / sum(.data$Weight),
+                            wmean  = stats::weighted.mean(.data$value, .data$weights, na.rm = TRUE),
                             mean   = mean(.data$value, na.rm = TRUE),
                             median = stats::median(.data$value, na.rm = TRUE),
                             mode   = mode_stat(.data$value, na.rm = TRUE),
@@ -298,12 +311,27 @@ draw_msf_estimations <- function(
                 disagscors$disagscors_var <- ifelse(grepl("CROP_", disagscors_var), "CROP", disagscors_var)
                 disagscors$CoefName <- "disag_efficiency"
                 return(disagscors)
-              }, error = function(e) { return(NULL) })
+                # A disaggregation that fails drops out of disagscors silently,
+                # so the table built from it is simply missing a dimension --
+                # which reads as "that breakdown wasn't requested". Name it.
+              }, error = function(e) {
+                message("draw_msf_estimations: draw ", draw, ", disaggregation ",
+                        disagscors_var, " FAILED: ", conditionMessage(e))
+                return(NULL)
+              })
 
               # Reached ONLY on error: the success path above ends in
               # return(disagscors), which returns from this function directly.
               return(NULL)
             }, scors=res$ef_samp, data=data), fill = TRUE))
+
+      # Every disaggregation can fail and leave a 0-row frame; assigning a scalar
+      # to it errors with "replacement has 1 row, data has 0", which names neither
+      # the draw nor the real cause. The messages above already named those, so
+      # fail here with something that points back at them.
+      if (is.null(disagscors) || nrow(disagscors) == 0)
+        stop("draw_msf_estimations: every disaggregation failed for draw ", draw,
+             " -- see the messages above.", call. = FALSE)
       disagscors$draw <- draw
     }
     res$disagscors <- disagscors
@@ -313,7 +341,14 @@ draw_msf_estimations <- function(
     if(!draw %in% 0) {res[["el_samp"]] <- NULL; res[["ef_samp"]] <- NULL; res[["rk_samp"]] <- NULL}
     return(res)
     #---------------------------------------------
-  }, error = function(e) {return(NULL)})
+    # Every failure in this function lands here and becomes a NULL. Say why.
+    # Without the message the only symptom is a list of NULLs from the caller's
+    # lapply over draws, which is indistinguishable from "no data" and hides the
+    # actual error -- a missing column, a degenerate fit, a bad formula.
+  }, error = function(e) {
+    message("draw_msf_estimations: draw ", draw, " FAILED: ", conditionMessage(e))
+    return(NULL)
+  })
 }
 
 
