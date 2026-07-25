@@ -22,8 +22,8 @@ characters, and recoding education levels. The function is designed
 to standardize inputs for further analysis of agricultural productivity.
 }
 \seealso{
-Other helpers: 
-\code{\link{compute_jenks_binned_shares}()},
-\code{\link{get_crop_area_list}()}
+Other helpers:
+\code{\link[=compute_jenks_binned_shares]{compute_jenks_binned_shares()}},
+\code{\link[=get_crop_area_list]{get_crop_area_list()}}
 }
 \concept{helpers}
