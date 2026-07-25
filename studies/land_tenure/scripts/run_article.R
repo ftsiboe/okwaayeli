@@ -26,7 +26,7 @@ OBJECTS     <- TRUE  # 301  -> narrative/article_objects.json                  f
 RENDER      <- TRUE  # 302  -> narrative/land-tenure.docx / .html              fast
 
 # ---- Citation style ---------------------------------------------------------
-CITATION_STYLE <- "elsevier"   # "elsevier" (Harvard, author-date) or "ieee"
+CITATION_STYLE <- "ieee"   # "elsevier" (Harvard, author-date) or "ieee"
 
 # ============================================================================
 # What depends on what
