@@ -9,8 +9,42 @@
 
 ## Note S1. Drivers of technical inefficiency
 
-<!-- TODO: heading with no body text. Write the note from Table S7's results,
-     modeled on resource_extraction's Note A1. -->
+Table S7 reports the covariates entering the inefficiency term, estimated on the naive national
+frontier, on each group-specific frontier, and on the matched and unmatched meta-frontiers. A
+positive coefficient moves the farm away from its efficient frontier; age and education enter in
+logs and are therefore elasticities. Three features of that table bear on how the ownership results
+in Section 5 should be read.
+
+The first concerns gender. On all three single-technology frontiers -- the naive national frontier
+and both group-specific frontiers -- being a female farmer is associated with significantly greater
+inefficiency, and the coefficient is larger among non-owners than among owners. This is the most
+consistent farmer-level result in the table, and it is worth stating plainly that it does not
+disappear once ownership is held constant: whatever it reflects, it is not a by-product of women
+being less likely to own the land they farm.
+
+The second concerns what is absent. Extension contact and mechanization carry no significant
+coefficient on any frontier, in either direction, and neither does age or crop diversification.
+Credit access is significant on the naive frontier and among owners, but with a positive sign --
+farmers with credit sit further from the frontier, not closer. We do not read this causally. Credit
+in these rounds reaches a small minority of farmers (Table 1), is not randomly assigned, and is
+plausibly sought by farms already under production stress; the sign is as consistent with selection
+into borrowing as with any effect of borrowing on performance.
+
+The third concerns the meta-frontier columns, where no covariate reaches conventional significance
+and the jackknife standard errors are substantially larger than on the single-technology frontiers.
+The natural reading is that once technology heterogeneity between ownership groups is modelled
+separately, rather than absorbed into a single national frontier, farmer attributes explain little
+of the residual inefficiency -- the same conflation the meta-frontier framework exists to resolve,
+and part of why this paper reports technology gap ratios and technical efficiency separately rather
+than as a single productivity index. That reading should be held loosely. The meta-frontier
+estimates are imprecise enough that the table cannot distinguish small effects from none, and the
+nulls there are better described as uninformative than as evidence of no relationship.
+
+One caution applies throughout. The inefficiency model is estimated jointly with the frontier, so
+its coefficients are conditional on the frontier specification. Figure S2 shows that the assumed
+distribution of the inefficiency term is the dimension to which the aggregate ownership results are
+most sensitive; the signs reported here are stable across the matching and functional-form
+dimensions and should not be assumed robust to distributional choice.
 
 ```{r, echo=FALSE, results='asis'}
 sec_landscape()

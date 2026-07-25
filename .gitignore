@@ -42,6 +42,9 @@ tests/**/*.png
 # Office lock files.
 ~$*
 *.tmp
+# Windows Explorer folder-settings files (regenerated locally; never part of the repo).
+desktop.ini
+studies/**/desktop.ini
 # pkgdown / R build artifacts.
 docs/
 inst/doc/

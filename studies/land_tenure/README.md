@@ -1,34 +1,88 @@
-Landownership Appears Neither Necessary nor Sufficient for Superior Agricultural Performance in Ghana
+Landownership Appears Neither Necessary nor Sufficient for Superior
+Agricultural Performance in Ghana
 ================
 
 <!-- README.md is generated from land_tenure.Rmd. Please edit that file. -->
 
-![Status: Drafting (v001)](https://img.shields.io/badge/status-drafting-lightgrey)
+<figure>
+<img src="https://img.shields.io/badge/status-in%20revision-blue"
+alt="Status: In revision (v002)" />
+<figcaption aria-hidden="true">Status: In revision (v002)</figcaption>
+</figure>
 
 For an overview of the broader project context, please refer to the main
-[okwaayeli README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md)
-in the repository root.
+[okwaayeli
+README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md) in the
+repository root.
 
 See the
-[LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
-file in the repository root for details.
+[LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE) file
+in the repository root for details.
 
-**Status**: Drafting (v001 produced 20 May 2026); GAAE 2025 conference paper available.
+**Status**: v002 in preparation. v001 was produced 20 May 2026; a GAAE
+2025 conference paper is under `submissions/conferences/`.
 
 ### Contributors
 
 - [Gilbert Addae](https://github.com/Gilbertaddae)
-- [Jacob Asravor](https://scholar.google.com/citations?user=_zUi3FsAAAAJ&hl=en)
-- [Francis Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
+- [Jacob
+  Asravor](https://scholar.google.com/citations?user=_zUi3FsAAAAJ&hl=en)
+- [Francis
+  Tsiboe](https://scholar.google.com/citations?user=ox2t_YIAAAAJ&hl=en)
 
-### Abstract
+### What this study asks
 
-Secure land tenure is widely assumed to stimulate investment and raise agricultural productivity, yet rigorous evidence from sub-Saharan Africa remains inconclusive. Leveraging six rounds of the Ghana Living Standards Survey (GLSS 3-7), this study links land-ownership status to production outcomes for 35,185 farm households. We use statistical matching within a meta-stochastic frontier framework to isolate ownership effects on input elasticities, returns to scale, technology gaps, and technical efficiency. Across the matched sample, all inputs significantly boost output, but fertilizer and pesticide use generate larger marginal gains for non-landowners. Landholders register slightly higher returns to scale (Delta = 0.0154); however, at the aggregate level we detect no statistically significant difference in either technology adoption or technical efficiency between owners and non-owners. Disaggregating by tenure form, documented owners and farmers with transferable or informal rights show lower meta-frontier access and reduced technical efficiency relative to matched non-owners, challenging the conventional narrative that tenure security automatically delivers productivity gains.
+Secure land tenure is widely assumed to stimulate investment and raise
+agricultural productivity, yet rigorous evidence from sub-Saharan Africa
+remains inconclusive. Using five rounds of the Ghana Living Standards
+Survey (GLSS 3-7), this study links land-ownership status to production
+outcomes, applying statistical matching within a meta-stochastic
+frontier framework to isolate ownership effects on input elasticities,
+returns to scale, technology gaps, and technical efficiency. It then
+disaggregates by tenure form — documentation, transfer rights, mode of
+acquisition, and sharecropping intensity.
 
-**Keywords**: land tenure; ownership; meta-stochastic frontier; technical efficiency; technology gap; Ghana
+<!--
+NO ABSTRACT HERE, DELIBERATELY. It lives in narrative/sections/00_abstract.Rmd,
+where every figure is inline R against the pipeline. A second copy here would be
+hand-typed and would drift from the paper -- silently, and on the headline
+result. Link to it; do not restate it.
+-->
 
-**JEL Classification**: Q15, Q12, O13, K11
+The abstract, full text, tables and figures are in
+[`narrative/`](narrative/) — see `narrative/land-tenure.Rmd` and the
+rendered `land-tenure.docx`. Every number in the manuscript is generated
+from the pipeline; none is typed by hand.
 
----
+**Keywords**: land tenure; ownership; meta-stochastic frontier;
+technical efficiency; technology gap; Ghana
+
+### Reproducing
+
+Run from the repository root. `scripts/run_article.R` is the single
+entry point; set a stage to `TRUE` to run it.
+
+    000_initialize   scaffolding                       fast
+    001_DATA         harmonized releases -> raw data   fast
+    002_MATCHING     -> estimation_data                EXPENSIVE
+    003_TREATMENT    -> treatment effects              EXPENSIVE
+    004_MSF          -> output/estimations/            HPC (job_msf.sbatch)
+    100_exhibit_*    -> data/descriptive_exhibits.rds  ~5-10 min
+    101_exhibit_*    -> output/figures/                moderate
+    102_exhibit_*    -> output/tables/*.xlsx           fast
+    301/302          -> narrative/land-tenure.docx     fast
+
+Data preparation upstream of `001` is Stata
+(`data-raw/okwaayeli_DATA.do`), which harmonizes the raw GLSS files.
+Everything from `001` onward is R: all tables and figures are built from
+the pipeline, with one deliberate exception — Table S0 documents how the
+tenure indicators were constructed from each round’s questionnaire, and
+is transcribed rather than computed.
+
+See [`scripts/README.md`](scripts/README.md) for the naming convention
+and [`narrative/diagnostics/`](narrative/diagnostics/) for the
+variable-construction audit trail.
+
+------------------------------------------------------------------------
 
 *Maintained by [ftsiboe](https://github.com/ftsiboe)*

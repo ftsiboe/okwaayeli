@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-07-16 16:42:05.152359",
+    "generated": "2026-07-25 12:40:11.784281",
     "source": "output/estimations/CropID_Pooled_<tenure>_TL_hnormal_optimal.rds",
     "matched_sample": "robust_mahalanobis"
   },
@@ -43,59 +43,6 @@
       "none": 0.4145,
       "any": 0.4066,
       "gap": -0.0079
-    }
-  },
-  "tenures": {
-    "ownership": {
-      "tgr": {
-        "none": 0.8555,
-        "any": 0.8474,
-        "gap": -0.0081
-      },
-      "te": {
-        "none": 0.4789,
-        "any": 0.4851,
-        "gap": 0.0062
-      },
-      "mte": {
-        "none": 0.4145,
-        "any": 0.4066,
-        "gap": -0.0079
-      }
-    },
-    "documents": {
-      "tgr": {
-        "none": null,
-        "any": 0.8684,
-        "gap": null
-      },
-      "te": {
-        "none": null,
-        "any": 0.4908,
-        "gap": null
-      },
-      "mte": {
-        "none": null,
-        "any": 0.4331,
-        "gap": null
-      }
-    },
-    "rights": {
-      "tgr": {
-        "none": null,
-        "any": 0.9181,
-        "gap": null
-      },
-      "te": {
-        "none": null,
-        "any": 0.4674,
-        "gap": null
-      },
-      "mte": {
-        "none": null,
-        "any": 0.4316,
-        "gap": null
-      }
     }
   },
   "elasticities": {
@@ -214,11 +161,11 @@
       "meta_u": 0.8562
     },
     "mono": {
-      "naive": 0.7541,
-      "none": 0.7862,
-      "any": 0.7104,
-      "meta_m": 0.998,
-      "meta_u": 0.9993
+      "naive": 0.4438,
+      "none": 0.685,
+      "any": 0.6584,
+      "meta_m": 0.9984,
+      "meta_u": 0.9995
     },
     "curv": {
       "naive": 0.1998,

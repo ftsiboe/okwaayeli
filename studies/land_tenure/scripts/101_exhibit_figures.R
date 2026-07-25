@@ -18,6 +18,8 @@ tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
   rm(list = ls(all = TRUE)); gc()
 })  
 
+library(ggplot2)
+
 devtools::document()
 
 project_name = "land_tenure"

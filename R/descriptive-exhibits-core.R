@@ -432,6 +432,27 @@ descriptive_trend_model <- function(data, outcome, treatment = NULL,
   #
   # The counterfactual frame is built by hand rather than with
   # marginaleffects::datagridcf(), which is absent in older versions.
+  #
+  # wts is passed ONLY when real sampling weights are in play. marginaleffects
+  # 0.30.0-0.32.0 silently return a ZERO-ROW table for slope = "eydx" combined
+  # with wts = <column>: sanitize_variables() rewrites the comparison to
+  # "eydxavgwts", but get_comparisons() checks it against a hardcoded elasticity
+  # list that lacks the *wts variants, so the y-hat the semi-elasticity divides
+  # by is never computed (predicted := NA_real_), every estimate is NA, and
+  # na.omit(..., cols = "estimate") deletes the lot. No error, no warning --
+  # mk() then crashed on a length-0 column ("arguments imply differing number
+  # of rows: 1, 0"). Versions <= 0.29.x are unaffected.
+  #
+  # With weights = NULL (the parity case -- no 100_*.do applies weights) .w is
+  # identically 1, so the weighted and unweighted estimators coincide exactly
+  # and omitting wts changes nothing. Omitting means OMITTING: the argument is
+  # added to the call only when real weights exist, because wts's default is
+  # NULL in <= 0.18.x but FALSE in >= 0.30.0 -- passing either literal errors
+  # on the other side of that change. With real weights on a broken version
+  # there is no safe path, so that case stops loudly below rather than letting
+  # every trend row vanish from the exhibits.
+  base_args <- list(fit, variables = ".trend", slope = "eydx")
+  if (!is.null(weights)) base_args$wts <- ".w"
   sl <- try({
     by_g <- NULL
     if (has_t) {
@@ -439,16 +460,35 @@ descriptive_trend_model <- function(data, outcome, treatment = NULL,
       cf <- do.call(rbind, lapply(lv, function(l) {
         z <- d; z$.g <- factor(l, levels = lv); z
       }))
-      by_g <- marginaleffects::avg_slopes(fit, variables = ".trend", by = ".g",
-                                          slope = "eydx", newdata = cf,
-                                          wts = ".w")
+      by_g <- do.call(marginaleffects::avg_slopes,
+                      c(base_args, list(by = ".g", newdata = cf)))
     }
-    all_g <- marginaleffects::avg_slopes(fit, variables = ".trend",
-                                         slope = "eydx", newdata = d,
-                                         wts = ".w")
+    all_g <- do.call(marginaleffects::avg_slopes,
+                     c(base_args, list(newdata = d)))
     list(by_g = by_g, all_g = all_g)
   }, silent = TRUE)
   if (inherits(sl, "try-error")) return(NULL)
+
+  # A zero-row slopes table is the marginaleffects wts bug described above, not
+  # an unestimable trend: the model fitted and every guard upstream passed.
+  # With weights this is an error -- returning NULL would strip every trend row
+  # from the exhibits, and the message() in descriptive_workhorse() would
+  # misread as a data refusal. Without weights it should be unreachable; refuse
+  # quietly if a future version finds a new way to return nothing.
+  if (!nrow(sl$all_g) || (has_t && !is.null(sl$by_g) && !nrow(sl$by_g))) {
+    if (!is.null(weights))
+      stop("descriptive_trend_model(): marginaleffects::avg_slopes() returned ",
+           "a zero-row table for slope = 'eydx' with wts = '", weights, "' ",
+           "(marginaleffects ",
+           as.character(utils::packageVersion("marginaleffects")),
+           "). Versions 0.30.0-0.32.0 silently drop all rows on this ",
+           "combination; install 0.29.x or earlier, or run with weights = NULL.",
+           call. = FALSE)
+    return(NULL)
+  }
+  # Group labels come from the by-column; if a future marginaleffects renames
+  # it, refuse rather than crash on a length-0 label.
+  if (has_t && !is.null(sl$by_g) && !".g" %in% names(sl$by_g)) return(NULL)
 
   mk <- function(x, group) data.frame(
     wave = "all", group = group, statistic = "trend_pct",

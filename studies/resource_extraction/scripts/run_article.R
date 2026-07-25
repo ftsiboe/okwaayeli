@@ -4,8 +4,8 @@
 
 # ---- Citation style toggle -------------------------------------------------
 # Choose "food_policy" (Elsevier Harvard, author-date) or "ieee" (numbered).
-CITATION_STYLE <- "ieee"
-Sys.setenv(ARTICLE_CSL = if (identical(CITATION_STYLE, "food_policy"))
+CITATION_STYLE <- "food_policy"
+Sys.setenv(ARTICLE_CSL = if (identical(CITATION_STYLE, "ieee"))
   "csl/ieee.csl" else "csl/elsevier-harvard.csl")
 # ----------------------------------------------------------------------------
 
