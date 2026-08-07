@@ -35,6 +35,14 @@ data-raw/releases/harmonized_data/*
 !data-raw/releases/harmonized_data/README.md
 !data-raw/releases/harmonized_data/README.Rmd
 !data-raw/releases/harmonized_data/codebook.md
+# The ag services release is tracked, unlike its siblings. Three reasons:
+#   - it is 89 KB, against 1.9-35 MB for the others, so it costs nothing
+#   - studies/ag_services/scripts/001 reads it LOCALLY rather than via
+#     get_household_data(), because the published copy at
+#     ftsiboe/GHAgricProductivityLab@hh_data is not the build this study uses
+#   - tracking it means the build travels with the code that produced it, so
+#     an HPC node or a co-author's clone gets the right data from `git pull`
+!data-raw/releases/harmonized_data/harmonized_ag_services_data.dta
 # Test fixtures (downloaded on demand).
 tests/**/*.dta
 tests/**/*.rds
