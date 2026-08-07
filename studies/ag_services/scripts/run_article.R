@@ -14,20 +14,48 @@ devtools::document()
 # ============================================================================
 # STAGES
 # ============================================================================
-INITIALIZE  <- TRUE  # 000  study scaffolding                                  fast
-DATA        <- TRUE  # 001  harmonized releases -> study_raw_data              fast
-MATCHING    <- TRUE  # 002  -> estimation_data, matched samples                EXPENSIVE
-TREATMENT   <- TRUE  # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
-MSF         <- FALSE  # 004  -> output/estimations/                             HPC, hours
-DESCRIPTIVE <- TRUE  # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
-FIGURES     <- FALSE  # 101  -> output/figures/ (png + data), output/tables/    moderate
-WORKBOOK    <- TRUE  # 102  -> output/tables/ag_services_tables.xlsx           fast
-OBJECTS     <- TRUE  # 301  -> narrative/article_objects.json                  NOT WRITTEN
-# 2026-08-07: OBJECTS is FALSE because scripts/301_article_objects.R does not
-# exist yet. Turning it on fails at .run(). The Rmd already guards on
-# file.exists("article_objects.json"), so the render works without it -- there
-# is simply no `objs$...` value to cite until 301 is written.
-RENDER      <- TRUE   # 302  -> narrative/ag-services.docx / .html              fast
+INITIALIZE  <- TRUE   # 000  study scaffolding                            fast
+DATA        <- TRUE   # 001  harmonize + build study_raw_data           ~minutes
+MATCHING    <- TRUE   # 002  -> estimation_data, matched samples        EXPENSIVE
+TREATMENT   <- TRUE   # 003  -> output/treatment_effects/, te_summary   EXPENSIVE
+MSF         <- FALSE  # 004  -> output/estimations/                     HPC, hours
+DESCRIPTIVE <- FALSE  # 100  NOT WRITTEN
+FIGURES     <- FALSE  # 101  NOT WRITTEN
+WORKBOOK    <- FALSE  # 102  NOT WRITTEN
+OBJECTS     <- FALSE  # 301  NOT WRITTEN
+RENDER      <- TRUE   # 302  -> narrative/ag-services.docx / .html      fast
+
+# ---- Why the levers are set this way, 2026-08-07 ----------------------------
+#
+# ON, and feasible now:
+#   000  fast, no dependencies.
+#   001  now runs 000_HARMONIZE_ag_services_data.do (Stata), promotes the
+#        _fixed release, and reads it LOCALLY -- get_household_data() would
+#        re-download the uncorrected copy from the GitHub release instead.
+#        Needs Stata on PATH or $STATA_EXE set. Levers are at the top of 001.
+#   002  MUST run whenever DATA runs. DATA alone re-saves the study environment
+#        with estimation_data STRIPPED, and every later stage then reads an
+#        environment missing the object it needs.
+#   003  reads estimation_data; independent of MSF.
+#   302  renders. Set AG_PREVIEW=1 or it stops at the first unwritten exhibit
+#        builder -- 14 of the 15 ft_*() functions are still .not_yet() stubs.
+#
+# OFF because the script does not exist. .run() hard-stops on a missing file,
+# and it stops BEFORE RENDER, so turning any of these on yields no document:
+#   100, 101, 102, 301
+#
+# OFF by choice -- 004 (MSF):
+#   The 2026-08-07 audit changed extension_compliance, extension_agency_* and
+#   the extension ordinal, but NONE of them enter the model. 004 fits
+#   HrvstKg on Area/SeedKg/HHLaborAE/HirdHr/FertKg/PestLt with intercept
+#   shifters (crop areas, Survey, Ecozon) and inefficiency covariates
+#   (lnAgeYr, lnYerEdu, CrpMix, Survey, Female, Ecozon, Credit, OwnLnd,
+#   EqipMech). The corrected variables appear only in disagscors_list.
+#   The four treatments are byte-identical across the audit arms, so the
+#   frontier estimates in output/estimations/ CANNOT change, and Table 7's
+#   36/36 verification stands.
+#   Turn 004 ON only to refresh `disagscors` -- i.e. the heterogeneity figures
+#   (draft Figures 3 and 4). That is hours on the HPC via job_msf.sbatch.
 
 # ---- Citation style ---------------------------------------------------------
 CITATION_STYLE <- "elsevier"   # "elsevier" (Harvard, author-date) or "ieee"

@@ -1,4 +1,9 @@
-# 4. Methods
+<!-- Renumbered 2026-08-07: the draft's top-level
+     '# 3 Agricultural Service Delivery in Ghana' was demoted to '## 2.3'
+     inside 02_data.Rmd, following the disability paper, which places the
+     equivalent section inside its Data section. Everything below shifts up. -->
+
+# 3. Methods
 
 <!-- The only substantive prose in the v000 draft (~2,440 words), together with 2. Data.
      CITATION MARKERS: this section carries numbered markers [22]-[26] and nothing else -
@@ -7,7 +12,7 @@
      bibliography, so these cannot be converted to @SurnameYear keys yet. Resolve the five
      sources, add them to references.bib, then convert. Do not guess. -->
 
-## 4.1 Conceptual framework
+## 3.1 Conceptual framework
 
 Numerous studies have established that the performance of Ghanaian farmers is influenced by various factors, including geographical location \[22\], \[23\], \[24\], farmer's age \[25\], and gender \[26\], among others. In the context of this study, we conceptualize agricultural service delivery as a community-level institutional environment that may shape smallholder farm performance through two related channels: technical efficiency and access to superior production technologies. Technical efficiency reflects how well farmers convert available inputs into output relative to the production frontier available to their group (citations), while the technology gap ratio captures how close that group-specific frontier is to the best feasible production frontier available to all farmers in the sample (citations).
 
@@ -17,7 +22,7 @@ However, agricultural service delivery is not a single-channel intervention (cit
 
 The study also considers the content of services available to farmers. Agricultural support may focus on planting or seed use, mechanization or agricultural equipment, credit, irrigation, animal husbandry, fertilizer or agrochemical input use, and post-harvest, marketing, or storage services. These service types may affect farm performance through different pathways. Planting and seed-use advice can improve crop establishment; mechanization can relax labor and timeliness constraints; credit can ease liquidity constraints; irrigation can reduce exposure to rainfall variability; animal husbandry support may matter for mixed farming systems; input-related advice can improve fertilizer and pesticide decisions; and post-harvest or marketing support can reduce losses and improve output handling and market participation. Thus, agricultural service delivery may influence not only whether farmers perform better, but also why performance differs across service environments.
 
-## 4.2 Meta-stochastic frontier analysis 
+## 3.2 Meta-stochastic frontier analysis 
 
 This study examines whether agricultural service delivery is associated with differences in smallholder farm performance in Ghana. The analysis focuses on three related outcomes: technical efficiency, technology gap ratios, and meta-technical efficiency. To estimate these outcomes, we apply the meta-stochastic frontier framework, which allows farmers operating under different service environments to have separate group-specific production frontiers while also being compared to a common meta-frontier. This framework is appropriate because farmers in communities with agricultural service access may face a different production environment from farmers in communities without such access.
 
@@ -59,7 +64,7 @@ Finally, after estimating the main model based on access to any agricultural ser
 
 After estimating the main meta-stochastic frontier model, the study predicts farmer-level technical efficiency, technology gap ratios, and meta-technical efficiency. These predicted outcomes are then summarized across observable farmer characteristics, including age, gender, and education, and across agricultural contexts, including crops and regions. This additional descriptive analysis is used to examine whether performance differences associated with agricultural service access are concentrated among particular farmer groups, crops, or locations. In doing so, the study links the meta-frontier results to the broader question of whether agricultural service delivery contributes to more inclusive and context-specific improvements in smallholder farm performance.
 
-## 4.3 Balanced sample construction for meta-frontier comparison
+## 3.3 Balanced sample construction for meta-frontier comparison
 
 A key advantage of these agricultural service provision measures is that they capture the community service environment faced by producers, rather than relying only on individual self-reports of extension contact. Because the measures are constructed from the GLSS community questionnaires, they provide a broader view of local agricultural support systems, including extension offices, extension officer visits, agricultural or fishing associations, cooperatives, and the specific types of services available, such as credit, mechanization, input support, irrigation, and post-harvest support. This is useful for the meta-stochastic frontier analysis because it allows farm performance to be compared across different service environments and helps distinguish whether performance differences are associated with the source of service delivery, the content of the services, or both.
 

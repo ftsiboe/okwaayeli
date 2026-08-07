@@ -108,3 +108,39 @@ even if it feels like a figure. Gaps are deliberate — `103_exhibit_*.R` slots 
 without renumbering.
 
 The reference for this layout is `studies/land_tenure`.
+
+## Stata's place in this study
+
+**Upstream only.** `000_HARMONIZE_ag_services_data.do` builds the community-level
+release from the raw GLSS files and runs *before* `001`. Nothing downstream of
+`001` touches Stata. The exhibit band (`1##`) is pure R, as in `land_tenure`.
+
+`resource_extraction` still carries a `100_exhibits.do`; `land_tenure` does not.
+Where the two siblings disagree about the exhibit layer, `land_tenure` is the
+newer answer, and this study follows it.
+
+## Retired 2026-08-07 — in `_to_delete/`, kept as specifications
+
+Neither file was ever a stage in `run_article.R`. Both are superseded, but they
+are the record of what the replacements must reproduce, so read them before
+writing the new scripts and delete them only afterwards.
+
+| Retired | Superseded by | What it specifies |
+|---|---|---|
+| `100_exhibits.do` (was `100_FIGTAB_ag_services.do`) | `100_exhibit_descriptive_stats.R` | The descriptive exhibits: workbook sheets `Table1`, `Table2-services`, `TableS2`, `TableS3` — the draft's Tables 1, 4, S3, S4. The replacement builds these from `R/descriptive-exhibits-core.R` instead of Stata. |
+| `100_FIGTAB_ag_services.R` | `101_exhibit_figures.R` + `exhibit_helpers_tables.R` | The eight figures (`score_trend`, `score_by_services`, `score_distributions`, `heterogeneity_crop_region`, `heterogeneity_genderAge`, `input_TE`, `robustness`, `Covariate_balance_variance`) and the `msf` / `CovBalDATA` / `ranking` machine sheets. |
+
+Two consequences of retiring the `.do`:
+
+1. **`data/tech_inefficiency_ag_services_data.dta` is orphaned.** It was written
+   by `100_exhibits.do` line 12 and read back by the same file. Nothing else
+   reads it. It should go to `_to_delete/` once `100_exhibit_descriptive_stats.R`
+   is confirmed to need no Stata intermediate.
+2. **The three legacy workbooks are the verification reference, not inputs.**
+   Every cell is frozen in
+   `narrative/diagnostics/verification_reference_2026-08-07.json`, which is what
+   the new builders are diffed against. See the `ft_table7()` precedent: 36/36.
+
+Also retired from `100_exhibits.do` and NOT to be carried forward: line 200's
+`putexcel set "Results\Farmer_Age_Productivity_Ghana_Results.xlsx"`, a leftover
+from a different study writing to a relative path outside the repo.

@@ -44,9 +44,6 @@ Francis Tsiboe
 ```{r child = "sections/02_data.Rmd"}
 ```
 
-```{r child = "sections/03_ag_services_context.Rmd"}
-```
-
 ```{r child = "sections/04_methods.Rmd"}
 ```
 

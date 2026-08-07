@@ -1,4 +1,9 @@
-# 5. Results and discussion
+<!-- Renumbered 2026-08-07: the draft's top-level
+     '# 3 Agricultural Service Delivery in Ghana' was demoted to '## 2.3'
+     inside 02_data.Rmd, following the disability paper, which places the
+     equivalent section inside its Data section. Everything below shifts up. -->
+
+# 4. Results and discussion
 
 <!-- STUB bodies. The draft has only the subsection headings here (24 words total).
      TWO NUMBERING FIXES APPLIED 2026-08-07:
@@ -6,12 +11,12 @@
          heterogeneity'); the second is renumbered 5.5.
        - '5.1 Diagnostic tests' was bold body text, not a heading; promoted to ##. -->
 
-## 5.1 Diagnostic tests
+## 4.1 Diagnostic tests
 
-## 5.2 Output elasticities
+## 4.2 Output elasticities
 
-## 5.3 Technology adoption and technical efficiency
+## 4.3 Technology adoption and technical efficiency
 
-## 5.4 Robustness of main findings
+## 4.4 Robustness of main findings
 
-## 5.5 Observed heterogeneity
+## 4.5 Observed heterogeneity

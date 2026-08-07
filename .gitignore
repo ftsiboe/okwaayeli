@@ -7,7 +7,9 @@
 # Per-study agent prompts: working notes for the next session on that study,
 # not part of the published repo.
 studies/**/AGENT_PROMPT.md
-
+studies/**/_to_delete/
+studies/**/assets/
+studies/**/logs/
 # Diagnostic harness: a scratch file for dissecting one specification. Neither a
 # numbered step nor a library, so it does not belong in scripts/ permanently.
 studies/**/surgery.R
@@ -18,6 +20,7 @@ studies/**/*.zip
 studies/**/*.csv
 studies/**/*.xlsx
 studies/**/*.png
+*.log
 # !studies/**/narrative/resource-extraction.html
 # Package data slot kept lean.
 data/*

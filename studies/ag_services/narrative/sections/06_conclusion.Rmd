@@ -1,4 +1,9 @@
-# 6. Conclusion
+<!-- Renumbered 2026-08-07: the draft's top-level
+     '# 3 Agricultural Service Delivery in Ghana' was demoted to '## 2.3'
+     inside 02_data.Rmd, following the disability paper, which places the
+     equivalent section inside its Data section. Everything below shifts up. -->
+
+# 5. Conclusion
 
 <!-- ============================================================================
      STUB. The v000 draft (narrative/v000_AgricServicesProdGapGhana_FT.docx)
