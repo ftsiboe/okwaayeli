@@ -42,11 +42,13 @@ resource_extraction/
     002_MATCHING_…_study.R    proximity-based matching
     003_TREATMENT_…_study.R   treatment-effect construction
     004_MSF_…_study.R         meta-stochastic frontier estimation
-    100_exhibits.R (.do)      build figures/tables into output/exhibits/
-    300_article_helpers.R     paths, fmt_* helpers, assert_present()
+    100_exhibit_descriptive_stats.R  descriptive exhibit cache (not yet wired in)
+    101_exhibit_figures.R     build figures + figure data from output/estimations/
+    article_helpers.R         paths, fmt_* helpers, assert_present()
     301_article_objects.R     assemble narrative/article_objects.json
     302_render_article.R      knit the master narrative to .docx/.html
-    run_article.R             source 300 -> 301 -> 302
+    exhibit_helpers_tables.R  flextable table builders (library)
+    run_article.R             entry point; stage levers (see scripts/README.md)
     job_msf.sbatch            HPC batch job for 004_MSF
   narrative/          the article, split into reproducible sections
     resource-extraction.Rmd   master Rmd (stitches sections/*.Rmd)
@@ -67,7 +69,7 @@ Run from the repository root, in order:
 2. `scripts/002_MATCHING_resource_extraction_study.R` — match extraction vs. non-extraction farmers.
 3. `scripts/003_TREATMENT_resource_extraction_study.R` — construct treatment effects.
 4. `scripts/004_MSF_resource_extraction_study.R` — estimate the meta-stochastic frontier (or submit `scripts/job_msf.sbatch`).
-5. `scripts/100_exhibits.R` — build figures and tables into `output/exhibits/`.
+5. `scripts/101_exhibit_figures.R` — build figures and figure data.
 6. `scripts/run_article.R` — assemble article objects and knit the manuscript.
 
 ---

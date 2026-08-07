@@ -1,6 +1,6 @@
 # Tables and Figures
 
-<!-- Tables migrated from the latest draft. Figures are produced by scripts/100_exhibits.R into output/exhibits/figure/.
+<!-- Tables migrated from the latest draft. Figures are produced by scripts/101_exhibit_figures.R into output/figures/.
      Exhibit titles are markdown headings (not flextable captions) so they appear in the Word navigation pane.
      Landscape exhibits are grouped into ONE section: emitting sec_landscape() then sec_portrait() back to back
      creates an empty portrait section, which Word renders as a blank page. -->
@@ -45,7 +45,7 @@ ft_table4()
 
 #### Figure 1. The association between natural resource extraction activities and farm productivity from 1998-2017
 
-![](../output/figure/score_trend.png){width=6.3in}
+![](../output/figures/score_trend.png){width=6.3in}
 
 ```{r, echo=FALSE, results='asis'}
 sec_portrait()
@@ -53,13 +53,13 @@ sec_portrait()
 
 #### Figure 2. Crop production technology adoption and technical efficiency gaps associated with natural resource extraction by farmer gender, age, and education in Ghana
 
-![](../output/figure/heterogeneity_genderAge.png){width=9.3in}
+![](../output/figures/heterogeneity_genderAge.png){width=9.3in}
 
 \newpage
 
 #### Figure 3. Crop production technology adoption and technical efficiency gaps associated with natural resource extraction by major crops and administrative regions in Ghana
 
-![](../output/figure/heterogeneity_crop_region.png){width=9.3in}
+![](../output/figures/heterogeneity_crop_region.png){width=9.3in}
 
 ```{r, echo=FALSE, results='asis'}
 sec_landscape()

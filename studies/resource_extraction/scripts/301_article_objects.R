@@ -3,7 +3,7 @@
 # Working directory is always the okwaayeli repo root.
 #
 # Everything is extracted from the same pooled meta-stochastic-frontier objects
-# that scripts/100_exhibits.R uses, so the manuscript text and the exhibits
+# that scripts/101_exhibit_figures.R uses, so the manuscript text and the exhibits
 # cannot drift apart.
 #
 # Keying (verified against the results workbook, which is the published source):
@@ -17,12 +17,12 @@
 #            gamma)       : UNMATCHED sample for the group frontiers;
 #                           the meta-frontier is on the matched sample.
 # The exported workbook relabels TCHLvel as Tech = -999/1/2/999.
-if (!exists("OBJECTS_JSON")) source("studies/resource_extraction/scripts/300_article_helpers.R")
+if (!exists("OBJECTS_JSON")) source("studies/resource_extraction/scripts/article_helpers.R")
 suppressPackageStartupMessages(library(jsonlite))
 
 EST <- file.path(OUTPUT, "estimations")
 
-# Optimal matched-sample id (same selection 100_exhibits.R uses).
+# Optimal matched-sample id (same selection 101_exhibit_figures.R uses).
 se_path <- file.path(DATA, "resource_extraction_study_environment.rds")
 mspecs  <- if (file.exists(se_path)) readRDS(se_path)$match_specification_optimal else NULL
 opt_sample <- if (!is.null(mspecs)) ifelse(is.na(mspecs$link), mspecs$distance, mspecs$link) else NA

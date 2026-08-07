@@ -32,7 +32,7 @@ if (file.exists("article_objects.json")) {
   objs <- jsonlite::fromJSON("article_objects.json")
 }
 # Table builders (flextable); paths are repo-root relative.
-if (file.exists("../scripts/305_tables.R")) source("../scripts/305_tables.R")
+if (file.exists("../scripts/exhibit_helpers_tables.R")) source("../scripts/exhibit_helpers_tables.R")
 ```
 
 Francis Tsiboe -- Agricultural Risk Policy Center, North Dakota State University, Fargo, ND 58102

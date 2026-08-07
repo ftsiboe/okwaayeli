@@ -25,12 +25,20 @@ run_only_for(id = 2, allowed_jobnames = "run_all")
 # ---- Define study name and initialize study environment
 project_name <- "resource_extraction"
 
-# study_setup() is assumed to:
-#   - create / verify directories,
-#   - define paths (e.g., wd$home, wd$data, wd$output),
-#   - and return a list-like "study_environment" object
-#     containing configuration for this specific project.
-study_environment <- study_setup(project_name = project_name)
+# study_setup() creates the directory tree and returns the study_environment
+# (paths in $wd, seed, layout).
+#
+# layout = "v2": plots and their data share output/figures/, table data goes to
+# output/tables/. Some siblings are still on "legacy" (figure/ + figure_data/),
+# hence a parameter rather than a rename. Downstream, reach for
+# study_dir_figures() / study_dir_figure_data() / study_dir_tables(), never a
+# directory literal next to wd$output.
+#
+# NB wd is written into the .rds below and is a SNAPSHOT -- stages that readRDS()
+# it and touch the figure/table dirs should call study_dirs() to recompute paths.
+# 002/003/004 do not need it: matching/, treatment_effects/ and estimations/ are
+# named the same under both layouts. See ?study_dirs.
+study_environment <- study_setup(project_name = project_name, layout = "v2")
 
 # ---- Load harmonized household / farmer-level data
 # Wrapper that downloads (via piggyback) and caches Stata .dta files from

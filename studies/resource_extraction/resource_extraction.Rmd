@@ -62,7 +62,7 @@ Run from the repository root, in order:
 2. `scripts/002_MATCHING_resource_extraction_study.R` — match extraction vs. non-extraction farmers.
 3. `scripts/003_TREATMENT_resource_extraction_study.R` — construct treatment effects.
 4. `scripts/004_MSF_resource_extraction_study.R` — estimate the meta-stochastic frontier (or submit `scripts/job_msf.sbatch`).
-5. `scripts/100_exhibits.R` — build figures and tables into `output/exhibits/`.
+5. `scripts/101_exhibit_figures.R` — build figures and figure data.
 6. `scripts/run_article.R` — assemble article objects and knit the manuscript.
 
 ---

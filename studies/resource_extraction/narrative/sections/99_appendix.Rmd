@@ -86,7 +86,7 @@ ft_tableA9()
 
 #### Figure A1. Covariate balancing summary
 
-![](../output/figure/Covariate_balance_variance.png){width=9.3in}
+![](../output/figures/Covariate_balance_variance.png){width=9.3in}
 
 ```{r, echo=FALSE, results='asis'}
 sec_landscape()
@@ -94,7 +94,7 @@ sec_landscape()
 
 #### Figure A2. Alternative model specifications generally show a smaller negative association between natural resource extraction and crop production output for Ghanaian farmers (2012-2017)
 
-![](../output/figure/robustness.png){width=6.3in}
+![](../output/figures/robustness.png){width=6.3in}
 
 ```{r, echo=FALSE, results='asis'}
 sec_portrait()

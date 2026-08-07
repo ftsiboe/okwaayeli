@@ -1,0 +1,202 @@
+# 101_exhibit_figures.R  (10x = compute; see scripts/README.md)
+# Builds the manuscript figures and the .csv/.rds behind each one, from the
+# estimation objects. Must run BEFORE the article is knitted:
+# exhibit_helpers_tables.R reads the figure data for its inline lookups.
+#
+# Paths come from study_dir_figures() / study_dir_figure_data() /
+# study_dir_tables() -- never a literal next to wd$output. This study is on the
+# "v2" layout (plots and their data share output/figures/, table data goes to
+# output/tables/), matching land_tenure; the accessors resolve either layout.
+# See ?study_dirs.
+#
+# The figure builders (tab_main_specification, fig_heterogeneity00,
+# fig_robustness, fig_input_te, fig_covariate_balance, fig_dsistribution) live in
+# R/exhibits-figures.R and are reached through the namespace. No library() calls
+# beyond ggplot2 and no data-raw/scripts/figures_and_tables.R shim: the package
+# declares its dependencies in DESCRIPTION. (That shim's own header names
+# land_tenure's 101 as the pattern to copy; this is that port.)
+#
+# Renamed from 100_exhibits.R -- two scripts cannot share the 100 slot, and
+# 100_exhibit_descriptive_stats.R has the better claim to it.
+tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
+  rm(list = ls(all = TRUE)); gc()
+})
+
+library(ggplot2)
+
+devtools::document()
+
+project_name = "resource_extraction"
+study_environment <- readRDS(
+  file.path(paste0("studies/", project_name, "/data"),
+            paste0(project_name,"_study_environment.rds")))
+
+# Repair wd in memory and create the folders. wd is a snapshot frozen into the
+# .rds by whichever run last called study_setup(), so without this a stage uses
+# the layout as of the last MATCHING run. layout is passed explicitly so this
+# works before 001 next re-runs and bakes it in. See ?study_dirs.
+study_environment <- study_dirs(study_environment, layout = "v2")
+
+mspecs_optimal <- study_environment$match_specification_optimal
+
+Keep.List<-c("Keep.List",ls())
+
+# Main Specification
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+res_list <- list.files(study_environment$wd$estimations, pattern = "_hnormal_optimal.rds", full.names = TRUE)
+res_list <- res_list[grepl("CropID_Pooled_",res_list)]
+res <- tab_main_specification(res_list=res_list,study_environment=study_environment)
+
+# The stacked MSF results, emitted for inspection.
+#
+# This replaces an openxlsx loadWorkbook -> writeData -> saveWorkbook round trip
+# into the "msf" sheet of output/resource_extraction_results.xlsx. That round
+# trip was WRITE-ONLY: nothing in R/, studies/ or tests/ ever read the "msf"
+# sheet back (read_exhibit_sheet() is only ever called on "Means_<treatment>" and
+# "extraction"). It could still abort the whole stage, because loadWorkbook()
+# errors on a missing file and writeData() on a missing sheet -- a hard failure
+# in service of an output no one consumed.
+#
+# The workbook itself stays: it is the parity reference that
+# tests/testthat/golden/_freeze.R regenerates the descriptive goldens from. It is
+# no longer a pipeline dependency; it remains evidence.
+write.csv(rbind(res[res$Survey %in% "GLSS0",],
+                res[res$estm_type %in% "sf_estm",]),
+          file.path(study_dir_tables(study_environment), "msf_main_specification.csv"),
+          row.names = FALSE)
+
+# Fig - Heterogeneity
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+res <- readRDS(file.path(study_environment$wd$estimations,"CropID_Pooled_extraction_any_TL_hnormal_optimal.rds"))$disagscors
+res$disasg <- as.character(res$disagscors_var)
+res$level  <- as.character(res$disagscors_level)
+res <- res[res$estType %in% "teBC",]
+res <- res[res$Survey %in% "GLSS0",]
+res <- res[res$restrict %in% "Restricted",]
+res <- res[res$stat %in% "mean",]
+res <- res[!res$sample %in% "unmatched",]
+res <- res[res$CoefName %in% "disag_efficiencyGap_lvl",]
+res <- res[c("disasg","level","fxnforms","distforms","Survey","input","technology_variable","Tech","CoefName","Estimate","Estimate.sd","jack_pv")]
+
+fig <- fig_heterogeneity00(res=res,y_title="Level difference (Any extraction less No extraction)\n",study_environment=study_environment)
+fig[["genderAge"]] <- fig[["genderAge"]] + theme(axis.text.x = element_text(size = 5.5))
+ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_crop_region.png"), fig[["crop_region"]],dpi = 600,width = 8, height = 5)
+ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_genderAge.png"), fig[["genderAge"]],dpi = 600,width = 8, height = 5)
+
+# Fig - TREND
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+ef_mean <- readRDS(file.path(study_environment$wd$estimations,"CropID_Pooled_extraction_any_TL_hnormal_optimal.rds"))$ef_mean
+ef_mean <- ef_mean[ef_mean$stat %in% "wmean", ]
+ef_mean <- ef_mean[ef_mean$estType %in% "teBC", ]
+ef_mean$estm_type <- "ef_mean"
+ef_mean$level_type <- gsub("efficiency", "", ef_mean$CoefName)
+ef_mean$level_type <- ifelse(ef_mean$level_type %in% "", "level", ef_mean$level_type)
+ef_mean$CoefName <- ef_mean$type
+ef_mean <- ef_mean[c("technology_variable", "fxnforms", "distforms", "estm_type", "level_type", "sample", "Survey", "restrict", "Tech", "CoefName", "Estimate", "Estimate.sd", "jack_pv")]
+ef_mean <- ef_mean[ef_mean$restrict %in% "Restricted", ]
+ef_mean <- ef_mean[ef_mean$sample %in% ifelse(mspecs_optimal$link %in% NA,mspecs_optimal$distance,mspecs_optimal$link),]
+ef_mean <- ef_mean[ef_mean$level_type %in% "Gap_lvl", ]
+ef_mean <- ef_mean[!ef_mean$CoefName %in% "TE0", ]
+ef_mean <- ef_mean[!ef_mean$Survey %in% "GLSS0", ]
+
+ef_mean$type <- as.numeric(as.character(factor(ef_mean$CoefName, levels = c("TGR", "TE","MTE"), labels = 1:3)))
+ef_mean$type <- factor(ef_mean$type, levels = 1:3,
+                       labels = c("Technology gap ratio", "Technical efficiency", "Meta-technical-efficiency"))
+
+ef_mean$Survey <- factor(ef_mean$Survey, levels = c("GLSS3","GLSS4","GLSS5","GLSS6","GLSS7"),
+                         labels = c("1991/1992\n(GLSS 3)","1998/1999\n(GLSS4)","2005/2006\n(GLSS5)",
+                                    "2012/2013\n(GLSS6)","2016/2017\n(GLSS7)"))
+
+# Save the plotted data (rds + csv so Figure 1 claims can be machine-checked)
+saveRDS(ef_mean, file = file.path(study_dir_figure_data(study_environment),"score_trend.rds"))
+write.csv(ef_mean, file = file.path(study_dir_figure_data(study_environment),"score_trend.csv"), row.names = FALSE)
+
+fig <- ggplot(
+  data = ef_mean,
+  aes(x = Survey, y = Estimate*100, group = type, fill = type, color = type, shape = type)) +
+  geom_hline(yintercept = 0, size = 0.5, color = "black") +  # Add a horizontal line at y = 0
+  geom_point(size=2) +
+  geom_errorbar(aes(ymax = (Estimate + Estimate.sd)*100, ymin = (Estimate - Estimate.sd)*100), width = 0.10) +
+  geom_line() +
+  scale_fill_manual("", values = c("orange", "darkgreen", "blue")) +
+  scale_color_manual("", values = c("orange", "darkgreen", "blue")) +
+  scale_shape_manual("", values = c(21, 25, 24, 22, 23, 3, 4, 8, 11)) +
+  scale_y_continuous(breaks = seq(-100, 100, by = 5)) +
+  labs(title = "", x = "", y = "Percentage point difference  [Any extraction minus No extraction]\n", caption = "") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(legend.position = "bottom") +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 8),
+        plot.title = element_text(size = 10),
+        axis.title.y = element_text(size = 10),
+        axis.title.x = element_text(size = 10),
+        axis.text.x = element_text(size = 8, colour = "black"),
+        axis.text.y = element_text(size = 6, colour = "black"),
+        plot.caption = element_text(size = 11, hjust = 0, vjust = 0, face = "italic"),
+        strip.text = element_text(size = 8),
+        strip.background = element_rect(fill = "white", colour = "black", size = 1))
+ggsave(file.path(study_dir_figures(study_environment),"score_trend.png"), fig,dpi = 600,width = 6, height = 6)
+
+
+# Fig - Robustness
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+fig_robustness(y_title="\nLevel difference [Any extraction less No extraction]",
+               res_list = c(file.path(study_environment$wd$estimations,"CropID_Pooled_extraction_any_CD_hnormal_optimal.rds"),
+                            list.files(study_environment$wd$estimations,
+                                       pattern = "CropID_Pooled_extraction_any_TL_",full.names = T)),
+               study_environment=study_environment)
+
+# Fig - Matching TE
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+fig_input_te(
+  y_title="\nGap associated with extraction (%)",
+  tech_lable=c("Full\nsample", "Any extraction\nsample", "No extraction\nsample"),
+  study_environment=study_environment)
+
+# Fig - Covariate balance
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+fig_covariate_balance(study_environment=study_environment)
+
+# Fig - Distribution
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+dataFrq <- readRDS(file.path(study_environment$wd$estimations,"CropID_Pooled_extraction_any_TL_hnormal_fullset.rds"))
+dataFrq <- dataFrq$ef_dist
+dataFrq <- dataFrq[dataFrq$estType %in% "teBC",]
+dataFrq <- dataFrq[dataFrq$Survey %in% "GLSS0",]
+dataFrq <- dataFrq[dataFrq$stat %in% "estimate_weight",]
+dataFrq <- dataFrq[dataFrq$restrict %in% "Restricted",]
+dataFrq$Tech <- factor(as.numeric(as.character(dataFrq$TCHLvel)),levels = 0:1,labels = c("No extraction","Any extraction"))
+
+# Save the plotted data (rds + csv so distribution-figure claims can be machine-checked)
+saveRDS(dataFrq, file = file.path(study_dir_figure_data(study_environment),"score_distributions.rds"))
+write.csv(dataFrq, file = file.path(study_dir_figure_data(study_environment),"score_distributions.csv"), row.names = FALSE)
+
+fig_dsistribution(dataFrq,study_environment=study_environment)
+
+
+# Fig - Region and crop ranking text
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+res <-readRDS(file.path(study_environment$wd$estimations,"CropID_Pooled_extraction_any_TL_hnormal_optimal.rds"))$disagscors
+res$disasg <- res$disagscors_var
+res$level <- res$disagscors_level
+res <- res[res$estType %in% "teBC",]
+res <- res[res$Survey %in% "GLSS0",]
+res <- res[res$restrict %in% "Restricted",]
+res <- res[res$stat %in% "mean",]
+res <- res[!res$sample %in% "unmatched",]
+res <- res[res$CoefName %in% "disag_efficiencyGap_pct",]
+res <- res[res$input %in% "MTE",]
+
+# Save the percent-gap ranking data (csv so crop/region claims can be machine-checked)
+write.csv(res[c("disasg","level","Survey","input","CoefName","Estimate","Estimate.sd","jack_pv")],
+          file = file.path(study_dir_figure_data(study_environment),"mte_gap_pct_crop_region.csv"),
+          row.names = FALSE)
+
+reg <- res[res$disagscors_var %in% "Region",]
+reg <- reg[order(reg$Estimate),]
+paste0(paste0(reg$level," (",round(reg$Estimate,2),"%)"),collapse = ", ")
+
+CROP <- res[res$disagscors_var %in% "CROP",]
+CROP <- CROP[order(CROP$Estimate),]
+paste0(paste0(CROP$level," (",round(CROP$Estimate,2),"%)"),collapse = ", ")

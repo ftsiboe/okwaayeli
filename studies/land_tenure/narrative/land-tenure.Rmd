@@ -31,7 +31,7 @@ if (file.exists("../scripts/article_helpers.R")) source("../scripts/article_help
 if (file.exists("../scripts/exhibit_helpers_tables.R")) source("../scripts/exhibit_helpers_tables.R")
 ```
 
-Gilbert Addae; Jacob Asravor; Francis Tsiboe
+Gilbert Addae; Francis Tsiboe; Jacob Asravor
 
 ```{r child = "sections/00_abstract.Rmd"}
 ```
