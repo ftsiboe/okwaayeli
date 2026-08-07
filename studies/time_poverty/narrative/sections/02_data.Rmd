@@ -1,0 +1,26 @@
+# 2. Data
+
+<!-- ============================================================================
+     STUB. This study has NO draft manuscript in any format - not a .docx, not an
+     .Rmd, nothing. Unlike the ag_services and land_tenure ports there was no
+     source document to split, so this section was created empty rather than
+     migrated. See ../diagnostics/scaffold_2026-08-07.md.
+     ============================================================================ -->
+
+<!-- WHAT IS ALREADY KNOWN, from the pipeline rather than from prose. Written
+     here so the section starts from facts instead of a blank page:
+
+     * Source: GLSS7 only. 001_DATA_time_poverty_study.R restricts to
+       Surveyx %in% c("GLSS7"). This is a SINGLE-WAVE study - the disability
+       script it was cloned from was two-wave, which is why its trend machinery
+       could not be carried over.
+     * Releases joined: harmonized_crop_farmer_data and
+       harmonized_time_poverty_data, inner-joined on Surveyx/EaId/HhId/Mid.
+     * Dropped columns: names matching LndFrgMid|EduWhyNo|RentHa.
+     * Upstream: ../scripts/time_poverty_DATA.do builds the time-use release
+       from ../time-poverty-assets/TimeGLSS7.dta.
+     * Treatment: tpoor0150. READ THE FLAG at the head of time_poverty_DATA.do
+       before describing it - the released variable is a PAID-time cutoff on the
+       s1q3 == 1 subsample, not the committed-time measure its label claims.
+       tpoor0125 and tpoorweai are set to missing wherever they disagree with
+       tpoor0150, which sharply limits what they can be used for. -->

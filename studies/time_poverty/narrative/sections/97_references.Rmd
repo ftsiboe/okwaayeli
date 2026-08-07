@@ -1,0 +1,7 @@
+# References {-}
+
+<!-- references.bib exists but is empty - no citation has been decided yet.
+     This div is what pandoc fills; it stays empty until the bibliography does. -->
+
+::: {#refs}
+:::

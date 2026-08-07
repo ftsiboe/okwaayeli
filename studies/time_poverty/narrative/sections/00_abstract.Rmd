@@ -1,0 +1,18 @@
+# Abstract {-}
+
+<!-- ============================================================================
+     STUB. This study has NO draft manuscript in any format - not a .docx, not an
+     .Rmd, nothing. Unlike the ag_services and land_tenure ports there was no
+     source document to split, so this section was created empty rather than
+     migrated. See ../diagnostics/scaffold_2026-08-07.md.
+     ============================================================================ -->
+
+<!-- The study README carries a placeholder abstract that ends "*Full abstract to
+     follow once v000 lands.*" It was deliberately NOT copied here: a placeholder
+     hand-carried into the manuscript stops looking like a placeholder. The
+     keywords and JEL codes below ARE from the README - they are the author's own
+     metadata, not prose. -->
+
+**Keywords:** Time poverty; gender; unpaid work; technical efficiency; meta-stochastic frontier; Ghana
+
+**JEL classification:** J16, J22, O13, Q12

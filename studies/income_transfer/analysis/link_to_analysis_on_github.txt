@@ -1,0 +1,6 @@
+All analysis code live on GitHub at the link below
+
+https://github.com/ftsiboe/GH-Agric-Productivity-Lab/tree/master/studies/tech_inefficiency_income_transfer
+
+Feel free to clone the repo and submit pull requests as needed.
+

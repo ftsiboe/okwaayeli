@@ -1,0 +1,8 @@
+# 6. Conclusion
+
+<!-- ============================================================================
+     STUB. The v000 draft (narrative/v000_AgricServicesProdGapGhana_FT.docx)
+     contains NO prose for this section - see
+     narrative/diagnostics/migration_2026-08-07.md, 'the draft is a
+     methods-and-exhibits skeleton'. Nothing to split.
+     ============================================================================ -->

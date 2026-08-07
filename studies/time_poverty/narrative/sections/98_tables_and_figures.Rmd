@@ -1,0 +1,35 @@
+# Tables and Figures
+
+<!-- ============================================================================
+     STUB. Layout mirrors studies/land_tenure/narrative/sections/98_tables_and_figures.Rmd
+     and studies/ag_services'. NO EXHIBIT IS LISTED HERE because this study has no
+     manuscript, and the exhibit list is a manuscript decision - ag_services could
+     write its 98 from a v000 draft's exhibit list, and there is no equivalent here.
+
+     Writing speculative ft_table1()/ft_table2() calls would invent the paper's
+     structure and then hide that invention behind builders that error. So this
+     file carries the mechanics and nothing else.
+
+     THE MECHANICS, recorded so they are not relearned:
+     * Tables are built by ../scripts/exhibit_helpers_tables.R (no ft_*() builders
+       yet - see its header). Figures come from ../scripts/101_exhibit_figures.R
+       into output/figures/.
+     * Exhibit titles are markdown headings, NOT flextable captions, so they appear
+       in the Word navigation pane.
+     * Landscape exhibits are grouped into ONE section. Emitting sec_landscape()
+       then sec_portrait() back to back creates an empty portrait section, which
+       Word renders as a blank page. A section's properties apply to the content
+       BEFORE it: sec_portrait() closes a portrait run, sec_landscape() closes a
+       landscape run.
+     * Every number printed here must come from the pipeline. Nothing gets pasted
+       in from a spreadsheet.
+
+     WHAT 101 WILL PRODUCE once 004 has run, i.e. the candidate figure list:
+       heterogeneity_crop_region.png, heterogeneity_genderAge.png, plus the
+       robustness, matching-TE, covariate-balance and distribution figures the
+       fig_*() builders write. Their .csv companions land in output/figures/.
+     ============================================================================ -->
+
+```{r, echo=FALSE, results='asis'}
+if (exists("sec_portrait")) sec_portrait()
+```

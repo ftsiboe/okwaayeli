@@ -1,0 +1,24 @@
+# 4. Methods
+
+<!-- ============================================================================
+     STUB. This study has NO draft manuscript in any format - not a .docx, not an
+     .Rmd, nothing. Unlike the ag_services and land_tenure ports there was no
+     source document to split, so this section was created empty rather than
+     migrated. See ../diagnostics/scaffold_2026-08-07.md.
+     ============================================================================ -->
+
+<!-- The method is NOT undetermined - it is implemented in the pipeline and can
+     be described from the code today:
+
+     * Statistical matching over randomly drawn specifications
+       (002_MATCHING_*.R, match_sample_specifications()), ranked by a composite
+       covariate-balance rate from cobalt::bal.tab(); the top spec is
+       match_specification_optimal.
+     * Exact strata: Region, Ecozon, Locality, Female.
+     * Log-linear treatment effects (ATE/ATET/ATEU) in 003.
+     * Meta-stochastic frontier in 004: sfaR/frontier, translog and
+       Cobb-Douglas forms, half-normal inefficiency; output HrvstKg on
+       Area, SeedKg, HHLaborAE, HirdHr, FertKg, PestLt.
+
+     studies/ag_services/narrative/sections/04_methods.Rmd is the fullest
+     written version of this same framework and is the right thing to adapt. -->

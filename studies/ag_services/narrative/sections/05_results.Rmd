@@ -1,0 +1,17 @@
+# 5. Results and discussion
+
+<!-- STUB bodies. The draft has only the subsection headings here (24 words total).
+     TWO NUMBERING FIXES APPLIED 2026-08-07:
+       - the draft used '5.4' TWICE ('Robustness of main findings' and 'Observed
+         heterogeneity'); the second is renumbered 5.5.
+       - '5.1 Diagnostic tests' was bold body text, not a heading; promoted to ##. -->
+
+## 5.1 Diagnostic tests
+
+## 5.2 Output elasticities
+
+## 5.3 Technology adoption and technical efficiency
+
+## 5.4 Robustness of main findings
+
+## 5.5 Observed heterogeneity

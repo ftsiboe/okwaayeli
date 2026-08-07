@@ -1,0 +1,13 @@
+# 5. Results
+
+<!-- ============================================================================
+     STUB. This study has NO draft manuscript in any format - not a .docx, not an
+     .Rmd, nothing. Unlike the ag_services and land_tenure ports there was no
+     source document to split, so this section was created empty rather than
+     migrated. See ../diagnostics/scaffold_2026-08-07.md.
+     ============================================================================ -->
+
+<!-- Blocked twice over: 004 has never run (output/estimations/ is empty) and
+     301_article_objects.R has no estimate block, so there are no numbers to
+     quote. Every figure in this section must come through objs$... from
+     article_objects.json - never typed in. -->

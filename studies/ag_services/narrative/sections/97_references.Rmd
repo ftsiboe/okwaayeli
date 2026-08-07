@@ -1,0 +1,7 @@
+# References {-}
+
+<!-- The v000 draft has an empty References section and no bibliography file.
+     narrative/references.bib does not exist yet. This div stays empty until it does. -->
+
+::: {#refs}
+:::

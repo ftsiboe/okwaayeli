@@ -1,0 +1,14 @@
+# Abstract {-}
+
+<!-- ============================================================================
+     STUB. The v000 draft (narrative/v000_AgricServicesProdGapGhana_FT.docx)
+     contains NO prose for this section - see
+     narrative/diagnostics/migration_2026-08-07.md, 'the draft is a
+     methods-and-exhibits skeleton'. Abstract prose has to be written; the README's abstract
+     ends with '*Full abstract to follow once v001 lands.*' and must not be
+     copied here - see the 'do not hand-copy an abstract' rule.
+     ============================================================================ -->
+
+**Keywords:** Extension services; cooperatives; farm performance; technical efficiency; meta-frontier; Ghana
+
+**JEL classification:** Q12, Q16, O13, D24

@@ -37,7 +37,13 @@ See the
 [LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
 file in the repository root for details.
 
-**Status**: Code-only at this stage. Replication scripts (001-005 plus 100_FIGTAB) are in place; the working paper is pending.
+**Status**: Code-only at this stage. The pipeline (`scripts/000`–`004`) is consolidated into the
+canonical layout and the article scaffolding (`narrative/`, `run_article.R`, the exhibit and
+article stages) is in place but unfilled. The estimation stage (`004`) has not yet been run —
+`output/estimations/` is empty — so no exhibit or article stage can produce output yet. See
+[`scripts/README.md`](scripts/README.md) and
+[`narrative/diagnostics/scaffold_2026-08-07.md`](narrative/diagnostics/scaffold_2026-08-07.md)
+for what is and is not built.
 
 ### Contributors
 

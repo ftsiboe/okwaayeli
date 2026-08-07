@@ -1,0 +1,66 @@
+# =============================================================================
+#  DATA and SETUP - AGRICULTURAL SERVICES STUDY 
+# =============================================================================
+#  General Description:
+#  ---------------------------------------------------------------------------
+#  This script prepares analysis-ready data for the agricultural services study within the
+#  okwaayeli project. It:
+#    - Initializes a study-specific environment (folders, paths, metadata),
+#    - Loads harmonized farm/household and agricultural services modules,
+#    - Merges them at the household-farmer level,
+#    - Restricts the sample to relevant GLSS waves,
+#    - Saves both the processed study dataset and the study environment object
+#      to disk for downstream analysis.
+# =============================================================================
+
+# ---- Housekeeping: clear workspace and run garbage collection
+rm(list = ls(all = TRUE)); gc()              
+
+# ---- Rebuild package documentation (if this is part of a package) 
+# This calls roxygen2 via devtools to regenerate .Rd docs and NAMESPACE.
+devtools::document()                         
+
+run_only_for(id = 8, allowed_jobnames = "run_all")
+
+# ---- Define study name and initialize study environment
+project_name <- "ag_services"
+
+# study_setup() is assumed to:
+#   - create / verify directories,
+#   - define paths (e.g., wd$home, wd$data, wd$output),
+#   - and return a list-like "study_environment" object
+#     containing configuration for this specific project.
+study_environment <- study_setup(project_name = project_name, layout = "v2")
+
+# ---- Load harmonized household / farmer-level data
+# Wrapper that downloads (via piggyback) and caches Stata .dta files from
+# the okwaayeli GitHub repo, then reads them with haven.
+farmer_data <- get_household_data("harmonized_crop_farmer_data",force = TRUE)
+
+ag_services_data <- get_household_data("harmonized_ag_services_data",force = TRUE)
+
+# ---- Merge farmer and agricultural services data at the household-member level
+# Merge keys:
+#   - Surveyx : survey round 
+#   - EaId    : enumeration area
+study_data <- dplyr::inner_join(
+  farmer_data,
+  ag_services_data,
+  by = c("Surveyx", "EaId")
+)
+
+# ---- Restrict to relevant survey rounds and drop certain variables
+study_data <- study_data[
+  study_data$Surveyx %in% c("GLSS5","GLSS6","GLSS7"),
+]
+
+# ---- Attach raw data to study environment (potential issue)
+study_environment$study_raw_data <- study_data
+
+# ---- Save study environment object
+# Save the entire study environment configuration (paths, metadata, etc.)
+# for reproducibility and to simplify subsequent scripts.
+saveRDS(
+  study_environment,
+  file.path(study_environment$wd$data, paste0(project_name,"_study_environment.rds"))
+)

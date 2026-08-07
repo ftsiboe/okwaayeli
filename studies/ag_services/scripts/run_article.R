@@ -1,5 +1,5 @@
 # run_article.R
-# One entry point for the resource_extraction pipeline. Set a stage TRUE to run it.
+# One entry point for the ag_services pipeline. Set a stage TRUE to run it.
 # Run from the okwaayeli repo root.
 #
 # Defaults are the cheap path: rebuild the article from the caches already on
@@ -11,7 +11,6 @@
 rm(list = ls(all = TRUE)); gc()
 
 devtools::document()
-
 # ============================================================================
 # STAGES
 # ============================================================================
@@ -21,17 +20,17 @@ MATCHING    <- TRUE  # 002  -> estimation_data, matched samples                E
 TREATMENT   <- TRUE  # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
 MSF         <- FALSE  # 004  -> output/estimations/                             HPC, hours
 DESCRIPTIVE <- TRUE  # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
-FIGURES     <- TRUE  # 101  -> output/figure/ + output/figure_data/            moderate
-OBJECTS     <- TRUE   # 301  -> narrative/article_objects.json                  fast
-RENDER      <- TRUE   # 302  -> narrative/resource-extraction.docx / .html      fast
-
-# WORKBOOK (102) does not exist here yet. land_tenure's
-# 102_exhibit_table_workbook.R emits every table as printed, one sheet each,
-# through the same ft_*() builders. Port it when the descriptive tables are live
-# (AGENT_PROMPT.md step 5) and add the lever here.
+FIGURES     <- FALSE  # 101  -> output/figures/ (png + data), output/tables/    moderate
+WORKBOOK    <- TRUE  # 102  -> output/tables/ag_services_tables.xlsx           fast
+OBJECTS     <- TRUE  # 301  -> narrative/article_objects.json                  NOT WRITTEN
+# 2026-08-07: OBJECTS is FALSE because scripts/301_article_objects.R does not
+# exist yet. Turning it on fails at .run(). The Rmd already guards on
+# file.exists("article_objects.json"), so the render works without it -- there
+# is simply no `objs$...` value to cite until 301 is written.
+RENDER      <- TRUE   # 302  -> narrative/ag-services.docx / .html              fast
 
 # ---- Citation style ---------------------------------------------------------
-CITATION_STYLE <- "food_policy"   # "food_policy" (Elsevier Harvard, author-date) or "ieee"
+CITATION_STYLE <- "elsevier"   # "elsevier" (Harvard, author-date) or "ieee"
 
 # ============================================================================
 # What depends on what
@@ -40,6 +39,10 @@ CITATION_STYLE <- "food_policy"   # "food_policy" (Elsevier Harvard, author-date
 #                     001 -> 100       descriptives read study_raw_data
 #                            100 -+
 #                            101 -+--> the Rmd's tables      -> 301 -> 302
+#                                 +--> 102 (same builders -> xlsx)
+#
+# 102 needs 100 and 101 for the same reason the Rmd does: it calls the same
+# ft_*() builders, and those read the descriptive cache and the figure data.
 #
 # Typical runs:
 #   article only .................. OBJECTS + RENDER                (default)
@@ -47,8 +50,9 @@ CITATION_STYLE <- "food_policy"   # "food_policy" (Elsevier Harvard, author-date
 #   re-estimated (004 on HPC) ..... FIGURES + OBJECTS + RENDER
 #   harmonized data changed ....... DATA + MATCHING + TREATMENT + (004 on HPC)
 #                                   then DESCRIPTIVE + FIGURES + OBJECTS + RENDER
+#   sending tables to a co-author . WORKBOOK (after 100/101 are current)
 
-.SCRIPTS <- "studies/resource_extraction/scripts"
+.SCRIPTS <- "studies/ag_services/scripts"
 
 # ---- Guards: the couplings that are not obvious ------------------------------
 
@@ -62,15 +66,34 @@ if (DATA && !MATCHING)
        "attaches it.\n  Running 001 alone leaves the environment unusable ",
        "downstream.", call. = FALSE)
 
-# 004 is a SLURM array (job_msf.sbatch, --array=1-61). Sourcing it here fits
+# 004 is a SLURM array (job_msf.sbatch, --array=1-60). Sourcing it here fits
 # every specification sequentially on this machine, which is not a thing you
 # want to discover by waiting.
 if (MSF)
   warning("run_article.R: MSF = TRUE runs 004 sequentially in THIS session.\n",
-          "  It is normally a SLURM array (scripts/job_msf.sbatch, --array=1-61).\n",
+          "  It is normally a SLURM array (scripts/job_msf.sbatch, --array=1-60).\n",
           "  If you edited technology_variables, update the array size to match ",
           "nrow(model_specifications) or the new specs never run.",
           call. = FALSE, immediate. = TRUE)
+
+# 2026-08-07 MIGRATION NOTE -- layout and the frozen environment.
+# 001 now calls study_setup(project_name, layout = "v2") and the study
+# environment moved from output/ to data/. The .rds currently on disk predates
+# both and resolves to the "legacy" layout (figure/ + figure_data/). Until
+# DATA + MATCHING have been re-run once, any stage that readRDS()s the
+# environment must call study_dirs() on it to recompute paths -- wd is a frozen
+# snapshot, not a live view. See ?study_dirs.
+#
+# The seed is fixed (study_setup(myseed = 1980632) -> 002's
+# match_sample_specifications(myseed = ...)), so the re-run should reproduce
+# output/matching/ byte-identically and output/estimations/ stays valid.
+# Verify with a checksum sweep before assuming 004 need not run again.
+
+# ---- Stata ------------------------------------------------------------------
+# 100_exhibits.do is NOT driven from here: R cannot run it. It reads
+# data/tech_inefficiency_ag_services_data.dta and writes descriptive exhibits to
+# output/tables/. Run it in Stata when the harmonized data changes, before
+# DESCRIPTIVE. It is a candidate for retirement once 102 owns the workbook.
 
 # Each stage runs in its OWN environment.
 #
@@ -101,13 +124,14 @@ Keep.List <- c("Keep.List", ls())
 # ============================================================================
 # Pipeline
 # ============================================================================
-.run(INITIALIZE,  "000_initialize.R",                       "Initialize")
-.run(DATA,        "001_DATA_resource_extraction_study.R",   "Data")
-.run(MATCHING,    "002_MATCHING_resource_extraction_study.R","Matching")
-.run(TREATMENT,   "003_TREATMENT_resource_extraction_study.R","Treatment effects")
-.run(MSF,         "004_MSF_resource_extraction_study.R",     "Meta-stochastic frontier")
-.run(DESCRIPTIVE, "100_exhibit_descriptive_stats.R",         "Descriptive exhibits")
-.run(FIGURES,     "101_exhibit_figures.R",                   "Figures")
+.run(INITIALIZE,  "000_initialize.R",                  "Initialize")
+.run(DATA,        "001_DATA_ag_services_study.R",      "Data")
+.run(MATCHING,    "002_MATCHING_ag_services_study.R",  "Matching")
+.run(TREATMENT,   "003_TREATMENT_ag_services_study.R", "Treatment effects")
+.run(MSF,         "004_MSF_ag_services_study.R",       "Meta-stochastic frontier")
+.run(DESCRIPTIVE, "100_exhibit_descriptive_stats.R",   "Descriptive exhibits")
+.run(FIGURES,     "101_exhibit_figures.R",             "Figures")
+.run(WORKBOOK,    "102_exhibit_table_workbook.R",      "Table workbook (xlsx)")
 
 if (OBJECTS || RENDER) {
   Sys.setenv(ARTICLE_CSL = if (identical(CITATION_STYLE, "ieee"))
@@ -123,13 +147,4 @@ if (OBJECTS || RENDER) {
 # sources it during the render -- at which point knitr's working directory is
 # narrative/, which is why it resolves its own paths via .STUDY_ROOT rather than
 # trusting article_helpers.R's repo-root-relative constants.
-
-# ---- Reproducibility: record the render environment ------------------------
-# Written alongside the manuscript so the replication package pins versions.
-if (RENDER)
-  writeLines(
-    capture.output(sessionInfo()),
-    "studies/resource_extraction/narrative/diagnostics/session_info.txt"
-  )
-
 message("\nrun_article.R: complete.")

@@ -1,0 +1,136 @@
+# Tables and Figures
+
+<!-- Layout mirrors studies/land_tenure/narrative/sections/98_tables_and_figures.Rmd.
+     Tables are built by scripts/exhibit_helpers_tables.R; figures by
+     scripts/101_exhibit_figures.R into output/figures/. See scripts/README.md.
+     Exhibit titles are markdown headings (not flextable captions) so they appear in the
+     Word navigation pane. Landscape exhibits are grouped into ONE section: emitting
+     sec_landscape() then sec_portrait() back to back creates an empty portrait section,
+     which Word renders as a blank page. A section's properties apply to the content
+     BEFORE it: sec_portrait() closes a portrait run, sec_landscape() closes a landscape run.
+
+     NONE OF THE ft_*() BUILDERS BELOW EXIST YET. This file is the target shape, written
+     2026-08-07 from the v000 draft's exhibit list. The frozen Word tables were deliberately
+     NOT pasted in: every number the paper prints comes from the pipeline. The v000 values
+     are preserved in narrative/v000_...docx and, cell by cell, in
+     narrative/diagnostics/verification_reference_2026-08-07.json.
+
+     FIGURE MAPPING was recovered on 2026-08-07 by matching the draft's embedded images
+     (Word downsampled them, so md5 does not match) against output/figures/ on exact aspect
+     ratio plus image content. Recorded in the migration log. -->
+
+```{r, echo=FALSE, results='asis'}
+sec_portrait()
+```
+
+#### Table 1. Summary Statistics of Crop Producers in Ghana (2005-2017)
+
+```{r tab1, echo=FALSE}
+ft_table1()
+```
+
+\newpage
+
+#### Table 2. Agencies Providing Agricultural Extension Service in Ghana (2012-2017)
+
+<!-- NO WORKBOOK COUNTERPART. Build from R/descriptive-exhibits-core.R; the underlying
+     numbers are in the .do's 1,826-row `services` sheet. -->
+
+```{r tab2, echo=FALSE}
+ft_table2()
+```
+
+\newpage
+
+#### Table 3. Patterns in Agricultural Extension Access in Ghana (2012-2017)
+
+<!-- NO WORKBOOK COUNTERPART. As Table 2. -->
+
+```{r tab3, echo=FALSE}
+ft_table3()
+```
+
+\newpage
+
+#### Table 4. Access to Community Agricultural Services in Ghana (2012-2017)
+
+<!-- Reference: `Table2-services` in ag_services_results-summary-statistics.xlsx.
+     Verified: Millet row 0.51/0.44/0.07/0.01/0.16/0.10 matches exactly. -->
+
+```{r tab4, echo=FALSE}
+ft_table4()
+```
+
+\newpage
+
+#### Table 5. Patterns in Compliance with Agricultural Advisory Recommendations in Ghana (2012-2017)
+
+<!-- NO WORKBOOK COUNTERPART. As Table 2. -->
+
+```{r tab5, echo=FALSE}
+ft_table5()
+```
+
+```{r, echo=FALSE, results='asis'}
+sec_landscape()
+```
+
+#### Table 6. Agricultural Service Impact on Input Elasticities and Variability in Crop Production in Ghana (2012-2017)
+
+<!-- Reference: `Table3` in ag_services_results-msf.xlsx. That sheet carries the literal
+     `disabled` as its estm_type row key - it is the disability study's sheet with
+     ag_services numbers in it. Key on TCHLvel, never the numeric Tech. -->
+
+```{r tab6, echo=FALSE}
+ft_table6()
+```
+
+\newpage
+
+#### Table 7. Agricultural Service Parity in Technology Level and Technical Efficiency Based on Source of Service
+
+<!-- Reference: `Table4` in ag_services_results-msf.xlsx. Same caveat as Table 6. -->
+
+```{r tab7, echo=FALSE}
+ft_table7()
+```
+
+\newpage
+
+#### Figure 1. The association between community agricultural service provision and farm productivity from 2005-2017
+
+<!-- RESOLVED 2026-08-07. The draft gives Figure 1 no Heading4, so it is absent from the
+     Word navigation pane - but its caption DOES exist, as plain body text immediately
+     above the image. Recovered verbatim and promoted to a heading here. My earlier
+     placeholder title was a guess and has been discarded. -->
+
+![](../output/figures/score_trend.png){width=6.3in}
+
+\newpage
+
+#### Figure 2. Community Agricultural Services and Farm Performance in Ghana
+
+![](../output/figures/score_by_services.png){width=6.3in}
+
+```{r, echo=FALSE, results='asis'}
+sec_portrait()
+```
+
+#### Figure 3. Agricultural Services Provision Association with Crop Production Technology Adoption and Technical Efficiency by Farmer Gender, Age, and Education in Ghana (2005-2017)
+
+![](../output/figures/heterogeneity_genderAge.png){width=9.3in}
+
+\newpage
+
+#### Figure 4. Agricultural Services Provision Association with Crop Production Technology Adoption and Technical Efficiency by Major Crops and Administrative Regions in Ghana (2005-2017)
+
+![](../output/figures/heterogeneity_crop_region.png){width=9.3in}
+
+```{r, echo=FALSE, results='asis'}
+sec_landscape()
+```
+
+<!-- UNUSED FIGURES: output/figures/input_TE.png and output/figures/score_distributions.png
+     are produced by the pipeline but referenced nowhere in the v000 draft. land_tenure uses
+     input_TE.png as its Figure 1 ("input and output gaps"). Decide whether ag_services
+     should carry an equivalent exhibit. -->

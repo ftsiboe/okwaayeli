@@ -1,0 +1,12 @@
+# Appendix {-}
+
+<!-- ============================================================================
+     STUB. Same reasoning as 98: the appendix exhibit list is a manuscript
+     decision and there is no manuscript.
+
+     In the sibling studies this section carries the specification-ranking table
+     and the covariate-balance exhibit. Both have real counterparts here already -
+     101_exhibit_figures.R writes match_specification_ranking.csv into
+     output/tables/ and covariate_balance.csv into output/figures/ - so this is
+     the section most likely to be fillable first, once 004 has run.
+     ============================================================================ -->

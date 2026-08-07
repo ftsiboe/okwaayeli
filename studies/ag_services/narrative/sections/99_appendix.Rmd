@@ -1,0 +1,151 @@
+# Supplementary material
+
+<!-- Layout mirrors studies/land_tenure/narrative/sections/99_appendix.Rmd.
+     Tables are built by scripts/exhibit_helpers_tables.R; figures by
+     scripts/101_exhibit_figures.R into output/figures/. See scripts/README.md.
+     Exhibit titles are markdown headings (not flextable captions) so they appear in the
+     Word navigation pane. Landscape exhibits are grouped into ONE section: emitting
+     sec_landscape() then sec_portrait() back to back creates an empty portrait section,
+     which Word renders as a blank page. A section's properties apply to the content
+     BEFORE it: sec_portrait() closes a portrait run, sec_landscape() closes a landscape run.
+
+     NONE OF THE ft_*() BUILDERS BELOW EXIST YET. This file is the target shape, written
+     2026-08-07 from the v000 draft's exhibit list. The frozen Word tables were deliberately
+     NOT pasted in: every number the paper prints comes from the pipeline. The v000 values
+     are preserved in narrative/v000_...docx and, cell by cell, in
+     narrative/diagnostics/verification_reference_2026-08-07.json.
+
+     FIGURE MAPPING was recovered on 2026-08-07 by matching the draft's embedded images
+     (Word downsampled them, so md5 does not match) against output/figures/ on exact aspect
+     ratio plus image content. Recorded in the migration log. -->
+
+## Note S1. Construction and Harmonization of Community Agricultural Service Delivery Variables
+
+<!-- STUB. The v000 draft has prose here; it was NOT carried over because the draft's
+     Appendix is 5,835 words of table content and the Note bodies need reading against
+     the recovered data/tables/tableS1.csv and tableS2.csv before they are trusted. -->
+
+## Note S2. Drivers of technical inefficiency
+
+<!-- STUB. As Note S1. land_tenure's equivalent Note is worth reading for the shape:
+     it reads Table S8 and says what the inefficiency covariates do and do not show. -->
+
+<!-- Closes the Note prose as PORTRAIT. Was sec_landscape(), which (a) rendered
+     the notes landscape and (b) sat back-to-back with 98's trailing
+     sec_landscape(), producing an empty section -- a blank page. -->
+
+```{r, echo=FALSE, results='asis'}
+sec_portrait()
+```
+
+#### Table S1. Final agricultural service delivery variables and GLSS7 source references
+
+<!-- CURATED INPUT - one of only two legitimate non-computable exhibits in this study.
+     data/tables/tableS1.csv, recovered 2026-08-07 from the sheet named `Sheet1` in
+     ag_services_results-msf.xlsx. 36 rows x 4 cols; the draft's Table S1 has 36 rows. Exact.
+     NB the sheet actually NAMED `TableS1` in that workbook is the disability study's and
+     was discarded. -->
+
+```{r tabS1, echo=FALSE}
+ft_tableS1()
+```
+
+\newpage
+
+#### Table S2. Harmonization of agricultural service questions across GLSS rounds
+
+<!-- CURATED INPUT - the second. data/tables/tableS2.csv, recovered from `Sheet2`.
+     28 rows x 5 cols against the draft's 26; the 2-row excess is probably a header/notes
+     band. VERIFY before wiring. -->
+
+```{r tabS2, echo=FALSE}
+ft_tableS2()
+```
+
+\newpage
+
+#### Table S3. Summary Statistics of Crop Producers in Ghana (2005-2017)
+
+<!-- Reference: `TableS2` in ag_services_results-summary-statistics.xlsx.
+     Verified: n=22519/11752, Female 0.25 (0.43) / 0.52 (0.50) match exactly. -->
+
+```{r tabS3, echo=FALSE}
+ft_tableS3()
+```
+
+\newpage
+
+#### Table S4. Trends in the Characteristics of Crop Producers in Ghana (2005-2017)
+
+<!-- Reference: `TableS3` in ag_services_results-summary-statistics.xlsx (trend block). -->
+
+```{r tabS4, echo=FALSE}
+ft_tableS4()
+```
+
+\newpage
+
+#### Table S5. Covariate balancing
+
+<!-- Reference: `CovBalDATA` in ag_services_results-msf.xlsx (1,369 rows, long format). -->
+
+```{r tabS5, echo=FALSE}
+ft_tableS5()
+```
+
+\newpage
+
+#### Table S6. Covariate balance summary
+
+<!-- Reference: `ranking` in ag_services_results-msf.xlsx.
+     Verified: Mahalanobis 0.0128 / 1.1164 / 0.0133 / 0.0105 match to four decimals. -->
+
+```{r tabS6, echo=FALSE}
+ft_tableS6()
+```
+
+\newpage
+
+#### Table S7. Meta Stochastic Frontier Analysis Results for Ghanaian Crop Producers for the periods 2005/06, 2012/13 and 2016/17
+
+<!-- Reference: `TableS4` in ag_services_results-msf.xlsx (lnI1-lnI6 production function).
+     That sheet's row 7 reads "Not disabled / Disabled" above services0 data. The draft has
+     it right ("No services / Some services"); the workbook does not. -->
+
+```{r tabS7, echo=FALSE}
+ft_tableS7()
+```
+
+\newpage
+
+#### Table S8. Determinants Of Crop Production Technical Inefficiency and Agricultural Service Driven Technology Gaps in Ghana (2005-2017)
+
+<!-- Reference: `Table5` in ag_services_results-msf.xlsx (Zu_* inefficiency covariates).
+     Verified: Female farmer (dummy) 0.280*** (0.003) matches exactly.
+     Same "Not disabled / Disabled" header defect as Table S7. -->
+
+```{r tabS8, echo=FALSE}
+ft_tableS8()
+```
+
+\newpage
+
+#### Figure S1. Covariate balancing summary
+
+![](../output/figures/Covariate_balance_variance.png){width=9.3in}
+
+<!-- Closes Tables S1-S8 AND Figure S1 (9.3in wide) as one landscape run. -->
+
+```{r, echo=FALSE, results='asis'}
+sec_landscape()
+```
+
+\newpage
+
+#### Figure S2. Different Model Specifications Generally Show Increasing Impact of Farmer Agricultural Service Provision on Crop Production Output for Ghanaian Farmers (2005-2017)
+
+![](../output/figures/robustness.png){width=6.3in}
+
+<!-- NO trailing marker. Figure S2 is portrait and is closed by the document's
+     own final sectPr, which pandoc emits as portrait. Adding sec_portrait()
+     here duplicates it and yields an empty section -- the second blank page. -->
