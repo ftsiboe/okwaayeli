@@ -13,7 +13,8 @@ See the
 [LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
 file in the repository root for details.
 
-**Status**: Drafting (v005, abstract pending).
+**Status**: Drafting (v005). Consolidated into the canonical study layout on
+2026-08-08; the automated narrative system is not yet in place.
 
 ### Contributors
 
@@ -23,14 +24,59 @@ file in the repository root for details.
 - [Sylvanus Gaku](https://people.extension.wisc.edu/#home/person/66ed8e9bc09f6f031b8fa85e/)
 - [Peter Quartey](https://scholar.google.com/citations?user=rEPtTzoAAAAJ&hl=en)
 
-### Abstract
+### What this study asks
 
-Financial inclusion, defined as improved access to savings, credit, digital payments, and insurance, is central to the development strategy of agro-based economies in sub-Saharan Africa, and recent reports document a marked expansion of (in)formal financial services in Ghana, including the spread of mobile money. In theory, relaxing liquidity constraints should foster poverty reduction and food security by enabling farmers to undertake lumpy, yield-enhancing investments and operate nearer to the production frontier. This study constructs a financial inclusion index for Ghanaian farm households across multiple GLSS rounds and combines it with statistical matching and a meta-stochastic frontier framework to identify how financial inclusion and credit access affect technology adoption and technical efficiency in crop production. *Full abstract to follow once v006 lands.*
+Financial inclusion — access to savings, credit, digital payments and insurance
+— is central to the development strategy of agro-based economies in sub-Saharan
+Africa, and recent reports document a marked expansion of (in)formal financial
+services in Ghana, including the spread of mobile money. In theory, relaxing
+liquidity constraints should let farmers undertake lumpy, yield-enhancing
+investments and operate nearer to the production frontier. This study builds a
+financial inclusion index for Ghanaian farm households from the Ghana Living
+Standards Survey, then applies statistical matching within a meta-stochastic
+frontier framework to identify how financial inclusion and credit access affect
+technology adoption and technical efficiency in crop production.
 
-**Keywords**: financial inclusion; credit; mobile money; technical efficiency; meta-stochastic frontier; Ghana
+<!--
+NO ABSTRACT HERE, DELIBERATELY. Once narrative/ is scaffolded it lives in
+narrative/sections/00_abstract.Rmd, where every figure is inline R against the
+pipeline. A second copy here would be hand-typed and would drift from the paper
+-- silently, and on the headline result. Link to it; do not restate it.
+-->
+
+The full text, tables and figures are in [`narrative/`](narrative/) — currently
+Word drafts (`v005_CreditAgricProdGapGhana.docx`, superseded versions in
+`narrative/old/`) pending migration to the automated manuscript system that
+`resource_extraction` and `land_tenure` use. **Until that migration lands, the
+numbers in the drafts are hand-typed and are not generated from the pipeline.**
+
+**Keywords**: financial inclusion; credit; mobile money; technical efficiency;
+meta-stochastic frontier; Ghana
 
 **JEL Classification**: G21, G51, O13, Q12, Q14
 
----
+### Reproducing
+
+Run from the repository root. There is no `run_article.R` entry point yet — run
+the numbered steps directly, in order.
+
+    000_initialize   scaffolding                       fast
+    000_INDEX        -> harmonized financial_inclusion_index (Stata)
+    001_DATA         harmonized releases -> raw data   fast
+    002_MATCHING     -> estimation_data                EXPENSIVE
+    003_TREATMENT    -> treatment effects              EXPENSIVE
+    004_MSF          -> output/estimations/            HPC (job_msf.sbatch)
+    101_exhibit_*    -> output/figures/                moderate
+
+Data preparation upstream of `001` is Stata (`data-raw/scripts/data-prep/glss/03_financial_inclusion.do`),
+which harmonizes the raw GLSS files.
+`scripts/000_INDEX_financial_inclusion_study.do` builds the financial inclusion
+index — the treatment variable itself — and writes it as a harmonized release
+that `001` reads back.
+
+See [`scripts/README.md`](scripts/README.md) for the naming convention and for
+what this study still lacks against `resource_extraction` and `land_tenure`.
+
+------------------------------------------------------------------------
 
 *Maintained by [ftsiboe](https://github.com/ftsiboe)*

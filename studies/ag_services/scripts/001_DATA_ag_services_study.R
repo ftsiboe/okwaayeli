@@ -35,16 +35,18 @@ study_environment <- study_setup(project_name = project_name, layout = "v2")
 # =============================================================================
 #  STAGE 000 - BUILD THE AG SERVICES RELEASE, OR USE THE SAVED ONE
 # =============================================================================
-#  Added 2026-08-07.
+#  The harmonizer lives with the other GLSS harmonization scripts, in
+#  data-raw/scripts/data-prep/glss/. It is 11_ag_services.do there, and it can
+#  also be run as part of the whole set via that folder's 00_run_all.do.
 #
-#  WHY THIS IS NOT JUST A system2() CALL
-#  -------------------------------------
+#  WHY THIS IS NOT get_household_data()
+#  ------------------------------------
 #  get_household_data() does NOT read data-raw/releases/harmonized_data/. It
 #  downloads the .dta from the GitHub release (ftsiboe/GHAgricProductivityLab,
 #  tag "hh_data") into an R user cache, and `force = TRUE` deletes that cache
-#  and re-downloads. Since that published release is still PRE-AUDIT, calling it
-#  here would silently pull data that does not reproduce this paper -- exactly
-#  the failure data-raw/okwaayeli_DATA.do's own header describes.
+#  and re-downloads. That published release does not carry the corrections this
+#  paper depends on, so calling it here would silently pull data that does not
+#  reproduce the results.
 #
 #  So ag services is read from the LOCAL release, always.
 #
@@ -56,16 +58,16 @@ study_environment <- study_setup(project_name = project_name, layout = "v2")
 #  one: the .dta is the release.
 #
 #  What is NOT optional is the schema contract below. It runs on every path, so
-#  a file predating the 2026-08-07 audit can never be used silently, whether it
-#  came from Stata, from git, or from a colleague.
+#  a release that does not carry the corrected variables can never be used
+#  silently, whether it came from Stata, from git, or from a colleague.
 #
-#  The farmer-level data is unaffected by the audit and still comes from GitHub.
+#  The farmer-level data is unaffected and still comes from GitHub.
 # =============================================================================
 
 HARMONIZE <- TRUE   # TRUE = rebuild with Stata when available; FALSE = never try
 
 .REL <- "data-raw/releases/harmonized_data"
-.DO  <- "studies/ag_services/scripts/000_HARMONIZE_ag_services_data.do"
+.DO  <- "data-raw/scripts/data-prep/glss/11_ag_services.do"
 .DST <- file.path(.REL, "harmonized_ag_services_data.dta")
 .rebuilt <- FALSE
 
@@ -88,7 +90,7 @@ if (isTRUE(HARMONIZE)) {
   } else {
     message("001: rebuilding the release with ", basename(.stata))
     stopifnot(file.exists(.DO))
-    .log <- "studies/ag_services/scripts/logs/harmonize.log"
+    .log <- "data-raw/scripts/data-prep/glss/logs/11_ag_services.log"
     unlink(.log)
     .flag <- if (.Platform$OS.type == "windows") "/e" else "-b"
     .rc <- system2(.stata, c(.flag, "do", shQuote(normalizePath(.DO, winslash = "/"))),
@@ -103,7 +105,7 @@ if (isTRUE(HARMONIZE)) {
     .lines <- readLines(.log, warn = FALSE)
     .err   <- grep("^r\\([0-9]+\\);", .lines, value = TRUE)
     if (length(.err))
-      stop("001: 000_HARMONIZE failed -- Stata returned ",
+      stop("001: 11_ag_services.do failed -- Stata returned ",
            paste(unique(.err), collapse = " "), "\n  Last 40 log lines:\n",
            paste("   ", utils::tail(.lines, 40), collapse = "\n"),
            "\n  Full log: ", .log, call. = FALSE)
@@ -111,7 +113,7 @@ if (isTRUE(HARMONIZE)) {
     # A run that errored before the save would leave the previous file in place
     # and look like success. Freshness applies ONLY on this path.
     if (!file.exists(.DST))
-      stop("001: 000_HARMONIZE reported no error but wrote no ", basename(.DST), ".",
+      stop("001: 11_ag_services.do reported no error but wrote no ", basename(.DST), ".",
            call. = FALSE)
     if (difftime(Sys.time(), file.mtime(.DST), units = "mins") > 30)
       stop("001: ", basename(.DST), " is older than 30 minutes. Stata did not ",
@@ -120,7 +122,7 @@ if (isTRUE(HARMONIZE)) {
   }
 }
 
-# ---- Load harmonized farmer-level data (unaffected by the audit; from GitHub)
+# ---- Load harmonized farmer-level data (from the GitHub release)
 farmer_data <- get_household_data("harmonized_crop_farmer_data", force = TRUE)
 
 # ---- Load ag services from the LOCAL release, never via get_household_data()
@@ -135,10 +137,10 @@ message("001: ag services read from ", .DST, "  (", nrow(ag_services_data), " ro
         if (.rebuilt) ", rebuilt this run)" else ", SAVED build)")
 
 # ---- Schema contract: enforced on EVERY path, rebuilt or saved --------------
-# These columns exist only in builds from 2026-08-07 onward. Their absence means
-# the file predates the audit and carries the GLSS5 MOFA zeros and the
-# fabricated GLSS4/GLSS5 compliance values. Failing here is the point: a
-# pre-audit release must never be used by accident on a machine that cannot
+# These columns exist only in a release built by 11_ag_services.do. Their
+# absence means the file is an older build that carries the GLSS5 MOFA zeros
+# and the fabricated GLSS4/GLSS5 compliance values. Failing here is the point:
+# such a release must never be used by accident on a machine that cannot
 # rebuild it.
 .need <- c("services0_strict", "services1_strict", "services2_strict",
            "services3_strict", "extension_office", "extension_officer",
@@ -146,8 +148,8 @@ message("001: ag services read from ", .DST, "  (", nrow(ag_services_data), " ro
 .miss <- setdiff(.need, names(ag_services_data))
 if (length(.miss))
   stop("001: the ag services release is missing ", paste(.miss, collapse = ", "),
-       ".\n  It predates the 2026-08-07 audit and does not reproduce this paper.\n",
-       "  Rebuild it with ", .DO, ", or obtain a build from after that date.",
+       ".\n  It is an older build and does not reproduce this paper.\n",
+       "  Rebuild it with ", .DO, ", or obtain a current build.",
        call. = FALSE)
 
 # ---- Merge farmer and agricultural services data at the household-member level

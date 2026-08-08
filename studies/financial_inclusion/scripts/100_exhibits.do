@@ -9,7 +9,7 @@ keep if _merge==3
 drop _merge
 keep if inlist(Surveyx,"GLSS6","GLSS7")
 compress
-saveold "$GitHub\ghana\okwaayeli\studies\financial_inclusion\output\financial_inclusion_study_data",replace ver(12)
+saveold "$GitHub\ghana\okwaayeli\studies\financial_inclusion\data\financial_inclusion_study_data",replace ver(12)
 
 decode CropID,gen(CropIDx)
 keep if CropIDx == "Pooled"
@@ -25,14 +25,14 @@ sca drop _all
 loc ApID0 = 0
 tempfile Summaries DATA
 
-use "$GitHub\ghana\okwaayeli\studies\financial_inclusion\output\financial_inclusion_study_data",clear
+use "$GitHub\ghana\okwaayeli\studies\financial_inclusion\data\financial_inclusion_study_data",clear
 decode CropID,gen(CropIDx)
 qui levelsof CropIDx, local(levels)
 
 qui foreach crop in `levels'{
   
 *loc crop "Pooled"
-use "$GitHub\ghana\okwaayeli\studies\financial_inclusion\output\financial_inclusion_study_data",clear
+use "$GitHub\ghana\okwaayeli\studies\financial_inclusion\data\financial_inclusion_study_data",clear
 decode CropID,gen(CropIDx)
 keep if CropIDx == "`crop'"
 gen disagCat = `disab'
@@ -227,7 +227,7 @@ export excel CropIDx Equ Coef Beta SE Tv Pv Min Max SD N /*
 
 mat drop _all
 sca drop _all
-use "$GitHub\ghana\okwaayeli\studies\financial_inclusion\output\financial_inclusion_study_data",clear
+use "$GitHub\ghana\okwaayeli\studies\financial_inclusion\data\financial_inclusion_study_data",clear
 tab FinIdxCat,gen(FinIdxCatx)
 decode CropID,gen(CropIDx)
 unab Person: FinWorker YerEdu HHFinWorker // Variables related to the person

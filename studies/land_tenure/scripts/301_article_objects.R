@@ -135,7 +135,7 @@ curv <- rates("curv")
 
 # --- 3c) Ownership gaps within acquisition / sharecropping categories --------
 # disag_efficiencyGap_lvl, matched sample: (no ownership minus some ownership)
-# within each category. Labels per data-raw/okwaayeli_DATA.do.
+# within each category. Labels per data-raw/scripts/data-prep/glss/10_land_tenure.do.
 dg <- pooled$disagscors
 dg$disasg <- as.character(dg$disagscors_var)
 dg$level  <- as.character(dg$disagscors_level)

@@ -1,0 +1,37 @@
+<!--
+PORTED FROM v005 on 2026-08-08. Verbatim prose; nothing rewritten.
+
+Citations converted to @keys against narrative/references.bib.
+
+EVERY MEASURED QUANTITY IN THIS FILE IS LIVE. Nothing that came out of the
+analysis is typed as a literal -- each one is an inline call resolved against
+the current pipeline output at knit time:
+
+    `r fmt_pct(objs$treatment$share_treated)`
+    `r fmt_num(objs$sample$n_pooled, 0)`
+    `r tbl_num("table4", "Land", 2)`
+
+There is no fallback. A lookup that cannot resolve stops the knit rather than
+printing a stale value, so the prose cannot drift from the tables.
+
+What is deliberately literal: years and wave labels, exhibit and section
+numbers, equation numbers, percentile trims, the 5% significance convention,
+and figures cited from other papers. Those are not results of this study --
+see the boundary list in narrative/diagnostics/.
+-->
+
+# 1. Introduction
+
+Financial inclusion, defined as improved access to savings, credit, digital payments, and insurance, is central to the development strategy of agro-based economies in sub-Saharan Africa (SSA) such as Ghana [@DemirgucKunt2017; @Ogundari2014]. In Ghana, recent reports document an expansion in access to (in)formal financial services over the past decade, and mobile money platforms have extended outreach into remote areas [@GSS2019; @GSS2014; @Klapper2025]. In theory, relaxing liquidity constraints should foster poverty reduction and food security by enabling farmers to undertake lumpy, yield-enhancing investments (e.g., fertilizer, improved seeds, mechanization) and thereby operate nearer to best-practice production frontiers. In practice, however, the evidence for Ghana is mixed across settings and services.
+
+Studies on credit and farm performance in Ghana often focus on specific crops or regions and rely on cross-sectional data.  For instance, participation in input credit schemes in Northern Ghana increased use of fertilizer and labor but yielded only modest output gains and no significant income effects among maize farmers [@Iddrisu2018]. Similarly, among smallholder rice producers, access to bank‐linked credit did not raise technical efficiency relative to non‐borrowers [@Anang2016]. By contrast, work on maize shows that both formal and informal financing are associated with improved technical and/or economic efficiency [@Martey2019; @AppiahTwumasi2022]. Recent evidence on starchy staples suggests that pure technical inefficiency, rather than technology gaps, explains a larger share of production shortfalls across ecologies [@Ansah2023a]. Collectively, these results sharpen a clear research gap which this study addresses: does expanded financial inclusion—operationalized here as access to and use of credit—move Ghanaian farms toward the best-practice frontier, or does it mainly raise input intensity without proportional efficiency gains?
+
+To address this question, we merge nationally representative microdata from waves 6 (2012/13) and 7 (2016/17) of the Ghana Living Standards Survey (GLSS), with a stochastic metafrontier (SMF) framework and nearest neighbor matching (NNM). This period brackets comparable agricultural/finance modules and coincides with the rapid diffusion of digital finance in Ghana, allowing us to study credit effects under meaningful institutional change [@GSS2019; @GSS2014; @WorldBank2024]. Our approach estimates how credit access affects farmers’ input elasticities (responsiveness of output to land, seed, labor, and agrochemicals) while separately quantifying shifts in pure technical efficiency (TE), the technology gap ratio [TGR] (distance to best‐practice frontiers), and meta‐frontier technical efficiency (MTE), under heterogeneous technologies. Viewing NNM as addressing selection on observables; we investigate robustness via alternative specifications and interpret the results accordingly.
+
+Credit use makes a practical difference in how farmers run a season. With a loan in hand, they can buy improved seeds before prices jump, pay for fertilizer and pesticides when crops need them, and hire extra hands for land prep, weeding, and harvest. Many also adopt practices used by the best performers—like timely spraying, better spacing, or renting a sheller for post-harvest. In our data, borrowers look more like these “best-practice” farms, meaning credit helps pull them toward better technology and timing. But getting closer isn’t the same as getting there. Some borrowers still face a learning curve using new inputs, struggle with delayed deliveries, or stretch loans across too many needs. Those frictions show up as lower day-to-day efficiency even when the toolkit is better.
+
+That’s why the policy message isn’t just “more credit,” it’s better credit. Loans need to arrive before planting, be sized to the crop, and repay after harvest; simple digital disbursement helps but so do guarantees that inputs are genuine and arrive on time. Bundling finance with practical extension (what to do, when, and how), basic record-keeping tools, soil testing, and links to buyers can turn borrowed cedis into reliable yield gains. For riskier seasons, pairing credit with weather insurance or flexible grace periods keeps farmers from backsliding. In short: when credit is matched with the right advice, inputs, and timing, farmers don’t just spend more—they farm smarter.
+
+We advance the literature in three ways. First, we go beyond single-crop and single-region analyses by providing nationally representative evidence that jointly characterizes movement toward the frontier (TGR) and movement along it (TE) under credit access. Second, by using an SMF, we ensure comparability of estimates across heterogeneous technologies driven by a producers financial inclusion  status, a critical improvement over studies that assume a common production technology [e.g., @AbdulRahaman2021; @AppiahTwumasi2022]. Third, we document systematic heterogeneity by gender, crop, and agro-ecological zone, clarifying where and for whom financial inclusion  is most likely to generate productivity-enhancing effects rather than efficiency losses [@Anang2016; @Martey2019].
+
+The remainder of the paper is organized as follows. Section 2 describes the data and summarizes key descriptive statistics. Section 3 examines the evolving financial service environment among crop producers. Section 4 outlines the meta‐stochastic frontier and matching methodology. Section 5 presents empirical results and discussion. Finally, Section 6 concludes with policy implications and directions for future research.

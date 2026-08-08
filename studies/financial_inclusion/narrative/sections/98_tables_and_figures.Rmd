@@ -1,0 +1,123 @@
+<!--
+Exhibit section. Captions, numbering and figure→file mapping are taken from
+narrative/diagnostics/exhibit_inventory_v005.md, extracted from
+v005_CreditAgricProdGapGhana.docx -- not invented.
+
+Layout rules:
+  - one #### heading per exhibit, so Word's navigation pane lists them
+  - ft_*() chunks for tables; bare ![](...){width=} for figures
+  - the caption is the HEADING, not the image alt text
+  - \newpage between exhibits
+
+Orientation: Tables 1 and 4 are 8-9 columns and need landscape. A section marker
+applies to the content BEFORE it, so content between markers takes the
+orientation of the NEXT marker; back-to-back markers create a blank page. The
+landscape blocks are commented out until the tables actually build -- adding
+them now would only produce blank pages around absent content.
+
+Tables 1, 2, 3, 5 and 6 are LIVE; Table 4 is still a stub. The rest are commented out; their
+builders are stubs that stop() with the reason and the next step. Uncomment each
+as its builder lands. NO FALLBACKS: a builder that cannot key its data must
+stop(), never drop back to a stored CSV.
+-->
+
+# Tables and figures
+
+#### Table 1. Summary statistics of crop producers in Ghana (2012-2017)
+
+<!-- 36 x 8. draw_descriptive_summary(), credit_hh split.
+     Columns: Variable | Pooled | No credit | Some credit | Trend (%) x3.
+     LANDSCAPE. Header n's must come from the build, not be typed. -->
+
+```{r ft-table1}
+ft_table1()
+```
+
+\newpage
+
+#### Table 2. Financial services dynamics amongst Ghanaian crop farmers (2012-2017)
+
+<!-- 58 x 4. descriptive_indicator_shares(trend="wave_diff", per_wave=TRUE).
+     Columns: Outcome | GLSS6 mean(sd) | GLSS7 mean(sd) | Trend.
+     Row groups: Banked; NonBanked_Why_*; InstTyp_*; AccTyp_*; PrdTyp_*;
+     Bank_Info_*; FinWorker/HHFinWorker; distances (BankKm/RoadKm/TrnprtKm --
+     continuous, see meta$cont_rows); Insured_*; financial inclusion score. -->
+
+```{r ft-table2}
+ft_table2()
+```
+
+\newpage
+
+#### Table 3. Loan application outcomes amongst Ghanaian crop farmers (2012-2017)
+
+<!-- 45 x 4. Same engine as Table 2, loans half.
+     Row groups: Applied; Accept/Refused/Proces; loan amounts (continuous);
+     Source_*; Use_*; Collateral_*; Refusal_*; reason-for-not-applying
+     (NO COUNTERPART FOUND -- see estimation_object_keying.md §3). -->
+
+```{r ft-table3}
+ft_table3()
+```
+
+\newpage
+
+#### Table 4. Credit impact on input elasticities and variability in crop production in Ghana (2012-2017)
+
+<!-- 31 x 9. From sf_estm in the estimation objects.
+     Columns: Naive national | Group (No credit [A] / Some credit [B] /
+     Difference) | Meta-frontier (Matched / Unmatched).
+     LANDSCAPE. Key on TCHLvel, never Tech. -->
+
+```{r ft-table4}
+# ft_table4()
+```
+
+\newpage
+
+#### Table 5. Parity in technology level and technical efficiency based on person with credit
+
+<!-- 16 x 4. From $disagscors.
+     Three row blocks (TGR, TE, MTE) x person-with-credit categories. -->
+
+```{r ft-table5}
+ft_table5()
+```
+
+\newpage
+
+#### Table 6. Parity in technology level and technical efficiency by financial service indicator
+
+<!-- 30 x 4. From $disagscors.
+     CAPTION CORRECTED: v005 gave Tables 5 and 6 the identical caption
+     ("...based on person with credit"). Table 6 is not by person with credit --
+     its rows are financial-service indicators. Flagged in
+     exhibit_inventory_v005.md §5.1. Confirm the wording with the co-authors. -->
+
+```{r ft-table6}
+ft_table6()
+```
+
+\newpage
+
+#### Figure 1. Crop production input and output gaps associated with credit access in Ghana
+
+![](../output/figures/input_TE.png){width=100%}
+
+\newpage
+
+#### Figure 2. The association between credit access and farm productivity differs by level of financial inclusion
+
+![](../output/figures/heterogeneity_financial_inclusion.png){width=100%}
+
+\newpage
+
+#### Figure 3. Credit parity in crop production technology adoption and technical efficiency by farmer gender, age, and education in Ghana (2012-2017)
+
+![](../output/figures/heterogeneity_genderAge.png){width=100%}
+
+\newpage
+
+#### Figure 4. Credit parity in crop production technology adoption and technical efficiency by major crops and administrative regions in Ghana (2012-2017)
+
+![](../output/figures/heterogeneity_crop_region.png){width=100%}

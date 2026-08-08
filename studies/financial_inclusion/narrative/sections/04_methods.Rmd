@@ -1,0 +1,124 @@
+<!--
+PORTED FROM v005 on 2026-08-08. Verbatim prose; nothing rewritten.
+
+Citations converted to @keys against narrative/references.bib.
+
+EVERY MEASURED QUANTITY IN THIS FILE IS LIVE. Nothing that came out of the
+analysis is typed as a literal -- each one is an inline call resolved against
+the current pipeline output at knit time:
+
+    `r fmt_pct(objs$treatment$share_treated)`
+    `r fmt_num(objs$sample$n_pooled, 0)`
+    `r tbl_num("table4", "Land", 2)`
+
+There is no fallback. A lookup that cannot resolve stops the knit rather than
+printing a stale value, so the prose cannot drift from the tables.
+
+What is deliberately literal: years and wave labels, exhibit and section
+numbers, equation numbers, percentile trims, the 5% significance convention,
+and figures cited from other papers. Those are not results of this study --
+see the boundary list in narrative/diagnostics/.
+-->
+
+<!--
+v005 numbers these subsections 4.1, 4.2, then 4.5 -- two are either cut or the
+numbering is stale. Carried over as found.
+
+EQUATIONS, restored 2026-08-08. The first port lost all of them, and lost them
+invisibly: v005 carries them as Word OMML objects, which python-docx returns as
+empty strings. The prose came through, the numbers "(1)".."(5)" came through,
+and the mathematics between them did not -- leaving sentences like "Here,  is
+crop output value" and a line reading ",  (1)". Nothing errored, because
+nothing was missing as far as any tool could see.
+
+They are reconstructed here as LaTeX from the OMML tree of
+v005_CreditAgricProdGapGhana.docx (structure preserved: subscripts,
+superscripts, fractions, n-ary operators), not retyped from the flattened text.
+pandoc converts $...$ to OMML for the .docx and MathJax renders it in the .html,
+so one source serves both.
+
+TWO SOURCE DEFECTS CARRIED OVER VERBATIM, both flagged inline below:
+  - the translog cross-term reads "log ln(x_k) ln(x_s)"; the stray log has no
+    business there and is almost certainly a stray keystroke in the original
+  - the text refers to "MTE via (6)" but the numbering stops at (5)
+Do not silently correct either; they are the author's to settle.
+-->
+
+# 4. Empirical methods
+
+Guided by Ghanaian and broader SSA literature, we posit the following hypotheses. H1 (Frontier adoption): credit access increases TGR by easing liquidity constraints for lumpy, technology-enhancing investments. H2 (Efficiency trade-off): without complementary agronomic knowledge, risk-management, and timely input delivery, credit-enabled adoption may reduce TE via misallocation, learning frictions, or risk-induced input timing errors. H3 (Input intensification): credit raises responsiveness to land and labor relative to fertilizer, reflecting managerial and timing constraints in input quality and application. These hypotheses will be tested within the SMF-PSM framework using GLSS 6–7. The above hypotheses have direct relevance for national agricultural policy formulation. If credit systematically narrows technology gaps but depresses efficiency, then bundled interventions e.g., pairing credit with extension, appropriate risk instruments, and increased payment delivery networks, are required to convert access into sustained productivity gains in Ghana’s smallholder sector [@Barrett2022; @Meyer2015; @WorldBank2024].
+
+
+## 4.1 Meta-stochastic frontier analysis
+
+Rising access to basic financial services amid shallow usage suggests that credit users and non-users face different financing constraints and, plausibly, different production technologies. Estimating a single common frontier would confound technology differences with managerial efficiency. We therefore model heterogeneous technologies for credit users and non-users and compare producers against a common stochastic metafrontier (SMF) to separate (i) proximity to best-practice technology (TGR) from (ii) within-technology technical efficiency (TE). The product of the two yields meta-frontier technical efficiency (MTE).
+
+We estimate separate stochastic production frontiers (SFs) for group $j \in \{\text{credit user},\ \text{non-user}\}$ using a translog form for flexibility:
+
+<!-- SOURCE DEFECT: the cross-term below carries a stray \log before the two
+     ln() factors, exactly as v005 has it. The standard translog is
+     (1/2) SUM_s SUM_k b_skj ln(x_k) ln(x_s). Carried over, not corrected. -->
+$$
+f^{j}(x_{ijt}) = \ln(y_{ijt}) = \beta_{0r}
+  + \sum_{k} \beta_{kj}\ln(x_{kijt})
+  + \frac{1}{2}\sum_{s}\sum_{k} \beta_{skj}\log\ln(x_{kijt})\ln(x_{sijt})
+  + \beta_{h}h_{ijt} + v_{ijt} - u_{ijt}
+$$
+
+$$
+u_{ijt} \sim N^{+}\!\left(0,\ \exp(w_{ijt}\alpha)\right),\qquad
+v_{ijt} \sim N\!\left(0,\ \sigma_{vj}^{2}\right)
+\qquad\qquad (1)
+$$
+
+Here, $y_{ijt}$ is crop output value for for the ith farmer in group j for survey t; inputs $x_{kijt}$ include land, planting materials, both family and hired labor, fertilizer, and pesticide; vector $h_{ijt}$ contains technology shifters and controls (crop-mix shares, survey wave, ecological zone). The composite error has two-sided noise $\sigma_{v}^{2}$ [$v_{ijt} \sim N(0, \sigma_{vj}^{2})$] [@Belotti2013] and one-sided inefficiency $u_{ijt} \ge 0$. Following standard practice, we opted for a half-normal distribution for $u_{ijt}$ (i.e., $u_{ijt} \sim N^{+}(0, \exp(w_{ijt}\alpha_{j}))$) having encountered issues with convergence for other distributions in the case of sub-sample estimations. However, alternative distributions (exponential, truncated-normal, gamma) were assessed and produced similar inferences. Determinants of inefficiency enter via a scaling function as $\sigma_{u_{ijt}}^{2} = \exp(w_{ijt}\alpha_{j})$, where $w_{ijt}$ includes covariates influencing technical inefficiency and $\alpha$ represents a vector of parameters to be estimated. Following previous works [@Adaku2023; @Ansah2023b; @Asravor2024; @Tsiboe2021a], $w_{ijt}$ contained farmer characteristics (age, education, and gender), institutional factors (land ownership, credit, mechanization, and extension), crop diversification, fixed effects for ecological zone and GLSS waves, and a constant term.
+
+Given the SF production function for the jth group, the “pure farmer technical efficiency” (TE) of the ith farmer is calculated as:
+
+$$
+TE_{ijt} = E\!\left(\exp(-u_{ijt}) \mid \varepsilon_{ijt}\right)
+\qquad\qquad (2)
+$$
+
+To benchmark heterogeneous group frontiers against a common technology set, we estimate a stochastic metafrontier that envelops the group-specific SFs:
+
+$$
+f^{M}(x_{ijt}) = \ln(y_{ijt}) = \beta_{0r}
+  + \sum_{k} \beta_{kM}\ln(x_{kiMt})
+  + \frac{1}{2}\sum_{s}\sum_{k} \beta_{skM}\log\ln(x_{kiMt})\ln(x_{siMt})
+  + \beta_{h}h_{ijt} - u_{Mijt}
+\qquad\qquad (3)
+$$
+
+Where $u_{iM} \sim N^{+}(0, \exp(w_{i}\alpha_{M}))$ is strictly positive, implying that $f^{j}(x_{ijt}) \le f^{M}(x_{ijt})$. Consequently, the ratio of group j’s stochastic frontier to the MSF is the technology gap ratio (TGR), which is represented as:
+
+$$
+TGR_{ijt} = \frac{f^{j}(x_{ijt})}{f^{M}(x_{ijt})} = e^{-u_{iM}} \le 1
+\qquad\qquad (4)
+$$
+
+and meta-frontier technical efficiency decomposes as
+
+$$
+MTE_{ijt} = f^{j}(x_{ijt})\left(f^{M}(x_{ijt})\,e^{v_{ijt}}\right)^{-1}
+  = TGR_{ijt} \times TE_{ijt}
+\qquad\qquad (5)
+$$
+
+This decomposition separates movement toward the best-practice technology set (TGR) from movement along a group’s frontier (TE).
+
+We implement a two-step SMF: (i) estimate group SFs in (1) by MLE, obtain TE; (ii) estimate the metafrontier in (4) on the pooled sample to recover TGR and hence MTE via (6).<!-- SOURCE DEFECT: there is no equation (6); the numbering stops at (5). Flagged, not corrected -- see the banner. --> Input elasticities are the first derivatives of the estimated frontiers evaluated at sample means; returns to scale (RTS) equal the sum of elasticities. Regularity (monotonicity, curvature) is checked at means; the SMF envelopment improves shape-regularity relative to a pooled single frontier. “Credit status” defines the groups (users vs non-users) and is measured at the household level in the preferred specification; robustness to narrower definitions (farmer-only) is reported elsewhere.
+
+
+## 4.2 Forming comparable pairs of farmers
+
+Several features could bias estimates: self-reported credit use (recall/social-desirability error and misclassification), non-random credit access (lender targeting and farmer self-selection), and treatment definitions (household-level vs farmer-only). Matching addresses selection on observables but not all unobservables (e.g., ability, risk preferences, networks), so we report robustness to alternative definitions, algorithms, and production-function forms and interpret remaining bias conservatively.
+
+We construct a matched sample to estimate the metafrontier in Equation (3). Each credit user is paired one-to-one with a non-user of similar characteristics [@Abadie2016; @Abadie2006], creating balance for the pooled SMF while preserving the user/non-user technology split. Exact matching is enforced within operator gender, GLSS wave, region, agro-ecology, and rural/urban status. Additional covariates for distance calculation include farmer demographics (age, education, marital status, religion, ethnicity, relation to household head), household composition (size, dependency ratio, female share), production choices (crop diversification, land shares by crop), and tenure/land ownership. This design isolates technological differences associated with credit from compositional differences in who borrows.
+
+To form pairs, we implement nearest-neighbor matching under multiple distance metrics—propensity scores (logit, probit, complementary log–log, cauchit), Euclidean/scaled-Euclidean, and (robust) Mahalanobis [@Rosenbaum2020; @Rosenbaum2010]. Balance is assessed via standardized differences and variance ratios (targets ≈0 and ≈1, respectively) [@Rubin2001; @Stuart2010]. As shown in Fig. S1, logit propensity-score distance delivers the best overall balance; nevertheless, the main results are stable across metrics. This matched-SMF approach follows prior MSF applications facing similar endogeneity concerns [@Asmare2022; @BravoUreta2021; @CrespoCebada2014; @Mayen2010; @Tiedemann2013].
+
+
+## 4.5 Estimating standard errors
+
+We use a cluster jackknife at the Enumeration Area (EA) level. For each survey wave, we create 100 delete-one-EA replicates. In every replicate, one EA is removed, the remaining EAs from both waves are pooled, and the full pipeline is re-run: group frontiers are re-estimated with monotonicity and quasi-concavity regularization, matching is re-done, the metafrontier is re-estimated, and TE, TGR, MTE, and elasticities are re-computed. Jackknife standard errors are obtained from the dispersion of these replicate estimates, which captures uncertainty from clustering, matching, and frontier estimation in a unified way. We report two-sided tests and confidence intervals based on these jackknife standard errors, and results are similar when varying the number of replicates or using an EA-level bootstrap.

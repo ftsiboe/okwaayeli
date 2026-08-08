@@ -1,0 +1,9 @@
+# Declarations
+
+**Funding.** <!-- TODO -->
+
+**Conflicts of interest.** The authors declare no competing interests.
+
+**Data availability.** <!-- TODO: point at the harmonized release. -->
+
+**Author contributions.** <!-- TODO -->

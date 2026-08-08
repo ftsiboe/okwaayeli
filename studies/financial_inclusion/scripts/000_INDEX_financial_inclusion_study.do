@@ -1,5 +1,5 @@
 /**************************************************************************
- * Filename: 001_tech_inefficiency_financial_inclusion_DATA.do
+ * Filename: studies/financial_inclusion/scripts/000_INDEX_financial_inclusion_study.do
  * Author: Francis Tsiaboe (ftsiboe)
  * Date: 2025-04-05
  *

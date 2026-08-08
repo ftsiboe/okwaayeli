@@ -57,7 +57,7 @@ The plumbing above them is complete and does not change when they are added.
 
 | File | Role |
 |---|---|
-| `time_poverty_DATA.do` | **upstream of `001`** — builds the paid/unpaid time-use datasets and writes the `harmonized_time_poverty_data` release. Run by hand from the repo root; inputs are the `.dta` files in `../time-poverty-assets/`, reached through `$TPAssets`. |
+| `data-raw/scripts/data-prep/glss/12_time_poverty.do` | **upstream of `001`** — builds the paid/unpaid time-use datasets and writes the `harmonized_time_poverty_data` release. Run by hand from the repo root; inputs are the `.dta` files in `../time-poverty-assets/`, reached through `$TPAssets`. |
 | `100_exhibits.do` | **unconverted disability code, hard-stopped.** See below. |
 
 ## Run order
@@ -118,7 +118,7 @@ over eight disability sub-indicators (`disabCat1`–`disabCat7`). This study is
 first. It carries a hard stop at the top; deleting the stop does not make it
 correct.
 
-**`tpoor0150` does not measure what its label says.** `time_poverty_DATA.do`
+**`tpoor0150` does not measure what its label says.** `data-raw/scripts/data-prep/glss/12_time_poverty.do`
 computes a committed-time cutoff, saves it, then does `keep if s1q3==1` and
 recomputes the same variable names off **paid** time, overwriting both the
 in-memory version and `PaidTimepoverty.dta`. The released treatment is the

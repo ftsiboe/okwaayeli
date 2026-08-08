@@ -1,0 +1,46 @@
+<!--
+PORTED FROM v005 on 2026-08-08. Verbatim prose; nothing rewritten.
+
+Citations converted to @keys against narrative/references.bib.
+
+EVERY MEASURED QUANTITY IN THIS FILE IS LIVE. Nothing that came out of the
+analysis is typed as a literal -- each one is an inline call resolved against
+the current pipeline output at knit time:
+
+    `r fmt_pct(objs$treatment$share_treated)`
+    `r fmt_num(objs$sample$n_pooled, 0)`
+    `r tbl_num("table4", "Land", 2)`
+
+There is no fallback. A lookup that cannot resolve stops the knit rather than
+printing a stale value, so the prose cannot drift from the tables.
+
+What is deliberately literal: years and wave labels, exhibit and section
+numbers, equation numbers, percentile trims, the 5% significance convention,
+and figures cited from other papers. Those are not results of this study --
+see the boundary list in narrative/diagnostics/.
+-->
+
+<!--
+TWO THINGS TO RESOLVE HERE, both in the source.
+
+1. The sample size contradicts Table 1. This prose says the final sample is
+   19,862 farm operators; Table 1's header, built live from the descriptive
+   cache, reports 15,860 pooled (14,455 no credit + 1,405 some credit). One of
+   them is wrong. Understand the discrepancy before wiring this number -- going
+   live would silently replace it and the disagreement would vanish unexamined.
+
+2. One sentence still carries the old IEEE markers: "[21], [22], [23], [25],
+   [26]". The style conversion missed it. Those index the PRE-conversion
+   ordering, so recovering them means reading the earlier draft. Note the gap at
+   [24]. Left exactly as found rather than guessed at.
+-->
+
+# 2. Data sources and sample description
+
+We use farm-level microdata from the Ghana Living Standards Survey (GLSS) Waves 6 (2012/13) and 7 (2016/17). Both waves are repeated cross-sections drawn via a two-stage design (enumeration areas, then households). Following the GLSS documentation, [@Tsiboe2020] consolidate the raw files to a farmer-level dataset that has supported several analyses of agricultural productivity in Ghana [21], [22], [23], [25], [26]. Our study focuses on crop farmers, trimming yield outliers by keeping observations with yields (kg/ha) between the 2.5th and 97.5th percentiles within survey round × crop. As shown in Table 1, the final sample comprises `r fmt_num(objs$sample$n_pooled, 0)` farm operators cultivating at least one of the following: banana, beans, cashew, cassava, citrus, cocoa, coconut, cocoyam, cotton/kenaf, maize, millet, oil-palm, groundnut, plantain, potato, rice, sorghum, yam, sugarcane, tomato, pepper, okra, onion, eggplant, and other minor crops.
+
+The consolidated files do not include a pre-built financial-inclusion module, so we reconstruct credit and financial-service indicators directly from the original GLSS questionnaires. Using preserved enumeration-area, household, and member IDs, we extract items from Section 12 (credit, assets, savings, and use of financial services; see Exhibits S1–S2) and merge them to the farmer-level file. Tables 2–3 summarize the specific variables (with questionnaire item numbers). We define credit use at the individual level as having an approved loan application or a positive amount borrowed in the past 12 months. Our preferred treatment is a household-level indicator equal to 1 if the farmer, spouse/children, or another household member meets this criterion (capturing intra-household pooling). By this definition, `r fmt_pct(objs$credit$share_hh, 2)`% of sample households used credit; component shares are `r fmt_pct(objs$credit$share_self, 2)`% farmer, `r fmt_pct(objs$credit$share_spouse, 2)`% spouse, and `r fmt_pct(objs$credit$share_member, 2)`% other member—not mutually exclusive, hence their sum exceeds `r fmt_pct(objs$credit$share_hh, 2)`%. Unless stated otherwise, “credit user(s)” refers to this household-level measure; a farmer-only variant is used in robustness checks.
+
+Table 1 reports descriptive statistics of the pooled and credit-disaggregated samples, focusing on farmer, crop, and household characteristics. Female farmers account for `r tbl_pct("table1", "Female farmer (dummy)", 1, 0)` of the pooled sample and the average farmer is `r tbl_num("table1", "Age (years)", 1)` years old with a little over `r tbl_num("table1", "Education (years)", 1)` years of schooling. Mean household size is about `r tbl_num("table1", "Size (AE)", 1)` adult equivalents (AE) and the dependency ratio `r tbl_num("table1", "Dependency (ratio)", 1)`. Consistent with national statistics on smallholder farmers [@MoFA2017], farms in our sample averages less than `r fmt_num(ceiling(tbl_num("table1", "Land (ha)", 1)), 0)` ha (≈`r tbl_num("table1", "Land (ha)", 1)` ha), of which `r tbl_pct("table1", "Land owned (dummy)", 1, 0)` is owned, and crop diversification score is `r tbl_num("table1", "Crop diversification (index)", 1)` on our index.
+
+Comparatively, credit users do not differ by household size or dependency ratios from non-users, but they are significantly younger (`r tbl_num("table1", "Age (years)", 3)` vs. `r tbl_num("table1", "Age (years)", 2)` years) and more educated (`r tbl_num("table1", "Education (years)", 3)` vs. `r tbl_num("table1", "Education (years)", 2)` years). Baseline per-hectare yields are statistically similar at 5% level for all crops except rice and yam (where non-users edge out users) and cocoyam and tomato (users outperform non-users). Additionally, credit access appears to be associated with increased hired labor employment and pesticide use, but not with other inputs. Moreover, over 2012–2017 fertilizer use among credit users increased by `r tbl_num("table1", "Fertilizer (Kg/ha)", 6)` kg/ha annually, while it remained statistically flat for non-users. Together, these statistics suggest largely uniform balance (and therefore, comparability) between users and non-users. Notwithstanding, the isolated imbalances between treated and control households justify our use of propensity score matching.

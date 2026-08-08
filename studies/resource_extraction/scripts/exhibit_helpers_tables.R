@@ -482,7 +482,7 @@ ft_tableA9 <- function() .ft_msf("tableA9.csv", size = 10,
 
 # ---- Table A1: construction of the extraction indicators --------------------
 # Question-level mapping (wave x source variables x wording x options), mirroring
-# the disability study's Table S1. Content sourced from data-raw/okwaayeli_DATA.do
+# the disability study's Table S1. Content sourced from data-raw/scripts/data-prep/glss/07_resource_extraction.do
 # (lines 1488-1649) and the foundational GLSS community files' variable/value labels.
 ft_tableA1 <- function() {
   d <- .read_tbl("tableA1.csv")

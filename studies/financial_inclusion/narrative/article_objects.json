@@ -1,0 +1,24 @@
+{
+  "sample": {
+    "n_raw": 48913,
+    "n_estimation": 48913,
+    "n_pooled": 15860,
+    "waves": ["GLSS6", "GLSS7"]
+  },
+  "treatment": {
+    "variable": "credit_hh",
+    "n_treated": 1405,
+    "n_control": 14455,
+    "share_treated": 0.0885876418663304
+  },
+  "credit": {
+    "share_hh": 0.0885876418663304,
+    "share_self": 0.0630064173202826,
+    "share_spouse": 0.0317502846808226,
+    "share_child": 0.00241545893719807,
+    "share_close": 0.0339504110138341,
+    "share_member": 0.0662747884503585
+  },
+  "te_summary_available": true,
+  "disag_variables": ["Accept", "AccTyp_Curnt", "AccTyp_Save", "AgeCat", "Applied", "Bank_Info_1", "Bank_Info_2", "Bank_Info_3", "Bank_Info_7", "Bank_Info_8", "Banked", "Collateral_1", "Collateral_3", "Collateral_5", "CROP", "Ecozon", "EduLevel", "Female", "FinIdxCat", "InstTyp_Bank", "InstTyp_Coop", "InstTyp_Invt", "InstTyp_Momo", "InstTyp_Save", "InstTyp_Susu", "Insured", "Insured_Health", "NonBanked_Why_1", "NonBanked_Why_2", "NonBanked_Why_3", "NonBanked_Why_7", "PrdTyp_Cheq", "Proces", "Refusal_2", "Refusal_3", "Refusal_4", "Refusal_5", "Refusal_6", "Refused", "Region", "Source_1", "Source_2", "Source_4", "Source_5", "Source_6", "Use_1", "Use_2", "Use_3", "Use_5", "Use_6"]
+}

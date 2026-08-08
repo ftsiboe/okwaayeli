@@ -68,8 +68,10 @@ Where to put things:
 You need:
 
 - R ≥ 4.1
-- A Stata installation (the data harmonization in `data-raw/okwaayeli_DATA.do`
-  is Stata; the rest of the pipeline is R)
+- A Stata installation (the GLSS harmonization in
+  `data-raw/scripts/data-prep/glss/` is Stata; the rest of the pipeline is R).
+  Not needed to run the studies: they read the harmonized `.dta` releases, and
+  Stata is only required to rebuild those.
 - The system libraries required by `MatchIt`, `frontier`, `micEcon`, `rgenoud`,
   `quadprog`, `optmatch`, `dbarts`, `CBPS`. On Debian/Ubuntu the usual
   `build-essential`, `libgmp-dev`, `libssl-dev`, `libxml2-dev` set suffices.
@@ -157,10 +159,11 @@ The harmonized datasets live in `data-raw/releases/harmonized_data/` and are
 published as the `hh_data` GitHub release. Updating one is a multi-step
 process:
 
-1. Modify the Stata harmonization in `data-raw/okwaayeli_DATA.do` (or the
-   per-topic block within it).
-2. Run the harmonization end-to-end and put the new `.dta` file in
-   `data-raw/releases/harmonized_data/`.
+1. Modify the relevant script in `data-raw/scripts/data-prep/glss/` — one file
+   per release, e.g. `10_land_tenure.do`.
+2. Run it. `do data-raw/scripts/data-prep/glss/00_run_all.do 10` runs that one;
+   the same file with no argument runs the whole set in dependency order. Either
+   way the new `.dta` lands in `data-raw/releases/harmonized_data/`.
 3. Update `data-raw/releases/harmonized_data/codebook.md` with the new /
    changed variable definitions.
 4. Run `data-raw/scripts/001_harmonized_data_release.R` to push the new

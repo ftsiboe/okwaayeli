@@ -45,8 +45,16 @@ if(! as.numeric(Sys.getenv("SLURM_ARRAY_TASK_ID", NA)) %in% NA){
 project_name <- "financial_inclusion"
 
 study_environment <- readRDS(
-  file.path(paste0("studies/", project_name, "/output"),
+  file.path(paste0("studies/", project_name, "/data"),
             paste0(project_name,"_study_environment.rds")))
+
+# `wd` inside the .rds is a FROZEN SNAPSHOT of the layout as of the run that
+# wrote it: an environment saved before the v2 migration still names
+# output/figure/. study_dirs() recomputes every path from project_name and
+# creates the folders. Without it a new entry such as wd$tables comes back NULL,
+# and file.path(NULL, "x.rds") yields character(0) rather than erroring --
+# surfacing far from its cause as an unattributable gzfile() failure.
+study_environment <- study_dirs(study_environment, layout = "v2")
 
 # --- Data ingest & harmonization
 DATA <- harmonized_data_prep(study_environment$study_raw_data)           
@@ -143,9 +151,11 @@ study_environment[["match_specification_ranking"]] <- res$rate
 study_environment[["match_specification_optimal"]] <- res$rate[nrow(res$rate),]
 study_environment[["balance_table"]]               <- res$bal_tab
 
-# Save environment snapshot for downstream stages
+# Save environment snapshot for downstream stages.
+# wd$data, not wd$output -- 002 is what attaches estimation_data, and every
+# later stage reads this file back as an input.
 saveRDS(
   study_environment,
-  file.path(study_environment$wd$output, paste0(project_name,"_study_environment.rds"))
+  file.path(study_environment$wd$data, paste0(project_name,"_study_environment.rds"))
 )
 

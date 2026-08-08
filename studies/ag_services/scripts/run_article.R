@@ -25,14 +25,16 @@ WORKBOOK    <- FALSE  # 102  NOT WRITTEN
 OBJECTS     <- FALSE  # 301  NOT WRITTEN
 RENDER      <- TRUE   # 302  -> narrative/ag-services.docx / .html      fast
 
-# ---- Why the levers are set this way, 2026-08-07 ----------------------------
+# ---- Why the levers are set this way --------------------------------------
 #
 # ON, and feasible now:
 #   000  fast, no dependencies.
-#   001  now runs 000_HARMONIZE_ag_services_data.do (Stata), promotes the
-#        _fixed release, and reads it LOCALLY -- get_household_data() would
-#        re-download the uncorrected copy from the GitHub release instead.
-#        Needs Stata on PATH or $STATA_EXE set. Levers are at the top of 001.
+#   001  rebuilds the ag services release by calling
+#        data-raw/scripts/data-prep/glss/11_ag_services.do where Stata is
+#        available, then reads it LOCALLY -- get_household_data() would
+#        re-download an older copy from the GitHub release instead. Stata is
+#        optional; without it the saved release is used. Either way the schema
+#        contract at the top of 001 decides whether the release is usable.
 #   002  MUST run whenever DATA runs. DATA alone re-saves the study environment
 #        with estimation_data STRIPPED, and every later stage then reads an
 #        environment missing the object it needs.

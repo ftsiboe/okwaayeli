@@ -17,9 +17,9 @@
      * Releases joined: harmonized_crop_farmer_data and
        harmonized_time_poverty_data, inner-joined on Surveyx/EaId/HhId/Mid.
      * Dropped columns: names matching LndFrgMid|EduWhyNo|RentHa.
-     * Upstream: ../scripts/time_poverty_DATA.do builds the time-use release
+     * Upstream: data-raw/scripts/data-prep/glss/12_time_poverty.do builds the time-use release
        from ../time-poverty-assets/TimeGLSS7.dta.
-     * Treatment: tpoor0150. READ THE FLAG at the head of time_poverty_DATA.do
+     * Treatment: tpoor0150. READ THE FLAG at the head of 12_time_poverty.do
        before describing it - the released variable is a PAID-time cutoff on the
        s1q3 == 1 subsample, not the committed-time measure its label claims.
        tpoor0125 and tpoorweai are set to missing wherever they disagree with

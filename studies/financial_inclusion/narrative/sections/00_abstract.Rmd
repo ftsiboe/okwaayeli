@@ -1,0 +1,26 @@
+<!--
+SCAFFOLD. No content has been carried over from the Word drafts, deliberately.
+
+This is where the abstract lives -- the ONLY place. README.md links here rather
+than restating it, because a hand-typed second copy drifts silently and does so
+on the headline result.
+
+Every figure in this section must be inline R against the pipeline, e.g.
+  `r fmt_pct(objs$treatment$share_treated)`
+not a typed number. Source the value from article_objects.json (objs$...),
+tbl_num()/tbl_pct(), or a figure-data lookup -- in that order of preference.
+
+Draft the prose from narrative/v005_CreditAgricProdGapGhana.docx, then replace
+each measured quantity with an inline expression and verify it against the
+source cell BEFORE wiring. Where the pipeline and the draft disagree, the
+pipeline wins -- change the text and log it in diagnostics/.
+-->
+
+## Abstract
+
+<!-- TODO: abstract prose. -->
+
+**Keywords**: financial inclusion; credit; mobile money; technical efficiency;
+meta-stochastic frontier; Ghana
+
+**JEL Classification**: G21, G51, O13, Q12, Q14

@@ -92,7 +92,7 @@ live off the estimation objects — separate, later work.
 
 `100_exhibits.do` (Stata) is the legacy exhibit path. It is superseded once the
 descriptive engine lands, and should be deleted then, not before. Stata's
-remaining job is upstream: `data-raw/okwaayeli_DATA.do` harmonizes the raw GLSS
+remaining job is upstream: `data-raw/scripts/data-prep/glss/07_resource_extraction.do` harmonizes the raw GLSS
 files.
 
 Nothing downstream of `001` reads Excel. `102` *writes* an `.xlsx` as a

@@ -11,7 +11,7 @@
 *   2. It loops over eight disability sub-indicators (disabled, disabled_self,
 *      disabled_spouse, disabled_child, disabled_close, disabled_member,
 *      disabCat1-disabCat7). This study has three (tpoor0150, tpoor0125,
-*      tpoorweai), and time_poverty_DATA.do sets the latter two to missing
+*      tpoorweai), and 12_time_poverty.do sets the latter two to missing
 *      wherever they disagree with the first.
 *
 * It also writes into disability_results.xlsx, a workbook that does not exist in

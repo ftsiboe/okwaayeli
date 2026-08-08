@@ -67,34 +67,21 @@ cannot be computed from any object:
 Both were recovered on 2026-08-07 from sheets named `Sheet1` and `Sheet2` in
 `ag_services_results-msf.xlsx`. Nothing else belongs in `data/tables/`.
 
-## Stata's job here
+## Known pending work
 
-Unlike `land_tenure`, this study still has a downstream Stata stage.
-`100_exhibits.do` (was `100_FIGTAB_ag_services.do`) reads
-`data/tech_inefficiency_ag_services_data.dta` and writes descriptive exhibits.
-Upstream, `data-raw/okwaayeli_DATA.do` harmonizes the raw GLSS files.
+Four exhibit-band scripts are still to be written:
+`100_exhibit_descriptive_stats.R`, `101_exhibit_figures.R`,
+`102_exhibit_table_workbook.R` and `301_article_objects.R`. Their specification
+is in `_to_delete/100_FIGTAB_ag_services.R` and `_to_delete/100_exhibits.do` --
+read those before writing the replacements, then let them go.
 
-The `$GitHub` globals in `100_exhibits.do` already point at this repo, so no
-repointing is needed — only the `output\` -> `data\` correction applied on
-2026-08-07, plus the removal of a `putexcel` line left over from the
-Farmer-Age-Productivity study.
-
-`100_exhibits.do` is a candidate for retirement once `102` owns the workbook.
-
-## Known pending work (2026-08-07)
-
-`100_FIGTAB_ag_services.R` is still present and is **not** canonical. It is the
-source for the decomposition into `100_exhibit_descriptive_stats.R`,
-`101_exhibit_figures.R` and `102_exhibit_table_workbook.R`, and it retains two
-defects until then:
+Two defects the replacements must NOT inherit from the old R script:
 
 1. it `source()`s `data-raw/scripts/figures_and_tables.R`, now a shim that only
-   loads the package — the builders live in `R/exhibits-figures.R` and should be
+   loads the package -- the builders live in `R/exhibits-figures.R` and should be
    called through the namespace;
 2. it writes figures with directory literals instead of `study_dir_figures()` /
    `study_dir_figure_data()` / `study_dir_tables()`.
-
-Retire it once the three replacements are in and verified.
 
 ## Adding a file
 
@@ -111,13 +98,14 @@ The reference for this layout is `studies/land_tenure`.
 
 ## Stata's place in this study
 
-**Upstream only.** `000_HARMONIZE_ag_services_data.do` builds the community-level
-release from the raw GLSS files and runs *before* `001`. Nothing downstream of
-`001` touches Stata. The exhibit band (`1##`) is pure R, as in `land_tenure`.
+**Upstream only, and not in this folder.** The community-level release is built
+by `data-raw/scripts/data-prep/glss/11_ag_services.do`, which lives with the
+other GLSS harmonizers rather than with this study. `001` calls it directly
+where Stata is available and falls back to the saved release where it is not;
+either way the schema contract in `001` decides whether the release is usable.
 
-`resource_extraction` still carries a `100_exhibits.do`; `land_tenure` does not.
-Where the two siblings disagree about the exhibit layer, `land_tenure` is the
-newer answer, and this study follows it.
+Nothing downstream of `001` touches Stata. The exhibit band (`1##`) is pure R,
+as in `land_tenure`.
 
 ## Retired 2026-08-07 — in `_to_delete/`, kept as specifications
 

@@ -53,7 +53,7 @@ get_household_data <- function(
   }
   
   # Define package-specific cache directory
-  temporary_dir <- tools::R_user_dir("GHAgricProductivityLab", which = "cache")
+  temporary_dir <- tools::R_user_dir("okwaayeli", which = "cache")
   
   if (!dir.exists(temporary_dir)) {
     dir.create(temporary_dir, recursive = TRUE)
@@ -71,7 +71,7 @@ get_household_data <- function(
     piggyback::pb_download(
       file      = paste0(dataset, ".dta"),
       dest      = temporary_dir,
-      repo      = "ftsiboe/GHAgricProductivityLab",
+      repo      = "ftsiboe/okwaayeli",
       tag       = "hh_data",
       overwrite = TRUE,
       .token    = github_token

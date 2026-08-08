@@ -62,3 +62,6 @@ inst/doc/
 *.Rcheck/
 *.tar.gz
 replications
+
+# Harmonization run logs are local artefacts, not part of the repo.
+data-raw/scripts/data-prep/glss/logs/

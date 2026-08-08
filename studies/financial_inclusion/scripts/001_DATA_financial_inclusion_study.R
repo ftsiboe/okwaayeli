@@ -30,12 +30,17 @@ if(! as.numeric(Sys.getenv("SLURM_ARRAY_TASK_ID", NA)) %in% NA){
 # ---- Define study name and initialize study environment
 project_name <- "financial_inclusion"
 
-# study_setup() is assumed to:
-#   - create / verify directories,
-#   - define paths (e.g., wd$home, wd$data, wd$output),
-#   - and return a list-like "study_environment" object
-#     containing configuration for this specific project.
-study_environment <- study_setup(project_name = project_name)
+# study_setup():
+#   - creates / verifies the directory tree (delegated to study_dirs()),
+#   - defines paths (wd$home, wd$data, wd$output, wd$figures, wd$tables, ...),
+#   - and returns the "study_environment" list every later stage reads back
+#     from data/<project>_study_environment.rds.
+#
+# layout = "v2": plots and the data behind them share output/figures/, and table
+# data goes to output/tables/. Must match what 000_initialize.R passes -- on
+# "legacy" this would create output/figure/ + output/figure_data/ while the
+# stages write to output/figures/. See ?study_dirs.
+study_environment <- study_setup(project_name = project_name, layout = "v2")
 
 # ---- Load harmonized household / farmer-level data
 # Wrapper that downloads (via piggyback) and caches Stata .dta files from
@@ -75,7 +80,11 @@ study_environment$study_raw_data <- study_data
 # ---- Save study environment object
 # Save the entire study environment configuration (paths, metadata, etc.)
 # for reproducibility and to simplify subsequent scripts.
+#
+# wd$data, NOT wd$output: the environment is an INPUT to every later stage, and
+# data/ holds inputs while output/ holds what the pipeline produces. Matches
+# resource_extraction and land_tenure.
 saveRDS(
   study_environment,
-  file.path(study_environment$wd$output, paste0(project_name,"_study_environment.rds"))
+  file.path(study_environment$wd$data, paste0(project_name,"_study_environment.rds"))
 )

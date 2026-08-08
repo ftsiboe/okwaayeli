@@ -335,7 +335,7 @@ ft_table1 <- function()
       .SRC_NOTE))
 
 # Table 2 row map: display label -> indicator name.
-# Value labels are set in data-raw/okwaayeli_DATA.do:
+# Value labels are set in data-raw/scripts/data-prep/glss/10_land_tenure.do:
 #   LndOwn 1 "Not owned" 2 "Owned w/o deed" 3 "Owned w/ deed"
 #   LndAq  1 Free 2 Sharecropping 3 Rented 4 Purchased 5 Kinship 6 Other
 #   LndRgt 1 None 2 Security 3 Sell 4 Both
@@ -596,7 +596,7 @@ ft_table3 <- function() {
 # cells. ft_table4() formats this; .live_table("table4") serves the same build
 # to tbl_num(), so the 27 inline citations in sections 1, 5 and 6 cannot drift
 # from the printed table.
-# Category labels per data-raw/okwaayeli_DATA.do (lab define LndOwn / LndRgt /
+# Category labels per data-raw/scripts/data-prep/glss/10_land_tenure.do (lab define LndOwn / LndRgt /
 # LndAq / ShrCrpCat). Level 1 is the reference in the two frontier blocks and
 # therefore has no row.
 #

@@ -1,0 +1,45 @@
+<!--
+PORTED FROM v005 on 2026-08-08. Verbatim prose; nothing rewritten.
+
+Citations converted to @keys against narrative/references.bib.
+
+EVERY MEASURED QUANTITY IN THIS FILE IS LIVE. Nothing that came out of the
+analysis is typed as a literal -- each one is an inline call resolved against
+the current pipeline output at knit time:
+
+    `r fmt_pct(objs$treatment$share_treated)`
+    `r fmt_num(objs$sample$n_pooled, 0)`
+    `r tbl_num("table4", "Land", 2)`
+
+There is no fallback. A lookup that cannot resolve stops the knit rather than
+printing a stale value, so the prose cannot drift from the tables.
+
+What is deliberately literal: years and wave labels, exhibit and section
+numbers, equation numbers, percentile trims, the 5% significance convention,
+and figures cited from other papers. Those are not results of this study --
+see the boundary list in narrative/diagnostics/.
+-->
+
+# 3. The state of financial inclusion and credit access
+
+To contextualize the credit access landscape in Ghana, we examine indicators (Tables 2 and 3) of account ownership, participation in financial schemes, self-reported barriers, institutional channels, products, outreach, infrastructure, insurance enrollment, and loan application outcomes. A composite financial inclusion score (Table 2, last row) summarizes these dimensions, while Table 3 presents farmers’ loan application outcomes across the two survey waves.
+
+
+## 3.1 Account Ownership and Barriers to Participation
+
+Account ownership remains a core marker of financial inclusion. Globally, the share of adults with an account rose from 51 percent in 2011 to 69 percent in 2017.  Among Ghanaian crop farmers, the increase was slower but still notable: formal account ownership grew from roughly one-quarter in 2012/13 to over one-third in 2016/17. This rise is mirrored in the composite financial inclusion index, though at its peak only `r tbl_pct("table2", "Has bank account/contributing to a scheme (binary)", 2, 1)` of households engaged in banks or savings schemes, leaving a large share unbanked. The main self-reported barrier is lack of funds, with nearly `r tbl_pct("table2", "Don't have enough money or income", 2, 1)` of non-account holders citing “not enough money,” a figure that edged upward between waves and aligns with global evidence on income volatility as the chief exclusion driver [@Klapper2025]. A smaller but growing share reported “no need for an account,” suggesting reliance on informal channels or mistrust of formal services. Distance to institutions declined in importance, reflecting infrastructure improvements, while paperwork burdens and awareness gaps persisted at low but steady levels.
+
+
+## 3.2 Channels, Products, and Digital Services
+
+Institutional channels have shifted markedly. Traditional banks—commercial, community, and rural—still serve the majority but fell from nearly `r tbl_pct("table2", "Commercial/community/rural bank", 1, 1)` to about half of account holders between the two survey waves. Mobile money platforms emerged rapidly, reaching over one-third of users by 2016/17 [@Aker2010], while informal susu schemes and savings groups remained stable around `r tbl_pct("table2", "Susu scheme", 2, 1)`. Product uptake is dominated by savings accounts; current, investment, and other more sophisticated products remain rare. Use of transaction services is limited: ATM cards and e-banking penetration remain below `r tbl_pct("table2", "ATM card", 2, 1)`, while cheque usage nearly doubled but from a very low base. These gaps reflect constraints in rural electricity and internet infrastructure but also highlight the untapped potential of digital services for streamlining farm transactions and record-keeping.
+
+
+## 3.3 Outreach, Information, and Insurance
+
+Sources of financial information have also shifted. Personal networks have grown in importance, with colleagues and relatives informing over half of account holders in 2016/17, up from `r tbl_pct("table2", "Colleagues/relatives", 1, 1)`, while radio’s role halved. This suggests that peer effects and trusted networks are more effective than mass media in promoting financial products among rural farmers. Infrastructure improvements reinforced these changes: average distance to the nearest bank fell by roughly five kilometers, and proximity to roads and transport also improved. On the risk-management side, health insurance enrollment rose appreciably due to public campaigns, but uptake of life, pension, and agricultural insurance remained negligible. Yet studies show strong farmers’ willingness to adopt index-based agricultural insurance under the right conditions [@Ali2020; @OppongMensah2023], pointing to a gap between latent demand and product availability.
+
+
+## 3.4 Loan Applications and Credit Use
+
+Credit application rates remain low: only about `r tbl_pct("table3", "Loan applied", 2, 1)` of farmers applied for a loan in either wave, with application rates essentially flat. Approval rates, however, improved, with two-thirds of applicants obtaining credit and rejection rates halving—possibly reflecting either more accommodating lenders or better borrower–lender matching. Still, average loan sizes declined, and sources shifted: group-based microfinance rose from `r tbl_pct("table3", "Group based micro-finance or lending", 1, 1)` to nearly `r tbl_pct("table3", "Group based micro-finance or lending", 2, 1)` of loans, while reliance on friends and formal banks declined [@AppiahTwumasi2019; @Karlan2017]. Notably, the share of loans used explicitly for agricultural purposes dropped sharply, suggesting growing nonfarm diversification, lender restrictions, or diversion of agricultural loans [@Hussain2016]. Collateral requirements eased as unsecured lending grew from two-thirds to more than three-quarters of cases, yet lack of collateral remained the leading reason for rejection. More than half of non-applicants cited “no need for a loan,” even as physical and institutional constraints diminished. This points to a persistent demand-side bottleneck: expanding credit supply alone may not be sufficient unless products are better aligned with farmers’ production needs and perceptions of value [@DeJanvry2020].

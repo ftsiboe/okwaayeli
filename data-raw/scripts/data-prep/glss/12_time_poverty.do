@@ -1,22 +1,49 @@
-* time_poverty_DATA.do -- upstream of 001; run by hand, not part of the run order.
+*==============================================================================
+* 12_time_poverty.do
 *
-* Builds the paid/unpaid time-use datasets and writes the
-* harmonized_time_poverty_data release that 001_DATA_time_poverty_study.R reads.
-* Relocated here from ../time-poverty-assets/ in the 2026-08 consolidation; the
-* .dta inputs stayed put, so the bare relative `use`/`save` calls now resolve
-* through $TPAssets rather than through Stata's working directory. Run from the
-* okwaayeli repo root.
+* Builds the paid/unpaid time-use datasets and the time poverty release that
+* studies/time_poverty/scripts/001_DATA_time_poverty_study.R reads.
 *
-* FLAG -- read before trusting tpoor0150. Line ~53 does `keep if s1q3==1` and
-* then RECOMPUTES TimPov15 off PaidTime, overwriting the CommTime-based version
-* saved a few lines earlier (and overwriting PaidTimepoverty.dta with it). So
-* the tpoor0150 that reaches the release is a PAID-time cutoff on a restricted
-* subsample, not the "Committed Time" the variable labels still claim. Nothing
-* downstream knows this. Left as found -- flagged, not silently changed.
+* WRITES: $LabGitHub\harmonized_time_poverty_data.dta
+*         plus two intermediates in $TPAssets (PaidTimepoverty, UnpaidTimepoverty)
+*
+* Its .dta INPUTS live with the study, not here, so $TPAssets points back at
+* studies/time_poverty/time-poverty-assets/. Only the script moved.
+*
+* FLAG -- read before trusting tpoor0150. Further down, `keep if s1q3==1` is
+* followed by a recomputation of TimPov15 off PaidTime, overwriting the
+* CommTime-based version saved a few lines earlier (and overwriting
+* PaidTimepoverty.dta with it). So the tpoor0150 that reaches the release is a
+* PAID-time cutoff on a restricted subsample, not the "Committed Time" the
+* variable labels still claim. Nothing downstream knows this. Left as found --
+* flagged, not silently changed.
+*
+* Run from the okwaayeli repo root, or from this folder.
+*==============================================================================
 
-gl Dropbox_Personal "C:/Users/ftsib/Dropbox (Personal)"
-gl LabGitHub "$Dropbox_Personal\GitHub\ghana\okwaayeli\data-raw\releases\harmonized_data"
-gl TPAssets  "$Dropbox_Personal\GitHub\ghana\okwaayeli\studies\time_poverty\time-poverty-assets"
+* --- shared paths ------------------------------------------------------------
+* Runs standalone or under 00_run_all.do. Locating _paths.do is separated from
+* running it, so a genuine path failure inside _paths.do propagates as itself
+* rather than being mistaken for "file not found".
+if "$GLSS_PATHS" == "" {
+    local _p ""
+    capture confirm file "_paths.do"
+    if !_rc local _p "_paths.do"
+    if "`_p'" == "" {
+        capture confirm file "data-raw/scripts/data-prep/glss/_paths.do"
+        if !_rc local _p "data-raw/scripts/data-prep/glss/_paths.do"
+    }
+    if "`_p'" == "" {
+        di as err "Cannot locate _paths.do. Run this from the okwaayeli repo root"
+        di as err "or from data-raw/scripts/data-prep/glss/, or use 00_run_all.do."
+        exit 601
+    }
+    run "`_p'"
+}
+
+* Study-owned inputs; the .dta files did not move.
+gl TPAssets "$REPO\studies\time_poverty\time-poverty-assets"
+
 
 use "$TPAssets\TimeGLSS7", clear
 

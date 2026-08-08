@@ -61,8 +61,16 @@ sysname <- toupper(as.character(Sys.info()[["sysname"]]))
 
 # Load saved study environment (directories, specifications, etc.)
 study_environment <- readRDS(
-  file.path(paste0("studies/", project_name, "/output"),
+  file.path(paste0("studies/", project_name, "/data"),
             paste0(project_name,"_study_environment.rds")))
+
+# `wd` inside the .rds is a FROZEN SNAPSHOT of the layout as of the run that
+# wrote it: an environment saved before the v2 migration still names
+# output/figure/. study_dirs() recomputes every path from project_name and
+# creates the folders. Without it a new entry such as wd$tables comes back NULL,
+# and file.path(NULL, "x.rds") yields character(0) rather than erroring --
+# surfacing far from its cause as an unattributable gzfile() failure.
+study_environment <- study_dirs(study_environment, layout = "v2")
 
 # Data ingest & basic harmonization
 estimation_data <- study_environment[["estimation_data"]]

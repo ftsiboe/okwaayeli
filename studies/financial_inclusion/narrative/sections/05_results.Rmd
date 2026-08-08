@@ -1,0 +1,91 @@
+<!--
+PORTED FROM v005 on 2026-08-08. Verbatim prose; nothing rewritten.
+
+Citations converted to @keys against narrative/references.bib.
+
+EVERY MEASURED QUANTITY IN THIS FILE IS LIVE. Nothing that came out of the
+analysis is typed as a literal -- each one is an inline call resolved against
+the current pipeline output at knit time:
+
+    `r fmt_pct(objs$treatment$share_treated)`
+    `r fmt_num(objs$sample$n_pooled, 0)`
+    `r tbl_num("table4", "Land", 2)`
+
+There is no fallback. A lookup that cannot resolve stops the knit rather than
+printing a stale value, so the prose cannot drift from the tables.
+
+What is deliberately literal: years and wave labels, exhibit and section
+numbers, equation numbers, percentile trims, the 5% significance convention,
+and figures cited from other papers. Those are not results of this study --
+see the boundary list in narrative/diagnostics/.
+
+WHAT IS NOT MAINTAINED: the verbs. "Rises", "falls", "the largest gains", "the
+only exception" are claims about sign and ordering that no lookup can hold. The
+estimates behind these numbers predate the 2026-08-08 rematch and several
+directions have inverted since v005. Read this section against its tables claim
+by claim once the MSF array re-runs --
+narrative/diagnostics/results_claim_conflicts.md.
+-->
+
+<!--
+RESULTS-SPECIFIC WARNINGS.
+
+1. Every wired number here reads Table 4 or Table 5, which are built from
+   estimation objects fitted 2026-04-26 -- BEFORE the 2026-08-08 matching re-run.
+   The values will move when the MSF array re-runs. That is the architecture
+   working, but it also means the PROSE CLAIMS around them are not yet checked:
+   "rises from X to Y", "the largest gains observed for family labor", "the only
+   exception is fertilizer". If a number moves across zero or changes rank, the
+   sentence becomes wrong while still rendering cleanly. Re-read this section
+   after the re-run, not just the tables.
+
+2. The draft carries literal holes, left exactly as found:
+   "[insert countries]", "[insert citations]" (three times).
+
+3. Section 5 is "Results and discussions" in v005 -- it carries both, which is
+   why sections/06_discussion.Rmd is not included by the master Rmd.
+-->
+
+# 5. Results and discussion
+
+We present diagnostics for the stochastic meta-frontier (SMF), input elasticities, technology differentials, robustness checks, and patterns of observed heterogeneity with particular emphasis on results from the matched sample.
+
+## 5.1 Diagnostic test
+
+Three sets of diagnostics support our use of the SMF and the half-normal inefficiency model. First, one-sided error tests [@Schmidt1984; @Coelli1995; @Gutierrez2001] reported in Table 4 reject the null of no inefficiency across all model variants (naïve national frontier; group frontiers; meta-frontier on matched and unmatched samples).In addition, imposing envelopment restrictions and estimating a stochastic meta-frontier improves shape-regularity diagnostics relative to a pooled frontier: monotonicity and curvature satisfaction rates increase substantially in the matched sample, reducing concerns that elasticities reflect local violations of economic regularity. The monotonicity satisfaction rate rises to `r tbl_pct("table4", "Monotonicity satisfaction rate", 5, 2)` and the curvature satisfaction rate to `r tbl_pct("table4", "Curvature satisfaction rate", 5, 2)`% under the matched meta-frontier, compared to their respective analogues of `r tbl_pct("table4", "Monotonicity satisfaction rate", 6, 2)` and `r tbl_pct("table4", "Curvature satisfaction rate", 6, 2)`% in the unmatched meta-frontier and `r tbl_pct("table4", "Monotonicity satisfaction rate", 1, 2)` and `r tbl_pct("table4", "Curvature satisfaction rate", 1, 2)`% in the naïve specification (Table 4). Third, likelihood-ratio tests for the meta-frontier strongly favour the enveloping specification over a common frontier at 1% significance level in both the matched and unmatched models. Meanwhile, the share of variance attributable to inefficiency () is high under the meta-frontier (matched = `r tbl_num("table4", "Ratio variance due to inefficiency", 5)`; unmatched = `r tbl_num("table4", "Ratio variance due to inefficiency", 6)`), indicating that cross-household output differences are dominated by technology gaps rather than transitory noise. Collectively, these tests confirm that our estimation strategy is fit for purpose and that estimates are reliable.
+
+## 5.2 Output elasticities
+
+Table 4 compares national, group, and matched meta-frontier estimates of input elasticities. Under the naïve national frontier, all inputs exhibit positive and statistically significant effects on crop output at the 1% level, consistent with earlier Ghanaian studies [@Akudugu2012; @Enu2013; @Karamba2011]. Land exerts the strongest influence, followed by family labor, planting materials, fertilizer, hired labor, and pesticide.
+
+The group frontier results show clear differences between borrowers and non-borrowers. Farmers with credit access display higher elasticities for nearly all inputs, with the largest gains observed for family labor (+`r tbl_num("table4", "Family labour", 4)` percentage points) and land (+`r tbl_num("table4", "Land", 4)`). Smaller but positive differences emerge for planting materials (+`r tbl_num("table4", "Planting material", 4)`) and pesticide (+`r tbl_num("table4", "Pesticide", 4)`) and hired labor (+`r tbl_num("table4", "Hired labour", 4)`). The only exception is fertilizer, where borrowers’ elasticity is slightly lower (`r tbl_num("table4", "Fertilizer", 3)` vs. `r tbl_num("table4", "Fertilizer", 2)`; –`r tbl_num("table4", "Fertilizer", 4)`). These shifts translate into higher returns to scale for borrowers (`r tbl_num("table4", "Returns to scale", 3)` vs. `r tbl_num("table4", "Returns to scale", 2)`), a statistically significant difference of +`r tbl_num("table4", "Returns to scale", 4)`.
+
+These findings echo evidence from [insert countries], where credit programs facilitated more allocation and enabled greater responsiveness to variable production inputs [insert citations]. The fertilizer anomaly stands in contrast to Ethiopian studies showing that fertilizer adoption is constrained by risk/credit issues [@Dercon2011]. However, it is consistent with research documenting Ghana’s persistently low and heterogeneous fertilizer returns, partly due to soil quality variation and input delivery inefficiencies [insert citations]. This suggests that credit alone may not raise fertilizer effectiveness unless complemented by agronomic support and input quality assurance.
+
+The matched meta-frontier further reinforces these patterns. Elasticities at the mean are generally larger than in the unmatched specification, especially for inputs that are most marginally adjusted. Land responsiveness rises from `r tbl_num("table4", "Land", 6)` to `r tbl_num("table4", "Land", 5)`, family labor from `r tbl_num("table4", "Family labour", 6)` to `r tbl_num("table4", "Family labour", 5)`, and hired labor from `r tbl_num("table4", "Hired labour", 6)` to `r tbl_num("table4", "Hired labour", 5)`. Pesticide use shows a notable increase (`r tbl_num("table4", "Pesticide", 5)` vs. `r tbl_num("table4", "Pesticide", 6)`), while fertilizer responsiveness is modestly lower (`r tbl_num("table4", "Fertilizer", 3)` vs. `r tbl_num("table4", "Hired labour", 5)`). Overall, these results suggest that access to credit enhances farmers’ capacity to intensify labor and protection-related inputs, while the small decline in fertilizer elasticity may reflect substitution effects or measurement limitations. Taken together, the evidence points to credit easing liquidity constraints in ways that strengthen input responsiveness along margins most sensitive to timely financial access. This interpretation resonates with broader evidence on how digital financial innovations expand smallholder access to working capital and improve timely input use across African settings [insert citations].
+
+## 5.3 Technology differential and technical efficiency
+
+Table 4 further decomposes performance into differences in technology (TGR), within-group technical efficiency (TE), and their combination into meta-frontier efficiency (MTE).
+
+Starting with technology gaps, the matched estimates show that borrowers are significantly closer to the best practice technology set. The technology gap ratio (TGR) rises from `r tbl_num("table5", "Anyone including farmer", 1, block = "Technology gap ratio (TGR)")` for non-users to `r tbl_num("table5", "Anyone including farmer", 2, block = "Technology gap ratio (TGR)")` for borrowers, a gain of `r tbl_diff("table5", "Anyone including farmer", 1, 2, block = "Technology gap ratio (TGR)")` percentage points. In practical terms, credit is associated with greater adoption of advanced technologies—such as improved seeds, fertilizer blends, or mechanized services (citations). To attain comparable output levels, credit-constrained farmers would need to raise their technological endowments by roughly `r fmt_num(100 * (1 / tbl_num("table5","Anyone including farmer",1,block="Technology gap ratio (TGR)") - 1), 0)`%.
+
+By contrast, pure technical efficiency (TE) is markedly lower for borrowers. In the matched sample, TE falls from `r tbl_num("table5", "Anyone including farmer", 1, block = "Pure farmer technical efficiency (TE)")` among non-borrowers to `r tbl_num("table5", "Anyone including farmer", 2, block = "Pure farmer technical efficiency (TE)")` among borrowers—a difference of `r sub("^-", "", tbl_diff("table5", "Anyone including farmer", 1, 2, block = "Pure farmer technical efficiency (TE)"))` percentage points. This suggests that conditional on their respective group technologies, borrowers operate farther from their potential frontier. While this result contradicts recent evidence from Ghana and other African contexts, which generally finds that credit-constrained farmers underperform relative to their efficient frontier [@Awotide2015; @Dessie2015], it may reflect transitional inefficiencies. For instance, credit may enable adoption of new technologies that are not yet mastered, introduce moral hazard in input use, or lead to resource misallocation when complementary services (e.g., training, extension, or timely input delivery) are lacking [@Tsiboe2016].
+
+Combining these two forces, meta-frontier technical efficiency (MTE) is modestly lower for borrowers (`r tbl_num("table5", "Anyone including farmer", 2, block = "Meta-frontier technical efficiency (MTE)")` vs. `r tbl_num("table5", "Anyone including farmer", 1, block = "Meta-frontier technical efficiency (MTE)")`), a statistically significant difference of `r sub("^-", "", tbl_diff("table5", "Anyone including farmer", 1, 2, block = "Meta-frontier technical efficiency (MTE)"))` percentage points. Thus, while credit facilitates convergence toward better technologies (higher TGR), it is also associated with reduced efficiency in operating those technologies (lower TE), yielding a small net decline in overall performance against best practice.
+
+Finally, it is notable that both borrowers and non-borrowers operate below `r fmt_num(100 * max(tbl_num("table5","Anyone including farmer",1,block="Meta-frontier technical efficiency (MTE)"), tbl_num("table5","Anyone including farmer",2,block="Meta-frontier technical efficiency (MTE)")), 0)`% of the best-practice frontier. Similar findings from other African settings attribute such low efficiency to limited application of essential inputs and persistent process inefficiencies, particularly delayed access to credit and weak market support systems [@Kumar2013; @Guirkinger2008]. This underscores that while credit access improves technological proximity, broader systemic interventions are needed to ensure that farmers can fully exploit the potential of advanced technologies.
+
+## 5.4 Robustness of main findings
+
+We next evaluate the robustness of the core finding that credit is associated with higher TGR but lower TE among credit users, resulting in modestly lower MTE. These contrasts remain qualitatively unchanged and statistically significant across alternative treatment definitions, model specifications, and matching methods. Table 5 first examines the definition of treatment. In our preferred specification, credit is broadly defined to include access by the farmer, spouse, children, or other household members. Under this definition, borrowers exhibit a TGR of `r tbl_num("table5", "Anyone including farmer", 2, block = "Technology gap ratio (TGR)")` versus `r tbl_num("table5", "Anyone including farmer", 1, block = "Technology gap ratio (TGR)")` for non-users (+`r tbl_diff("table5", "Anyone including farmer", 1, 2, block = "Technology gap ratio (TGR)")` percentage points), TE of `r tbl_num("table5", "Anyone including farmer", 2, block = "Pure farmer technical efficiency (TE)")` versus `r tbl_num("table5", "Anyone including farmer", 1, block = "Pure farmer technical efficiency (TE)")` (−`r sub("^-", "", tbl_diff("table5", "Anyone including farmer", 1, 2, block = "Pure farmer technical efficiency (TE)"))`), and MTE of `r tbl_num("table5", "Anyone including farmer", 2, block = "Meta-frontier technical efficiency (MTE)")` versus `r tbl_num("table5", "Anyone including farmer", 1, block = "Meta-frontier technical efficiency (MTE)")` (−`r sub("^-", "", tbl_diff("table5", "Anyone including farmer", 1, 2, block = "Meta-frontier technical efficiency (MTE)"))`). Narrowing the treatment to only the farmer’s personal credit reduces the magnitudes but preserves the direction of effects: TGR improves by `r tbl_diff("table5", "Farmer", 1, 2, block = "Technology gap ratio (TGR)")` percentage points, TE declines by about `r sub("^-", "", tbl_diff("table5", "Farmer", 1, 2, block = "Pure farmer technical efficiency (TE)"))` points, and MTE is lower by roughly `r sub("^-", "", tbl_diff("table5", "Farmer", 1, 2, block = "Meta-frontier technical efficiency (MTE)"))` points. Definitions based on spousal or other household members’ credit show comparable patterns, underscoring that the efficiency gap persists regardless of how credit access is measured.
+
+Turning to methodological checks, the findings remain consistent across distance metrics used in the matching algorithm (Mahalanobis, Euclidean) and across alternative propensity score models with probit, logit, complementary log–log, or cauchit links (Figure S1). In every case, borrowers continue to display significantly higher TGR and lower TE. Likelihood-ratio tests favor a translog production structure over Cobb–Douglas, though re-estimating with Cobb–Douglas preserves the same ordering of TGR, TE, and MTE across credit groups (Figure S1). Varying the distributional assumption for the one-sided error term (exponential, truncated normal, gamma) produces substantively similar inferences, supporting the use of the half-normal baseline.
+
+Taken together, the robustness checks summarized in Table 5 and the supplementary figures and tables demonstrate that the main conclusions are not driven by treatment definition, model specification, or distributional assumptions. Across specifications, credit users consistently appear closer to the best-practice technology set (higher TGR) but operate less efficiently within that set (lower TE), producing slightly lower overall performance relative to the meta-frontier (MTE).
+
+## 5.5 Observed heterogeneity
+
+We also explore heterogeneity across borrower characteristics, crop systems, and regions, and relate these patterns to the main findings. Figure 3 and Table S2 indicate that the technology gains from credit are not uniform: increases in TGR are largest among male, better-educated, and prime-age farmers, with correspondingly smaller penalties in TE. This gradient is consistent with the covariate associations in Table S4, which show that education and access to extension services are linked to lower inefficiency. Trade-offs between TGR and TE also vary by crop system. Borrowers in cocoa- and root/tuber-dominated areas experience larger technological gains but also steeper efficiency reductions, whereas maize-, sorghum-, and millet-based systems show more muted trade-offs. Regional heterogeneity similarly reflects agro-ecological conditions and market access, suggesting that credit facilitates technology adoption most where the technology–environment match is favorable but does not automatically improve within-group efficiency.
+
+Input trends over 2012–2017 provide context for these patterns. Figures 1 and 2, together with Table S2, document rising seed expenditure and greater labor use, with little evidence of increased mechanization or irrigation. Figure 1 shows that input and output gaps between credit users and non-users largely mirror these intensification dynamics. Figure 2 further illustrates that the productivity advantage of credit users is strongest at higher levels of the composite financial inclusion index, underscoring complementarities between credit, payment systems, and access to information. Taken together, the results highlight that the credit–efficiency relationship is mediated by farmer characteristics, crop systems, and local institutions, with credit yielding the greatest technology gains where enabling conditions are present

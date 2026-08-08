@@ -1,0 +1,81 @@
+<!--
+Supplementary exhibits. Captions and mapping from
+narrative/diagnostics/exhibit_inventory_v005.md.
+
+Tables S1-S4 are all 7-8 columns and belong in a landscape section; the markers
+are held back until the builders exist, for the same reason as in 98.
+
+On curated exhibits: the ONLY legitimate one is an exhibit that cannot be
+computed -- questionnaire wording, response options, per-wave mappings.
+land_tenure's Table S0 is the model. This study has no such table and arguably
+needs one MORE than land_tenure does, because its index is constructed rather
+than observed: there is no questionnaire page a reader can check it against.
+See narrative/diagnostics/financial_inclusion_index_documentation.md.
+
+Everything else builds from the pipeline. Copying numbers out of the v005 draft
+or financial_inclusion_results.xlsx into a CSV is the next drift.
+-->
+
+# Appendix
+
+#### Table S1. Summary statistics of crop producers in Ghana (2012-2017)
+
+<!-- 36 x 7. draw_descriptive_summary(), person-with-credit split:
+     Pooled | Farmer | Spouse of farmer | Child | Spouse or child |
+     Household member other. Levels. LANDSCAPE.
+     Needs credit_self / credit_spouse / credit_child / credit_close /
+     credit_member -- all six splits now run in 100. -->
+
+```{r ft-tableS1}
+ft_tableS1()
+```
+
+\newpage
+
+#### Table S2. Trends in the characteristics of crop producers in Ghana (2012-2017)
+
+<!-- 36 x 7. Same cells as S1, trend columns instead of levels. LANDSCAPE. -->
+
+```{r ft-tableS2}
+ft_tableS2()
+```
+
+\newpage
+
+#### Table S3. Meta stochastic frontier analysis results for Ghanaian crop producers, 2012/13 and 2016/17
+
+<!-- 51 x 8. Full sf_estm including the production function block and
+     intercepts. LANDSCAPE. -->
+
+```{r ft-tableS3}
+ft_tableS3()
+```
+
+\newpage
+
+#### Table S4. Determinants of crop production technical inefficiency and credit-driven technology gaps in Ghana (2012-2017)
+
+<!-- 17 x 8. Inefficiency and technology-gap determinants. LANDSCAPE. -->
+
+```{r ft-tableS4}
+ft_tableS4()
+```
+
+\newpage
+
+#### Figure S1. Covariate balancing summary
+
+![](../output/figures/Covariate_balance_variance.png){width=100%}
+
+\newpage
+
+#### Figure S2. Different model specifications generally show decreasing impact of farmer credit access on crop production output for Ghanaian farmers (2012-2017)
+
+![](../output/figures/robustness.png){width=100%}
+
+<!--
+NOT IN THE PAPER: output/figures/score_distributions.png.
+101 builds it, no version of v005 prints it. Either promote it to an appendix
+exhibit here, or stop building it. Leaving it half-alive is how an orphan
+figure survives three revisions.
+-->

@@ -1,0 +1,40 @@
+<!--
+PORTED FROM v005 on 2026-08-08. Verbatim prose; nothing rewritten.
+
+Citations converted to @keys against narrative/references.bib.
+
+EVERY MEASURED QUANTITY IN THIS FILE IS LIVE. Nothing that came out of the
+analysis is typed as a literal -- each one is an inline call resolved against
+the current pipeline output at knit time:
+
+    `r fmt_pct(objs$treatment$share_treated)`
+    `r fmt_num(objs$sample$n_pooled, 0)`
+    `r tbl_num("table4", "Land", 2)`
+
+There is no fallback. A lookup that cannot resolve stops the knit rather than
+printing a stale value, so the prose cannot drift from the tables.
+
+What is deliberately literal: years and wave labels, exhibit and section
+numbers, equation numbers, percentile trims, the 5% significance convention,
+and figures cited from other papers. Those are not results of this study --
+see the boundary list in narrative/diagnostics/.
+
+WHAT IS NOT MAINTAINED: the verbs. "Rises", "falls", "the largest gains", "the
+only exception" are claims about sign and ordering that no lookup can hold. The
+estimates behind these numbers predate the 2026-08-08 rematch and several
+directions have inverted since v005. Read this section against its tables claim
+by claim once the MSF array re-runs --
+narrative/diagnostics/results_claim_conflicts.md.
+-->
+
+# 6. Conclusion
+
+The paper acknowledges the importance of credit and how it impacts crop production albeit with differentiated effects.  We therefore posed the question: does expanded financial inclusion move Ghanaian farms toward the best-practice frontier, or does it mainly raise input intensity without proportional efficiency gains? By addressing this knowledge gap in both theoretical and empirical literature, our study advances literature in three ways. First, the analysis extends beyond single-crop and single-region investigation by providing nationally representative evidence that jointly characterizes movement toward the frontier (TGR) and movement along it (TE) under credit access. Second, our use of an SMF ensures comparability of estimates across heterogeneous crops and regional technologies; certainly, an improvement over studies that assume a common production technology. Finally, we document systematic heterogeneity by gender, crop, and agro-ecological zone, clarifying where and for whom credit is most likely to generate productivity-enhancing effects rather than efficiency losses. The paper employs a novel hybrid approach, combining a Stochastic Metafrontier (SMF) framework with Propensity Score Matching (PSM) on a nationally representative data from Waves 6 and 7 of the Ghana Living Standards Survey (GLSS).
+
+Our analysis reveals that all factor inputs—land, labor, seed, and agrochemicals have a positive and statistically significant (at the 1% level) relationship with total crop output, with land exhibiting the strongest influence. Crucially, credit access amplifies farmers' responsiveness to these inputs. In our matched sample, borrowers show higher output elasticities than their unmatched counterparts.
+
+Disaggregating the efficiency effects yields nuanced insights; while credit facilitates investment in superior technology, narrowing the technology gap between borrower groups, it does not automatically translate into better farm management. Contrary to some existing studies, we find that borrowers are less technically efficient than non-borrowers, operating farther from their group's best-practice frontier. This suggests that credit, while boosting output through input intensification and technology adoption, may simultaneously introduce inefficiencies in how those inputs are managed.
+
+Alarmingly, both borrowers and non-borrowers in our sample operate below `r fmt_num(100 * max(tbl_num("table5","Anyone including farmer",1,block="Meta-frontier technical efficiency (MTE)"), tbl_num("table5","Anyone including farmer",2,block="Meta-frontier technical efficiency (MTE)")), 0)`% of their potential output in our matched sample, constrained by limited and untimely access to credit. This restriction curtails the optimal application of essential inputs (e.g., fertilizer, quality seeds, labor) and heightens vulnerability to shocks, ultimately compromising overall yield and productivity.
+
+Our findings underscore an urgent need for targeted policy interventions. Efforts must extend beyond simply expanding credit availability to ensure it is timely, accessible, and coupled with complementary support such as extension services and training. This also includes improving financial literacy and farm management skills to enhance technical efficiency, ensuring that credit translates into sustainable productivity gains. Such measures are vital for boosting agricultural output, promoting sustainable development, and contributing to economic growth in Ghana, where agriculture remains a cornerstone of the economy.

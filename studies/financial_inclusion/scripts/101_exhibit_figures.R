@@ -1,3 +1,18 @@
+# =============================================================================
+#  EXHIBIT FIGURES - FINANCIAL INCLUSION STUDY
+# =============================================================================
+#  Builds every figure in the paper from output/estimations/, and saves the data
+#  behind each one alongside it so the numbers the narrative quotes off a figure
+#  are machine-checkable.
+#
+#  Was 100_FIGTAB_financial_inclusion_study.R at the study root. Renumbered to
+#  101 to match resource_extraction and land_tenure, where the 100 slot is
+#  descriptive statistics and 101 is figures.
+#
+#  Paths resolve through study_dir_figures() / study_dir_tables(), never by
+#  pasting a folder name next to wd$output -- see ?study_dirs.
+# =============================================================================
+
 rm(list = ls(all = TRUE)); gc()  
 library('magrittr');library(ggplot2);library(gridExtra)
 library(dplyr);library(gtable);library(stringr);library(cowplot)
@@ -5,12 +20,23 @@ devtools::document()
 
 project_name = "financial_inclusion"
 study_environment <- readRDS(
-  file.path(paste0("studies/", project_name, "/output"),
+  file.path(paste0("studies/", project_name, "/data"),
             paste0(project_name,"_study_environment.rds")))
+
+# `wd` inside the .rds is a FROZEN SNAPSHOT of the layout as of the run that
+# wrote it: an environment saved before the v2 migration still names
+# output/figure/. study_dirs() recomputes every path from project_name and
+# creates the folders. Without it a new entry such as wd$tables comes back NULL,
+# and file.path(NULL, "x.rds") yields character(0) rather than erroring --
+# surfacing far from its cause as an unattributable gzfile() failure.
+study_environment <- study_dirs(study_environment, layout = "v2")
 
 mspecs_optimal <- study_environment$match_specification_optimal
 
-source("data-raw/scripts/figures_and_tables.R")
+# NOTE: this script used to source("data-raw/scripts/figures_and_tables.R").
+# That file is now only a deprecation shim that loads the package, and the
+# builders it provided live in R/exhibits-figures.R -- reachable through the
+# namespace with no source() at all. devtools::document() above loads them.
 
 Keep.List<-c("Keep.List",ls())
 
@@ -38,8 +64,8 @@ res <- res[c("disasg","level","fxnforms","distforms","Survey","input","technolog
 
 fig <- fig_heterogeneity00(res=res,y_title="Difference (no-credit less Credit)\n",study_environment=study_environment)
 fig[["genderAge"]] <- fig[["genderAge"]] + theme(axis.text.x = element_text(size = 5.5))
-ggsave(file.path(study_environment$wd$output,"figure","heterogeneity_crop_region.png"), fig[["crop_region"]],dpi = 600,width = 8, height = 5)
-ggsave(file.path(study_environment$wd$output,"figure","heterogeneity_genderAge.png"), fig[["genderAge"]],dpi = 600,width = 8, height = 5)
+ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_crop_region.png"), fig[["crop_region"]],dpi = 600,width = 8, height = 5)
+ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_genderAge.png"), fig[["genderAge"]],dpi = 600,width = 8, height = 5)
 
 data <- res[(res$disasg %in% "FinIdxCat"),]
 data$x <- factor(as.numeric(as.character(data$level)),levels = 1:5,
@@ -67,7 +93,17 @@ fig <- ggplot(data = data, aes(x = x, y = Estimate, group = input, shape = input
         legend.title = element_text(size = 10),
         legend.text = element_text(size = 10),
         strip.background = element_rect(fill = "white", colour = "black", size = 1))
-ggsave(file.path(study_environment$wd$output,"figure","heterogeneity_financial_inclusion.png"), 
+# Persist the data behind Figure 2 BEFORE plotting.
+#
+# Every other figure here is built by a package function in R/exhibits-figures.R,
+# and those write their own .rds/.csv alongside the .png. This one is hand-rolled
+# ggplot in the script, so nothing was saved -- which made the paper's headline
+# heterogeneity result the one number in the study that could not be checked
+# against a file. Save it the same way the package builders do.
+saveRDS(data,   file.path(study_dir_figure_data(study_environment), "heterogeneity_financial_inclusion.rds"))
+write.csv(data, file.path(study_dir_figure_data(study_environment), "heterogeneity_financial_inclusion.csv"), row.names = FALSE)
+
+ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_financial_inclusion.png"), 
        fig,dpi = 600,width = 6.8, height = 5)
 
 
@@ -148,8 +184,8 @@ openxlsx::saveWorkbook(wb,file.path(study_environment$wd$output,paste0(project_n
 # Fig - Robustness  
 rm(list= ls()[!(ls() %in% c(Keep.List))])
 fig_robustness(y_title="\nDifference [no-credit less Credit]",
-               res_list = c(file.path(study_environment$wd$output,"estimations","CropID_Pooled_credit_hh_CD_hnormal_optimal.rds"),
-                            list.files(file.path(study_environment$wd$output,"estimations"),
+               res_list = c(file.path(study_environment$wd$estimations,"CropID_Pooled_credit_hh_CD_hnormal_optimal.rds"),
+                            list.files(study_environment$wd$estimations,
                                        pattern = "CropID_Pooled_credit_hh_TL_",full.names = T)),
                study_environment=study_environment)
 
@@ -166,7 +202,7 @@ fig_covariate_balance(study_environment=study_environment)
 
 # Fig - Distribution 
 rm(list= ls()[!(ls() %in% c(Keep.List))])
-dataFrq <- readRDS(file.path(study_environment$wd$output,"estimations/CropID_Pooled_credit_hh_TL_hnormal_fullset.rds"))
+dataFrq <- readRDS(file.path(study_environment$wd$estimations,"CropID_Pooled_credit_hh_TL_hnormal_fullset.rds"))
 dataFrq <- dataFrq$ef_dist
 dataFrq <- dataFrq[dataFrq$estType %in% "teBC",]
 dataFrq <- dataFrq[dataFrq$Survey %in% "GLSS0",]
@@ -178,7 +214,7 @@ fig_dsistribution(dataFrq,study_environment=study_environment)
 
 # Fig - Region and crop ranking text
 rm(list= ls()[!(ls() %in% c(Keep.List))])
-res <-readRDS(file.path(study_environment$wd$output,"estimations/CropID_Pooled_credit_hh_TL_hnormal_optimal.rds"))$disagscors
+res <-readRDS(file.path(study_environment$wd$estimations,"CropID_Pooled_credit_hh_TL_hnormal_optimal.rds"))$disagscors
 res$disasg <- res$disagscors_var
 res$level <- res$disagscors_level
 res <- res[res$estType %in% "teBC",]

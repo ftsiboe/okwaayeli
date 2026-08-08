@@ -73,7 +73,7 @@ entry point; set a stage to `TRUE` to run it.
     301/302          -> narrative/land-tenure.docx     fast
 
 Data preparation upstream of `001` is Stata
-(`data-raw/okwaayeli_DATA.do`), which harmonizes the raw GLSS files.
+(`data-raw/scripts/data-prep/glss/10_land_tenure.do`), which harmonizes the raw GLSS files.
 Everything from `001` onward is R: all tables and figures are built from
 the pipeline, with one deliberate exception — Table S0 documents how the
 tenure indicators were constructed from each round’s questionnaire, and

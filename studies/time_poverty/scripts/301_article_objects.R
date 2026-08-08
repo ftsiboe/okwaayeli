@@ -51,7 +51,7 @@ objs$sample <- list(
 )
 
 # TREATMENT DEFINITION -- carried into the JSON so the paper cannot describe it
-# wrongly by accident. scripts/time_poverty_DATA.do computes a committed-time
+# wrongly by accident. data-raw/scripts/data-prep/glss/12_time_poverty.do computes a committed-time
 # cutoff, then restricts to s1q3 == 1 and RECOMPUTES the same variable names off
 # PAID time, overwriting the first. tpoor0150 in the release is the paid-time
 # version, not the committed-time one its labels claim. See that file's FLAG.
@@ -59,7 +59,7 @@ objs$treatment_definition <- paste(
   "tpoor0150: indicator that daily paid time exceeds 1.5x the median of paid",
   "time, computed on the s1q3 == 1 subsample of GLSS7. NOTE: the variable label",
   "in the harmonized release says 'Committed Time'; that is stale --",
-  "time_poverty_DATA.do overwrites the committed-time version. Verify before",
+  "12_time_poverty.do overwrites the committed-time version. Verify before",
   "the paper describes the measure.")
 
 # --- 2) Estimates -------------------------------------------------------------

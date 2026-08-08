@@ -1,70 +1,48 @@
 *==============================================================================
-* 000_HARMONIZE_ag_services_data.do
+* 11_ag_services.do
 *
-* Build the harmonized community-level agricultural service dataset from the
-* GLSS4-GLSS7 community questionnaires.
+* Builds the 'Harmonized Ag services data' release from the GLSS4-GLSS7
+* community questionnaires (section CS5 / CS5B).
 *
-* POSITION: runs BEFORE 001_DATA_ag_services_study.R, which reads the release
-* this file writes. Numbered 000 alongside 000_initialize.R, following the same
-* same-number-different-language convention the repo already uses for
-* 100_exhibits.do next to 100_exhibit_descriptive_stats.R.
+* WRITES: $LabGitHub\harmonized_ag_services_data.dta
 *
-* PROVENANCE: extracted verbatim on 2026-08-07 from the block
-* `{ //Harmonized Ag services data }` at data-raw/okwaayeli_DATA.do L2470-2773,
-* then scaffolded to run standalone. The parent block should be deleted once
-* this file is confirmed to reproduce it.
+* Also called directly by studies/ag_services/scripts/001_DATA_ag_services_study.R
+* on machines that have Stata. 001 reads this script's log and treats any line
+* matching ^r(NNN); as a failure, because Stata batch mode exits 0 even on
+* error. That is why the log below is opened unconditionally and given a NAME:
+* a named log coexists with the unnamed log 00_run_all.do holds open, so the
+* script behaves identically standalone and under the master.
 *
-* AUDIT: this block was audited on 2026-08-07 against the four GLSS community
-* questionnaires and the GLSS5 Community Manual. Findings and their severities
-* are in studies/ag_services/narrative/diagnostics/
-* ag_services_harmonization_audit_plan.md. Every fix below carries an
-* `AUDIT n.n` tag matching a section of that document.
+* The four questionnaires do not ask these questions the same way. Where a
+* harmonization decision was not obvious from the variable names, the reasoning
+* is in the comment above it. Those comments are load-bearing -- several encode
+* a wave-specific quirk that is invisible in the data.
 *
-* THE AUDIT_FIXES LEVER WAS REMOVED 2026-08-07, having done its job. While it
-* existed this file could reproduce the parent block byte-for-byte (`cf _all`
-* PASSED against the then-live release) and the two arms could be diffed to
-* measure exactly what the audit changed. Both results are recorded in
-* narrative/diagnostics/migration_2026-08-07.md, Addendum 6.
-*
-* Removed because a lever that keeps known-wrong code executable is a hazard:
-* running the old arm and promoting it would republish the GLSS5 MOFA zeros and
-* the fabricated compliance values. It also made the release SCHEMA conditional
-* -- services*_strict existed on only one arm.
-*
-* The pre-audit build is preserved as
-*   data-raw/releases/harmonized_data/harmonized_ag_services_data_PRE_AUDIT.dta
-* so the comparison stays reproducible without keeping the code path alive.
-*
-* Run from the repo root:  do studies/ag_services/scripts/000_HARMONIZE_ag_services_data.do
+* Run from the okwaayeli repo root, or from this folder.
 *==============================================================================
 
-clear all
-set more off
-
-*--- Paths (self-contained; mirrors data-raw/okwaayeli_DATA.do) ----------------
-gl OneDrive          "C:/Users/ftsib/OneDrive"
-gl Dropbox_Personal  "C:/Users/ftsib/Dropbox (Personal)"
-gl DATABASE          "$OneDrive\Research\Database\Ghana\Surveys\Database"
-gl REPO              "$Dropbox_Personal\GitHub\ghana\okwaayeli"
-gl LabGitHub         "$REPO\data-raw\releases\harmonized_data"
-
-* Paths below are ABSOLUTE, derived from $REPO. Relative paths break when the
-* file is launched from Stata's do-file editor, which sets the working
-* directory to the script's own folder (or a temp copy) rather than the repo
-* root -- producing ".../scripts/studies/ag_services/scripts/logs/..." and
-* r(603). Absolute paths make the file runnable from anywhere.
-capture mkdir "$REPO/studies/ag_services/scripts/logs"
-
-* Fail loudly rather than writing to a path that does not exist.
-capture confirm file "$LabGitHub/nul"
-if _rc {
-  di as err "LabGitHub does not resolve to an existing directory: $LabGitHub"
-  exit 601
+* --- shared paths ------------------------------------------------------------
+* Runs standalone or under 00_run_all.do. Locating _paths.do is separated from
+* running it, so a genuine path failure inside _paths.do propagates as itself
+* rather than being mistaken for "file not found".
+if "$GLSS_PATHS" == "" {
+    local _p ""
+    capture confirm file "_paths.do"
+    if !_rc local _p "_paths.do"
+    if "`_p'" == "" {
+        capture confirm file "data-raw/scripts/data-prep/glss/_paths.do"
+        if !_rc local _p "data-raw/scripts/data-prep/glss/_paths.do"
+    }
+    if "`_p'" == "" {
+        di as err "Cannot locate _paths.do. Run this from the okwaayeli repo root"
+        di as err "or from data-raw/scripts/data-prep/glss/, or use 00_run_all.do."
+        exit 601
+    }
+    run "`_p'"
 }
 
-capture log close _all
-log using "$REPO/studies/ag_services/scripts/logs/harmonize.log", replace text
-
+capture log close ag_services
+log using "$GLSS/logs/11_ag_services.log", replace text name(ag_services)
 
 *GlSS7
 tempfile Final
@@ -74,16 +52,18 @@ keep supid clusterno region district comname
 save `Final',replace
 use "$DATABASE/GLSS/Datasets/GSS/GLSS7/Data/COMMUNITY/g7comSEC5",clear 
 gen ComName = comname
-* --- AUDIT 1.2 -------------------------------------------------------------
-* The parent merged with no keep()/assert. Every variable it contributes is
-* dropped four lines later, so its only surviving effect was to add _merge==2
-* rows -- SEC0 communities with no SEC5 record. Those carry no cs5q*, so every
-* indicator falls to 0 and they enter the CONTROL GROUP OF ALL FOUR TREATMENTS.
+
+* SEC0 lists every community; SEC5 is the agriculture section. A community in
+* SEC0 with no SEC5 record carries no cs5q* at all, so every indicator built
+* below would fall to 0 and it would enter the control group of all four
+* treatments as a fully-observed "no services" community. It is not: it is
+* unobserved. Dropped rather than merged in silently.
 merg 1:1 supid clusterno comname using `Final'
 qui count if _merge == 2
-di as txt "GLSS7: SEC0-only communities (phantom controls in the parent): " r(N)
+di as txt "GLSS7: SEC0-only communities dropped (unobserved, not untreated): " r(N)
 drop if _merge == 2
 drop _merge
+
 ren clusterno EaId
 gen Surveyx = "GLSS7"
 decode cs5q9, gen(cs5q9x)
@@ -105,6 +85,10 @@ append using `Final', force
 save `Final',replace
 
 *GlSS5
+* GLSS5 numbers the tail of the section one lower than GLSS6/GLSS7: its q12 is
+* their q13, its q13 their q14, its q14 their q15, and its q11 their q12. The
+* renames below shift GLSS5 onto the GLSS6/7 numbering so the three waves can
+* be appended. Order matters -- q14 is renamed before q13 so nothing collides.
 use "$DATABASE/GLSS/Datasets/GSS/GLSS5/Data/community/com-sec52",clear
 ren clust EaId
 gen Surveyx = "GLSS5"
@@ -128,15 +112,20 @@ qui foreach code in strtrim stritrim strltrim strrtrim strproper{
 for var cs5q9x:replace X = `code'(X)
 }
 
-* --- AUDIT 1.4 -------------------------------------------------------------
-* GLSS7 re-worded the agency options to "NGO/Non-Profit Organisation (Local)"
-* while these literals were never updated; "Mofa" and "Agric Cooperative" match
-* no printed option text in ANY wave. The three strings below were the only
-* ones in the block with no `levelsof` diagnostic behind them.
+* --- extension provider ------------------------------------------------------
+* The provider is stored as LABEL TEXT, and the label text is not constant
+* across waves. GLSS5 spells the ministry out; GLSS6 and GLSS7 abbreviate it.
+* Matching one spelling produces an all-zero column for the other wave -- a
+* wrong zero, which reads as "no MOFA extension anywhere in GLSS5" rather than
+* as missing data. Both spellings are matched.
 *
-* The correct literals cannot be written without seeing the stored value
-* labels, so this ASSERTS rather than guesses: if a wave matches nothing, it
-* stops instead of silently releasing a column of zeros.
+* Observed level sets, by wave:
+*   GLSS5: Ministry Of Food And Agriculture | Ngo(Foreign) | Ngo(Local) | Other
+*   GLSS6: Agric Cooperative | Mofa | Ngo(Foreign) | Ngo(Local) | Other
+*   GLSS7: Agric Cooperative | Mofa | Ngo(Local) | Other
+*
+* These are printed on every run, because a future wave can add a level and
+* nothing else would notice.
 di as txt _n "Observed cs5q9x levels, POOLED:"
 levelsof cs5q9x, clean
 di as txt _n "Observed cs5q9x levels, BY WAVE (label text is not constant):"
@@ -146,46 +135,28 @@ foreach w of local _ws {
   levelsof cs5q9x if Surveyx == "`w'", clean
 }
 
-* CONFIRMED 2026-08-07 by running this file with AUDIT_FIXES=0: the pooled
-* level set is
-*   Agric Cooperative | Ministry Of Food And Agriculture | Mofa |
-*   Ngo(Foreign) | Ngo(Local) | Other
-* The parent matched only "Mofa", so extension_agency_mofa came back ZERO for
-* every GLSS5 community -- a silent all-zero column in the live release, not a
-* missing one. Both spellings are now matched. The duplicated "Ngo(Local)" in
-* the parent's inlist is dropped; it was a no-op.
-* Observed level sets, per wave (from AUDIT_FIXES=0 on 2026-08-07):
-*   GLSS5: Ministry Of Food And Agriculture | Ngo(Foreign) | Ngo(Local) | Other
-*   GLSS6: Agric Cooperative | Mofa | Ngo(Foreign) | Ngo(Local) | Other
-*   GLSS7: Agric Cooperative | Mofa | Ngo(Local) | Other
-* GLSS5 spells MOFA out; GLSS6/7 abbreviate. The parent matched only "Mofa",
-* so extension_agency_mofa was ZERO for every GLSS5 community in the live
-* release -- a wrong zero, not a missing. Both spellings are matched below.
 gen extension_agency_mofa = inlist(cs5q9x,"Mofa","Ministry Of Food And Agriculture")
 gen extension_agency_ngo  = inlist(cs5q9x,"Ngo(Local)","Ngo(Foreign)")
 gen extension_agency_coop = cs5q9x == "Agric Cooperative"
 
-* Any level that no indicator claims is a provider silently dropped to zero.
+* A level that no indicator claims would be silently dropped to zero. This is
+* the guard that fails when a spelling changes; it stops the run rather than
+* releasing the column.
 qui gen byte _claimed = extension_agency_mofa | extension_agency_ngo | ///
                         extension_agency_coop | inlist(cs5q9x,"Other","")
 qui count if !_claimed & !missing(cs5q9x)
 if r(N) > 0 {
-  di as err "AUDIT 1.4: " r(N) " records carry an agency level no indicator claims:"
+  di as err "extension agency: " r(N) " records carry a level no indicator claims:"
   levelsof cs5q9x if !_claimed & !missing(cs5q9x), clean
+  di as err "Add the level to the inlist() above, or to the 'Other' exemption."
   exit 459
 }
 drop _claimed
 
-* Wave coverage, informational. A zero here is NOT necessarily a defect: an
-* option can be offered by the questionnaire and chosen by no community.
-* Confirmed on 2026-08-07 --
-*   GLSS5 carries NO "Agric Cooperative" level at all, so extension_agency_coop
-*   is legitimately zero for that wave. The questionnaire does offer the option
-*   (GLSS5 p.27, "Agricultural Cooperatives ...4"); no GLSS5 community selected
-*   it. Likewise GLSS7 carries no "Ngo(Foreign)".
-* The real guard is the unclaimed-level check ABOVE, which fails when a level
-* exists in the data and no indicator matches it. That is the condition which
-* silently produces a wrong zero; this one merely reports sparsity.
+* Coverage by wave, informational. A zero here is NOT necessarily a defect: an
+* option can be offered by the questionnaire and chosen by no community. GLSS5
+* carries no "Agric Cooperative" level and GLSS7 no "Ngo(Foreign)", both
+* legitimately. The unclaimed-level check above is the one that discriminates.
 di as txt _n "Agency indicator coverage by wave (informational, zeros can be real):"
 tabstat extension_agency_mofa extension_agency_ngo extension_agency_coop, ///
         by(Surveyx) stat(mean n) nototal
@@ -327,37 +298,28 @@ replace extension = 4 if extension_officer_visit*extension_officer == 1
 replace extension = 5 if extension_officer_visit*extension_office == 1
 replace extension = 6 if extension_office*extension_officer*extension_officer_visit == 1
 
-* --- AUDIT 2 ---------------------------------------------------------------
-* extension code 7: office + stationed officer, but NO visit. The parent
-* collapsed this state into code 2 ("Extension office access only"), which is
-* factually wrong and makes the ordinal non-injective (8 states, 7 codes).
-* Nothing downstream uses `extension` except `> 2`, so this is safe either way.
+* --- extension: the eighth state ---------------------------------------------
+* The ladder above assigns seven codes, but the questionnaire admits eight
+* states: office and stationed officer with NO visit has no code and would fall
+* through to 2 ("office access only"), which is factually wrong. Code 7 names it.
+*
 * MUST run BEFORE the keep below, which drops the three source flags.
 replace extension = 7 if extension_office == 1 & extension_officer == 1 ///
                        & extension_officer_visit == 0
 
-* --- AUDIT 2 (cont.) : CONSEQUENCE OF ADDING CODE 7 ------------------------
-* Adding code 7 BREAKS the idiom `extension > 2`. In the parent, every code
-* above 2 involved a visit, so `> 2` and "an officer visits" coincided. Code 7
-* is office + stationed officer + NO VISIT, and 7 > 2, so the idiom would
-* silently reclassify those communities as having active extension.
-*
-* Measured on 2026-08-07: 32 communities. The first version of this fix shipped
-* without this guard and moved all 32 into services3, changing the treatment
-* definition -- caught by compare_harmonization.do, not by inspection.
-*
-* The fix is to stop inferring the visit from the ordinal's numbering and key
-* on the flag that means it. `_visit` is dropped before the save.
+* Because code 7 exists, `extension > 2` no longer means "an officer visits" --
+* 7 is office plus stationed officer and NO visit. Anything that needs the visit
+* must key on the flag that means it, not on the ordinal's numbering. That is
+* what _visit is for; it is dropped before the save.
 gen byte _visit = extension_officer_visit == 1
 
 tab extension extension_compliance
 
-* --- AUDIT 2 (cont.) -------------------------------------------------------
-* The parent dropped extension_office / extension_officer /
-* extension_officer_visit here, after using them to build `extension`. That
-* makes the control group unverifiable: `ag_services == 0` includes communities
-* with an office and/or a stationed officer (see AUDIT 1.1) and no released
-* variable lets a reader see which. They are retained under the fixes.
+* extension_office / extension_officer / extension_officer_visit are RETAINED.
+* They are the only way a reader can see which communities inside
+* `ag_services == 0` have an extension presence without a visit -- the
+* partially-treated controls the _strict variants below exclude. Dropping them
+* here would make that group unverifiable from the release alone.
 keep Surveyx EaId extension extension_office extension_officer ///
      extension_officer_visit extension_agency_* services_* farm_association ///
      community_cooperative community_tractors extension_distance ///
@@ -384,16 +346,16 @@ replace services1 = . if services1 == 0 & services0 == 1
 replace services2 = . if services2 == 0 & services0 == 1
 replace services3 = . if services3 == 0 & services0 == 1
 
-* --- AUDIT 1.1 : SENSITIVITY ARM -------------------------------------------
-* The main-specification control group above is `ag_services == 0`. Because
-* ag_services counts extension ONLY via `extension > 2` (a visit), that group
-* still contains communities with an extension OFFICE and/or a STATIONED
-* OFFICER. Those farms are partially treated, so every technology gap ratio is
-* biased toward zero by an amount proportional to how many of them there are.
+* --- sensitivity arm ---------------------------------------------------------
+* The main-specification control group is `ag_services == 0`. It counts
+* extension only via a visit, so it still contains communities with an
+* extension OFFICE and/or a STATIONED OFFICER. Those farms are partially
+* treated, which biases every technology gap ratio toward zero in proportion to
+* how many of them there are.
 *
-* The main specification is retained unchanged. These _strict variants use a
-* comparison group with no extension presence of ANY kind, and the paper
-* reports both. See the audit plan section 1.1.
+* The main specification is unchanged. The _strict variants below use a
+* comparison group with no extension presence of any kind, and the paper
+* reports both.
 qui count if ag_services == 0 & inlist(extension,1,2,7)
 di as txt "Partially-treated communities inside the 'no services' control: " r(N)
 tab extension Surveyx if ag_services == 0
@@ -412,10 +374,10 @@ drop _clean
 
 sum services*
 
+* Wipes every label, then re-applies them. Everything the release ships with a
+* label must be re-declared below this line, including the four treatments.
 for var * : label variable X ""
 
-* AUDIT 2: `for var * : label variable X ""` above wipes every label, and the
-* parent's re-label block omitted the four headline treatments.
 label variable services0 "Any agricultural service source in community"
 label variable services1 "Agricultural/fishing association service source"
 label variable services2 "Agricultural cooperative service source"
@@ -426,23 +388,21 @@ label variable community_cooperative "Community cooperative"
 label variable extension "Community agricultural extension"
 label variable ag_services "Community agricultural services"
 
-*label variable extension_office              "Community has an agricultural extension office"
-label variable extension_distance            "Distance from community to nearest agricultural extension office"
-label variable extension_office        "Community has an agricultural extension office"
-label variable extension_officer       "Agricultural extension officer stationed in the community"
-label variable extension_officer_visit "Extension officer or agent visits farmers in the community"
-*label variable extension_officer             "Community has access to an agricultural extension officer"
-*label variable extension_officer_visit       "Extension officer visited the community"
+label variable extension_distance       "Distance from community to nearest agricultural extension office"
+label variable extension_office         "Community has an agricultural extension office"
+label variable extension_officer        "Agricultural extension officer stationed in the community"
+label variable extension_officer_visit  "Extension officer or agent visits farmers in the community"
 
 label variable extension_agency_mofa         "Community extension service provider is MOFA"
 label variable extension_agency_ngo          "Community extension service provider is NGO"
 label variable extension_agency_coop         "Community extension service provider is agricultural cooperative"
 
+* credit, mechanization, agchemicals and post_harvest are written from BOTH
+* cs5q10* (the extension roster) and cs5q13* (the association roster), so they
+* mean "extension OR association provides". The labels say so; the other four
+* come from the extension roster alone.
 label variable services_planting         "Extension services in community include planting or seed-use advice"
 label variable services_mechanization    "Extension or association in community provides mechanization support"
-* AUDIT 1.5: credit, mechanization, agchemicals and post_harvest are written
-* from BOTH cs5q10* (extension roster) and cs5q13* (association roster), so
-* they mean "extension OR association provides". The labels now say so.
 label variable services_credit           "Extension or association in community provides credit support"
 label variable services_irrigation       "Extension services in community include irrigation advice"
 label variable services_husbandry        "Extension services in community include animal husbandry advice"
@@ -451,17 +411,15 @@ label variable services_post_harvest     "Extension or association in community 
 
 label variable extension_compliance          "Community compliance with extension advice"
 
-* --- AUDIT 1.5 -------------------------------------------------------------
-* These three come from cs5q13* -- the ASSOCIATION services roster (gated by
-* cs5q12 -> farm_association). The cooperative is a SEPARATE question
+* These three come from cs5q13* -- the ASSOCIATION services roster, gated by
+* cs5q12 -> farm_association. The COOPERATIVE is a separate question
 * (cs5q14 -> community_cooperative) with no service roster at all, and is a
-* separate treatment (services2). The parent's labels named the wrong one of
-* two variables sitting side by side in the same file.
+* separate treatment (services2). The two sit side by side; the labels name the
+* association, which is what built them.
 label variable services_employment      "Farmer association in community provides employment opportunities"
 label variable services_records         "Farmer association in community provides record/book-keeping support"
 label variable services_labour          "Farmer association in community provides communal labour"
 
-*label variable cooperative_participation     "Community members participate in cooperative activities"
 label variable community_tractors            "Number of tractors in the community"
 
 
@@ -484,54 +442,32 @@ label define extension_lbl ///
 
 label values extension extension_lbl
 
-/*
-label define cooperative_lbl ///
-    0 "No cooperative" ///
-	1 "Community has cooperative only" ///
-    2 "Cooperative participation only" ///
-    3 "Community has cooperative and participation"
-
-label values cooperative cooperative_lbl
-
-label define ag_services_lbl ///
-    0 "None" ///
-	1 "Cooperative" ///
-	2 "Extension" ///
-    3 "Both"
-
-label values ag_services ag_services_lbl
-
-tab extension ag_services
-
-tab cooperative ag_services
-*/
-* --- AUDIT 1.3 -------------------------------------------------------------
-* GLSS5 has NO compliance question -- it first appears as GLSS6 Q11 / GLSS7 Q11
-* (verified against the questionnaires). The parent's unrestricted replace
-* assigned a substantive 0 = "None" to GLSS5, so the 0 category spanned all
-* waves while categories 1-3 were GLSS6/7 only. It also overwrote OBSERVED
-* GLSS6/7 responses wherever extension <= 2.
-* Two defects in the parent's single line, both fixed here:
-*   (a) WAVE. GLSS4 and GLSS5 never asked the question, so a substantive
-*       0 = "None" there is fabricated. Restricted to GLSS6/GLSS7.
-*   (b) OVERWRITE. The parent replaced unconditionally, destroying OBSERVED
-*       responses from GLSS6/7 communities that have an office and/or a
-*       stationed officer but no visit (extension <= 2). The run of
-*       2026-08-07 shows 27 such records with a real 1/2/3 answer. Restricted
-*       to filling MISSING values only.
-* NB cs5q11 itself is gone by this point -- it is dropped by the keep above,
-* after being used to build extension_compliance before the collapse. The wave
-* restriction is what carries the fix; missing() carries the non-overwrite.
+* --- compliance: wave scope and non-overwrite --------------------------------
+* GLSS4 and GLSS5 never asked this question -- it first appears as GLSS6 Q11 /
+* GLSS7 Q11 (verified against the questionnaires). So a substantive
+* 0 = "None" outside GLSS6/7 would be fabricated, and the 0 category would span
+* all waves while categories 1-3 were GLSS6/7 only.
+*
+* The fill is also restricted to MISSING values. GLSS6/7 communities with an
+* office and/or a stationed officer but no visit gave real 1/2/3 answers; an
+* unconditional replace would destroy them.
+*
+* NB cs5q11 itself is gone by this point -- dropped by the keep above, after
+* building extension_compliance before the collapse. The wave restriction
+* carries the scope; missing() carries the non-overwrite.
 replace extension_compliance = 0 if _visit == 0 ///
       & inlist(Surveyx,"GLSS6","GLSS7") & missing(extension_compliance)
 
 tab extension_compliance Surveyx
 
 
-
 *==============================================================================
-* RELEASE CONTRACT  (AUDIT 2: the parent block had none; the land_tenure block
-* immediately above it does. A silent drop is the failure this prevents.)
+* RELEASE CONTRACT
+*
+* Runs BEFORE the save, so a structurally broken build exits 111 and never
+* reaches saveold. A silent drop is the failure this prevents: the study
+* scripts would read the release, find the column gone, and fail somewhere
+* far away from the cause.
 *==============================================================================
 foreach v in Surveyx EaId extension ag_services services0 services1 services2 ///
              services3 farm_association community_cooperative {
@@ -557,12 +493,7 @@ di as txt _n "Release summary:"
 tab Surveyx
 tabstat services0 services1 services2 services3, by(Surveyx) stat(mean n) nototal
 
-*------------------------------------------------------------------------------
-* Writes the live release DIRECTLY. Safe because the release contract above
-* runs BEFORE the save: a structurally broken build exits 111 and never reaches
-* this line. harmonized_ag_services_data_PRE_AUDIT.dta is never overwritten.
-*------------------------------------------------------------------------------
 compress
 saveold "$LabGitHub\harmonized_ag_services_data", replace version(12)
 di as res _n "Wrote $LabGitHub\harmonized_ag_services_data.dta"
-log close
+capture log close ag_services

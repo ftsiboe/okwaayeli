@@ -57,11 +57,11 @@ mspecs_optimal <- study_environment$match_specification_optimal
 # ---- Estimation objects this script depends on ------------------------------
 # TREATMENT is tpoor0150, set in 002 as DATA$Treat and passed to 004 as a
 # technology_variable; tpoor0125 is the 1.25x companion. Both are built by
-# scripts/time_poverty_DATA.do -- WHICH DOES NOT BUILD WHAT ITS LABELS SAY. That
+# data-raw/scripts/data-prep/glss/12_time_poverty.do -- WHICH DOES NOT BUILD WHAT ITS LABELS SAY. That
 # script computes a committed-time cutoff, saves it, then restricts to s1q3==1
 # and recomputes the same variable names off PAID time, overwriting the first.
 # tpoor0150 in the release is the paid-time version. See the FLAG at the head of
-# time_poverty_DATA.do before this study reports what the treatment measures.
+# 12_time_poverty.do before this study reports what the treatment measures.
 .est <- function(name) {
   p <- file.path(study_environment$wd$estimations, name)
   if (!file.exists(p))
@@ -181,7 +181,7 @@ dataFrq <- dataFrq[dataFrq$restrict %in% "Restricted",]
 if (!identical(.lvl, c("0","1")))
   stop("100_exhibits.R: TCHLvel carries levels {", paste(.lvl, collapse = ", "),
        "}, not {0, 1}.\n  tpoor0150 was expected to reach 004 as an unlabelled 0/1",
-       " indicator (see scripts/time_poverty_DATA.do: gen TimPov15 = CommTime > Cutoff15).",
+       " indicator (see data-raw/scripts/data-prep/glss/12_time_poverty.do: gen TimPov15 = CommTime > Cutoff15).",
        "\n  Fix the labels below to match before trusting this figure.", call. = FALSE)
 dataFrq$Tech <- factor(as.character(dataFrq$TCHLvel),
                        levels = c("0","1"),

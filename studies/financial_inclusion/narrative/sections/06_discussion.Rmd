@@ -1,0 +1,15 @@
+<!-- SCAFFOLD. -->
+
+# Discussion
+
+<!-- TODO: interpret the efficiency-versus-technology-gap split. The policy
+     reading differs sharply depending on which channel dominates, and that is
+     the paper's payoff. -->
+
+<!-- TODO: the heterogeneity result -- whether credit's effect varies across the
+     inclusion distribution, and what that implies for targeting. -->
+
+<!-- TODO: limitations. At minimum: the two stacked complete-case restrictions
+     (see 02_data), the index's sensitivity to its unpinned indicator set, and
+     the cross-sectional identification. Be specific; a generic limitations
+     paragraph is worse than none. -->
