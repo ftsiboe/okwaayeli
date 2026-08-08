@@ -218,7 +218,7 @@ Throughout, the function uses \pkg{dplyr}, \pkg{tidyr}, \pkg{data.table},
 output of \code{\link{sf_workhorse}}.
 }
 \seealso{
-Other frontier analysis:
-\code{\link[=sf_workhorse]{sf_workhorse()}}
+Other frontier analysis: 
+\code{\link{sf_workhorse}()}
 }
 \concept{frontier analysis}

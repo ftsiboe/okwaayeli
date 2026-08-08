@@ -53,11 +53,11 @@ Requires that \code{data} contain \code{Survey} and \code{EaId}.
 \code{tidyr::pivot_wider()} in new code).
 }
 \seealso{
-Other matching:
-\code{\link[=covariate_balance]{covariate_balance()}},
-\code{\link[=draw_matched_samples]{draw_matched_samples()}},
-\code{\link[=treatment_effect_calculation]{treatment_effect_calculation()}},
-\code{\link[=treatment_effect_summary]{treatment_effect_summary()}},
-\code{\link[=write_match_formulas]{write_match_formulas()}}
+Other matching: 
+\code{\link{covariate_balance}()},
+\code{\link{draw_matched_samples}()},
+\code{\link{treatment_effect_calculation}()},
+\code{\link{treatment_effect_summary}()},
+\code{\link{write_match_formulas}()}
 }
 \concept{matching}

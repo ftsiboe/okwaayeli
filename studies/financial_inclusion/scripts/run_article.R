@@ -21,7 +21,7 @@ TREATMENT   <- FALSE  # 003  -> output/treatment_effects/, te_summary.rds       
 MSF         <- FALSE  # 004  -> output/estimations/                             HPC, hours
 DESCRIPTIVE <- FALSE  # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
 FIGURES     <- FALSE  # 101  -> output/figures/ (png + data)                    moderate
-WORKBOOK    <- FALSE # 102  -> output/tables/financial_inclusion_tables.xlsx   NOT YET WRITTEN
+WORKBOOK    <- TRUE  # 102  -> output/tables/financial_inclusion_tables.xlsx  minutes
 OBJECTS     <- TRUE   # 301  -> narrative/article_objects.json                  fast
 RENDER      <- TRUE   # 302  -> narrative/financial-inclusion.docx / .html      fast
 
@@ -128,6 +128,7 @@ if (OBJECTS || RENDER) {
 # narrative/, which is why it must resolve its own paths via .STUDY_ROOT rather
 # than trusting article_helpers.R's repo-root-relative constants.
 #
-# NOT YET WRITTEN FOR THIS STUDY. Until it exists, WORKBOOK = TRUE will fail and
-# the Rmd's ft_*() chunks have nothing to call. See scripts/README.md.
+# 102 sources it directly, because it runs at the repo root and needs the same
+# builders the Rmd calls -- same functions, same numbers, one definition.
+# See scripts/README.md.
 message("\nrun_article.R: complete.")
