@@ -67,19 +67,19 @@ fig[["genderAge"]] <- fig[["genderAge"]] + theme(axis.text.x = element_text(size
 ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_crop_region.png"), fig[["crop_region"]],dpi = 600,width = 8, height = 5)
 ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_genderAge.png"), fig[["genderAge"]],dpi = 600,width = 8, height = 5)
 
-data <- res[(res$disasg %in% "FinIdxCat"),]
-data$x <- factor(as.numeric(as.character(data$level)),levels = 1:5,
-                              labels = c("Very low\n(Bottom 20%)",
-                                         "Low\n(20–40%)",
-                                         "Medium\n(40–60%)",
-                                         "High\n(60–80%%)",
-                                         "Very high\n(Top 20%)"))
+# Heterogeneity is shown across formal account ownership, an observed binary,
+# rather than across quintiles of a constructed index. Banked is already in
+# disagscors_list in 004_MSF, so this needs no re-estimation.
+data <- res[(res$disasg %in% "Banked"),]
+data$x <- factor(as.numeric(as.character(data$level)),levels = c(0,1),
+                              labels = c("No formal account",
+                                         "Has formal account"))
 data$input <- factor(data$input, levels = c("TGR","TE","MTE"), labels = c("Technology gap ratio", "Technical efficiency", "Meta-technical-efficiency"))
 
 fig <- ggplot(data = data, aes(x = x, y = Estimate, group = input, shape = input, colour = input, fill = input)) +
   geom_errorbar(aes(ymax = Estimate + Estimate.sd, ymin = Estimate - Estimate.sd), width = 0.25) +
   geom_point(size = 2) +
-  labs(title = "", x = "\nQuintile category of the continuous financial inclusion index", 
+  labs(title = "", x = "\nFormal account ownership", 
        y = "Difference (no-credit less Credit)\n", caption = "") +
   scale_fill_manual(name = "", values = c("orange", "darkgreen", "blue")) +
   scale_color_manual(name = "", values = c("orange", "darkgreen", "blue")) +

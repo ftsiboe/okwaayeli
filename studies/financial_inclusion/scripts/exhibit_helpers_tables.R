@@ -202,7 +202,7 @@ exhibit_cache_clear <- function() {
     "Reasons for no bank account and contributing to a loan/savings scheme (single choice)",
     "Don't have enough money or income", "Don't have regular income",
     "Not necessary/interested", "Financial institutions are too far away",
-    "Process cumbersome", "Unaware of any", "Low or no income", "Mistrust",
+    "Process cumbersome", "Unaware of any", "Mistrust",
     "Spouse", "Too young",
     "Types of financial institution with accounts or contribution (multichoice)",
     "Commercial/community/rural bank", "Mobile money", "Susu scheme",
@@ -222,31 +222,43 @@ exhibit_cache_clear <- function() {
     "Bank", "Road", "Transportation",
     "Insurance enrolment (multichoice)",
     "Health", "Life", "Vehicle", "Pension", "Investment", "Death", "Education",
-    "Asset", "Business", "Travel",
-    "Financial inclusion score"),
-  header = c(0, 1, rep(0, 10), 1, rep(0, 6), 1, 0,0,0, 1, 0,0,0,
-             1, rep(0, 9), 1, 0,0, 1, 0,0,0, 1, rep(0, 10), 0),
+    "Asset", "Business", "Travel"),
+  header = c(0, 1, rep(0,  9), 1, rep(0, 6), 1, 0,0,0, 1, 0,0,0,
+             1, rep(0, 9), 1, 0,0, 1, 0,0,0, 1, rep(0, 10)),
   Variable = c(
     "Banked",
-    NA, "NonBanked_Why_1", "NonBanked_Why_2", "NonBanked_Why_7",
-    "NonBanked_Why_3", "NonBanked_Why_8", "NonBanked_Why_6", "NonBanked_Why_4",
-    "NonBanked_Why_5", "NonBanked_Why_9", "NonBanked_Why_10",
+    NA, "NonBanked_Why_1", "NonBanked_Why_2", "NonBanked_Why_5",
+    "NonBanked_Why_3", "NonBanked_Why_6", "NonBanked_Why_4",
+    "NonBanked_Why_7", "NonBanked_Why_8", "NonBanked_Why_9",
     NA, "InstTyp_Bank", "InstTyp_Momo", "InstTyp_Susu", "InstTyp_Save",
     "InstTyp_Coop", "InstTyp_Invt",
     NA, "AccTyp_Save", "AccTyp_Curnt", "AccTyp_Invst",
     NA, "PrdTyp_Cheq", "PrdTyp_ATM", "PrdTyp_Ebnk",
-    NA, "Bank_Info_1", "Bank_Info_7", "Bank_Info_8", "Bank_Info_2",
-    "Bank_Info_3", "Bank_Info_10", "Bank_Info_5", "Bank_Info_6", "Bank_Info_9",
+    NA, "Bank_Info_4", "Bank_Info_1", "Bank_Info_5", "Bank_Info_7",
+    "Bank_Info_6", "Bank_Info_2", "Bank_Info_3", "Bank_Info_10", "Bank_Info_9",
     NA, "FinWorker", "HHFinWorker",
     NA, "BankKm", "RoadKm", "TrnprtKm",
     NA, "Insured_Health", "Insured_Life", "Insured_Car", "Insured_Pension",
     "Insured_Invest", "Insured_Death", "Insured_Edu", "Insured_Asset",
-    "Insured_Buss", "Insured_Travel",
-    "FinIdxSi"),
+    "Insured_Buss", "Insured_Travel"),
   stringsAsFactors = FALSE)
-# Bank_Info_4 ("Family/Friend") has no row in v005 -- distinct from Bank_Info_1
-# ("Colleagues/Relatives"). Either the draft merged them or the level is empty.
-# Confirm before adding a row; do not fold them together silently.
+# The NonBanked_Why_* and Bank_Info_* codes are pinned by an explicit
+# `lab define' in 03_financial_inclusion.do. Read them from there, not from the
+# order they happen to appear in the data -- a bare `encode' numbers categories
+# alphabetically over whatever strings are present, so the indices move whenever
+# a category is added or renamed, silently rewiring every row below.
+#
+# Current pinning:
+#   NonBanked_Why  1 Low/No Income  2 Iregular Income  3 Distance  4 Ignorant
+#                  5 Uninterested   6 Cumbersome       7 Mistrust  8 Spouse
+#                  9 Too Young
+#   Bank_Info      1 Radio  2 Television  3 Newspaper/Magazine
+#                  4 Colleagues/Relatives  5 Rep. from the institution
+#                  6 Employer/Union  7 Community/Assoc. Leaders  8 Ict Medium
+#                  9 Self  10 Ngo  11 Family/Friend
+#
+# Two categories have no row here: Bank_Info_8 ("Ict Medium", GLSS7 only) and
+# Bank_Info_11 ("Family/Friend"). Add them if the table should be exhaustive.
 
 # ==============================================================================
 # Table 3 -- Loan application outcomes

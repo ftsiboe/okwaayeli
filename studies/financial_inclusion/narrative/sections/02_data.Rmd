@@ -21,25 +21,100 @@ see the boundary list in narrative/diagnostics/.
 -->
 
 <!--
-TWO THINGS TO RESOLVE HERE, both in the source.
+OPEN ITEMS IN THIS FILE.
 
-1. The sample size contradicts Table 1. This prose says the final sample is
-   19,862 farm operators; Table 1's header, built live from the descriptive
-   cache, reports 15,860 pooled (14,455 no credit + 1,405 some credit). One of
-   them is wrong. Understand the discrepancy before wiring this number -- going
-   live would silently replace it and the disagreement would vanish unexamined.
+1. RESOLVED 2026-08-09, and the resolution is recorded here rather than left to
+   inference. The v005 prose said the final sample was 19,862 farm operators;
+   Table 1's header reports 15,860 pooled (14,455 no credit + 1,405 some
+   credit). The comment that used to sit here warned against wiring the number
+   before understanding the disagreement. It was wired anyway, at some point
+   between 2026-08-08 and 2026-08-09, so the literal now survives only inside
+   this comment. Checked directly against the analysis file on 2026-08-09:
+   CropID == "Pooled" is 15,860 rows, split 14,455 / 1,405 on credit_hh. The
+   live value is the correct one; 19,862 was the v005 error. Nothing to do.
 
 2. One sentence still carries the old IEEE markers: "[21], [22], [23], [25],
    [26]". The style conversion missed it. Those index the PRE-conversion
    ordering, so recovering them means reading the earlier draft. Note the gap at
    [24]. Left exactly as found rather than guessed at.
+
+3. WEIGHTS. WeightHH is present in the analysis file and is not applied; the
+   descriptive pipeline records weights = "none". It is not innocuous here:
+   weighted, household credit use falls 9.77% -> 7.91% across the two rounds,
+   while unweighted it is flat (8.99% -> 8.63%). This section calls the survey
+   nationally representative without saying the estimates are unweighted.
+   Either apply the weights or say they are not applied.
+
+4. TREATMENT CONSTRUCTION, verified against source and data on 2026-08-09.
+   Kept here rather than in a separate document so that it travels with the
+   section it describes.
+
+   credit_hh is built in data-raw/data-prep/glss/03_financial_inclusion.do,
+   :1294-1312 (the gate) and :1339-1416 (the roster propagation). The round
+   filter at :1297 restricts to GLSS6 and GLSS7; 001_DATA:75 re-applies it.
+
+   THE GATE READS LIKE AN AMOUNT TEST AND IS NOT. :1312 blanks LoanAmt wherever
+   Applied*Accept == 0, so `gen credit_hh = LoanAmt > 0 & LoanAmt != .' is the
+   three-way conjunction. Re-implemented independently in Python on the raw
+   sec12a/g7sec12a files: the conjunction and the disjunction the v005 prose
+   described differ for ONE respondent in 112,051. Documentation defect, not an
+   estimation defect. The prose was corrected to the conjunction on 2026-08-09.
+
+   PREVALENCE, pooled (n=15,860; GLSS6 9,918, GLSS7 5,942), blanks read as 0:
+     credit_hh 8.859% (GLSS6 8.994, GLSS7 8.633; weighted 9.772 / 7.907)
+     credit_self 6.129  credit_spouse 2.989  credit_child 0.221
+     credit_close 3.203  credit_member 6.469
+     applied 9.666%  granted|applied 64.346 (G6) / 61.880 (G7)
+   Alternative gates at operator level: applied&granted, amount>0 and the study
+   rule are IDENTICAL (972 rows each); applied-regardless-of-outcome gives
+   1,533 (9.666%).
+
+   COMPONENT SHARES ARE PUBLISHED ~0.17pp TOO HIGH. The sub-indicators are
+   never 0 inside a credit household -- they are 1 or missing (the disability
+   study's blank-the-unidentified-subcategory convention). 301:92 divides with
+   na.rm = TRUE, so each is divided by a denominator shrunk by its own
+   missingness. Correct values are the prevalence figures above. The one-argument
+   patch and the full arithmetic sit in a comment block above .share() in
+   301_article_objects.R. NOT APPLIED: it changes three published numbers.
+
+   TWO HOUSEHOLD CREDIT VARIABLES. The analysis file carries both credit_hh and
+   `Credit' ("Household Access to credit"). They disagree on 525 of 15,860 rows
+   (3.31%); Credit is a strict superset, 12.169% against 8.859%. Of the 525, 393
+   applied, none were accepted, none has a positive amount. The study uses
+   credit_hh (002_MATCHING:63), so nothing published is wrong, but a future edit
+   keying on Credit would change every result silently. Credit is not built in
+   03_financial_inclusion.do; it arrives via harmonized_crop_farmer_data and its
+   construction has not been traced.
+
+   STACKED SAMPLE RESTRICTIONS, none of them stated in the prose:
+   (a) 03_financial_inclusion.do:1319-1320 drops rows missing YerEdu, AgeYr,
+       Banked or Insured, and drops AgeYr < 18;
+   (b) complete-case deletion inside the index PCA (000_INDEX);
+   (c) complete.cases() at 002_MATCHING:80.
+
+   FARMER-ONLY ARM. The prose promises Section 5 estimates under both
+   definitions. No treatment-definition arm was found in
+   output/tables/financial_inclusion_tables.xlsx, which carries Tables 1-6 and
+   S1-S4. Either build the arm or drop the promise before submission.
+
+   SUTVA is not discussed, and group-based microfinance rose from 23.8% to
+   39.2% of loans between the rounds, so the no-interference assumption is not
+   innocuous.
 -->
 
 # 2. Data sources and sample description
 
 We use farm-level microdata from the Ghana Living Standards Survey (GLSS) Waves 6 (2012/13) and 7 (2016/17). Both waves are repeated cross-sections drawn via a two-stage design (enumeration areas, then households). Following the GLSS documentation, [@Tsiboe2020] consolidate the raw files to a farmer-level dataset that has supported several analyses of agricultural productivity in Ghana [21], [22], [23], [25], [26]. Our study focuses on crop farmers, trimming yield outliers by keeping observations with yields (kg/ha) between the 2.5th and 97.5th percentiles within survey round × crop. As shown in Table 1, the final sample comprises `r fmt_num(objs$sample$n_pooled, 0)` farm operators cultivating at least one of the following: banana, beans, cashew, cassava, citrus, cocoa, coconut, cocoyam, cotton/kenaf, maize, millet, oil-palm, groundnut, plantain, potato, rice, sorghum, yam, sugarcane, tomato, pepper, okra, onion, eggplant, and other minor crops.
 
-The consolidated files do not include a pre-built financial-inclusion module, so we reconstruct credit and financial-service indicators directly from the original GLSS questionnaires. Using preserved enumeration-area, household, and member IDs, we extract items from Section 12 (credit, assets, savings, and use of financial services; see Exhibits S1–S2) and merge them to the farmer-level file. Tables 2–3 summarize the specific variables (with questionnaire item numbers). We define credit use at the individual level as having an approved loan application or a positive amount borrowed in the past 12 months. Our preferred treatment is a household-level indicator equal to 1 if the farmer, spouse/children, or another household member meets this criterion (capturing intra-household pooling). By this definition, `r fmt_pct(objs$credit$share_hh, 2)`% of sample households used credit; component shares are `r fmt_pct(objs$credit$share_self, 2)`% farmer, `r fmt_pct(objs$credit$share_spouse, 2)`% spouse, and `r fmt_pct(objs$credit$share_member, 2)`% other member—not mutually exclusive, hence their sum exceeds `r fmt_pct(objs$credit$share_hh, 2)`%. Unless stated otherwise, “credit user(s)” refers to this household-level measure; a farmer-only variant is used in robustness checks.
+The consolidated files do not include a pre-built financial-inclusion module, so we reconstruct credit and financial-service indicators directly from the original GLSS questionnaires. Using preserved enumeration-area, household, and member IDs, we extract items from Part B, Section 12a (credit, banking, use of financial services, and insurance) and merge them to the farmer-level file. Table S0 in the appendix documents, for each round, the source variables, the question wording, the response options, and their mapping to the analysis variables; Tables 2 and 3 report their incidence.
+
+We define credit use at the individual level as the conjunction of three conditions in the twelve months preceding the interview: the person applied for a loan from a financial institution (GLSS6 `s12aq7`, GLSS7 `s12aq7`); the application was granted (GLSS6 `s12aq8`, GLSS7 `s12aq8a`–`s12aq8c`); and a positive loan amount was recorded (`s12aq10` in both rounds). All three are required. The survey's skip pattern makes them close to equivalent in practice, because an amount is elicited only for a granted application, but the indicator is a conjunction, not a disjunction, and a household that applied and was refused is a non-user however the question is read. Our preferred treatment is a household-level indicator equal to 1 if (i) the farm operator, (ii) the operator's spouse, (iii) an operator's child, or (iv) any other household member satisfies that criterion. Aggregating to the household rather than the operator reflects the pooling of liquidity within farm households: a loan taken by a spouse relaxes the same constraint on the same farm, and the frontier the analysis characterises is the household's technology, not the operator's borrowing record.
+
+By this definition, `r fmt_pct(objs$credit$share_hh, 2)` of sample households used credit. Component shares are `r fmt_pct(objs$credit$share_self, 2)` operator, `r fmt_pct(objs$credit$share_spouse, 2)` spouse, and `r fmt_pct(objs$credit$share_member, 2)` other member. Criteria (i)–(iii) are not mutually exclusive, since a household may have both operator and spouse credit, so the components sum to more than the household rate; criterion (iv) is disjoint from the others by construction. Unless stated otherwise, “credit user(s)” refers to this household-level measure. The farmer-only variant, which counts only criterion (i), reclassifies `r fmt_pct(objs$credit$reclass_farmer_only, 2)` of the sample, in one direction only: it is a strict subset of the household measure, since no operator borrows in a household recorded as having no credit. Section 5 reports the estimates under both definitions.
+
+Two features of the instrument bound what the indicator can measure. First, the two rounds do not code loan outcomes the same way: GLSS6 records a binary granted/not-granted, while GLSS7 adds a third status, “processing,” which the indicator treats as non-use because no loan has been disbursed. This affects `r fmt_pct(objs$credit$processing_share_glss7, 2)` of GLSS7 applicants and has no GLSS6 counterpart, so cross-round comparisons of approval are comparing a two-way split against a three-way one. Second, GLSS7 elicits status, source, purpose and collateral for up to three loans but records a single loan amount, so where an applicant reports several loans the amount cannot be attributed to a particular one; GLSS6, with one loan slot, has no such ambiguity. Loan amounts reported in Table 3 are CPI-deflated to 2016/17 cedis. Table S0 sets out the per-round source variables, question wording and response options in full.
+
+The classification is insensitive to how the three conditions are combined. Requiring only that a positive amount be recorded, or only that an application be granted, reproduces the study indicator row for row, because the questionnaire elicits an amount only where an application succeeded. Relaxing the criterion to any loan application, whatever its outcome, raises the operator-level rate from `r fmt_pct(objs$credit$share_self, 2)` to `r fmt_pct(objs$credit$applied_share, 2)`, but that is a different construct: it counts households whose applications were refused or still pending alongside those that received funds.
 
 Table 1 reports descriptive statistics of the pooled and credit-disaggregated samples, focusing on farmer, crop, and household characteristics. Female farmers account for `r tbl_pct("table1", "Female farmer (dummy)", 1, 0)` of the pooled sample and the average farmer is `r tbl_num("table1", "Age (years)", 1)` years old with a little over `r tbl_num("table1", "Education (years)", 1)` years of schooling. Mean household size is about `r tbl_num("table1", "Size (AE)", 1)` adult equivalents (AE) and the dependency ratio `r tbl_num("table1", "Dependency (ratio)", 1)`. Consistent with national statistics on smallholder farmers [@MoFA2017], farms in our sample averages less than `r fmt_num(ceiling(tbl_num("table1", "Land (ha)", 1)), 0)` ha (≈`r tbl_num("table1", "Land (ha)", 1)` ha), of which `r tbl_pct("table1", "Land owned (dummy)", 1, 0)` is owned, and crop diversification score is `r tbl_num("table1", "Crop diversification (index)", 1)` on our index.
 

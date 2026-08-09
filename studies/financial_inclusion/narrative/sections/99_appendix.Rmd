@@ -7,16 +7,110 @@ are held back until the builders exist, for the same reason as in 98.
 
 On curated exhibits: the ONLY legitimate one is an exhibit that cannot be
 computed -- questionnaire wording, response options, per-wave mappings.
-land_tenure's Table S0 is the model. This study has no such table and arguably
-needs one MORE than land_tenure does, because its index is constructed rather
-than observed: there is no questionnaire page a reader can check it against.
-See narrative/diagnostics/financial_inclusion_index_documentation.md.
+land_tenure's Table S0 is the model. ADDED 2026-08-09 as Table S0 below, on
+that model. It is deliberately static: its content is the questionnaire, which
+does not change when the pipeline re-runs, and the alternative -- generating it
+from the .dta labels at build time -- would make the exhibit stage depend on
+raw GLSS paths it does not otherwise need.
+
+EVERY CELL IN TABLE S0 WAS READ OFF THE RAW FILES, not transcribed from a
+draft. Variable labels and value labels were extracted directly from
+GLSS6/Data/PARTB/sec12a.dta and GLSS7/Data/PARTB/g7sec12a.dta on 2026-08-09,
+then re-verified row by row: every s12aq* name cited exists in the wave the
+table claims it does. Wording is lightly normalised to sentence case for print
+(the instruments differ: GLSS6 is lowercase throughout and carries trailing " -"
+artifacts, GLSS7 is Title case); the item numbers and response codes are
+verbatim. If a row is edited, re-check it against the .dta labels.
+
+The three items in the last block do NOT come from Section 12a: BankKm, RoadKm
+and TrnprtKm are from the community questionnaire via the collated store, which
+sits outside this repo. Unlike the rest of the table they were documented from
+code only, not verified against source.
+
+Construction notes that belong with the code rather than the manuscript are in
+the comment block at the top of narrative/sections/02_data.Rmd.
 
 Everything else builds from the pipeline. Copying numbers out of the v005 draft
 or financial_inclusion_results.xlsx into a CSV is the next drift.
 -->
 
 # Appendix
+
+#### Table S0. Construction of the credit and financial-service variables from the GLSS Section 12a questionnaires
+
+| Analysis variable | GLSS6 item | GLSS7 item | Question wording | Response options |
+|---|---|---|---|---|
+| **Credit access** | | | | |
+| `Applied` | s12aq7 | s12aq7 | Has [NAME] applied for a loan from a financial institution in the last 12 months? | 1 Yes, 2 No |
+| `Accept`, `Refused`, `Proces` | s12aq8 | s12aq8a, s12aq8b, s12aq8c | GLSS6: Was the loan application granted? GLSS7: What is/was the status of the loan application? | GLSS6: 1 Yes, 2 No. GLSS7: 1 Granted, 2 Processing, 3 Not granted |
+| `LoanAmt` | s12aq10 | s12aq10 | Total amount of original loan | Continuous, cedis; deflated to 2016/17 prices |
+| `RePaid` | s12aq13 | s12aq13 | Amount of loan repaid (including charges etc.) | Continuous, cedis; deflated to 2016/17 prices |
+| `credit_self` | derived | derived | Applied, granted, and a positive amount recorded | 0, 1 |
+| **`credit_hh`** (treatment) | derived | derived | `credit_self` for the operator, spouse, a child, or any other household member | 0, 1 |
+| `credit_spouse` | derived | derived | `credit_self` for the spouse, via the roster link | 0, 1 |
+| `credit_child` | derived | derived | `credit_self` for a child, via the maternal and paternal roster links | 0, 1 |
+| `credit_close` | derived | derived | `credit_spouse` or `credit_child` | 0, 1 |
+| `credit_member` | derived | derived | Household has credit and neither the operator, spouse, nor a child does | 0, 1 |
+| **Loan characteristics** | | | | |
+| Source of loan | s12aq9 | s12aq9a to s12aq9c | Source of loan | 1 State bank, 2 Private bank, 3 Cooperative, 4 Government agency, 5 NGO, 6 Business firm, 7 Employer, 8 Money lender, 9 Savings and loan scheme, 10 Susu scheme, 11 Trader, 12 Farmer |
+| Purpose of loan | s12aq11 | s12aq11a to s12aq11c | Purpose of loan | 1 Day-to-day expenses, 2 Emergency, 3 Pay off debts, 4 Pay off another's debts, 5 Social reasons, 6 Education, 7 Rent, 8 Purchase or build a house, 9 Improve house, 10 Household assets, 11 Vehicle, 12 Land |
+| Collateral | s12aq12 | s12aq12a to s12aq12c | Kind of guarantee required by lender | 1 None, 2 Land, 3 Cattle, 4 House or building, 5 Employer, 6 Relatives, 7 Non-relatives, 8 Land title, 9 Salary channelled through lender, 10 Vehicle documents, 11 Cash or bank account, 12 Third-party security |
+| Reason for refusal | s12aq14 | s12aq14 | Why was the loan refused? | 1 Could not provide collateral, 2 Salary or income too low, 3 Could not get a guarantor, 4 Amount applied for too high, 5 Previous debt problems, 6 Inappropriate purpose, 7 Other |
+| Reason for not applying | s12aq15 | s12aq15 | What was the main reason for not trying to obtain a loan? | 1 No need, 2 Interest rate too high, 3 Demand for collateral, 4 Already has too much debt, 5 Cannot obtain the amount needed, 6 Other |
+| **Account ownership** | | | | |
+| `Banked` | s12aq1 | s12aq1 | Does [NAME] have a bank account? | 1 Yes, 2 No |
+| Reason for no account | s12aq2 | s12aq2 | What is the main reason for not having a bank account? | 1 Not necessary or interested, 2 Not aware of one, 3 Process cumbersome, 4 Institution too far away, 5 Not enough money or income, 6 No regular income, 7 Other |
+| **Type of institution** | | | | |
+| `InstTyp_Bank` | s12aq3a, s12aq3c | s12aq3a, s12aq3c | Is the account in a commercial bank? In a community or rural bank? | 1 Yes, 2 No |
+| `InstTyp_Invt` | s12aq3b | s12aq3b | Investment or mortgage institution | 1 Yes, 2 No |
+| `InstTyp_Save` | s12aq3d | s12aq3d | Savings and loans scheme | 1 Yes, 2 No |
+| `InstTyp_Coop` | s12aq3e | s12aq3e | Cooperative or credit union | 1 Yes, 2 No |
+| `InstTyp_Susu` | s12aq3f | s12aq3f | Susu scheme | 1 Yes, 2 No |
+| `InstTyp_Momo` | not asked | s12aq3g | Mobile money | 1 Yes, 2 No |
+| **Type of account** | | | | |
+| `AccTyp_Curnt` | s12aq4a, s12aq4e | s12aq4a, s12aq4f | Current or cheque account; e-zwich account | 1 Yes, 2 No |
+| `AccTyp_Save` | s12aq4c, s12aq4d | s12aq4c, s12aq4d, s12aq4e | Savings account; susu account (GLSS7 only); fixed deposit account | 1 Yes, 2 No |
+| `AccTyp_Invst` | s12aq4b | s12aq4b | Investment account | 1 Yes, 2 No |
+| **Transaction products** | | | | |
+| `PrdTyp_Cheq` | s12aq5a | s12aq5a | Bank transaction product used: cheque book | 1 Yes, 2 No |
+| `PrdTyp_ATM` | s12aq5b, s12aq5c | s12aq5b, s12aq5c | ATM card; e-zwich | 1 Yes, 2 No |
+| `PrdTyp_Ebnk` | s12aq5d | s12aq5d | Electronic banking | 1 Yes, 2 No |
+| **Source of knowledge** | | | | |
+| `Bank_Info` | s12aq6 | s12aq6 | How did [NAME] come to know about the financial institution? | 1 Radio, 2 Television, 3 Newspaper or magazine, 4 Colleagues or relatives, 5 Representative of the institution, 6 Employer or union, 7 Community or association leaders; GLSS6: 8 Other; GLSS7: 8 ICT medium, 9 Other |
+| **Insurance** | | | | |
+| `Insured` | s12aq16 | s12aq16 | Do you have an insurance policy? | 1 Yes, 2 No |
+| `Insured_Car` | s12aq18a | s12aq18a | Type of short-term insurance: vehicle or motor | 1 Yes, 2 No |
+| `Insured_Health` | s12aq18b | s12aq18b | Type of short-term insurance: medical | 1 Yes, 2 No |
+| `Insured_Death` | s12aq18c | s12aq18c | Type of short-term insurance: funeral | 1 Yes, 2 No |
+| `Insured_Asset` | s12aq18d | s12aq18d | Type of short-term insurance: property | 1 Yes, 2 No |
+| `Insured_Buss` | s12aq18e | s12aq18e | Type of short-term insurance: commercial or business | 1 Yes, 2 No |
+| `Insured_Travel` | s12aq18f | s12aq18f | Type of short-term insurance: travel | 1 Yes, 2 No |
+| `Insured_Life` | s12aq19a, s12aq19b | s12aq19a, s12aq19b | Long-term cover: life insurance, premium paid by holder or by employer | 1 Yes, 2 No |
+| `Insured_Pension` | s12aq19c | s12aq19c | Long-term cover: retirement annuity or plan | 1 Yes, 2 No |
+| `Insured_Edu` | s12aq19d | s12aq19d | Long-term cover: education | 1 Yes, 2 No |
+| `Insured_Invest` | s12aq19e | s12aq19e | Long-term cover: other endowment or investment saving plan | 1 Yes, 2 No |
+| **Community amenities** | | | | |
+| `BankKm`, `RoadKm`, `TrnprtKm` | community module | community module | Distance to the nearest bank, motorable road, and public transport | Continuous, km; minimum within the enumeration area |
+
+*Notes*: Items are drawn from Part B, Section 12a of each questionnaire
+(`sec12a` in GLSS6, `g7sec12a` in GLSS7); GLSS7 suffixes multi-response items
+with `_a`, `_b` and so on, which the harmonization strips. Wording is
+reproduced from the survey instruments. Loan detail is elicited only from
+respondents who applied and were granted a loan, so the credit indicator is the
+conjunction of application, approval and a positive amount rather than a test on
+the amount alone. Mobile money and susu accounts do not appear in the GLSS6
+instrument, so their zero entries in Table 2 denote items not asked rather than
+an absence of holdings; the GLSS6 columns for the remaining institution and
+account items are re-indexed onto the GLSS7 positions before the rounds are
+pooled. GLSS7 records the status, source, purpose and collateral of up to three
+loans but a single loan amount, and adds a "processing" outcome that GLSS6 does
+not offer. The source-of-knowledge item is reported in Table 2 but is not
+discussed in the text; its derived category indicators do not currently
+reproduce the response order shown above, and the block is withheld from the
+narrative pending correction. Distances are taken from the community
+questionnaire rather than from Section 12a.
+
+\newpage
 
 #### Table S1. Summary statistics of crop producers in Ghana (2012-2017)
 

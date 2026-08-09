@@ -3,9 +3,9 @@ PORTED FROM v005 on 2026-08-08. Verbatim prose; nothing rewritten.
 
 Citations converted to @keys against narrative/references.bib.
 
-EVERY MEASURED QUANTITY IN THIS FILE IS LIVE. Nothing that came out of the
-analysis is typed as a literal -- each one is an inline call resolved against
-the current pipeline output at knit time:
+MEASURED QUANTITIES IN THIS FILE ARE LIVE, with the exceptions listed below.
+Each live figure is an inline call resolved against the current pipeline output
+at knit time:
 
     `r fmt_pct(objs$treatment$share_treated)`
     `r fmt_num(objs$sample$n_pooled, 0)`
@@ -16,30 +16,117 @@ printing a stale value, so the prose cannot drift from the tables.
 
 What is deliberately literal: years and wave labels, exhibit and section
 numbers, equation numbers, percentile trims, the 5% significance convention,
-and figures cited from other papers. Those are not results of this study --
-see the boundary list in narrative/diagnostics/.
+and figures cited from other papers -- the Global Findex account-ownership
+series in 3.1 is one of these. Those are not results of this study.
+
+HISTORY. Until 2026-08-09 this file carried the banner used by 02_data.Rmd,
+which asserts that NOTHING in the file is a literal. That was false here: the
+section narrated roughly a dozen study-derived quantities in words -- "roughly
+one-quarter", "over one-third", "halved", "two-thirds", "roughly five
+kilometers". A guarantee that holds in one file and not in another, stated
+identically in both, is worse than no guarantee. Those quantities were wired to
+the exhibit pipeline on 2026-08-09 and the banner was corrected to match.
+
+STILL NOT LIVE, and why -- one item, in 3.3. See the flag at that paragraph.
+-->
+
+<!--
+REQUIRES `run_article.R` with OBJECTS = TRUE BEFORE THE NEXT KNIT.
+3.4 now cites objs$credit$approval_glss6 / approval_glss7, added to
+301_article_objects.R on 2026-08-09. Until 301 is re-run,
+narrative/article_objects.json does not carry those keys and the knit will stop
+with a named error -- by design, per the no-fallbacks doctrine.
 -->
 
 # 3. The state of financial inclusion and credit access
 
-To contextualize the credit access landscape in Ghana, we examine indicators (Tables 2 and 3) of account ownership, participation in financial schemes, self-reported barriers, institutional channels, products, outreach, infrastructure, insurance enrollment, and loan application outcomes. A composite financial inclusion score (Table 2, last row) summarizes these dimensions, while Table 3 presents farmers’ loan application outcomes across the two survey waves.
+To contextualize the credit access landscape in Ghana, we examine indicators (Tables 2 and 3) of account ownership, participation in financial schemes, self-reported barriers, institutional channels, products, outreach, infrastructure, insurance enrollment, and loan application outcomes. Table 3 presents farmers’ loan application outcomes across the two survey waves.
 
 
 ## 3.1 Account Ownership and Barriers to Participation
 
-Account ownership remains a core marker of financial inclusion. Globally, the share of adults with an account rose from 51 percent in 2011 to 69 percent in 2017.  Among Ghanaian crop farmers, the increase was slower but still notable: formal account ownership grew from roughly one-quarter in 2012/13 to over one-third in 2016/17. This rise is mirrored in the composite financial inclusion index, though at its peak only `r tbl_pct("table2", "Has bank account/contributing to a scheme (binary)", 2, 1)` of households engaged in banks or savings schemes, leaving a large share unbanked. The main self-reported barrier is lack of funds, with nearly `r tbl_pct("table2", "Don't have enough money or income", 2, 1)` of non-account holders citing “not enough money,” a figure that edged upward between waves and aligns with global evidence on income volatility as the chief exclusion driver [@Klapper2025]. A smaller but growing share reported “no need for an account,” suggesting reliance on informal channels or mistrust of formal services. Distance to institutions declined in importance, reflecting infrastructure improvements, while paperwork burdens and awareness gaps persisted at low but steady levels.
+Account ownership remains a core marker of financial inclusion. Globally, the share of adults with an account rose from 51 percent in 2011 to 69 percent in 2017.  Among Ghanaian crop farmers, the increase was slower but still notable: formal account ownership grew from `r tbl_pct("table2", "Has bank account/contributing to a scheme (binary)", 1, 1)` in 2012/13 to `r tbl_pct("table2", "Has bank account/contributing to a scheme (binary)", 2, 1)` in 2016/17. Even at that level, most farm households remained outside the formal system. The main self-reported barrier is lack of funds, with `r tbl_pct("table2", "Don't have enough money or income", 2, 1)` of non-account holders citing “not enough money,” up from `r tbl_pct("table2", "Don't have enough money or income", 1, 1)` in the earlier round and aligned with global evidence on income volatility as the chief exclusion driver [@Klapper2025]. Mistrust of formal institutions is the next most common reason, cited by `r tbl_pct("table2", "Mistrust", 2, 1)`, also up between waves, suggesting continued reliance on informal channels. Distance to institutions declined in importance, reflecting infrastructure improvements, while paperwork burdens and awareness gaps persisted at low but steady levels.
 
 
 ## 3.2 Channels, Products, and Digital Services
 
-Institutional channels have shifted markedly. Traditional banks—commercial, community, and rural—still serve the majority but fell from nearly `r tbl_pct("table2", "Commercial/community/rural bank", 1, 1)` to about half of account holders between the two survey waves. Mobile money platforms emerged rapidly, reaching over one-third of users by 2016/17 [@Aker2010], while informal susu schemes and savings groups remained stable around `r tbl_pct("table2", "Susu scheme", 2, 1)`. Product uptake is dominated by savings accounts; current, investment, and other more sophisticated products remain rare. Use of transaction services is limited: ATM cards and e-banking penetration remain below `r tbl_pct("table2", "ATM card", 2, 1)`, while cheque usage nearly doubled but from a very low base. These gaps reflect constraints in rural electricity and internet infrastructure but also highlight the untapped potential of digital services for streamlining farm transactions and record-keeping.
+Institutional channels have shifted markedly. Traditional banks (commercial, community, and rural) still serve the largest share but fell from `r tbl_pct("table2", "Commercial/community/rural bank", 1, 1)` to `r tbl_pct("table2", "Commercial/community/rural bank", 2, 1)` of account holders between the two survey waves. Mobile money platforms emerged rapidly, from no recorded presence in 2012/13 to `r tbl_pct("table2", "Mobile money", 2, 1)` of account holders by 2016/17 [@Aker2010], while informal susu schemes and savings groups remained stable around `r tbl_pct("table2", "Susu scheme", 2, 1)`. Product uptake is dominated by savings accounts; current, investment, and other more sophisticated products remain rare. Use of transaction services is limited: ATM card penetration remains at `r tbl_pct("table2", "ATM card", 2, 1)` and e-banking at `r tbl_pct("table2", "e-banking", 2, 1)`, while cheque-book use rose from `r tbl_pct("table2", "Cheque book", 1, 1)` to `r tbl_pct("table2", "Cheque book", 2, 1)`, close to a doubling, but from a very low base. These gaps reflect constraints in rural electricity and internet infrastructure but also highlight the untapped potential of digital services for streamlining farm transactions and record-keeping.
 
 
 ## 3.3 Outreach, Information, and Insurance
 
-Sources of financial information have also shifted. Personal networks have grown in importance, with colleagues and relatives informing over half of account holders in 2016/17, up from `r tbl_pct("table2", "Colleagues/relatives", 1, 1)`, while radio’s role halved. This suggests that peer effects and trusted networks are more effective than mass media in promoting financial products among rural farmers. Infrastructure improvements reinforced these changes: average distance to the nearest bank fell by roughly five kilometers, and proximity to roads and transport also improved. On the risk-management side, health insurance enrollment rose appreciably due to public campaigns, but uptake of life, pension, and agricultural insurance remained negligible. Yet studies show strong farmers’ willingness to adopt index-based agricultural insurance under the right conditions [@Ali2020; @OppongMensah2023], pointing to a gap between latent demand and product availability.
+<!--
+=============================================================================
+BLOCKING DEFECT, DIAGNOSED 2026-08-09. DO NOT NARRATE Bank_Info_* UNTIL FIXED.
+
+Table 2's whole "Source of financial institution knowledge" block is
+index-shifted. The row printed as "Radio" carries the mass belonging to
+Colleagues/Relatives, and "Colleagues/relatives" prints 0.000 in both rounds.
+
+Evidence -- share of non-missing s12aq6 in the RAW files against Table 2:
+
+  code  category                     GLSS6     GLSS7      Table 2 row / value
+   1    Radio                       13.449%   10.135%     "Radio"  39.0% / 51.9%
+   4    Colleagues/Relatives        41.973%   49.794%     "Colleagues/relatives"
+                                                            0.0% / 0.0%
+
+Colleagues/Relatives is the modal response in both rounds; it cannot be 0.000.
+The value printed against "Radio" is approximately Colleagues/Relatives' share.
+
+ROOT CAUSE. 03_financial_inclusion.do:1234 builds the dummies with
+
+    tab Bank_Info, gen(Bank_Info_)
+
+`tab ..., gen()` numbers dummies over the OBSERVED LEVELS IN SEQUENCE, not by
+the underlying code. exhibit_helpers_tables.R:237-238 keys .T2_MAP on
+Bank_Info_k == pinned code k, which holds only if codes 1..11 are all present
+with no gaps. They are not:
+
+  - the `lab define' at :1128-1131 is Title case ("Radio",
+    "Colleagues/Relatives"); `encode ..., label(Bank_Info)' matches label text
+    EXACTLY; and Bank_Info is decoded PER ROUND (:956, :972), which yields
+    lowercase for GLSS6 ("radio") and Title case for GLSS7 ("Radio"). GLSS6's
+    strings therefore match nothing in the pinned set and are appended as new
+    codes at the end.
+  - the free-text recodes assign "SELF", "NGO" and "Family/FRIEND", which do
+    not match their pinned labels "Self", "Ngo", "Family/Friend" either.
+
+The do-file header already warns that this pair is order-sensitive; the warning
+is correct and the code does not honour it. NonBanked_Why_* is built the same
+way at :1233 and carries the same exposure -- it is probably intact only
+because its strlower() recodes at :1012-1033 normalise both rounds onto the
+canonical strings first. Section 3.1 cites two NonBanked_Why rows; they look
+plausible against the raw data but rest on that same mechanism.
+
+FIX (one loop, replaces the tab; guarantees index == pinned code whatever is
+observed). Not applied here -- it lives in data-raw, changes published Table 2
+rows, and needs a Stata re-run:
+
+    forvalues k = 1/11 { gen Bank_Info_`k' = Bank_Info == `k' }
+    forvalues k = 1/9  { gen NonBanked_Why_`k' = NonBanked_Why == `k' }
+
+The v005 sentence this replaces read:
+
+  "Personal networks have grown in importance, with colleagues and relatives
+   informing over half of account holders in 2016/17, up from [inline tbl_pct
+   on table2 / Colleagues/relatives / col 1], while radio's role halved. This
+   suggests that peer effects and trusted networks are more effective than
+   mass media..."
+
+Ironically the RAW data supports that claim -- Colleagues/Relatives is modal
+and rising, 42.0% -> 49.8% -- but Table 2 as built cannot be cited for it. The
+paragraph below therefore carries NO information-source figures at all. It is a
+holding position. Once the loop above lands and Table 2 rebuilds, restore the
+peer-effects sentence and wire it to "Colleagues/relatives".
+
+(The inline call in the quoted sentence is written out in words rather than
+left as live code: knitr evaluates inline R inside HTML comments too.)
+=============================================================================
+-->
+
+Sources of financial information are reported in Table 2 but are not discussed here; the underlying response-category mapping is under review and the block is not cited pending that review. Infrastructure improvements are clearer. Average distance to the nearest bank fell by `r fmt_num(tbl_num("table2", "Bank", 1) - tbl_num("table2", "Bank", 2), 1)` km, from `r tbl_num("table2", "Bank", 1)` km to `r tbl_num("table2", "Bank", 2)` km; distance to a motorable road fell from `r tbl_num("table2", "Road", 1)` km to `r tbl_num("table2", "Road", 2)` km, and to public transport from `r tbl_num("table2", "Transportation", 1)` km to `r tbl_num("table2", "Transportation", 2)` km. On the risk-management side, health insurance enrollment rose appreciably due to public campaigns, but uptake of life, pension, and agricultural insurance remained negligible. Yet studies show strong farmers’ willingness to adopt index-based agricultural insurance under the right conditions [@Ali2020; @OppongMensah2023], pointing to a gap between latent demand and product availability.
 
 
 ## 3.4 Loan Applications and Credit Use
 
-Credit application rates remain low: only about `r tbl_pct("table3", "Loan applied", 2, 1)` of farmers applied for a loan in either wave, with application rates essentially flat. Approval rates, however, improved, with two-thirds of applicants obtaining credit and rejection rates halving—possibly reflecting either more accommodating lenders or better borrower–lender matching. Still, average loan sizes declined, and sources shifted: group-based microfinance rose from `r tbl_pct("table3", "Group based micro-finance or lending", 1, 1)` to nearly `r tbl_pct("table3", "Group based micro-finance or lending", 2, 1)` of loans, while reliance on friends and formal banks declined [@AppiahTwumasi2019; @Karlan2017]. Notably, the share of loans used explicitly for agricultural purposes dropped sharply, suggesting growing nonfarm diversification, lender restrictions, or diversion of agricultural loans [@Hussain2016]. Collateral requirements eased as unsecured lending grew from two-thirds to more than three-quarters of cases, yet lack of collateral remained the leading reason for rejection. More than half of non-applicants cited “no need for a loan,” even as physical and institutional constraints diminished. This points to a persistent demand-side bottleneck: expanding credit supply alone may not be sufficient unless products are better aligned with farmers’ production needs and perceptions of value [@DeJanvry2020].
+Credit application rates remain low: `r tbl_pct("table3", "Loan applied", 1, 1)` of farmers applied for a loan in 2012/13 and `r tbl_pct("table3", "Loan applied", 2, 1)` in 2016/17, essentially flat. Approval, conditional on applying, was close to two-thirds in both rounds, at `r fmt_pct(objs$credit$approval_glss6, 1)` and `r fmt_pct(objs$credit$approval_glss7, 1)`, while the share of all farmers whose applications were rejected fell from `r tbl_pct("table3", "Rejected", 1, 1)` to `r tbl_pct("table3", "Rejected", 2, 1)`, the decline in rejections reflecting fewer refusals rather than a higher approval rate among applicants. Sources shifted: group-based microfinance rose from `r tbl_pct("table3", "Group based micro-finance or lending", 1, 1)` to `r tbl_pct("table3", "Group based micro-finance or lending", 2, 1)` of loans, while reliance on friends and relatives fell from `r tbl_pct("table3", "Friends/relatives", 1, 1)` to `r tbl_pct("table3", "Friends/relatives", 2, 1)` and on formal lenders from `r tbl_pct("table3", "Formal lender (bank/financial institution)", 1, 1)` to `r tbl_pct("table3", "Formal lender (bank/financial institution)", 2, 1)` [@AppiahTwumasi2019; @Karlan2017]. Notably, the share of loans used explicitly for agricultural purposes dropped sharply, from `r tbl_pct("table3", "Agricultural", 1, 1)` to `r tbl_pct("table3", "Agricultural", 2, 1)`, suggesting growing nonfarm diversification, lender restrictions, or diversion of agricultural loans [@Hussain2016]. Collateral requirements eased as unsecured lending grew from `r tbl_pct("table3", "None", 1, 1)` to `r tbl_pct("table3", "None", 2, 1)` of cases, yet lack of collateral remained the leading reason for rejection. Non-applicants citing “no need for a loan” rose from `r tbl_pct("table3", "No need", 1, 1)` to `r tbl_pct("table3", "No need", 2, 1)`, even as physical and institutional constraints diminished. This points to a persistent demand-side bottleneck: expanding credit supply alone may not be sufficient unless products are better aligned with farmers’ production needs and perceptions of value [@DeJanvry2020].

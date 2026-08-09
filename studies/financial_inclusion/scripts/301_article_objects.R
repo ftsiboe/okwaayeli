@@ -67,8 +67,8 @@ objs$sample <- list(
 
 # ---- Treatment prevalence ----------------------------------------------------
 # credit_hh is the treatment (002:63) AND the technology variable (004:86).
-# The index this study is named for enters as a covariate (FinIdxSi) and a
-# heterogeneity dimension (FinIdxCat) -- see
+# The composite index is no longer reported or plotted; heterogeneity is shown
+# across formal account ownership (Banked). See
 # narrative/diagnostics/financial_inclusion_index_documentation.md.
 pooled <- est[as.character(est$CropID) %in% "Pooled", , drop = FALSE]
 if (nrow(pooled) && "Treat" %in% names(pooled)) {
@@ -89,7 +89,60 @@ if (nrow(pooled) && "Treat" %in% names(pooled)) {
 # mutually exclusive (a household can have both farmer and spouse credit), so
 # the components sum to more than the household rate. The prose says so; do not
 # "fix" it.
+# ============================================================================
+# READ THIS BEFORE CHANGING .share(). Flagged 2026-08-09.
+#
+# `na.rm = TRUE` here is NOT harmless, and the reason is not obvious from this
+# file. In the harmonized release the sub-indicators are never 0 inside a credit
+# household -- they are 1 or MISSING. That is the disability study's convention,
+# carried over: blank the sub-category where the composite is 1 but the specific
+# category is not identified, so a zero is never read as "explicitly not this
+# category". credit_hh itself has no missing.
+#
+# Measured on the pooled sample (n = 15,860; 1,405 treated):
+#
+#   variable        ones   missing among credit_hh == 1
+#   credit_self      972   433  (30.8%)
+#   credit_spouse    474   931  (66.3%)
+#   credit_child      35  1370  (97.5%)
+#   credit_close     508   897  (63.8%)
+#   credit_member   1026   379  (27.0%)
+#
+# na.rm = TRUE drops exactly those rows, so each component is divided by a
+# denominator shrunk by its own missingness:
+#
+#   component       published   correct (missing = 0)   error
+#   share_self       6.3006%     6.1286%                +0.172 pp
+#   share_spouse     3.1750%     2.9887%                +0.186 pp
+#   share_child      0.2415%     0.2207%                +0.021 pp
+#   share_close      3.3950%     3.2030%                +0.192 pp
+#   share_member     6.6275%     6.4691%                +0.158 pp
+#
+# share_hh is unaffected (no missing), so the headline treatment rate is right;
+# the three component figures quoted in 02_data.Rmd are each ~0.17 pp too high.
+#
+# THE FIX IS ONE ARGUMENT, and it is deliberately NOT APPLIED here because it
+# changes three published numbers and that is a decision, not a cleanup:
+#
+#   .share <- function(df, v) {
+#     if (!v %in% names(df)) return(NA_real_)
+#     x <- suppressWarnings(as.numeric(df[[v]]))
+#     mean(!is.na(x) & x > 0)        # blanked sub-indicator == not that category
+#   }
+#
+# See narrative/diagnostics/credit_variable_documentation.md section 4.2.
+# ============================================================================
 .share <- function(df, v) if (v %in% names(df)) mean(df[[v]] > 0, na.rm = TRUE) else NA_real_
+
+# Blank-as-zero reader, used by the derived quantities below. Kept separate from
+# .share() so that fixing one does not silently change the other.
+.num0 <- function(df, v) {
+  if (!v %in% names(df)) return(NULL)
+  x <- suppressWarnings(as.numeric(df[[v]]))
+  x[is.na(x)] <- 0
+  x
+}
+
 objs$credit <- list(
   share_hh     = .share(pooled, "credit_hh"),
   share_self   = .share(pooled, "credit_self"),
@@ -98,11 +151,62 @@ objs$credit <- list(
   share_close  = .share(pooled, "credit_close"),
   share_member = .share(pooled, "credit_member")
 )
-missing_comp <- names(objs$credit)[vapply(objs$credit, is.na, logical(1))]
+
+# ---- Derived treatment-definition quantities ---------------------------------
+# Added 2026-08-09 for the Data and Context sections. Each is computed with
+# blanks read as zeros (see .num0 above), which is the intended convention.
+
+# Reclassification rate, farmer-only vs household definition. 02_data.Rmd cites
+# this to make the robustness promise specific rather than gestural. The
+# household measure is a strict superset -- no operator borrows in a household
+# recorded as having no credit -- so this is a one-directional share.
+.hh   <- .num0(pooled, "credit_hh")
+.self <- .num0(pooled, "credit_self")
+objs$credit$reclass_farmer_only <-
+  if (!is.null(.hh) && !is.null(.self)) mean(.hh != .self) else NA_real_
+
+# Approval conditional on applying, by round. NOT the same as the Table 3
+# "Accepted" row, which is a share of ALL farmers, not of applicants. 03's
+# claim that approval "improved" was checked against this and did not survive:
+# it is flat-to-falling, while REJECTIONS fall. The prose now says so.
+.approval <- function(df, wave) {
+  if (!all(c("Applied", "Accept", "Surveyx") %in% names(df))) return(NA_real_)
+  a <- df[as.character(df$Surveyx) %in% wave & .num0(df, "Applied") %in% 1, , drop = FALSE]
+  if (!nrow(a)) return(NA_real_)
+  mean(suppressWarnings(as.numeric(a$Accept)) %in% 1)
+}
+objs$credit$approval_glss6 <- .approval(pooled, "GLSS6")
+objs$credit$approval_glss7 <- .approval(pooled, "GLSS7")
+
+# Share applying for a loan regardless of outcome. The Data section contrasts
+# this with share_self to show that relaxing the gate to "any application"
+# changes the construct rather than loosening it: the three tighter rules
+# (applied & granted, amount > 0, and the study rule) select identical rows.
+objs$credit$applied_share <- local({
+  a <- .num0(pooled, "Applied")
+  if (is.null(a)) NA_real_ else mean(a %in% 1)
+})
+
+# Share of GLSS7 applicants with an application still in "processing" -- a
+# status code GLSS6's instrument does not have (s12aq8 is binary there;
+# s12aq8a-c is three-way in GLSS7). The indicator treats it as non-use. Cited in
+# 02_data.Rmd as an instrument asymmetry. `Proces` is missing for ALL of GLSS6,
+# which is correct and is why this is a GLSS7-only key.
+objs$credit$processing_share_glss7 <- local({
+  if (!all(c("Applied", "Surveyx") %in% names(pooled)) || !"Proces" %in% names(pooled))
+    return(NA_real_)
+  a <- pooled[as.character(pooled$Surveyx) %in% "GLSS7" &
+                .num0(pooled, "Applied") %in% 1, , drop = FALSE]
+  if (!nrow(a)) return(NA_real_)
+  p <- suppressWarnings(as.numeric(a$Proces)); p[is.na(p)] <- 0
+  mean(p > 0)
+})
+
+missing_comp <- names(objs$credit)[vapply(objs$credit, function(z) is.null(z) || is.na(z), logical(1))]
 if (length(missing_comp))
-  warning("301: credit component(s) absent from estimation_data: ",
+  warning("301: credit key(s) absent or NA: ",
           paste(missing_comp, collapse = ", "),
-          " -- the Data section cites them and the knit will stop.",
+          " -- the Data and Context sections cite them and the knit will stop.",
           call. = FALSE, immediate. = TRUE)
 
 # ---- Treatment-effect summary ------------------------------------------------

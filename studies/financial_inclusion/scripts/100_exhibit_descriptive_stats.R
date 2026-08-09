@@ -53,8 +53,7 @@ message("study_raw_data: ", nrow(d), " rows")
 # Two models, one table: OLS over the continuous outcomes, logit over the binary
 # ones. `families` is what carries that distinction into the spec grid.
 CONT <- c("Yield", "Area", "SeedKg", "HHLaborAE", "HirdHr", "FertKg",
-          "PestLt", "AgeYr", "YerEdu", "HHSizeAE", "Depend", "CrpMix",
-          "FinIdxSi")                      # the index enters as a covariate
+          "PestLt", "AgeYr", "YerEdu", "HHSizeAE", "Depend", "CrpMix")
 BIN  <- c("Female", "EqipMech", "Extension", "EqipIrig", "OwnLnd",
           "Banked", "Insured")
 
@@ -133,7 +132,7 @@ dt <- d[as.character(d$Surveyx) %in% DESC_WAVES, , drop = FALSE]
 # counterpart in disagscors. Either it is named differently in study_raw_data or
 # it was never carried into the estimation data. Check names(d) before
 # concluding the rows have to be dropped.
-CATS <- c("FinIdxCat", "InstTyp", "AccTyp", "PrdTyp", "Source", "Collateral",
+CATS <- c("InstTyp", "AccTyp", "PrdTyp", "Source", "Collateral",
           "Insured", "NonBanked_Why", "Use", "Refusal", "Bank_Info", "WhyNoLoan")
 
 # "Reason for not applying for loan" DOES exist -- WhyNoLoan_1..5, confirmed
@@ -152,7 +151,6 @@ CONT_ROWS_WANTED <- c("BankKm", "RoadKm", "TrnprtKm",
 IND <- c(
   intersect(c("Banked", "Insured", "Applied", "Refused", "Accept", "Proces",
               "FinWorker", "HHFinWorker"), names(dt)),
-  grep("^FinIdxCat_",     names(dt), value = TRUE),
   grep("^InstTyp_",       names(dt), value = TRUE),   # institution type
   grep("^AccTyp_",        names(dt), value = TRUE),   # account type
   grep("^PrdTyp_",        names(dt), value = TRUE),   # transaction products

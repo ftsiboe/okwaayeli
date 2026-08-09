@@ -27,7 +27,7 @@ rm(list= ls()[!(ls() %in% c(Keep.List))])
 
 
 
-data <- res[(res$disasg %in% "FinIdxCat"),]
+data <- res[(res$disasg %in% "Banked"),]
 data$x <- factor(as.numeric(as.character(data$level)),levels = 1:5,
                  labels = c("Very low\n(Bottom 20%)",
                             "Low\n(20–40%)",

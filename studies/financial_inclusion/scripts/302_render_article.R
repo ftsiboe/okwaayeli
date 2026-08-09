@@ -6,9 +6,12 @@ if (!exists("NARRATIVE")) source("studies/financial_inclusion/scripts/article_he
 # ---- Citation style switch --------------------------------------------------
 # The master Rmd reads Sys.getenv("ARTICLE_CSL"). Set it here (or in the calling
 # session) to switch styles; both files live in narrative/csl/.
-#   Elsevier Harvard (author-date): "csl/elsevier-harvard.csl"  [default]
-#   IEEE (numbered):                "csl/ieee.csl"
-Sys.setenv(ARTICLE_CSL = Sys.getenv("ARTICLE_CSL", unset = "csl/elsevier-harvard.csl"))
+#   IEEE (numbered):                "csl/ieee.csl"               [default]
+#   Elsevier Harvard (author-date): "csl/elsevier-harvard.csl"
+# run_article.R sets ARTICLE_CSL from CITATION_STYLE before sourcing this, so
+# the unset-fallback only bites when 302 is run on its own. Keep it in step with
+# CITATION_STYLE's default, or the two entry points disagree silently.
+Sys.setenv(ARTICLE_CSL = Sys.getenv("ARTICLE_CSL", unset = "csl/ieee.csl"))
 
 # officedown::rdocx_document replaces word_document so that wide exhibits can
 # be wrapped in landscape sections (see BLOCK_LANDSCAPE markers in 98/99).

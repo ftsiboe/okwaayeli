@@ -41,7 +41,7 @@ ft_table1()
      Columns: Outcome | GLSS6 mean(sd) | GLSS7 mean(sd) | Trend.
      Row groups: Banked; NonBanked_Why_*; InstTyp_*; AccTyp_*; PrdTyp_*;
      Bank_Info_*; FinWorker/HHFinWorker; distances (BankKm/RoadKm/TrnprtKm --
-     continuous, see meta$cont_rows); Insured_*; financial inclusion score. -->
+     continuous, see meta$cont_rows); Insured_*. -->
 
 ```{r ft-table2}
 ft_table2()

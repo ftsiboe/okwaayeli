@@ -13,10 +13,19 @@ output:
     toc_float: true
     css: css/tables.css
 bibliography: references.bib
-# Citation style — switch by changing ARTICLE_CSL (files live in csl/):
+# Citation style — set by scripts/run_article.R's CITATION_STYLE, which exports
+# ARTICLE_CSL. The fallback below is what a bare knit (RStudio's Knit button,
+# no pipeline) uses, so it tracks CITATION_STYLE's default. Files live in csl/:
+#   IEEE (numbered):                 csl/ieee.csl               [current]
 #   Elsevier Harvard (author-date):  csl/elsevier-harvard.csl
-#   IEEE (numbered):                 csl/ieee.csl
-csl: "`r Sys.getenv('ARTICLE_CSL', 'csl/elsevier-harvard.csl')`"
+#
+# Every citation in sections/ is bracketed (`[@key]`), so both styles render
+# without rewriting prose. Two things do NOT follow the switch automatically:
+# reference.docx styles the bibliography for hanging-indent author-date, and
+# 02_data.Rmd still carries five hand-typed markers "[21], [22], [23], [25],
+# [26]" left over from the pre-Harvard draft. Under IEEE those are
+# indistinguishable from citeproc's own output while pointing at nothing.
+csl: "`r Sys.getenv('ARTICLE_CSL', 'csl/ieee.csl')`"
 link-citations: true
 ---
 

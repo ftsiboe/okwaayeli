@@ -20,13 +20,17 @@ MATCHING    <- FALSE  # 002  -> estimation_data, matched samples                
 TREATMENT   <- FALSE  # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
 MSF         <- FALSE  # 004  -> output/estimations/                             HPC, hours
 DESCRIPTIVE <- FALSE  # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
-FIGURES     <- FALSE  # 101  -> output/figures/ (png + data)                    moderate
+FIGURES     <- TRUE  # 101  -> output/figures/ (png + data)                    moderate
 WORKBOOK    <- TRUE  # 102  -> output/tables/financial_inclusion_tables.xlsx  minutes
 OBJECTS     <- TRUE   # 301  -> narrative/article_objects.json                  fast
 RENDER      <- TRUE   # 302  -> narrative/financial-inclusion.docx / .html      fast
 
 # ---- Citation style ---------------------------------------------------------
-CITATION_STYLE <- "elsevier"   # "elsevier" (Harvard, author-date) or "ieee"
+CITATION_STYLE <- "ieee"       # "ieee" (numbered) or "elsevier" (Harvard, author-date)
+# This is the switch that matters -- it sets ARTICLE_CSL below, which both 301
+# and the Rmd read. The unset-fallbacks in 302_render_article.R and the Rmd's
+# YAML are kept in agreement with it so that knitting outside this pipeline
+# (RStudio's Knit button, or sourcing 302 directly) produces the same style.
 
 # ============================================================================
 # What depends on what

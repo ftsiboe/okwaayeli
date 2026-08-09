@@ -304,7 +304,14 @@ draw_msf_estimations <- function(
                             .groups = "drop"
                           )
                         score.data <- as.data.frame(score.data)
-                        score.data <- data.frame(worklist[kk,], score.data)
+                        # Recycle the one-row spec across every summary row.
+                        # Without row.names = NULL, data.frame() tries to carry
+                        # the row names of worklist[kk, ] -- one name for a
+                        # many-row result -- and warns "row names were found
+                        # from a short variable and have been discarded" on
+                        # each of the thousands of calls made here.
+                        score.data <- data.frame(worklist[kk, , drop = FALSE], score.data,
+                                                 row.names = NULL)
                         return(score.data)
                       }, worklist=worklist, disagscors=disagscors), fill = TRUE))
                 

@@ -76,8 +76,17 @@ test_that("efficiency study has no issues", {
     file.path(study_environment$wd$output, paste0(project_name,"_study_environment.rds"))
   )
 
-  expect_true(all(names(study_environment) %in% c("wd", "myseed","study_raw_data")))
-  expect_true(all(list.files(study_environment$wd$output) %in% c("estimations","figure","figure_data","matching","test_study_environment.rds","treatment_effects")))
+  # study_setup() returns `project_name` and `layout` next to `wd`/`myseed` --
+  # they arrived with the layout switch and travel inside the saved .rds -- and
+  # study_dirs() creates `tables/` under both layouts. `te_summary.rds` is
+  # written by the treatment-effect stage below and nothing empties
+  # studies/test/output between runs, so it survives into the next run's first
+  # stage; allow it here rather than making the test order-dependent.
+  expect_true(all(names(study_environment) %in%
+                    c("wd","project_name","layout","myseed","study_raw_data")))
+  expect_true(all(list.files(study_environment$wd$output) %in%
+                    c("estimations","figure","figure_data","matching","tables",
+                      "te_summary.rds","test_study_environment.rds","treatment_effects")))
 
   # =============================================================================
   #  MATCHING WORKFLOW - TEST
@@ -222,10 +231,12 @@ test_that("efficiency study has no issues", {
 
   expect_true(
     all(names(study_environment)
-                  %in% c("wd","myseed","study_raw_data","match_specifications","sample_draw_list","crop_area_list",
+                  %in% c("wd","project_name","layout","myseed","study_raw_data","match_specifications","sample_draw_list","crop_area_list",
                          "match_variables_exact","match_variables_factor","match_variables_scaler",
                          "match_specification_ranking","match_specification_optimal","balance_table","estimation_data")))
-  expect_true(all(list.files(study_environment$wd$output) %in% c("estimations","figure","figure_data","matching","test_study_environment.rds","treatment_effects")))
+  expect_true(all(list.files(study_environment$wd$output) %in%
+                    c("estimations","figure","figure_data","matching","tables",
+                      "te_summary.rds","test_study_environment.rds","treatment_effects")))
   expect_true(all(list.files(study_environment$wd$matching) %in% paste0("match_",stringr::str_pad(1:8, 4, pad = "0"), ".rds")))
 
   obj <- readRDS(
@@ -330,10 +341,10 @@ test_that("efficiency study has no issues", {
 
   expect_true(
     all(names(study_environment)
-                  %in% c("wd","myseed","study_raw_data","match_specifications","sample_draw_list","crop_area_list",
+                  %in% c("wd","project_name","layout","myseed","study_raw_data","match_specifications","sample_draw_list","crop_area_list",
                          "match_variables_exact","match_variables_factor","match_variables_scaler",
                          "match_specification_ranking","match_specification_optimal","balance_table","estimation_data")))
-  expect_true(all(list.files(study_environment$wd$output) %in% c("estimations","figure","figure_data","matching",
+  expect_true(all(list.files(study_environment$wd$output) %in% c("estimations","figure","figure_data","matching","tables",
                                                                  "test_study_environment.rds","te_summary.rds","treatment_effects")))
   expect_true(all(list.files(study_environment$wd$treatment_effects) %in% paste0("te_",stringr::str_pad(1:8, 4, pad = "0"), ".rds")))
 

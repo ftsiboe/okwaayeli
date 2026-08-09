@@ -228,7 +228,6 @@ export excel CropIDx Equ Coef Beta SE Tv Pv Min Max SD N /*
 mat drop _all
 sca drop _all
 use "$GitHub\ghana\okwaayeli\studies\financial_inclusion\data\financial_inclusion_study_data",clear
-tab FinIdxCat,gen(FinIdxCatx)
 decode CropID,gen(CropIDx)
 unab Person: FinWorker YerEdu HHFinWorker // Variables related to the person
 unab Insured: Insured_*   // Variables related to insurance
@@ -239,7 +238,7 @@ unab PrdTyp: PrdTyp_*   // Variables related to types of transaction products
 unab Community: BankKm RoadKm TrnprtKm  // Variables related to the community
 
 // Combine all the above variables into a single local macro 'Factors'
-loc Factors credit_self `Insured' `Banked' `InstTyp' `AccTyp' `PrdTyp' `Community' FinIdxCatx* 
+loc Factors credit_self `Insured' `Banked' `InstTyp' `AccTyp' `PrdTyp' `Community' 
 
 tabstat `Factors' if CropIDx == "Pooled",by(Surveyx) save
 keep if CropIDx == "Pooled"
@@ -248,7 +247,7 @@ gen Trend=Season-r(min)
 egen Clust = group(Survey Ecozon EaId HhId)
 mat Means=J(1,8,.)
 
-qui foreach Var in FinIdx FinIdxSi `Person'{
+qui foreach Var in `Person'{
 	qui levelsof CropIDx, local(levels)
 	qui foreach crop in `levels'{
 		preserve

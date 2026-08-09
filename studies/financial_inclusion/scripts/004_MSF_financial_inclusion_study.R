@@ -184,7 +184,7 @@ lapply(
            f %in% 2 & d %in% 1){
           
           disagscors_list <- c("Ecozon","Region","AgeCat","EduLevel","Female",
-                               "Applied","Refused","Accept","Proces","FinIdxCat",
+                               "Applied","Refused","Accept","Proces",
                                "Insured","Banked",names(data)[grepl("CROP_",names(data))])
           
           for(ddx in c(
