@@ -27,11 +27,11 @@ extracts balance via \code{cobalt::bal.tab}, reshapes, computes a composite bala
 \code{ARRAY, method, distance, link, sample}.
 }
 \seealso{
-Other matching: 
-\code{\link{draw_matched_samples}()},
-\code{\link{match_sample_specifications}()},
-\code{\link{treatment_effect_calculation}()},
-\code{\link{treatment_effect_summary}()},
-\code{\link{write_match_formulas}()}
+Other matching:
+\code{\link[=draw_matched_samples]{draw_matched_samples()}},
+\code{\link[=match_sample_specifications]{match_sample_specifications()}},
+\code{\link[=treatment_effect_calculation]{treatment_effect_calculation()}},
+\code{\link[=treatment_effect_summary]{treatment_effect_summary()}},
+\code{\link[=write_match_formulas]{write_match_formulas()}}
 }
 \concept{matching}

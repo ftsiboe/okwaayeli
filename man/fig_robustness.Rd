@@ -28,13 +28,13 @@ Plots the treatment gap across alternative specifications -- functional form,
 inefficiency distribution, score aggregation, matching algorithm.
 }
 \seealso{
-Other exhibit figures: 
-\code{\link{ers_theme}()},
-\code{\link{fig_covariate_balance}()},
-\code{\link{fig_distribution}()},
-\code{\link{fig_dsistribution}()},
-\code{\link{fig_heterogeneity00}()},
-\code{\link{fig_input_te}()},
-\code{\link{tab_main_specification}()}
+Other exhibit figures:
+\code{\link[=ers_theme]{ers_theme()}},
+\code{\link[=fig_covariate_balance]{fig_covariate_balance()}},
+\code{\link[=fig_distribution]{fig_distribution()}},
+\code{\link[=fig_dsistribution]{fig_dsistribution()}},
+\code{\link[=fig_heterogeneity00]{fig_heterogeneity00()}},
+\code{\link[=fig_input_te]{fig_input_te()}},
+\code{\link[=tab_main_specification]{tab_main_specification()}}
 }
 \concept{exhibit figures}
