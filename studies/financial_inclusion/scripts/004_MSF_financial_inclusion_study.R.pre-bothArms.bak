@@ -198,31 +198,7 @@ lapply(
             names(data)[grepl("Insured_",names(data))],
             names(data)[grepl("Bank_Info_",names(data))],
             names(data)[grepl("NonBanked_Why_",names(data))])){
-            # SUPPORT ON BOTH ARMS, not just overall support.
-            #
-            # The mean below is taken with na.rm, so for the loan-module blocks
-            # (Source_*, Collateral_*, Use_*) it is the share among BORROWERS:
-            # those items are elicited only where a loan exists, and are NA for
-            # every non-borrower. Verified 2026-09-02 on the estimation data --
-            # Source_1..6, Collateral_1..8 and Use_1..6 each have ZERO
-            # non-borrowers with a recorded value.
-            #
-            # A disaggregation on such a variable has no comparison group: every
-            # farmer in scope is treated by construction, so the credit-minus-
-            # no-credit gap it yields is not a contrast. That is the defect
-            # Appiah-Twumasi raised on v005 Table 6 ("is this even useful given
-            # that for some variables all the farmers in that scope will be on
-            # one treatment type"), and it is why Table 6's Collateral/trust and
-            # Loan-application-processing blocks render blank while
-            # .guard_filled() -- which tolerates a table up to 75% empty --
-            # lets them ship.
-            #
-            # The second clause requires at least one untreated observation, so
-            # only variables that can support a contrast are carried. Applied
-            # passes (1,657 non-borrower records against 3,050); Accept, Proces
-            # and the Refusal_* block do not, or do so on a handful.
-            if(round(mean(data[,ddx],na.rm=T),2) >= 0.03 &&
-               sum(!is.na(data[,ddx]) & data[,technology_variable] %in% 0) > 0){ 
+            if(round(mean(data[,ddx],na.rm=T),2) >= 0.03){ 
               disagscors_list <- c(disagscors_list,ddx)
             }
           }
