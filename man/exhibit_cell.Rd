@@ -38,13 +38,13 @@ standard deviation in parentheses, and an estimate with significance stars and
 its standard error in brackets.
 }
 \seealso{
-Other exhibits:
-\code{\link[=exhibit_crop_table]{exhibit_crop_table()}},
-\code{\link[=exhibit_group_sizes]{exhibit_group_sizes()}},
-\code{\link[=exhibit_sheet_to_schema]{exhibit_sheet_to_schema()}},
-\code{\link[=exhibit_stars]{exhibit_stars()}},
-\code{\link[=exhibit_value]{exhibit_value()}},
-\code{\link[=exhibit_wave_table]{exhibit_wave_table()}},
-\code{\link[=read_exhibit_sheet]{read_exhibit_sheet()}}
+Other exhibits: 
+\code{\link{exhibit_crop_table}()},
+\code{\link{exhibit_group_sizes}()},
+\code{\link{exhibit_sheet_to_schema}()},
+\code{\link{exhibit_stars}()},
+\code{\link{exhibit_value}()},
+\code{\link{exhibit_wave_table}()},
+\code{\link{read_exhibit_sheet}()}
 }
 \concept{exhibits}
