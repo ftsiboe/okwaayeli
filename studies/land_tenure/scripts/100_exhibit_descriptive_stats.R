@@ -16,11 +16,25 @@ tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
   rm(list = ls(all = TRUE)); gc()
 })  
 
-devtools::document()
+# Paths: resolve the study root once, so this runs from a standalone checkout as
+# well as from the okwaayeli monorepo. See scripts/_paths.R.
+if (!exists("PROJECT_ROOT")) {
+  .p <- c("scripts/_paths.R", "../scripts/_paths.R",
+          "studies/land_tenure/scripts/_paths.R")
+  .p <- .p[file.exists(.p)]
+  if (!length(.p))
+    stop("cannot find scripts/_paths.R -- run from the study root.", call. = FALSE)
+  source(.p[1])
+}
 
-STUDY   <- "studies/land_tenure"
-SE_RDS  <- file.path(STUDY, "data", "land_tenure_study_environment.rds")
-OUT_RDS <- file.path(STUDY, "data", "descriptive_exhibits.rds")
+# The okwaayeli helpers: the working tree in the monorepo (load_all, so edits
+# are picked up), the installed copy standalone. Replaces devtools::document(),
+# which needs a package in the working directory and fails outright without one.
+okwaayeli_load()
+
+# STUDY / DATA / SE_RDS come from scripts/_paths.R, sourced above, and are
+# absolute -- they used to be "studies/land_tenure" relative to the monorepo root.
+OUT_RDS <- file.path(DATA, "descriptive_exhibits.rds")
 
 stopifnot(file.exists(SE_RDS))
 d <- readRDS(SE_RDS)$study_raw_data

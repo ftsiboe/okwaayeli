@@ -1,0 +1,96 @@
+<!-- NEW SECTION, 2026-08-13. Discussion was split out of "5. Results and
+     discussion" at the author's request. Section 5 reports, this section
+     interprets, and the conclusion is Section 7. resource_extraction carries
+     the same split; land_tenure keeps the combined form.
+
+     SCOPE. Section 5 has six results this section takes up: the two channels
+     running in opposite directions, their near-cancellation, the technology gap
+     closing across rounds, the sign reversal that follows from it, the
+     differences between the three sources of provision, and the split by
+     service content. Section 5's other results (the elasticities, the scale
+     null, the matching sign reversal, the distributional heterogeneity) are
+     reported there and not revisited here.
+
+     RULES.
+       1. No new numbers. Every quantity this section uses has already appeared
+          in Section 5. If a paragraph needs one that has not, add it there
+          first, or the reader cannot check the claim against an exhibit.
+       2. Live lookups only. Each marker below names the object path for every
+          number it will need, so converting a marker to prose is mechanical.
+          The values quoted in the markers are navigational and must not survive
+          into the prose as literals.
+       3. Nothing may exceed Section 4.4. These are associations conditional on
+          observables in a balanced sample, not causal effects, and the
+          treatment is community provision rather than individual receipt.
+
+     THE ARGUMENT, in five lines, so the paragraph order has a reason:
+       The negative technology gap is most plausibly a placement artefact, and
+       three pieces of internal evidence point that way. The positive efficiency
+       gap behaves like a treatment effect on the same three tests. The near-zero
+       net measure is therefore not "services do not matter" but the sum of one
+       contaminated component and one informative one. The paper's substantive
+       claim should rest on technical efficiency. The sources and the service
+       content then say where that efficiency gain concentrates.
+
+     Target 1,400 to 1,900 words across the eight markers. Sibling models: land
+     tenure's combined Results and discussion, whose middle paragraphs do this
+     work at length, and resource_extraction's Section 5. -->
+
+# 6. Discussion
+
+[[OUTLINE ¶1. state the puzzle before addressing it. Agricultural service delivery is expected to widen the set of technologies a farmer can reach. On these estimates it does not appear to: communities with a service source sit on a frontier further below the meta-frontier, not closer to it, while their farmers use that frontier better. Give both figures once. Numbers: objs$eff$services0$tgr$gap and objs$eff$services0$te$gap. Close the paragraph on the fact that the two nearly cancel (objs$eff$services0$mte$gap), because the rest of the section is about why that cancellation should not be read as an absence of effect.]]
+
+[[OUTLINE ¶2. set out the readings of a negative technology gap, without yet choosing. Three are available. (a) Placement: services are directed toward communities whose accessible technology is already behind, so the sign of the association is not the sign of the effect. Section 4.4 concedes this cannot be ruled out on these data and names it the sharpest unobserved confounder. (b) A real constraint: extension and farmer organisations propagate a standardised package that sits below the best technology available to the most capable producers, so exposure compresses the technology set rather than expanding it. (c) A composition effect: the served group is nearly twice the size of the unserved group and more heterogeneous, and a group frontier fitted over a wider population sits further from an envelope defined by the best performers anywhere. Reading (b) is the only one that makes the estimate a genuine effect of services, and it is the one requiring the strongest evidence.]]
+
+[[OUTLINE ¶3. THE PIVOT OF THE SECTION. Three pieces of internal evidence discriminate, and all three point away from reading (b).
+
+     First and strongest, service content does not move the technology gap. Across the four service types estimable on the served side, the technology component varies from about −0.05 to −0.09 while the efficiency component varies from +0.41 to −0.31. If the negative gap were something services do, changing what a service menu contains should move it; it barely does. Numbers: objs$by_service$services_post_harvest$provided$tgr and $services_mechanization$provided$tgr for the narrow range, the matching $te fields for the wide one.
+
+     Second, the gap closes across the period, to an estimate indistinguishable from zero by 2016/17, while the efficiency gap does not move. A constraint imposed by services should not dissolve while the services expand. A placement pattern should attenuate as coverage widens and targeting becomes less selective, which is what Section 2.1 shows happening beneath a flat headline share. Numbers: objs$by_wave$tgr$gap by round, and objs$by_wave$te$gap alongside.
+
+     Third, the gap is largest exactly where the served group is most selected. Associations show a technology gap difference roughly three times the aggregate, and Section 2.2 found association communities distinguished chiefly by schooling rather than by scale or input use. Numbers: objs$eff$services1$tgr$gap against objs$eff$services0$tgr$gap.
+
+     State the conclusion at the strength the evidence carries, which is that reading (a) is the most economical account and reading (b) is not supported, not that placement has been demonstrated. The design cannot separate them and Section 4.4 says so.]]
+
+[[OUTLINE ¶4. the contrast. Put the efficiency gap through the same three tests and note that it behaves differently on every one. It varies with service content in a way the technology gap does not. It is stable across rounds where the technology gap collapses. It is positive under both extension and associations, and the one source where it is not is also the one where neither component is individually significant. A component that responds to what services do, when they are delivered, and how, is the component that behaves like a treatment effect. This is the paper's substantive finding and the paragraph should say so plainly.]]
+
+[[OUTLINE ¶5. what follows for the net measure. Meta-technical efficiency is the product of a placement-contaminated component and an informative one, so its near-zero value is not evidence that agricultural services do not matter. It is what happens when a selection artefact of one sign is multiplied by a treatment-like effect of the other. Make the methodological point at the level it deserves: a study reporting only overall performance would have recovered a small positive number and concluded very little, and the decomposition is what makes the result legible. This is the strongest general claim the paper has for readers outside Ghana.
+
+     The sign reversal across rounds belongs here rather than in ¶3, because it is a consequence of the decomposition rather than evidence for it. Overall performance runs from negative in 2005/06 to positive in 2016/17, so the pooled figure is an average across a comparison that reverses direction and no single round produces it. Any single-number summary of what agricultural services did in Ghana between 2005 and 2017 is therefore misleading, whichever sign it carries. Numbers: objs$by_wave$mte$gap by round against objs$eff$services0$mte$gap.]]
+
+[[OUTLINE ¶6. the three sources. Extension is the clean case: both components move in the direction the aggregate implies and the net difference is the largest positive of the three. Associations show the same directions at close to three times the magnitude and end up net negative, which ¶3 has already used as evidence of selection and which can be stated here as a substantive difference between institutional forms rather than only as a diagnostic. Cooperatives are the odd case and deserve one honest sentence: neither component is individually distinguishable from zero yet their product is, which is a property of how the two errors covary rather than a finding about cooperatives, and it should not be presented as one. Numbers: the objs$eff$services1, $services2 and $services3 blocks.]]
+
+[[OUTLINE ¶7. service content and where the efficiency gain sits. Post-harvest and marketing support carries by far the largest positive efficiency difference, planting and agrochemical advice smaller positive ones, and mechanization a large negative. Since ¶3 has established that the technology component is near-constant across these, the content result is a statement about utilisation: what a community's service menu contains bears on how well farmers use the frontier available to them and almost not at all on which frontier that is. The mechanization reversal is the one that needs an account rather than a restatement, and it should be given one or explicitly left open. Numbers: the $provided$te fields across the four estimable service types in objs$by_service.]]
+
+[[OUTLINE ¶8. policy, at the level the design supports and no further. What can be said: within a balanced sample, operating in a served community is associated with better use of the available production frontier, that association is strongest where services include post-harvest and marketing support, and it is not visible in overall performance because the technology comparison works against it. What cannot be said: that provision causes these differences, or that individual participation would produce them, since the treatment is community availability and Section 2.1 states that uptake and provision diverge by an amount the data cannot measure. Close on the practical implication of ¶5, which is that programme evaluation resting on a single aggregate performance measure will understate what service delivery does.]]
+
+<!-- LITERATURE THIS SECTION NEEDS, and what the bibliography already holds.
+
+     ALREADY IN references.bib and usable as they stand:
+       * meta-frontier with selection on observables, for ¶2 and ¶4:
+         @Mayen2010, @CrespoCebada2014, @Asmare2022, @BravoUreta2021,
+         @Tiedemann2013. These are cited in Section 4.3 for the design; ¶2 needs
+         them for the interpretation, which is a different use of the same work.
+       * the framework itself, if ¶1 restates the decomposition: @Battese2004,
+         @ODonnell2008.
+       * Ghanaian technical efficiency and technology gaps, for ¶4 and ¶6:
+         @Tsiboe2019, @Tsiboe2022, @Asravor2024, @Ansah2023, @Adaku2022.
+       * applied meta-frontier precedent for treating an institutional boundary
+         as technology-defining, for ¶6: @TweneboahKodua2022, @Birhanu2022,
+         @Uddin2014.
+
+     NOT IN THE BIBLIOGRAPHY. Each of these needs a source found and added
+     before the paragraph that needs it can be written. Do not write the
+     paragraph around a citation that does not exist yet.
+       * programme placement and the targeting of agricultural extension. ¶3
+         rests on this and it is the section's load-bearing claim.
+       * farmer-based organisations and cooperatives in Ghana, for ¶6. The
+         association result is the most surprising in the paper and currently
+         has no literature against it.
+       * post-harvest loss and marketing support, for ¶7.
+       * agricultural mechanization in Ghana, for ¶7's reversal.
+       * a magnitude benchmark for ¶1 or ¶4. land_tenure uses @Tsiboe2024 for
+         this, reporting a technology gap of roughly six percentage points on a
+         margin where a real barrier to technology access operates. That entry
+         is in land_tenure's bibliography and can be copied across, which makes
+         it the cheapest of the five to close. -->

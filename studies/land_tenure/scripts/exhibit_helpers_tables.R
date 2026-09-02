@@ -43,7 +43,15 @@ set_flextable_defaults(font.family = "Times New Roman")
 
 # Self-contained path resolution: sourced BOTH from the repo root (run_article.R)
 # and from narrative/ (the Rmd's knit_root_dir).
-.STUDY_ROOT <- if (dir.exists("output/estimations")) {
+#
+# Prefer the absolute root from scripts/_paths.R when a caller has already
+# established it -- it is right regardless of the working directory, which knitr
+# moves to the document's directory mid-render. The relative probes below remain
+# as a fallback: 303_render_tex.R evaluates this file with
+# eval(parse(readLines(...))), which exposes no path to search from.
+.STUDY_ROOT <- if (exists("PROJECT_ROOT")) {
+  PROJECT_ROOT
+} else if (dir.exists("output/estimations")) {
   "."
 } else if (dir.exists("../output/estimations")) {
   ".."
@@ -174,7 +182,7 @@ exhibit_cache_clear <- function() {
     if (is.null(cache)) {
       if (!file.exists(.DESC))
         stop("exhibit_helpers_tables.R: missing ", .DESC,
-             "\n  Run: Rscript studies/land_tenure/scripts/100_exhibit_descriptive_stats.R",
+             "\n  Run: Rscript scripts/100_exhibit_descriptive_stats.R",
              call. = FALSE)
       cache <<- readRDS(.DESC)
     }
@@ -335,7 +343,7 @@ ft_table1 <- function()
       .SRC_NOTE))
 
 # Table 2 row map: display label -> indicator name.
-# Value labels are set in data-raw/scripts/data-prep/glss/10_land_tenure.do:
+# Value labels are set in data-raw/okwaayeli_DATA.do:
 #   LndOwn 1 "Not owned" 2 "Owned w/o deed" 3 "Owned w/ deed"
 #   LndAq  1 Free 2 Sharecropping 3 Rented 4 Purchased 5 Kinship 6 Other
 #   LndRgt 1 None 2 Security 3 Sell 4 Both
@@ -596,7 +604,7 @@ ft_table3 <- function() {
 # cells. ft_table4() formats this; .live_table("table4") serves the same build
 # to tbl_num(), so the 27 inline citations in sections 1, 5 and 6 cannot drift
 # from the printed table.
-# Category labels per data-raw/scripts/data-prep/glss/10_land_tenure.do (lab define LndOwn / LndRgt /
+# Category labels per data-raw/okwaayeli_DATA.do (lab define LndOwn / LndRgt /
 # LndAq / ShrCrpCat). Level 1 is the reference in the two frontier blocks and
 # therefore has no row.
 #
@@ -666,7 +674,9 @@ ft_table3 <- function() {
     stop("table4 keying unresolved (no LndOwn/LndRgt gap rows)")
 
   # Acquisition and sharecropping blocks: ownership gap within each category
-  # (no ownership minus some ownership), from the estimation objects.
+  # (SOME ownership minus NO ownership -- level[TCHLvel==1] - level[TCHLvel==0],
+  # so a negative cell places LANDOWNERS behind), from the estimation objects.
+  # This comment and the printed footnote said the reverse until 2026-08-13.
   for (dn in names(DIMS)) {
     d <- res[res$disasg %in% DIMS[[dn]], ]
     if (nrow(d) == 0) next
@@ -711,7 +721,7 @@ ft_table4 <- function() {
   ft <- add_footer_lines(ft, values = c(
     paste(.SIG_NOTE, "Jackknife standard errors in parentheses."),
     "Documentation and rights: level difference of each category relative to matched farmers in the reference category (not owned; no rights), estimated on that category's own meta-stochastic frontier. Scores are sampling-weighted means.",
-    "Acquisition and sharecropping: matched-sample ownership gap (no ownership minus some ownership) within each category, from the disaggregated scores of the ownership frontier. Scores are unweighted means; the disaggregated output carries no weighted statistic.",
+    "Acquisition and sharecropping: matched-sample ownership gap (some ownership minus no ownership) within each category, from the disaggregated scores of the ownership frontier. Scores are unweighted means; the disaggregated output carries no weighted statistic.",
     "The two groups of blocks therefore differ in weighting. This reflects what the estimation routine reports, not a difference in the samples.",
     "Meta Stochastic Frontier Analysis jointly performed on Ghana Living Standards Survey [waves 3-7]."))
   ft <- fontsize(ft, size = 7, part = "footer")
@@ -729,7 +739,7 @@ ft_table4 <- function() {
 #
 # GLSS3 carries no variable or value labels and GLSS4 carries no value labels,
 # so both waves' codes are verified against G3QPartB.pdf / G4QPartB.pdf.
-# Verification trail: narrative/diagnostics/tenure_variable_documentation.md
+# Verification trail: narrative/docs/diagnostics/tenure_variable_documentation.md
 ft_tableS0 <- function() {
   d <- .read_tbl("tableS0.csv")
   ft <- flextable(d)
@@ -1208,7 +1218,10 @@ fig1_range <- function(outcomes, fun) {
 }
 
 # Ownership gap trend behind Figure 2 (output/figure_data/score_trend.csv).
-# trend_gap("TGR", "GLSS 3") -> gap in percentage points (no-own minus own).
+# trend_gap("TGR", "GLSS 3") -> gap in percentage points, SOME ownership minus NO
+# ownership (own minus no-own), so a positive value places LANDOWNERS ahead. Same
+# Gap_lvl coefficient as Figure S2; see the sign note below. This comment said
+# the reverse until 2026-08-13.
 trend_gap <- function(metric, wave) {
   d <- utils::read.csv(file.path(.FIGDAT, "score_trend.csv"))
   v <- d$Estimate[d$CoefName == metric & grepl(wave, d$Survey, fixed = TRUE)]
@@ -1221,6 +1234,67 @@ trend_range <- function(metric, waves, fun) {
   v <- d$Estimate[keep]
   if (length(v) == 0) stop("trend_range: no rows", call. = FALSE)
   100 * fun(as.numeric(v))
+}
+
+# Robustness panel behind Figure S2 (output/figures/robustness.csv). One row per
+# (dimension, specification, metric); `mainest` repeats the main specification's
+# value on every row, so a deviation is Estimate - mainest.
+#
+# SIGN. These are efficiencyGap_lvl, which the estimation object computes as
+# efficiency[TCHLvel == 1] - efficiency[TCHLvel == 0] -- SOME ownership minus NO
+# ownership. Verified as an exact identity against ef_mean levels (TGR:
+# 0.8474277 - 0.8555425 = -0.008114770, the panel's main TGR estimate). A
+# positive value therefore places LANDOWNERS ahead. Figure S2's axis label said
+# the reverse until 2026-08-13 and was corrected in 101_exhibit_figures.R along
+# with the heterogeneity and trend figures; any figure PNG rendered before that
+# date still carries the reversed label until 101 is re-run.
+.robust_dat <- function() {
+  d <- utils::read.csv(file.path(.FIGDAT, "robustness.csv"))
+  if (!nrow(d)) stop("robustness.csv is empty; run scripts/101 first", call. = FALSE)
+  d
+}
+.robust_row <- function(metric, option) {
+  d <- .robust_dat()
+  r <- d[d$type == metric & d$options == option, ]
+  if (!nrow(r)) stop("robust: not found: ", metric, " / ", option, call. = FALSE)
+  r[1, ]
+}
+# Point estimate of one specification, in percentage points.
+robust_est <- function(metric, option) 100 * as.numeric(.robust_row(metric, option)$Estimate)
+# Main-specification estimate, in percentage points (identical on every row).
+robust_main <- function(metric) 100 * as.numeric(.robust_row(metric, "Half normal distribution")$mainest)
+# Jackknife t-ratio of one specification. NA where no SE was returned (Rayleigh).
+robust_t <- function(metric, option) {
+  r <- .robust_row(metric, option)
+  as.numeric(r$Estimate) / as.numeric(r$Estimate.sd)
+}
+# Spread of the panel with whole groups of specifications held out, in pp.
+# `drop` matches against dimension AND specification label, so
+# robust_spread(fun = range, drop = c("distribution", "Unmatched")) is the panel
+# excluding dimension (B) and the unmatched-sample row.
+robust_spread <- function(fun, drop = character(), metric = NULL, what = c("estimate", "deviation")) {
+  d <- .robust_dat()
+  if (!is.null(metric)) d <- d[d$type %in% metric, ]
+  for (p in drop) d <- d[!grepl(p, d$dimension) & !grepl(p, d$options), ]
+  if (!nrow(d)) stop("robust_spread: nothing left after drop", call. = FALSE)
+  v <- switch(match.arg(what),
+              estimate  = d$Estimate,
+              deviation = abs(d$Estimate - d$mainest))
+  100 * fun(as.numeric(v))
+}
+# Counts for the prose: dimensions varied, and distinct alternatives to the main
+# specification (the main spec appears once per dimension and is not an
+# alternative to itself).
+robust_ndim <- function() length(unique(.robust_dat()$dimension))
+#
+# NOT sum(Estimate != mainest): the unrestricted frontier reproduces the main TGR
+# to the last digit while moving TE and MTE, so a per-metric test drops it. An
+# option is the main specification only if it reproduces mainest on ALL three
+# metrics.
+robust_nalt <- function() {
+  d <- .robust_dat()
+  is_main <- tapply(d$Estimate == d$mainest, d$options, all)
+  sum(!is_main)
 }
 
 # Sample sizes for the prose in 00_abstract / 01_introduction / 02_data /

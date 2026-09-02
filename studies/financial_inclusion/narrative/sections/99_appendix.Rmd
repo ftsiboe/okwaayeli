@@ -2,39 +2,70 @@
 Supplementary exhibits. Captions and mapping from
 narrative/diagnostics/exhibit_inventory_v005.md.
 
-Tables S1-S4 are all 7-8 columns and belong in a landscape section; the markers
-are held back until the builders exist, for the same reason as in 98.
+ROUND 2 (2026-09-02). Three items APPENDED after Table S4, so nothing existing
+is renumbered: Note S1 (financial-inclusion index construction, prose),
+Table S5 (variable definitions, measurement and expected signs) and Table S6
+(first-component loadings by stratum). Table S0, Tables S1-S4 and Figures
+S1-S2 are untouched.
+
+Note S1 is sourced entirely from scripts/000_INDEX_financial_inclusion_study.do
+and the diagnostics that script writes (financial_inclusion_index_diagnostics).
+LIVE: objs$sample$n_pooled, once. LITERAL, deliberately: the indicator counts
+(14 indicators; 13 in the GLSS7 strata after Insured_Travel is screened out for
+having no variation) and the stratum sample sizes (16,273 pooled; 8,083 / 1,527
+/ 5,692 / 971). These are design facts of the index build -- the composition and
+the row counts of the PCA -- not estimates, and they have no table cell to be
+read from. EVERY OTHER quantity in the note is qualitative; the figures live in
+Table S6.
+
+ft_tableS5() and ft_tableS6() DO NOT EXIST YET, and neither id is registered in
+.live_table(). The knit stops at these two chunks until the builders land: build
+each from the specification in the HTML comment above its chunk, then register
+it. Until then, no tbl_num()/tbl_pct() call anywhere in the manuscript may name
+tableS5 or tableS6, and prose about them stays qualitative.
 
 On curated exhibits: the ONLY legitimate one is an exhibit that cannot be
-computed -- questionnaire wording, response options, per-wave mappings.
-land_tenure's Table S0 is the model. ADDED 2026-08-09 as Table S0 below, on
-that model. It is deliberately static: its content is the questionnaire, which
-does not change when the pipeline re-runs, and the alternative -- generating it
-from the .dta labels at build time -- would make the exhibit stage depend on
-raw GLSS paths it does not otherwise need.
+computed -- questionnaire wording, response options, per-wave mappings. Table S0
+is deliberately static for that reason: its content is the questionnaire, which
+does not change when the pipeline re-runs. EVERY CELL IN TABLE S0 WAS READ OFF
+THE RAW FILES, not transcribed from a draft: variable and value labels were
+extracted from GLSS6/Data/PARTB/sec12a.dta and GLSS7/Data/PARTB/g7sec12a.dta on
+2026-08-09 and re-verified row by row. Wording is lightly normalised to sentence
+case for print; item numbers and response codes are verbatim. If a row is
+edited, re-check it against the .dta labels. The three items in the last block
+(BankKm, RoadKm, TrnprtKm) come from the community questionnaire via the
+collated store, which sits outside this repo; unlike the rest of the table they
+were documented from code only, not verified against source.
 
-EVERY CELL IN TABLE S0 WAS READ OFF THE RAW FILES, not transcribed from a
-draft. Variable labels and value labels were extracted directly from
-GLSS6/Data/PARTB/sec12a.dta and GLSS7/Data/PARTB/g7sec12a.dta on 2026-08-09,
-then re-verified row by row: every s12aq* name cited exists in the wave the
-table claims it does. Wording is lightly normalised to sentence case for print
-(the instruments differ: GLSS6 is lowercase throughout and carries trailing " -"
-artifacts, GLSS7 is Title case); the item numbers and response codes are
-verbatim. If a row is edited, re-check it against the .dta labels.
-
-The three items in the last block do NOT come from Section 12a: BankKm, RoadKm
-and TrnprtKm are from the community questionnaire via the collated store, which
-sits outside this repo. Unlike the rest of the table they were documented from
-code only, not verified against source.
-
-Construction notes that belong with the code rather than the manuscript are in
-the comment block at the top of narrative/sections/02_data.Rmd.
+Tables S1-S4 are all 7-8 columns and belong in a landscape section; the markers
+are held back until the builders exist, for the same reason as in 98. Table S5
+and Table S6 are portrait and need no marker.
 
 Everything else builds from the pipeline. Copying numbers out of the v005 draft
 or financial_inclusion_results.xlsx into a CSV is the next drift.
 -->
 
+<!--
+ORDERING (2026-09-02): all Note S# precede all Table S#, then the figures,
+as in the resource_extraction appendix (Note A1 before Table A1). Note S1 was
+moved ahead of Table S0 for this reason; nothing was renumbered.
+-->
+
 # Appendix
+
+#### Note S1. Financial-Inclusion Index Construction
+
+The financial-inclusion index introduced in Section 2.3 and used as a matching covariate in Section 4.3 summarizes the non-credit dimensions of a farm household member's engagement with financial services. It is built on one record per household member, with that member's demographic characteristics averaged over the plots the member works, merged by enumeration area, household and member identifier to the harmonized financial-services release from which the indicators of Table S0 are drawn. The index is the first principal component of 14 indicators: the member's years of schooling, whether the member works in a financial institution, whether another member of the household does, whether the member owns an account with a financial institution or contributes to a savings scheme, and ten indicators of insurance cover (vehicle, medical, funeral, property, commercial, travel, life, retirement, education and other endowment or investment plans). The component is fitted on complete cases across all 14 indicators; on the current release the financial indicators are themselves complete, so that restriction binds only through years of schooling, which is carried down from the farmer file. Composite measures of this kind are standard in work that treats financial inclusion as a multidimensional construct spanning accounts, savings and insurance rather than as account ownership alone, in Africa as elsewhere [@Zins2016; @DemirgucKunt2017].
+
+Three indicators available in the same release were deliberately left out: the community distances to the nearest bank, motorable road and public transport (Table S0). Coverage is the first reason. The community questionnaire is administered per enumeration area and does not reach every area, so the three distances are missing for about a fifth of the members in the release, and the complete-case rule would drop every one of them. That loss is not random. It falls disproportionately on urban enumeration areas in 2012/13, which is precisely the imbalance the harmonization avoids by joining the community block to the farmer records rather than restricting to it, so admitting the distances here would reintroduce the same selection one stage later. Construct is the second reason. The distances describe a place rather than a person and enter with the sign opposite to every other indicator, so a component that included them would mix how financially connected a member is with how far that member lives from a bank. Excluding them makes the index unambiguously the former and removes the need to reason about sign when the loadings are read.
+
+Because the two rounds differ in the services they record and rural and urban localities differ in the services available, a component is fitted separately within each survey-round-by-locality stratum rather than once over the pooled data: on 8,083 members in rural GLSS6, 1,527 in urban GLSS6, 5,692 in rural GLSS7 and 971 in urban GLSS7, against 16,273 in the pooled fit that supplies the reference metric. The sign and the scale of a principal component are arbitrary, so the four stratum scores are not comparable as estimated. Each is therefore placed on the pooled component's metric by regressing the pooled score on the stratum score within the stratum and retaining the fitted values, a rescaling that fixes orientation as well as scale: where a stratum's component came out sign-flipped, the regression coefficient is negative and the fitted values still align with the pooled score. The strata are disjoint, so the rescaled scores coalesce into a single value for every member. Three variables are released. `FinIdx` is the rescaled component itself. `FinIdxSi` is `FinIdx` min-max scaled over the pooled sample to the unit interval, and it is the variable that enters the matching distance of Section 4.3. `FinIdxCat` is the weighted quintiles of `FinIdx`, also taken over the pooled sample. Both transformations are pooled rather than within-round, so they express a member's absolute position on the index and not a rank within a survey round; and because the scaling is min-max, `FinIdxSi` is by construction sensitive to a single extreme value, which compresses the remaining members into a narrower band than a rank or quantile transform would.
+
+Table S6 reports the first-component loadings and the share of variance the component explains in each stratum, and they warrant a careful reading rather than a reassuring one. In the pooled fit every loading is positive and the two largest are on years of schooling and on account ownership, followed by life and vehicle insurance and by financial-sector employment, so the pooled metric is oriented in the direction the index's name implies and the rescaling carries that orientation into every stratum. Two departures qualify this. Travel insurance has no variation in either 2016/17 stratum and is screened out of both, so the index rests on 14 indicators in 2012/13 and on 13 in 2016/17; taken with the fact that account ownership captures mobile money only in the later round, the index's content is not identical across the two rounds. And one loading is negative: commercial insurance in the urban 2016/17 stratum. It is near enough to zero to carry little weight in the score, but a mixed sign pattern is the signal that a first component is picking up something other than inclusion, and it is reported here rather than smoothed over. The more consequential diagnostic is the explained variance. The first component accounts for about a seventh of the variance in a set of 14 indicators, where a component carrying no information at all would account for about a fourteenth. The component is therefore informative but far from dominant: the indicators it summarizes are only loosely correlated with one another, a single dimension does not come close to exhausting them, and a different indicator set or a different scaling would produce a different ordering of members. This is the substantiation of the limitation that Section 6 states, and it is the reason the index is used to balance a comparison rather than to carry an interpretation.
+
+What the index is not, finally, is the treatment. The treatment throughout this paper is `credit_hh`, the household credit indicator defined in Section 2.2 and documented in Table S0. The index enters in two other roles: `FinIdxSi` is one covariate in the distance on which each credit-using household is paired with a non-user, so that borrowers are compared with non-borrowers of similar overall engagement with financial services (Section 4.3), and `FinIdxCat` is available in the estimation as a dimension of heterogeneity. No exhibit in this paper reports results by the index's quintiles; heterogeneity across financial services is examined on the observed indicators themselves, formal account ownership above all (Figure 2 and Table 6). The index is estimated on 16,273 household-member records, a larger set than the `r fmt_num(objs$sample$n_pooled, 0)` farm operators of the analysis sample, so index values exist for records the frontier analysis does not use; the matching draws on the values it needs and discards the rest.
+
+\newpage
 
 #### Table S0. Construction of the credit and financial-service variables from the GLSS Section 12a questionnaires
 
@@ -153,6 +184,185 @@ ft_tableS3()
 
 ```{r ft-tableS4}
 ft_tableS4()
+```
+
+\newpage
+
+#### Table S5. Definition, measurement and expected sign of the variables in the frontier, inefficiency and matching specifications
+
+<!-- ~38 x 4. NEW BUILDER, DOES NOT EXIST YET; ft_tableS5() will stop the knit
+     until it lands. Curated in the sense of Table S0 -- its content is the
+     specification, not an estimate -- but every row below was read off the
+     pipeline, not off a draft. PORTRAIT.
+
+     Columns: Variable | Definition and measurement | Where it enters |
+     Expected sign. Blocks in the order given here.
+
+     SOURCES. Frontier and inefficiency rows: 004_MSF_financial_inclusion_study.R
+     (output_variable, input_variables, intercept_shifters,
+     inefficiency_covariates, adoption_covariates). Matching rows:
+     002_MATCHING_financial_inclusion_study.R (match_variables_scaler,
+     match_variables_factor, match_variables_exact). Units, where the variable
+     is also printed descriptively, follow Table 1's row labels verbatim so the
+     two exhibits agree.
+
+     Dependent variable
+       HrvstKg  Crop output of the pooled crop record, entering the frontier in
+                logs. 004_MSF passes output_variable = "HrvstKg"; Section 4.2
+                describes y as the real value of crop output and Table 1 prints
+                "All crops" in real GH₵/ha. PRINT THE UNITS THE PIPELINE
+                ACTUALLY CARRIES and reconcile the two descriptions before this
+                table is circulated. Expected sign: n/a (dependent variable).
+
+     Frontier inputs (six; each logged, with the translog cross-terms of
+     Equation (1); elasticities in Table 4 are evaluated at the sample means)
+       Area       Cultivated land, ha ("Land (ha)").                 Expected +
+       SeedKg     Planting material ("Seed (real GH₵/ha)").     Expected +
+       HHLaborAE  Family labour, adult equivalents
+                  ("Household labour (AE)").                         Expected +
+       HirdHr     Hired labour ("Hired labour (man-days/ha)").       Expected +
+       FertKg     Fertilizer ("Fertilizer (Kg/ha)").                 Expected +
+       PestLt     Pesticide ("Pesticide (Liter/ha)").                Expected +
+     Sign note for the block: positive, from monotonicity of the production
+     function -- this is production theory, not a result. Table 4 reports the
+     share of observations at which monotonicity and curvature in fact hold.
+     H3 (Section 4.1) adds a between-group expectation and no more: the credit
+     users' frontier is expected to be MORE responsive to land and labour than
+     the non-users', and not more responsive to fertilizer. H3 is a prediction
+     about a difference of elasticities, so it belongs in a footnote to this
+     block, not in the sign column of a single row.
+
+     Frontier shifters (h in Equation (1); intercept_shifters in 004_MSF)
+       Area_<crop> shares  Share of cultivated area under each crop averaging at
+                           least 3% of area, maize the base category.
+       Survey              Survey round, GLSS6 (2012/13) or GLSS7 (2016/17).
+       Ecozon              Agro-ecological zone (base = Coastal Savannah,
+                           per Table S4).
+     Expected sign: none posited. These shift the frontier's intercept to hold
+     cropping pattern, round and agro-ecology constant; the paper takes no
+     position on their signs and none should be invented for them.
+
+     Inefficiency and technology-gap determinants (w in Equation (1), scaling
+     the variance of the one-sided term; the SAME vector scales u_M in
+     Equation (3), so each row governs both technical inefficiency and the
+     technology gap -- 004_MSF passes identical inefficiency_covariates and
+     adoption_covariates). SIGN CONVENTION, which the table must state in its
+     note: a POSITIVE coefficient means GREATER inefficiency, i.e. a larger
+     distance from the frontier, and correspondingly a LARGER technology gap.
+     Estimates are in Table S4.
+       lnAgeYr    Operator age in years, logged ("Age (years)").
+                  Expected sign: none. Experience and accumulated managerial
+                  skill pull one way, slower adoption of new practice the other,
+                  and the paper takes no position ex ante.
+       lnYerEdu   Operator years of schooling, logged ("Education (years)").
+                  Expected -: schooling is the human capital that Section 4.1
+                  treats as complementary to the technology in use.
+       CrpMix     Crop diversification index ("Crop diversification (index)").
+                  Expected sign: none. Diversification spreads managerial
+                  attention and buffers risk at the same time; the paper takes
+                  no position.
+       Female     Operator is a woman ("Female farmer (dummy)").
+                  Expected sign: none for inefficiency. The paper's framing
+                  (Sections 4.1 and 5.4) anticipates a disadvantage in ACCESS TO
+                  TECHNOLOGY rather than in management, so any expectation
+                  attaches to the metafrontier column and not to the group
+                  frontiers; state that in words rather than printing a sign.
+       OwnLnd     Household owns the land it farms ("Land owned (dummy)").
+                  Expected -: secure tenure supports the investment and care
+                  that keep a farm near its frontier.
+       EqipMech   Mechanized equipment used ("Mechanization (dummy)").
+                  Expected -.
+       Extension  Received extension advice ("Extension (dummy)").
+                  Expected -: advisory contact is the standard efficiency-
+                  raising service in this literature and the one Section 4.1
+                  names in the bundling argument.
+       Survey     Survey round.      Control; no sign posited.
+       Ecozon     Agro-ecological zone (base = Coastal Savannah).
+                  Control; no sign posited.
+     NB Table S4 prints no survey-round coefficient although 004_MSF passes the
+     round as a factor; carry that flag into this table's note rather than
+     printing a row the estimates do not support.
+
+     Exact-match strata (must match identically; 002_MATCHING
+     match_variables_exact)
+       Survey    Survey round.
+       Region    Administrative region.
+       Ecozon    Agro-ecological zone.
+       Locality  Rural or urban.
+       Female    Operator gender.
+     Expected sign: NOT APPLICABLE. These define the cells within which pairs
+     are formed, so no user is compared with a non-user from another round,
+     place or gender. Nothing is estimated on them.
+
+     Matching covariates, continuous (match_variables_scaler)
+       AgeYr      Operator age, years.
+       YerEdu     Operator years of schooling.
+       HHSizeAE   Household size, adult equivalents ("Size (AE)").
+       FmleAERt   Female share of household adult equivalents.
+       Depend     Dependency ratio ("Dependency (ratio)").
+       CrpMix     Crop diversification index.
+       Area_<crop> shares  Share of cultivated area under each crop, the list
+                  discovered from the data by get_crop_area_list().
+       FinIdxSi   Financial-inclusion index, min-max scaled to [0,1] over the
+                  pooled sample (Note S1).
+     Matching covariates, categorical (match_variables_factor)
+       OwnLnd     Land ownership.
+       Ethnic     Ethnicity.
+       Marital    Marital status.
+       Religion   Religion.
+       Head       Relationship to the household head.
+     Expected sign for BOTH matching blocks: NOT APPLICABLE. These enter a
+     distance, not a regression; the criterion they answer to is balance
+     between users and non-users, reported for every covariate in Fig. S1, not
+     a coefficient sign. Say so in the cell -- do not leave it blank and do not
+     invent an expectation. Pairing requires complete information on every
+     matching field, together with the identifiers, the survey weight and the
+     treatment flag.
+
+     TREATMENT. credit_hh, the household credit indicator, is defined in
+     Table S0 and is not repeated here: it is not a regressor in any of the
+     three specifications. It partitions the sample into the two groups whose
+     frontiers are compared (Section 4.2) and supplies the flag on which pairs
+     are drawn (Section 4.3). One note line to that effect is enough.
+-->
+
+```{r ft-tableS5}
+ft_tableS5()
+```
+
+\newpage
+
+#### Table S6. First-component loadings and explained variance for the financial-inclusion index, by stratum
+
+<!-- 16 x 6. NEW BUILDER, DOES NOT EXIST YET; ft_tableS6() will stop the knit
+     until it lands. PORTRAIT.
+
+     Source: financial_inclusion_index_diagnostics, written by
+     000_INDEX_financial_inclusion_study.do, one row per stratum x indicator
+     carrying the first-component loading, the stratum N and the share of
+     variance the component explains (rho). Read that file, never a transcript
+     of it.
+
+     Columns: Indicator | Pooled | GLSS6 Rural | GLSS6 Urban | GLSS7 Rural |
+     GLSS7 Urban, in that order.
+     Rows: the 14 indicators in the order of Note S1 -- years of schooling,
+     financial-sector employment (member), financial-sector employment
+     (household), account ownership, then the ten insurance indicators; then
+     two footer rows, the stratum N and the explained variance.
+
+     Insured_Travel is screened out of BOTH GLSS7 strata for having no
+     variation there, so it has no loading in those two columns: print an em
+     dash, never a zero, and say why in the note. Indicator labels follow
+     Table S0 so that a reader can map each row back to its questionnaire item.
+     The note should also carry the sign convention -- the pooled component is
+     oriented so that higher means more included -- and the reference point for
+     rho, namely the share a single component would carry among 14 uninformative
+     indicators. Note S1 is where those points are argued; the table states them
+     and prints the figures.
+-->
+
+```{r ft-tableS6}
+ft_tableS6()
 ```
 
 \newpage

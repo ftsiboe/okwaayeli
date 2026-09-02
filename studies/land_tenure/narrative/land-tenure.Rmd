@@ -1,22 +1,21 @@
 ---
-title: "Landownership Appears Neither Necessary nor Sufficient for Superior Agricultural Performance in Ghana"
+title: Landownership Appears Neither Necessary nor Sufficient for Superior Agricultural
+  Performance in Ghana
 output:
-  # officedown (not word_document) so exhibits can sit in landscape sections;
-  # word_document has no mechanism for page orientation.
+  pdf_document:
+    toc: true
+    toc_depth: '2'
   officedown::rdocx_document:
-    reference_docx: reference.docx
+    reference_docx: assets/reference.docx
     fig_width: 6.3
     fig_height: 4.5
   html_document:
     toc: true
     toc_depth: 2
     toc_float: true
-    css: css/tables.css
-bibliography: references.bib
-# Citation style — switch by changing ARTICLE_CSL (files live in csl/):
-#   Elsevier Harvard (author-date):  csl/elsevier-harvard.csl
-#   IEEE (numbered):                 csl/ieee.csl
-csl: "`r Sys.getenv('ARTICLE_CSL', 'csl/elsevier-harvard.csl')`"
+    css: assets/css/tables.css
+bibliography: references/references.bib
+csl: "`r Sys.getenv('ARTICLE_CSL', 'references/csl/ieee.csl')`"
 link-citations: true
 ---
 

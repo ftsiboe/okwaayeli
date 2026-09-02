@@ -14,15 +14,15 @@ devtools::document()
 # ============================================================================
 # STAGES
 # ============================================================================
-INITIALIZE  <- TRUE   # 000  study scaffolding                            fast
-DATA        <- TRUE   # 001  harmonize + build study_raw_data           ~minutes
-MATCHING    <- TRUE   # 002  -> estimation_data, matched samples        EXPENSIVE
-TREATMENT   <- TRUE   # 003  -> output/treatment_effects/, te_summary   EXPENSIVE
+INITIALIZE  <- FALSE  # 000  study scaffolding                            fast
+DATA        <- FALSE  # 001  harmonize + build study_raw_data           ~minutes
+MATCHING    <- FALSE  # 002  -> estimation_data, matched samples        EXPENSIVE
+TREATMENT   <- FALSE  # 003  -> output/treatment_effects/, te_summary   EXPENSIVE
 MSF         <- FALSE  # 004  -> output/estimations/                     HPC, hours
 DESCRIPTIVE <- FALSE  # 100  NOT WRITTEN
 FIGURES     <- FALSE  # 101  NOT WRITTEN
 WORKBOOK    <- FALSE  # 102  NOT WRITTEN
-OBJECTS     <- FALSE  # 301  NOT WRITTEN
+OBJECTS     <- TRUE   # 301  NOT WRITTEN
 RENDER      <- TRUE   # 302  -> narrative/ag-services.docx / .html      fast
 
 # ---- Why the levers are set this way --------------------------------------

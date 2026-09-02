@@ -27,13 +27,18 @@ if (file.exists("article_objects.json")) {
 }
 # Formatting helpers + assert_present() guards.
 if (file.exists("../scripts/article_helpers.R")) source("../scripts/article_helpers.R")
+# Outline markers ([[OUTLINE]], [[CITE:]], [[WIRE:]]) print in red, so an
+# unfinished section is obvious in the .docx instead of reading as prose. This
+# touches no section file; see placeholders_in_red() for what it does and does
+# not match. Delete this line to print them in body colour.
+if (exists("placeholders_in_red")) placeholders_in_red()
 # Table builders (flextable); paths are narrative-relative.
 if (file.exists("../scripts/exhibit_helpers_tables.R")) source("../scripts/exhibit_helpers_tables.R")
 ```
 
 <!-- TODO 2026-08-07: author list taken from studies/ag_services/README.md
      contributors. The v000 draft carries no byline - confirm before submission. -->
-Francis Tsiboe
+Benjamin Addo, Ralph Armah, Francis Tsiboe
 
 ```{r child = "sections/00_abstract.Rmd"}
 ```
@@ -44,13 +49,19 @@ Francis Tsiboe
 ```{r child = "sections/02_data.Rmd"}
 ```
 
+```{r child = "sections/03_ag_services.Rmd"}
+```
+
 ```{r child = "sections/04_methods.Rmd"}
 ```
 
 ```{r child = "sections/05_results.Rmd"}
 ```
 
-```{r child = "sections/06_conclusion.Rmd"}
+```{r child = "sections/06_discussion.Rmd"}
+```
+
+```{r child = "sections/07_conclusion.Rmd"}
 ```
 
 ```{r child = "sections/96_declarations.Rmd"}

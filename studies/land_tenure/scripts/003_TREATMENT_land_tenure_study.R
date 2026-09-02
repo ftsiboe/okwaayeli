@@ -25,7 +25,21 @@ tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
   rm(list = ls(all = TRUE)); gc()
 })  
 
-devtools::document()  
+# Paths: resolve the study root once, so this runs from a standalone checkout as
+# well as from the okwaayeli monorepo. See scripts/_paths.R.
+if (!exists("PROJECT_ROOT")) {
+  .p <- c("scripts/_paths.R", "../scripts/_paths.R",
+          "studies/land_tenure/scripts/_paths.R")
+  .p <- .p[file.exists(.p)]
+  if (!length(.p))
+    stop("cannot find scripts/_paths.R -- run from the study root.", call. = FALSE)
+  source(.p[1])
+}
+
+# The okwaayeli helpers: the working tree in the monorepo (load_all, so edits
+# are picked up), the installed copy standalone. Replaces devtools::document(),
+# which needs a package in the working directory and fails outright without one.
+okwaayeli_load()
 
 run_only_for(id = 5, allowed_jobnames = "run_all")
 
@@ -35,9 +49,7 @@ project_name = "land_tenure"
 sysname <- toupper(as.character(Sys.info()[["sysname"]]))
 
 # Load saved study environment (directories, specifications, etc.)
-study_environment <- readRDS(
-  file.path(paste0("studies/", project_name, "/data"),
-            paste0(project_name,"_study_environment.rds")))
+study_environment <- study_env()
 
 # --- Data ingest & harmonization
 # Load harmonized survey data stored in the study environment

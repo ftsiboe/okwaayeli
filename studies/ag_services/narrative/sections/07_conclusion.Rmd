@@ -1,0 +1,17 @@
+<!-- Renumbering, 2026-08-13, second move. Discussion was split out of Section
+     5 into a standalone Section 6, so the conclusion becomes Section 7. The
+     paper now runs: 2 Data, 3 Service delivery, 4 Methods, 5 Results,
+     6 Discussion, 7 Conclusion.
+
+     This file was sections/06_conclusion.Rmd until today. The old copy is
+     superseded and should be removed from sections/ so the master Rmd cannot
+     pick up both. -->
+
+# 7. Conclusion
+
+<!-- ============================================================================
+     STUB. The v000 draft (narrative/v000_AgricServicesProdGapGhana_FT.docx)
+     contains NO prose for this section - see
+     narrative/diagnostics/migration_2026-08-07.md, 'the draft is a
+     methods-and-exhibits skeleton'. Nothing to split.
+     ============================================================================ -->

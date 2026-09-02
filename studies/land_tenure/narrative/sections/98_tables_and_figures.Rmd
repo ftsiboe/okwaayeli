@@ -1,5 +1,17 @@
+```{r setup-98-tables-and-figures, include=FALSE}
+# Knitting this section on its own? Load what ../land-tenure.Rmd normally
+# provides. A no-op under the parent, 303 or 304, which already have it.
+if (!exists("fmt_num")) {
+  .s <- c("_setup.R", "sections/_setup.R", "narrative/sections/_setup.R")
+  .s <- .s[file.exists(.s)]
+  if (!length(.s)) stop("cannot find sections/_setup.R from ", getwd(), call. = FALSE)
+  source(.s[1])
+}
+```
+
 # Tables and Figures
 
+```{=html}
 <!-- Layout mirrors studies/resource_extraction/narrative/sections/98_tables_and_figures.Rmd.
      Tables are built by scripts/exhibit_helpers_tables.R from data/descriptive_exhibits.rds
      (written by scripts/100_exhibit_descriptive_stats.R); figures by
@@ -9,12 +21,13 @@
      creates an empty portrait section, which Word renders as a blank page.
      A section's properties apply to the content BEFORE it: sec_portrait() closes a portrait run,
      sec_landscape() closes a landscape run. -->
+```
 
 ```{r, echo=FALSE, results='asis'}
 sec_portrait()
 ```
 
-#### Table 1. Summary statistics of crop producers in Ghana (1991-2017)
+#### `r exhibit_head("summary_stats")`
 
 ```{r tab1, echo=FALSE}
 ft_table1()
@@ -22,7 +35,7 @@ ft_table1()
 
 \newpage
 
-#### Table 2. Farmland ownership details amongst Ghanaian crop farmers (2012-2017)
+#### `r exhibit_head("ownership_details")`
 
 ```{r tab2, echo=FALSE}
 ft_table2()
@@ -30,7 +43,7 @@ ft_table2()
 
 \newpage
 
-#### Table 3. Land ownership impact on input elasticities and variability in crop production in Ghana (1991-2017)
+#### `r exhibit_head("input_elasticities")`
 
 ```{r tab3, echo=FALSE}
 ft_table3()
@@ -40,7 +53,7 @@ ft_table3()
 sec_landscape()
 ```
 
-#### Table 4. Parity in technology level and technical efficiency by farmland ownership details in Ghana (1991-2017)
+#### `r exhibit_head("parity_matched")`
 
 ```{r tab4, echo=FALSE}
 ft_table4()
@@ -48,29 +61,29 @@ ft_table4()
 
 \newpage
 
-#### Figure 1. Crop production input and output gaps associated with farmland ownership in Ghana (1991-2017)
+#### `r exhibit_head("input_te")`
 
-![](../output/figures/input_TE.png){width=6.3in}
+![](../output/figures/input_TE.png){width="6.3in"}
 
 \newpage
 
-#### Figure 2. The association between farmland ownership and farm productivity from 1991-2017
+#### `r exhibit_head("score_trend")`
 
-![](../output/figures/score_trend.png){width=6.3in}
+![](../output/figures/score_trend.png){width="6.3in"}
 
 ```{r, echo=FALSE, results='asis'}
 sec_portrait()
 ```
 
-#### Figure 3. Farmland ownership parity in crop production technology adoption and technical efficiency by farmer gender, age, and education in Ghana (1991-2017)
+#### `r exhibit_head("het_gender_age")`
 
-![](../output/figures/heterogeneity_genderAge.png){width=9.3in}
+![](../output/figures/heterogeneity_genderAge.png){width="9.3in"}
 
 \newpage
 
-#### Figure 4. Farmland ownership parity in crop production technology adoption and technical efficiency by major crops and administrative regions in Ghana (1991-2017)
+#### `r exhibit_head("het_crop_region")`
 
-![](../output/figures/heterogeneity_crop_region.png){width=9.3in}
+![](../output/figures/heterogeneity_crop_region.png){width="9.3in"}
 
 ```{r, echo=FALSE, results='asis'}
 sec_landscape()

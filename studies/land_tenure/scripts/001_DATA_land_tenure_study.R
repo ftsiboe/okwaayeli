@@ -20,7 +20,21 @@ tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
 
 # ---- Rebuild package documentation (if this is part of a package) 
 # This calls roxygen2 via devtools to regenerate .Rd docs and NAMESPACE.
-devtools::document()                         
+# Paths: resolve the study root once, so this runs from a standalone checkout as
+# well as from the okwaayeli monorepo. See scripts/_paths.R.
+if (!exists("PROJECT_ROOT")) {
+  .p <- c("scripts/_paths.R", "../scripts/_paths.R",
+          "studies/land_tenure/scripts/_paths.R")
+  .p <- .p[file.exists(.p)]
+  if (!length(.p))
+    stop("cannot find scripts/_paths.R -- run from the study root.", call. = FALSE)
+  source(.p[1])
+}
+
+# The okwaayeli helpers: the working tree in the monorepo (load_all, so edits
+# are picked up), the installed copy standalone. Replaces devtools::document(),
+# which needs a package in the working directory and fails outright without one.
+okwaayeli_load()
 
 run_only_for(id = 5, allowed_jobnames = "run_all")
 
@@ -106,7 +120,7 @@ study_data <- study_data[
 # waves are retained in the pooled/matched estimation. Temporal claims are
 # restricted to GLSS5-GLSS7, which span the routine 2000->2010 re-basing but not
 # the 1984-frame break. See narrative/sections/05_results.Rmd and
-# narrative/diagnostics/tenure_variable_documentation.md.
+# narrative/docs/diagnostics/tenure_variable_documentation.md.
 study_data$CensusFrame <- ifelse(
   study_data$Surveyx %in% c("GLSS3", "GLSS4"), "1984",
   ifelse(study_data$Surveyx == "GLSS5", "2000", "2010")

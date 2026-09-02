@@ -1,3 +1,14 @@
+```{r setup-96-declarations, include=FALSE}
+# Knitting this section on its own? Load what ../land-tenure.Rmd normally
+# provides. A no-op under the parent, 303 or 304, which already have it.
+if (!exists("fmt_num")) {
+  .s <- c("_setup.R", "sections/_setup.R", "narrative/sections/_setup.R")
+  .s <- .s[file.exists(.s)]
+  if (!length(.s)) stop("cannot find sections/_setup.R from ", getwd(), call. = FALSE)
+  source(.s[1])
+}
+```
+
 # Declarations {-}
 
 The authors extend their sincere gratitude to the institutions granting access to the crucial household datasets that underpinned this study. The analyses, findings, and conclusions presented in this publication reflect solely the perspectives and interpretations of the authors. As such, they should not be considered as reflecting the official stance, policies, or determinations of the institutions of the authors.

@@ -1,19 +1,275 @@
 % references.bib -- studies/ag_services
 %
-% DELIBERATELY EMPTY, 2026-08-07.
+% STATUS 2026-08-13. Was deliberately empty. It now carries exactly the sources
+% the v000 draft NAMES IN TEXT and nothing else, copied verbatim (keys included)
+% from studies/land_tenure/narrative/references.bib so the two papers cite the
+% same entry under the same key.
 %
-% The v000 draft has an EMPTY References section and no bibliography file. Its
-% Methods section carries five numbered markers, [22] through [26], and nothing
-% else -- [1]-[21] appear nowhere -- because that section was carried over from
-% another paper whose reference list did not travel with it.
+% Naming a source is the draft's own act, so converting "(Rubin 1980)" to
+% "@Rubin1980" is transcription, not inference. What remains unresolved is
+% inference, and is NOT in this file:
 %
-% This file exists only so pandoc can resolve the `bibliography:` key in
-% narrative/ag-services.Rmd. An empty bib is honest; an invented one is not.
+%   * the numbered markers [22]-[26] in section 4.1. Per
+%     narrative/diagnostics/migration_2026-08-07.md (Addendum 2): [25] is safe,
+%     [26] is a coin-flip between two works, and [22]-[24] cannot be resolved
+%     without the source paper's numbered reference list.
+%   * the [[CITE: ...]] markers in section 4.1, which name a claim needing
+%     support rather than a source to look up.
+%   * five sources the draft names in section 4.3 -- Mayen et al. (2010),
+%     Crespo-Cebada et al. (2014), Asmare et al. (2022), Bravo-Ureta et al.
+%     (2021), Tiedemann and Latacz-Lohmann (2013) -- which land_tenure's
+%     bibliography does not carry. They remain author-year text in the prose
+%     until entries exist. Add them here and convert the text in one edit.
 %
-% Candidates, with confidence, are in
-%   narrative/diagnostics/migration_2026-08-07.md  (Addendum 2, "Citations")
-% Six of the seven already exist with correct SurnameYear keys in
-%   studies/land_tenure/narrative/references.bib
-% and can be copied across once the assignment is confirmed. Do not guess:
-% [25] is safe, [26] is a coin-flip between two works, and [22]-[24] cannot be
-% resolved without the source paper's numbered reference list.
+% An empty bib was honest; an invented one is not. Neither is a half-converted
+% one, so grep the prose for author-year text before adding an entry here.
+
+@misc{Rubin1980,
+  author = {D. B. Rubin},
+  title = {Bias Reduction Using Mahalanobis-Metric Matching},
+  year = {1980},
+  doi = {10.2307/2529981},
+  note = {D. B. Rubin, "Bias Reduction Using Mahalanobis-Metric Matching," *Biometrics*, vol. 36, no. 2, p. 293, Jun. 1980, doi: 10.2307/2529981.}
+}
+
+@misc{Rosenbaum2020,
+  author = {P. R. Rosenbaum},
+  title = {Modern Algorithms for Matching in Observational Studies},
+  year = {2020},
+  doi = {10.1146/annurev-statistics-031219-041058},
+  note = {P. R. Rosenbaum, "Modern Algorithms for Matching in Observational Studies," *Annu. Rev. Stat. Its Appl.*, vol. 7, no. 1, pp. 143--176, Mar. 2020, doi: 10.1146/annurev-statistics-031219-041058.}
+}
+
+@misc{Rubin2001,
+  author = {D. B. Rubin},
+  title = {Using Propensity Scores to Help Design Observational Studies: Application to the Tobacco Litigation},
+  year = {2001},
+  doi = {10.1023/A:1020363010465},
+  note = {D. B. Rubin, "Using Propensity Scores to Help Design Observational Studies: Application to the Tobacco Litigation," *Health Serv. Outcomes Res. Methodol.*, vol. 2, no. 3--4, pp. 169--188, Dec. 2001, doi: 10.1023/A:1020363010465.}
+}
+
+@misc{Stuart2010,
+  author = {E. A. Stuart},
+  title = {Matching Methods for Causal Inference: A Review and a Look Forward},
+  year = {2010},
+  doi = {10.1214/09-STS313},
+  note = {E. A. Stuart, "Matching Methods for Causal Inference: A Review and a Look Forward," *Stat. Sci.*, vol. 25, no. 1, Feb. 2010, doi: 10.1214/09-STS313.}
+}
+
+@misc{Schmidt1984,
+  author = {P. Schmidt and T.-F. Lin},
+  title = {Simple tests of alternative specifications in stochastic frontier models},
+  year = {1984},
+  doi = {10.1016/0304-4076(84)90058-7},
+  note = {P. Schmidt and T.-F. Lin, "Simple tests of alternative specifications in stochastic frontier models," *J. Econom.*, vol. 24, no. 3, pp. 349--361, Mar. 1984, doi: 10.1016/0304-4076(84)90058-7.}
+}
+
+@article{Coelli1995,
+  author = {T. J. Coelli},
+  title = {Estimators and hypothesis tests for a stochastic frontier function: A Monte Carlo analysis},
+  journal = {Journal of Productivity Analysis},
+  volume = {6},
+  number = {3},
+  pages = {247--268},
+  year = {1995},
+  doi = {10.1007/BF01076978}
+}
+
+@article{Gutierrez2001,
+  author = {R. G. Gutierrez and S. Carter and D. M. Drukker},
+  title = {sg160: On boundary-value likelihood-ratio tests},
+  journal = {Stata Technical Bulletin},
+  volume = {60},
+  pages = {15--18},
+  year = {2001}
+}
+
+
+% ADDED 2026-08-13, second pass. The author asked that the remaining citation
+% gaps be closed by looking at the sibling studies and reusing comparable
+% sources rather than by inventing any. These twelve entries are copied
+% key-for-key from studies/land_tenure/narrative/references.bib, which cites
+% them for the same claims:
+%
+%   Battese2004, ODonnell2008          the meta-frontier framework itself
+%   TweneboahKodua2022, Birhanu2022,   its applied record in smallholder
+%     Uddin2014                        agriculture (Ghana, Ethiopia, Bangladesh)
+%   Tsiboe2019, Tsiboe2021, Tsiboe2021b, the Ghanaian technology-and-efficiency
+%     Tsiboe2022, Asravor2024,           literature: geography, age, gender,
+%     Adaku2022, Ansah2023               and extension exposure
+%
+% Section 4.1's numbered markers [22]-[26] are resolved against these on the
+% basis of SUBJECT MATCH, which is a judgement and is recorded as one in the
+% prose comment there: Asravor2024 is literally the age paper and Adaku2022 the
+% gender paper, so [25] and [26] are well-supported; [22]-[24] (geography) are
+% filled with the three Ghanaian spatial-technology papers land_tenure cites for
+% the same clause. If the source paper's numbered list ever surfaces, check it.
+
+@misc{Battese2004,
+  author = {G. E. Battese, D. S. P. Rao, and C. J. O'Donnell},
+  title = {A Metafrontier Production Function for Estimation of Technical Efficiencies and Technology Gaps for Firms Operating Under Different Technologies},
+  year = {2004},
+  doi = {10.1023/B:PROD.0000012454.06094.29},
+  note = {G. E. Battese, D. S. P. Rao, and C. J. O'Donnell, "A Metafrontier Production Function for Estimation of Technical Efficiencies and Technology Gaps for Firms Operating Under Different Technologies," *J. Product. Anal.*, vol. 21, no. 1, pp. 91--103, Jan. 2004, doi: 10.1023/B:PROD.0000012454.06094.29.}
+}
+
+@misc{ODonnell2008,
+  author = {C. J. O'Donnell, D. S. P. Rao, and G. E. Battese},
+  title = {Metafrontier frameworks for the study of firm-level efficiencies and technology ratios},
+  year = {2008},
+  doi = {10.1007/s00181-007-0119-4},
+  note = {C. J. O'Donnell, D. S. P. Rao, and G. E. Battese, "Metafrontier frameworks for the study of firm-level efficiencies and technology ratios," *Empir. Econ.*, vol. 34, no. 2, pp. 231--255, Mar. 2008, doi: 10.1007/s00181-007-0119-4.}
+}
+
+@misc{TweneboahKodua2022,
+  author = {T. Tweneboah Kodua, E. E. Onumah, and A. Mensah-Bonsu},
+  title = {Technical efficiency of improved and local variety seed maize farms in Ghana: A meta-frontier analysis},
+  year = {2022},
+  doi = {10.1080/23322039.2021.2022858},
+  note = {T. Tweneboah Kodua, E. E. Onumah, and A. Mensah-Bonsu, "Technical efficiency of improved and local variety seed maize farms in Ghana: A meta-frontier analysis," *Cogent Econ. Finance*, vol. 10, no. 1, p. 2022858, 2022, doi: 10.1080/23322039.2021.2022858.}
+}
+
+@misc{Birhanu2022,
+  author = {F. Z. Birhanu, A. S. Tsehay, and D. A. Bimerew},
+  title = {Cereal production practices and technical efficiency among farm households in major teff growing mixed farming areas of Ethiopia: A stochastic meta-frontier approach},
+  year = {2022},
+  doi = {10.1080/23322039.2021.2012986},
+  note = {F. Z. Birhanu, A. S. Tsehay, and D. A. Bimerew, "Cereal production practices and technical efficiency among farm households in major teff growing mixed farming areas of Ethiopia: A stochastic meta-frontier approach," *Cogent Econ. Finance*, vol. 10, no. 1, p. 2012986, 2022, doi: 10.1080/23322039.2021.2012986.}
+}
+
+@misc{Uddin2014,
+  author = {M. M. Uddin, B. Br{\"u}mmer, and K. J. Peters},
+  title = {Technical efficiency and metatechnology ratios under varying resource endowment in different production systems: A stochastic metafrontier model in Bangladesh dairy farms},
+  year = {2014},
+  note = {M. M. Uddin, B. Brummer, and K. J. Peters, "Technical efficiency and metatechnology ratios under varying resource endowment in different production systems: A stochastic metafrontier model in Bangladesh dairy farms," *China Agric. Econ. Rev.*, vol. 6, no. 3, pp. 485--505, 2014.}
+}
+
+@misc{Tsiboe2019,
+  author = {F. Tsiboe, J. Asravor, and E. Osei},
+  title = {Vegetable production technical efficiency and technology gaps in Ghana},
+  year = {2019},
+  note = {F. Tsiboe, J. Asravor, and E. Osei, "Vegetable production technical efficiency and technology gaps in Ghana," vol. 14, no. 4, 2019.}
+}
+
+@misc{Tsiboe2021,
+  author = {F. Tsiboe},
+  title = {Chronic sources of low cocoa production in Ghana: new insights from meta-analysis of old survey data},
+  year = {2021},
+  doi = {10.1017/age.2021.3},
+  note = {F. Tsiboe, "Chronic sources of low cocoa production in Ghana: new insights from meta-analysis of old survey data," *Agric. Resour. Econ. Rev.*, pp. 1--26, Mar. 2021, doi: 10.1017/age.2021.3.}
+}
+
+@misc{Tsiboe2021b,
+  author = {F. Tsiboe},
+  title = {SPATIOTEMPORAL EVALUATION OF DRY BEANS AND GROUNDNUT PRODUCTION TECHNOLOGY AND INEFFICIENCY IN GHANA},
+  year = {2021},
+  doi = {10.15414/raae.2021.24.01.76-87},
+  note = {F. Tsiboe, "SPATIOTEMPORAL EVALUATION OF DRY BEANS AND GROUNDNUT PRODUCTION TECHNOLOGY AND INEFFICIENCY IN GHANA," *Rev. Agric. Appl. Econ.*, vol. 24, no. 1, pp. 76--87, Mar. 2021, doi: 10.15414/raae.2021.24.01.76-87.}
+}
+
+@misc{Tsiboe2022,
+  author = {F. Tsiboe, J. Asravor, V. Owusu, and A. Mensah-Bonsu},
+  title = {Production technology, efficiency, and productivity of cereal farms: Prospects for enhancing farm performance in Ghana},
+  year = {2022},
+  doi = {10.1017/age.2022.16},
+  note = {F. Tsiboe, J. Asravor, V. Owusu, and A. Mensah-Bonsu, "Production technology, efficiency, and productivity of cereal farms: Prospects for enhancing farm performance in Ghana," *Agric. Resour. Econ. Rev.*, vol. 51, no. 3, pp. 579--609, Dec. 2022, doi: 10.1017/age.2022.16.}
+}
+
+@misc{Asravor2024,
+  author = {J. Asravor, F. Tsiboe, R. K. Asravor, A. N. Wiredu, and M. Zeller},
+  title = {Technology and managerial performance of farm operators by age in Ghana},
+  year = {2024},
+  doi = {10.1007/s11123-023-00679-y},
+  note = {J. Asravor, F. Tsiboe, R. K. Asravor, A. N. Wiredu, and M. Zeller, "Technology and managerial performance of farm operators by age in Ghana," *J. Product. Anal.*, vol. 61, no. 3, pp. 279--303, Jun. 2024, doi: 10.1007/s11123-023-00679-y.}
+}
+
+@misc{Adaku2022,
+  author = {A. A. Adaku, F. Tsiboe, and J. Clottey},
+  title = {Taking stock of gender gaps in crop production technology adoption and technical efficiency in Ghana},
+  year = {2022},
+  doi = {10.1080/03031853.2022.2150664},
+  note = {A. A. Adaku, F. Tsiboe, and J. Clottey, "Taking stock of gender gaps in crop production technology adoption and technical efficiency in Ghana," *Agrekon*, vol. 62, no. 1, pp. 31--48, Jan. 2023, doi: 10.1080/03031853.2022.2150664.}
+}
+
+@misc{Ansah2023,
+  author = {I. G. K. Ansah, M. Appiah-Twumasi, and F. Tsiboe},
+  title = {Starchy staples production shortfalls in Ghana: Technical inefficiency effects outweigh technological differences across ecologies},
+  year = {2023},
+  doi = {10.1371/journal.pone.0284780},
+  note = {I. G. K. Ansah, M. Appiah-Twumasi, and F. Tsiboe, "Starchy staples production shortfalls in Ghana: Technical inefficiency effects outweigh technological differences across ecologies," *PLOS ONE*, vol. 18, no. 4, p. e0284780, Apr. 2023, doi: 10.1371/journal.pone.0284780.}
+}
+
+% ADDED 2026-08-13, third pass. The five sources section 4.3 names for the
+% matched-sample design, plus the two Tsiboe works section 2.1 names that no
+% sibling .bib carried.
+%
+% PROVENANCE. These are NOT web guesses. studies/disability's submitted
+% manuscript cites the same five for the same claim -- "a common approach in
+% studies using MSF that often encounter self-selection bias in technology
+% adoption" -- and carries their full references in its own list; the entries
+% below are transcribed from it. Three of the five (Mayen, Crespo-Cebada,
+% Bravo-Ureta) were independently confirmed against the publishers, and those
+% three carry a verified DOI. Asmare and Tiedemann are transcribed only, so no
+% DOI is asserted for either: better a missing field than a fabricated
+% identifier. Add them when you have them in front of you.
+%
+% Tsiboe2020 is the consolidated dataset this study is built on. Tsiboe2021c is
+% the fertilizer-subsidy paper, which is one of the works section 2.1 names and
+% which land_tenure's bibliography does not carry.
+%
+% NOTE ON Tsiboe2021b, inherited from land_tenure and left as found: its author
+% field reads "F. Tsiboe" alone, but the work is Tsiboe, Aseete and Djokoto.
+% Fixing it there is a land_tenure edit, not an ag_services one.
+
+@misc{Mayen2010,
+  author = {C. D. Mayen and J. V. Balagtas and C. E. Alexander},
+  title = {Technology adoption and technical efficiency: Organic and conventional dairy farms in the United States},
+  year = {2010},
+  doi = {10.1093/ajae/aap018},
+  note = {C. D. Mayen, J. V. Balagtas, and C. E. Alexander, "Technology adoption and technical efficiency: Organic and conventional dairy farms in the United States," *American Journal of Agricultural Economics*, vol. 92, no. 1, pp. 181--195, 2010, doi: 10.1093/ajae/aap018.}
+}
+
+@misc{CrespoCebada2014,
+  author = {E. Crespo-Cebada and F. Pedraja-Chaparro and D. Sant{\'i}n},
+  title = {Does school ownership matter? An unbiased efficiency comparison for regions of Spain},
+  year = {2014},
+  doi = {10.1007/s11123-013-0338-y},
+  note = {E. Crespo-Cebada, F. Pedraja-Chaparro, and D. Sant{\'i}n, "Does school ownership matter? An unbiased efficiency comparison for regions of Spain," *Journal of Productivity Analysis*, vol. 41, no. 1, pp. 153--172, 2014, doi: 10.1007/s11123-013-0338-y.}
+}
+
+@misc{Asmare2022,
+  author = {F. Asmare and J. Jarait{\.e} and A. Ka{\v z}ukauskas},
+  title = {Climate change adaptation and productive efficiency of subsistence farming: A bias-corrected panel data stochastic frontier approach},
+  year = {2022},
+  note = {F. Asmare, J. Jarait{\.e}, and A. Ka{\v z}ukauskas, "Climate change adaptation and productive efficiency of subsistence farming: A bias-corrected panel data stochastic frontier approach," *Journal of Agricultural Economics*, vol. 73, no. 3, pp. 739--760, 2022. DOI not verified.}
+}
+
+@misc{BravoUreta2021,
+  author = {B. E. Bravo-Ureta and M. Gonz{\'a}lez-Flores and W. Greene and D. Sol{\'i}s},
+  title = {Technology and technical efficiency change: Evidence from a difference in differences selectivity corrected stochastic production frontier model},
+  year = {2021},
+  doi = {10.1111/ajae.12112},
+  note = {B. E. Bravo-Ureta, M. Gonz{\'a}lez-Flores, W. Greene, and D. Sol{\'i}s, "Technology and technical efficiency change: Evidence from a difference in differences selectivity corrected stochastic production frontier model," *American Journal of Agricultural Economics*, vol. 103, no. 1, pp. 362--385, 2021, doi: 10.1111/ajae.12112.}
+}
+
+@misc{Tiedemann2013,
+  author = {T. Tiedemann and U. Latacz-Lohmann},
+  title = {Production risk and technical efficiency in organic and conventional agriculture: The case of arable farms in Germany},
+  year = {2013},
+  note = {T. Tiedemann and U. Latacz-Lohmann, "Production risk and technical efficiency in organic and conventional agriculture -- The case of arable farms in Germany," *Journal of Agricultural Economics*, vol. 64, no. 1, pp. 73--96, 2013. DOI not verified.}
+}
+
+@misc{Tsiboe2020,
+  author = {F. Tsiboe},
+  title = {Nationally representative farm/household level dataset on crop production in Ghana from 1987-2017},
+  year = {2020},
+  url = {https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4134518},
+  note = {F. Tsiboe, "Nationally representative farm/household level dataset on crop production in Ghana from 1987-2017," SSRN, 2020. Available: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4134518}
+}
+
+@misc{Tsiboe2021c,
+  author = {F. Tsiboe and I. S. Egyir and G. Anaman},
+  title = {Effect of fertilizer subsidy on household level cereal production in Ghana},
+  year = {2021},
+  note = {F. Tsiboe, I. S. Egyir, and G. Anaman, "Effect of fertilizer subsidy on household level cereal production in Ghana," *Scientific African*, vol. 13, p. e00916, 2021.}
+}

@@ -70,7 +70,7 @@ ft_table3()
      LANDSCAPE. Key on TCHLvel, never Tech. -->
 
 ```{r ft-table4}
-# ft_table4()
+ft_table4()
 ```
 
 \newpage

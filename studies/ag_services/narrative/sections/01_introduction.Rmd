@@ -1,8 +1,115 @@
+<!-- OUTLINE, 2026-08-13. Ten markers, one per paragraph.
+
+     A fully written draft of this section exists and was reverted to markers at
+     the author's request. It is kept as 01_introduction.PROSE_DRAFT.Rmd outside
+     the section tree, so nothing below has to be reconstructed from scratch if
+     any of it is wanted back.
+
+     STRUCTURE, which is the disability paper's and should not be rearranged:
+       1  hook
+       2  what the literature has and has not done
+       3  Ghana, closing on the question
+       4  the questions, stated
+       5  data
+       6  methods, and the ceiling on interpretation
+       7  headline result
+       8  the two disaggregations
+       9  contributions, with antecedents folded in
+       10 roadmap
+
+     Antecedents get no block of their own. They appear twice: briefly in ¶2, and
+     fully inside ¶9, where each contribution is stated against what prior work
+     already does, so that gap and answer arrive in the same sentence. The
+     disability paper's seventh paragraph is the model.
+
+     RULES, all four carried from the developed sections.
+       1. Live lookups only. Every number belongs to Section 2, 3 or 5 and is
+          reachable through the objects or the table builders. Each marker names
+          what it needs. No result may be typed as a literal.
+       2. Deliberately literal, here as everywhere in the repository: survey
+          years and round labels, section numbers, the 1 percent significance
+          convention, and counts of rounds, sources and service categories.
+       3. Only cite works already in references.bib. Every key named below is in
+          it. The one claim that needs a source the bibliography lacks is flagged
+          at ¶3 and repeated at the foot.
+       4. Nothing may exceed Section 4.4. Associations conditional on
+          observables, with a treatment measured as community availability rather
+          than individual receipt. ¶6 states this so ¶7 and ¶8 can report cleanly
+          without hedging every sentence.
+
+     Target roughly 1,700 words, which is the length of the disability
+     introduction. -->
+
 # 1. Introduction
 
-<!-- ============================================================================
-     STUB. The v000 draft (narrative/v000_AgricServicesProdGapGhana_FT.docx)
-     contains NO prose for this section - see
-     narrative/diagnostics/migration_2026-08-07.md, 'the draft is a
-     methods-and-exhibits skeleton'. Nothing to split.
-     ============================================================================ -->
+[[OUTLINE ¶1. HOOK. Open on the thing itself, not on the literature, and use no citations. An extension officer arrives in a village with advice. Two different things can follow: the farmer is brought within reach of a way of producing that was not available before, or the farmer is helped to come closer to the best they could already have done with what they had. Establish that these are different outcomes calling for different interventions, and that a comparison of output between served and unserved communities cannot separate them. Close on the stakes: extension is a standing recurrent budget commitment across the region and is judged on exactly that comparison, so where the two effects run in opposite directions a single productivity measure can return almost nothing while both are large. That last sentence is the paper in miniature and the rest of the introduction unpacks it.]]
+
+[[OUTLINE ¶2. WHAT THE LITERATURE HAS AND HAS NOT DONE. Two moves, in order. First, that the field already has the instrument for this distinction: fit a frontier to each group and envelop both with a meta-frontier [@Battese2004; @ODonnell2008], and note that in Ghana it has been applied repeatedly to attributes of the farmer and the farm [@Tsiboe2019; @Tsiboe2021; @Tsiboe2021b; @Tsiboe2022; @Ansah2023; @Asravor2024; @Adaku2022]. Second, the omission: service delivery has not been examined this way. Where extension appears in that work it is a covariate in the inefficiency function, not the boundary determining which technology is available. Say why that is substantive rather than cosmetic, which is that an advisory service is precisely the institution that might do either. Keep this brief. ¶9 makes the same point at length and this is only the trailer.]]
+
+[[OUTLINE ¶3. GHANA, AND CLOSE ON THE QUESTION. Why this setting suits the distinction. Open with the institutional arrangement, then let the surveys describe the environment, then draw the inference that motivates the paper.
+
+     Three features, each carrying one or two numbers and no more. Provision is close to a public monopoly (Table 2, share/Pooled, v1 against v2 and v3; the two private channels are small enough to need one decimal). Access is contact-based rather than infrastructural (Table 3, v3 against v1 and v2). The menu is agronomically narrow (Table 4, v1 and v2 against v6, v7 and v4).
+
+     The inference to draw: a service consisting overwhelmingly of advice on how to use inputs a farmer already has is more plausibly an intervention in efficiency than in technology. That is what makes the decomposition a real question rather than a formality. Then the closing sentence states the question itself, and ¶4 breaks it into parts.
+
+     Do not re-narrate Section 3, and keep out of the crop rows. Pooled figures only.
+
+     [[CITE: the institutional sentences that open this paragraph. Ministry of Food and Agriculture delivery through district-level staff, and decentralisation to district assemblies over the survey period. This is the only claim in the section resting on literature the bibliography does not hold, and Section 3's second paragraph needs the same source. Do not build the sentence around a citation that does not exist yet.]]]]
+
+[[OUTLINE ¶4. THE QUESTIONS. Three of them, enumerated, in the manner of resource_extraction. Whether farmers in served communities operate a different technology from comparable farmers elsewhere; whether any difference in overall performance comes from the technology available, from the efficiency with which it is used, or from both; and whether the answer depends on who provides, on what is provided, and on when it is observed. Then say what an answer looks like, which is a sign and a magnitude on each of two components rather than one number on their product, and define the three measures once, since the whole paper turns on holding them apart.]]
+
+[[OUTLINE ¶5. DATA. Opens "To answer these questions". Three rounds of the Ghana Living Standards Survey, the operator count, the three survey years, and the community questionnaire as the source of the service measures. The important sentence is what the treatment is and is not: a property of the enumeration area, not of the household, so it is not jointly determined with a farmer's own productivity, and the price is that it records availability rather than uptake and understates the participant contrast. State that price here rather than saving it for the limitations, because ¶9 claims it as a contribution and cannot do so honestly otherwise. Then coverage by round, and one sentence naming the three institutional sources and the eight content categories that the disaggregations use.
+
+     Numbers: objs$prevalence$n_all, and objs$prevalence$share$services0 by round.]]
+
+[[OUTLINE ¶6. METHODS, AND THE CEILING. Short, and it is scaffolding rather than argument. The meta-stochastic frontier [@Battese2004; @ODonnell2008]: a separate translog frontier for served and unserved communities, both enveloped by a common meta-frontier. Make the contrast with the alternative explicit, since it is the methodological heart of the paper: this is a different exercise from entering a service dummy as a regressor on one shared frontier. Then matching, one to one on observables before estimation, with both samples reported so the contribution of matching can be read off the table; then jackknife standard errors over enumeration areas. Close on the ceiling in one or two sentences: selection on observables, community availability rather than individual receipt, so what follows are associations, with Section 4.4 carrying the full statement. Getting this in here lets ¶7 and ¶8 report without qualifying every clause.]]
+
+[[OUTLINE ¶7. HEADLINE RESULT, and this is the paragraph a reader will remember, so give it nothing else to do. The two margins run in opposite directions: served communities sit on a frontier further below the meta-frontier, and their farmers use that frontier better. Give both levels and both differences, note that both are significant at the 1 percent level, then the near-cancellation in the product. Close on the general point, which is the paper's most portable claim: an evaluation resting on aggregate performance alone would have recovered a figure close to zero and concluded that service delivery makes little difference, while two large effects were present and offsetting.
+
+     Do not explain why the technology component is negative. That is Section 6's work and the introduction should not pre-empt it.
+
+     Numbers: the tgr, te and mte blocks of objs$eff$services0.]]
+
+[[OUTLINE ¶8. THE TWO DISAGGREGATIONS, presented as evidence rather than as a list. Both bear on which component behaves like a consequence of the services. By service content, the technology component barely moves across the four estimable types while the efficiency component swings across the same four; draw the conclusion, which is that what a menu contains bears on how well farmers use the frontier available and very little on which frontier that is. By survey round, the technology gap closes to an estimate not distinguishable from zero while the efficiency difference holds. Then the consequence of one moving and the other not, which is that their product changes sign across the period, so any single summary figure averages over a comparison that reverses direction inside it.
+
+     Numbers: the $provided$tgr and $provided$te fields in objs$by_service; objs$by_wave$tgr$gap, $te$gap and $mte$gap by round.]]
+
+[[OUTLINE ¶9. CONTRIBUTIONS, WITH ANTECEDENTS FOLDED IN. The structural point of the section. Three contributions, and each one opens on what the existing literature does and closes on what this paper does instead, so that gap and answer arrive together.
+
+     One, the boundary. Ghanaian work has placed it at attributes of the farmer and the farm [@Tsiboe2019; @Tsiboe2021; @Tsiboe2021b; @Tsiboe2022; @Ansah2023; @Asravor2024; @Adaku2022] and applied meta-frontier work elsewhere at seed variety [@TweneboahKodua2022], production practice [@Birhanu2022] and resource endowment [@Uddin2014]. This paper places it at the community's institutional service environment, which is what makes the two channels separable at all.
+
+     Two, measurement. Extension exposure in this literature is typically self-reported receipt, jointly determined with the performance being explained. This paper uses the service environment of the enumeration area across three nationally representative rounds, and repeats the price named in ¶5 rather than quietly dropping it.
+
+     Three, the decomposition as the finding. Group membership is not randomly assigned and the field's answer has been matching or an explicit selection correction [@Mayen2010; @CrespoCebada2014; @Tiedemann2013; @BravoUreta2021; @Asmare2022]. This paper adopts that and then asks which of the two recovered components behaves like a consequence of the treatment, using service content and survey round as the test. That the two move in opposite directions, and that only one responds to what services contain, is the result rather than a step toward one.
+
+     Close on external relevance in one sentence: Ghana is the setting, but the measurement problem is general to any programme evaluated on aggregate farm performance.]]
+
+[[OUTLINE ¶10. ROADMAP. Two or three sentences, customised rather than generic. Section 2 data and the service measures, Section 3 service delivery as the surveys record it, Section 4 the frontier, the matched sample and what the design identifies, Section 5 results, Section 6 interpretation, Section 7 conclusions. Supplementary exhibits in the appendix.]]
+
+<!-- OUTSTANDING LITERATURE.
+
+     ALREADY IN references.bib and sufficient for ¶2 and ¶9, which is why the
+     antecedents are writable as they stand: @Battese2004, @ODonnell2008,
+     @TweneboahKodua2022, @Birhanu2022, @Uddin2014, @Tsiboe2019, @Tsiboe2021,
+     @Tsiboe2021b, @Tsiboe2022, @Ansah2023, @Asravor2024, @Adaku2022,
+     @Mayen2010, @CrespoCebada2014, @Tiedemann2013, @BravoUreta2021, @Asmare2022.
+     Paragraphs 1, 4, 5, 7, 8 and 10 need no citations at all.
+
+     NOT IN THE BIBLIOGRAPHY.
+       * Ministry of Food and Agriculture extension delivery and its
+         decentralisation to district assemblies, for ¶3. Section 3's second
+         paragraph needs the same source, so it is load-bearing twice and is the
+         first to find.
+       * returns to public agricultural extension in sub-Saharan Africa, for ¶1.
+         Optional; the claim stands without it but reads better with it.
+       * the endogeneity of self-reported extension contact, for ¶9's second
+         contribution. Optional; the argument is made from first principles.
+
+     All three are shared with the outstanding lists for Sections 3 and 6, so one
+     literature pass closes several sections at once.
+
+     ONE CORRECTION TO CARRY FORWARD. An earlier draft of the Section 3 outline
+     described irrigation advice as reaching under one percent of
+     farmer-communities. Table 4 prints at two decimals and resolves to one
+     percent. One percent is what the exhibit shows and what the prose should
+     say. -->

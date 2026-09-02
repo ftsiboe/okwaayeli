@@ -27,7 +27,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", out.width = "100%")
 knitr::opts_chunk$set(cache = FALSE, echo = TRUE)
 ```
 
-![Status: Drafting (v005)](https://img.shields.io/badge/status-drafting-lightgrey)
+![Status: Full draft (v006)](https://img.shields.io/badge/status-full%20draft-blue)
 
 For an overview of the broader project context, please refer to the main
 [okwaayeli README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md)
@@ -37,8 +37,20 @@ See the
 [LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
 file in the repository root for details.
 
-**Status**: Drafting (v005). Consolidated into the canonical study layout on
-2026-08-08; the automated narrative system is not yet in place.
+**Status**: Full draft (v006, 2026-09-02). Every section is written, including
+the abstract and the conclusion, which were scaffolds until now. The narrative
+was revised end to end against the current pipeline output, and the headline
+result changed direction in the process: credit-using households operate a
+technology set that lies *farther* from the best-practice frontier than that of
+matched non-users, not nearer to it, and the meta-frontier efficiency shortfall
+is a technology gap rather than a management gap. Results and discussion are
+integrated in `05_results.Rmd`; `06_discussion.Rmd` is superseded. The
+superseded sections are kept in
+[`narrative/revision/superseded/`](narrative/revision/superseded/) and the
+revision is documented in
+[`narrative/revision/revision_notes.md`](narrative/revision/revision_notes.md),
+whose section 4 lists the sixteen items that need author input before the draft
+is circulated.
 
 ### Contributors
 
@@ -96,8 +108,9 @@ the numbered steps directly, in order.
 
 Data preparation upstream of `001` is Stata (`data-raw/scripts/data-prep/glss/03_financial_inclusion.do`),
 which harmonizes the raw GLSS files. `scripts/000_INDEX_financial_inclusion_study.do`
-builds the financial inclusion index — the treatment variable itself — and
-writes it as a harmonized release that `001` reads back.
+builds the financial inclusion index — a *covariate*, not the treatment — and
+writes it as a harmonized release that `001` reads back. The treatment is
+`credit_hh`; see the README section on the treatment variable.
 
 See [`scripts/README.md`](scripts/README.md) for the naming convention and for
 what this study still lacks against `resource_extraction` and `land_tenure`.

@@ -1,0 +1,1102 @@
+---
+title: "Measurement and identification of time poverty in Ghanaian crop production"
+subtitle: "What the Ghana Living Standards Survey supports, and what we propose to estimate"
+author: "Prepared for the study team"
+date: "Draft for comment, 9 August 2026"
+bibliography: time-poverty-measure-review-and-construction.bib
+link-citations: true
+output:
+  word_document:
+    fig_caption: true
+    fig_width: 7.2
+    fig_height: 3.0
+    toc: true
+  html_document:
+    theme: readable
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    fig_caption: true
+    fig_width: 7.2
+    fig_height: 3.0
+  pdf_document:
+    fig_caption: true
+    fig_width: 7.2
+    fig_height: 3.0
+    toc: true
+---
+
+<!--
+STATUS
+  Draft circulated for team comment. It combines two earlier memoranda, one
+  on the reconstruction of the time-poverty measure and one on identification,
+  which are retained in the _archive folder. This file supersedes both; edit
+  here.
+
+RENDERING
+  rmarkdown::render("time-poverty-measurement-and-identification.Rmd",
+                    output_format = "all")
+  PDF requires a LaTeX installation (tinytex::install_tinytex() if absent).
+
+DEPENDENCIES
+  knitr and rmarkdown only; the figures use base graphics, so nothing needs
+  installing. Citations are resolved by pandoc against
+  time-poverty-measure-review-and-construction.bib, which must sit beside
+  this file. To match a target journal, add a csl: <style>.csl line to the
+  YAML above; with none, pandoc uses Chicago author-date. No data files are
+  read: every figure and table is drawn from the numeric literals in the
+  "inputs" chunk, so the file renders anywhere. To refresh after a rebuild,
+  replace the literals in that one chunk and re-knit.
+-->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
+                      dpi = 300, fig.align = "center")
+
+## ---- house style -----------------------------------------------------
+## Two-slot categorical palette, checked for colour-vision-deficient
+## separation and for contrast against the chart surface.
+MEN   <- "#2a78d6"   # slot 1
+WOMEN <- "#eb6834"   # slot 2
+SURF  <- "#fcfcfb"   # chart surface
+GRID  <- "#e1e0d9"   # hairline gridline
+BASE  <- "#c3c2b7"   # baseline / rules
+MUTED <- "#898781"   # axis ink
+INK2  <- "#52514e"   # secondary ink
+
+## A panel with a hairline horizontal grid, no box, and recessive axes.
+panel <- function(xlim, ylim, yat, ylab = NULL, xat = NULL, xlabs = NULL,
+                  xlab = NULL, title = NULL, xaxs = "r") {
+  plot.new()
+  plot.window(xlim = xlim, ylim = ylim, xaxs = xaxs, yaxs = "i")
+  rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4],
+       col = SURF, border = NA)
+  abline(h = yat, col = GRID, lwd = 0.6)
+  axis(2, at = yat, col = NA, col.axis = MUTED, las = 1, cex.axis = 0.95,
+       line = -0.6)
+  if (!is.null(xat)) {
+    axis(1, at = xat, labels = if (is.null(xlabs)) xat else xlabs,
+         col = BASE, col.axis = MUTED, cex.axis = 0.95, lwd = 0.6,
+         padj = if (is.null(xlabs)) 0 else 0.3)
+  }
+  if (!is.null(ylab)) mtext(ylab, side = 2, line = 2.4, cex = 0.8, col = INK2)
+  if (!is.null(xlab)) mtext(xlab, side = 1, line = 2.2, cex = 0.8, col = INK2)
+  if (!is.null(title)) mtext(title, side = 3, line = 0.6, cex = 0.85,
+                             font = 2, col = "black")
+}
+
+## Legend drawn in the plot region, no frame.
+sexkey <- function(x, y, horiz = FALSE) {
+  legend(x, y, legend = c("Men", "Women"), fill = c(MEN, WOMEN),
+         border = NA, bty = "n", cex = 0.9, horiz = horiz,
+         text.col = INK2, x.intersp = 0.6, y.intersp = 1.05)
+}
+sexkey_line <- function(x, y) {
+  legend(x, y, legend = c("Men", "Women"), col = c(MEN, WOMEN), lwd = 2,
+         bty = "n", cex = 0.9, text.col = INK2, seg.len = 1.4,
+         x.intersp = 0.7, y.intersp = 1.05)
+}
+
+## A pandoc grid table with column widths we control, so a long cell cannot
+## squeeze a short column to nothing. Renders in Word, HTML and PDF alike.
+grid_table <- function(df, widths, caption = NULL) {
+  cols <- names(df)
+  rule <- function(ch) paste0("+", paste(vapply(widths,
+            function(w) strrep(ch, w + 2), character(1)), collapse = "+"), "+")
+  block <- function(vals) {
+    cells <- Map(function(v, w) {
+      x <- strwrap(v, width = w)
+      if (!length(x)) x <- ""
+      formatC(x, width = -w)
+    }, as.character(vals), widths)
+    h <- max(vapply(cells, length, integer(1)))
+    cells <- lapply(seq_along(cells), function(j)
+      c(cells[[j]], rep(strrep(" ", widths[j]), h - length(cells[[j]]))))
+    vapply(seq_len(h), function(i)
+      paste0("| ", paste(vapply(cells, function(cc) cc[i], character(1)),
+                         collapse = " | "), " |"), character(1))
+  }
+  out <- c(rule("-"), block(cols), rule("="))
+  for (i in seq_len(nrow(df))) out <- c(out, block(unlist(df[i, ])), rule("-"))
+  if (!is.null(caption)) out <- c(out, "", paste0(": ", caption))
+  cat(out, sep = "\n")
+}
+
+## Grouped bars: two series side by side at integer positions 1..n.
+bars2 <- function(m, w, width = 0.34, gap = 0.02) {
+  n <- length(m)
+  for (i in seq_len(n)) {
+    rect(i - width - gap/2, 0, i - gap/2,         m[i], col = MEN,   border = NA)
+    rect(i + gap/2,         0, i + width + gap/2, w[i], col = WOMEN, border = NA)
+  }
+}
+## Additional roles used by the balance figure in Part II.
+MATCHED <- "#2a78d6"   # covariate already in the matching set
+UNMATCH <- "#eb6834"   # candidate not currently used
+```
+
+```{r inputs}
+rounds <- c("GLSS 5 (2005/06)", "GLSS 6 (2012/13)", "GLSS 7 (2016/17)")
+
+comp <- data.frame(
+  round = rep(rounds, each = 6),
+  panel = rep(rep(c("Economic activity", "Unpaid domestic and care work",
+                    "Total committed time"), each = 2), times = 3),
+  sex   = rep(c("Men", "Women"), times = 9),
+  hours = c(31.31, 26.04, 10.89, 31.58, 42.13, 57.21, 34.06, 28.91, 5.547, 16.44, 39.61, 45.34, 40.16, 36.98, 0, 0, 40.16, 36.98),
+  stringsAsFactors = FALSE
+)
+
+sens <- data.frame(
+  round = rep(rounds, each = 31),
+  k     = rep(c(1, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5, 1.55, 1.6, 1.65, 1.7, 1.75, 1.8, 1.85, 1.9, 1.95, 2, 2.05, 2.1, 2.15, 2.2, 2.25, 2.3, 2.35, 2.4, 2.45, 2.5), times = 3),
+  men   = c(0.42, 0.3839, 0.3545, 0.3239, 0.29, 0.2629, 0.235, 0.2092, 0.1876, 0.163, 0.1432, 0.128, 0.1121, 0.0998,
+    0.08799, 0.07736, 0.06815, 0.06229, 0.05284, 0.04714, 0.04209, 0.03738, 0.03452, 0.03121, 0.02778, 0.02528, 0.0225, 0.02072,
+    0.01953, 0.01811, 0.01684, 0.4675, 0.4393, 0.4167, 0.3792, 0.3447, 0.3203, 0.2934, 0.2643, 0.2401, 0.2179, 0.1955,
+    0.1781, 0.1639, 0.1456, 0.1248, 0.109, 0.09507, 0.08281, 0.07038, 0.06314, 0.04659, 0.03979, 0.03483, 0.02946, 0.02588,
+    0.02205, 0.01807, 0.01509, 0.01341, 0.01133, 0.01028, 0.4639, 0.4103, 0.4024, 0.3568, 0.3029, 0.2567, 0.2472, 0.2112,
+    0.1826, 0.178, 0.1103, 0.1073, 0.09698, 0.07835, 0.07498, 0.05431, 0.03603, 0.0351, 0.03222, 0.02592, 0.02313, 0.02247,
+    0.01248, 0.01205, 0.01165, 0.009105, 0.00844, 0.008031, 0.007001, 0.005644, 0.005018),
+  women = c(0.5704, 0.5448, 0.5158, 0.4942, 0.4657, 0.4407, 0.415, 0.3851, 0.3618, 0.3411, 0.3204, 0.2989, 0.2772, 0.2599,
+    0.2392, 0.2241, 0.205, 0.1896, 0.1741, 0.1608, 0.1498, 0.1372, 0.1282, 0.12, 0.1106, 0.1031, 0.09375, 0.08661,
+    0.08013, 0.07511, 0.06954, 0.5272, 0.5071, 0.4836, 0.4596, 0.4305, 0.4058, 0.3799, 0.3507, 0.3248, 0.2998, 0.2757,
+    0.2524, 0.2321, 0.2114, 0.1878, 0.1714, 0.1578, 0.1411, 0.1263, 0.1113, 0.09427, 0.08173, 0.07065, 0.06326, 0.05542,
+    0.04856, 0.04208, 0.03556, 0.03196, 0.0283, 0.02423, 0.3801, 0.3327, 0.324, 0.2867, 0.2409, 0.1948, 0.1862, 0.1606,
+    0.1337, 0.1295, 0.07515, 0.07191, 0.06416, 0.05221, 0.04878, 0.03309, 0.02265, 0.02244, 0.02114, 0.01709, 0.01591, 0.01551,
+    0.0102, 0.009404, 0.00905, 0.007365, 0.006451, 0.006052, 0.004867, 0.003262, 0.002347),
+  stringsAsFactors = FALSE
+)
+
+surv <- data.frame(
+  round = rep(rounds, each = 56),
+  hours = rep(seq(0, 110, by = 2), times = 3),
+  men   = c(0.9447, 0.9055, 0.8609, 0.8291, 0.8017, 0.7817, 0.7621, 0.7459, 0.73, 0.7165, 0.7019, 0.6899, 0.6803, 0.663,
+    0.6497, 0.6318, 0.615, 0.601, 0.5758, 0.5563, 0.53, 0.5007, 0.474, 0.4499, 0.4225, 0.3899, 0.3653, 0.341,
+    0.3147, 0.29, 0.2654, 0.2411, 0.2188, 0.1993, 0.1828, 0.1633, 0.1472, 0.1306, 0.1191, 0.1069, 0.09717, 0.08892,
+    0.07906, 0.07084, 0.06537, 0.05908, 0.05129, 0.04765, 0.04274, 0.0397, 0.0359, 0.03322, 0.03052, 0.02804, 0.02555, 0.02341,
+    0.9325, 0.8874, 0.849, 0.8188, 0.7913, 0.7713, 0.7518, 0.735, 0.7195, 0.7075, 0.6924, 0.6789, 0.6646, 0.6497,
+    0.6342, 0.6136, 0.5982, 0.5842, 0.5589, 0.539, 0.5111, 0.4815, 0.4552, 0.4293, 0.3993, 0.3652, 0.3372, 0.3122,
+    0.2857, 0.2644, 0.2409, 0.2192, 0.1991, 0.1807, 0.1674, 0.1491, 0.133, 0.1165, 0.1028, 0.08958, 0.07796, 0.06823,
+    0.05741, 0.04659, 0.03988, 0.03518, 0.03035, 0.02676, 0.02233, 0.01947, 0.0166, 0.014, 0.01285, 0.01101, 0.009929, 0.009127,
+    1, 0.991, 0.9792, 0.9608, 0.9437, 0.9189, 0.9021, 0.893, 0.8654, 0.8537, 0.8245, 0.8126, 0.7932, 0.7586,
+    0.7397, 0.6749, 0.6631, 0.6573, 0.5811, 0.5674, 0.4639, 0.4103, 0.4024, 0.3568, 0.3029, 0.2567, 0.2472, 0.2112,
+    0.1826, 0.178, 0.1103, 0.1073, 0.09698, 0.07835, 0.07498, 0.05431, 0.03603, 0.0351, 0.03222, 0.02592, 0.02313, 0.02247,
+    0.01248, 0.01205, 0.01165, 0.009105, 0.00844, 0.008031, 0.007001, 0.005644, 0.005018, 0.004403, 0.004293, 0.003575, 0.003301, 0.00321),
+  women = c(0.96, 0.9474, 0.9295, 0.9101, 0.8921, 0.8728, 0.8533, 0.8342, 0.8161, 0.8013, 0.7866, 0.7712, 0.7566, 0.7402,
+    0.7276, 0.7142, 0.6989, 0.6864, 0.6694, 0.6535, 0.6394, 0.6221, 0.6051, 0.5906, 0.573, 0.5516, 0.5275, 0.5077,
+    0.4876, 0.4657, 0.4428, 0.4222, 0.3985, 0.3768, 0.3591, 0.3417, 0.3238, 0.3063, 0.2863, 0.271, 0.2562, 0.2396,
+    0.227, 0.2135, 0.1986, 0.1848, 0.1717, 0.1616, 0.152, 0.1422, 0.133, 0.1255, 0.1176, 0.1113, 0.1053, 0.09814,
+    0.9499, 0.9318, 0.9129, 0.8934, 0.8691, 0.8428, 0.8197, 0.7959, 0.7724, 0.751, 0.7314, 0.7118, 0.6923, 0.6761,
+    0.6582, 0.6411, 0.6235, 0.6083, 0.5916, 0.5761, 0.5569, 0.5358, 0.5181, 0.4966, 0.4733, 0.4498, 0.4242, 0.3994,
+    0.3752, 0.3508, 0.3264, 0.3022, 0.2797, 0.2576, 0.2367, 0.2167, 0.1966, 0.1794, 0.166, 0.1515, 0.137, 0.1215,
+    0.1066, 0.09427, 0.08197, 0.07138, 0.06375, 0.0568, 0.05019, 0.044, 0.03772, 0.03388, 0.02961, 0.02677, 0.02317, 0.01904,
+    1, 0.9919, 0.9797, 0.959, 0.9441, 0.9215, 0.9005, 0.8908, 0.8554, 0.8379, 0.7952, 0.7742, 0.7469, 0.7062,
+    0.6866, 0.6012, 0.5846, 0.5772, 0.4869, 0.4755, 0.3801, 0.3327, 0.324, 0.2867, 0.2409, 0.1948, 0.1862, 0.1606,
+    0.1337, 0.1295, 0.07515, 0.07191, 0.06416, 0.05221, 0.04878, 0.03309, 0.02265, 0.02244, 0.02114, 0.01709, 0.01591, 0.01551,
+    0.0102, 0.009404, 0.00905, 0.007365, 0.006451, 0.006052, 0.004867, 0.003262, 0.002347, 0.002243, 0.002177, 0.001703, 0.001537, 0.001513),
+  stringsAsFactors = FALSE
+)
+
+medians <- data.frame(
+  round  = rounds,
+  median = c(48.3333, 43, 40),
+  stringsAsFactors = FALSE
+)
+
+reversal <- data.frame(
+  group = rep(c("GLSS 5\nreconstructed", "GLSS 6\nreconstructed",
+                "GLSS 7\nreconstructed", "GLSS 7\nprevious measure"), each = 2),
+  sex   = rep(c("Men", "Women"), times = 4),
+  share = c(0.14, 0.4015, 0.2097, 0.3013, 0.08595, 0.06854, 0.2588, 0.1754),
+  stringsAsFactors = FALSE
+)
+
+panels <- c("Economic activity", "Unpaid domestic and care work",
+            "Total committed time")
+rlab   <- c("GLSS 5\n2005/06", "GLSS 6\n2012/13", "GLSS 7\n2016/17")
+
+## pull a series out of the long tables
+getcomp <- function(pnl, sx) {
+  comp$hours[comp$panel == pnl & comp$sex == sx][match(rounds, rounds)]
+}
+## Standardised mean differences, treated against control, on the 19,663
+## GLSS 5 and GLSS 6 crop farmers with complete data. Treated share 0.227.
+smd <- data.frame(
+  variable = c("Age", "Household head", "Persons 60 and over", "Spouse co-resident",
+               "Other adult women 15-59", "Land fragmentation", "Children under 5",
+               "Household labour", "Own children under 5", "Cultivated area",
+               "Children 5-14", "Extension contact", "Community extension office",
+               "Years of education", "Female adult-equivalent ratio",
+               "Dependency ratio", "Adult men 15-59", "Adult women 15-59",
+               "Crop mix", "Household size", "Cooking with wood or charcoal",
+               "Electric lighting", "Piped water at home", "Distance to water"),
+  smd = c(-0.346, -0.316, -0.217, -0.162, -0.147, -0.160, 0.119,
+          -0.121, 0.114, -0.112, 0.108, 0.108, 0.102,
+          -0.083, 0.054, -0.046, -0.045, 0.043, -0.007, 0.012,
+          0.070, -0.052, 0.037, 0.003),
+  matched = c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+              FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+              TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE,
+              FALSE, FALSE, FALSE, FALSE),
+  stringsAsFactors = FALSE
+)
+```
+
+# Part I. What the treatment measures
+
+## 1. Summary
+
+This document combines two memoranda: one on the reconstruction of the time-poverty measure, and one on whether the reconstructed measure can support the causal language the study wants to use. They are one argument in two halves, and a reader who takes only the second will not know why the treatment changed.
+
+**On measurement.** The variable this study has been using as its treatment is not a measure of time poverty. It is a relative cutoff on hours of paid and self-employed work, computed on household heads alone, from a survey module that records no cooking, no cleaning, no water or fuelwood collection, and no care of children, the elderly or the sick. Because unpaid domestic and care work is the component that separates women's time from men's, its absence does not add noise to the measure; it inverts it. Under the previous construction, 26 per cent of male and 18 per cent of female farmers in the analysis sample were classified time poor. The premise of the paper is the reverse.
+
+We have rebuilt the measure from the published Ghana Living Standards Survey (GLSS) microdata, and in doing so established something we had not expected: two of the three recent rounds carry a full unpaid domestic and care module that the pipeline was never reading. GLSS 5 (2005/06) and GLSS 6 (2012/13) each field a housekeeping and care battery inside the employment section, over the same seven-day recall window as the employment hours, and therefore directly additive to them. GLSS 7 (2016/17) does not; the module was dropped. The consequence is uncomfortable but simple: the study was built on the one recent round that cannot measure the construct it is about.
+
+The rebuilt release covers 169,364 individuals across the three rounds and no longer depends on any externally supplied file. On the two rounds where committed time is fully measured, women's mean committed time exceeds men's by 15.1 hours per week in GLSS 5 and 5.7 hours in GLSS 6, and the share above one and a half times the median is 32.0 against 14.3 per cent in GLSS 5 and 27.6 against 19.6 per cent in GLSS 6. On GLSS 7, where only economic activity is observed, the gradient runs the other way: 11.0 per cent of men against 7.5 per cent of women. That contrast is not a finding about Ghana between 2013 and 2017. It is the signature of what the instrument stopped asking, and it reproduces on Ghanaian data the reversal Bardasi and Wodon report for Guinea. The analysis sample grows from 6,331 farmer-members to 20,772, of which 15,120 sit in rounds where the measure means what its name says.
+
+**On identification.** An instrumental-variables strategy is not available in these data. The natural candidates, the community-level water, electricity, road and extension infrastructure recorded in the community questionnaire, are jointly weak in the first stage, with an F statistic of 2.00 on four excluded instruments, and they are not excludable: the same four enter the yield equation with a joint F of 2.95 and p of 0.019. The household-level version fails earlier, for want of variation: 95.9 per cent of the time poor and 94.4 per cent of the rest cook with wood or charcoal, and mean distance to the water source differs by half a metre.
+
+That leaves selection on observables, which is the design the study already uses, and it can be materially strengthened. Four blocks of pre-determined variables are absent from the matching set and imbalanced past the conventional threshold: the month of interview, household head status, the age and sex composition of the household, and community extension access. The month of interview is the most consequential, predicting both the treatment and the outcome and moving the naive treatment coefficient by 19 per cent on its own. A bounding exercise puts the identified set outside the confidence interval of the controlled estimate, so the paper has to report sensitivity analysis rather than assert conditional independence.
+
+**What we propose.** Estimate the study on GLSS 5 and GLSS 6, where committed time is measured, and carry GLSS 7 separately under a different name, a long-hours indicator rather than a time-poverty indicator. Match on the enriched conditioning set at the meta-frontier stage. Report the estimates as associations conditional on observables in a balanced sample, with bounds. Part III sets this out and Section 13 records what has been decided and what has not.
+
+### What we are asking the team to comment on
+
+Four things, in order of how much they would change the paper.
+
+1. **The rounds.** Section 12 recommends estimating on GLSS 5 and GLSS 6 and treating GLSS 7 as a falsification sample. The alternative is to pool all three with the basis flag interacted with the wave. This is the decision that most changes what gets written.
+
+2. **The conditioning set.** Section 10 proposes four additions and argues against four others on the ground that they are mediators rather than confounders. Anyone who disagrees about a specific variable should say which and why.
+
+3. **The framing.** Part II concludes that the estimates are associations conditional on observables. If anyone sees an identification route we have missed, this is the moment.
+
+4. **The manuscript prose.** Appendix B is drafted to be lifted into the paper. Comments on wording are welcome there in a way they are not in the body of this document.
+
+## 2. Preferred time-poverty status indicator
+
+So that the rest of this memorandum is read against a fixed object, this section states the indicator we propose to use before any of the evidence for it. Section 6 gives the construction in full; Section 12 argues the rounds it should be estimated on.
+
+Let $E_{iw}$ denote the hours individual $i$ in round $w$ reports across all economic activity in the seven days before interview, and let $U_{iw}$ denote the hours the same individual reports across all unpaid housekeeping and care activities over the same seven days. Committed time is their sum,
+
+$$
+C_{iw} \;=\; E_{iw} \,+\, U_{iw},
+$$
+
+measured in hours per week. Let $B_{w}$ be the reference population for round $w$, meaning individuals aged fifteen and over with a valid response to the relevant modules, and let $\omega_{iw}$ be the individual sampling weight. The round-specific line is the weighted median of committed time on that population,
+
+$$
+m_{w} \;=\; \operatorname{median}_{\,i \in B_{w}}\bigl(\, C_{iw} \,;\, \omega_{iw} \,\bigr).
+$$
+
+**The preferred indicator is the dummy**
+
+$$
+T^{1.5}_{iw} \;=\; \mathbf{1}\bigl\{\, C_{iw} \,>\, 1.5\, m_{w} \,\bigr\},
+$$
+
+which takes the value one for the time poor and zero for the non-time poor, with $\mathbf{1}\{\cdot\}$ the indicator function. The inequality is strict, so a person whose committed time falls exactly on the line is not time poor; that is Bardasi and Wodon's convention [@BardasiWodon2010], and it decides the classification of the thirty-nine GLSS 5 respondents who sit precisely on the line, for reasons Section 6 sets out.
+
+Four subsets and variants are available from the same release, and each is a re-reading of the quantities already defined rather than a separate construction. The first is the threshold multiple. Writing $\lambda$ for that multiple,
+
+$$
+T^{\lambda}_{iw} \;=\; \mathbf{1}\bigl\{\, C_{iw} \,>\, \lambda\, m_{w} \,\bigr\},
+\qquad \lambda \in \{\,1.25,\; 1.5,\; 2\,\},
+$$
+
+so that $\lambda = 1.25$ widens the group and $\lambda = 2$ isolates the extreme tail. The second is an absolute rather than relative line,
+
+$$
+T^{\mathrm{abs}}_{iw} \;=\; \mathbf{1}\bigl\{\, C_{iw} \,>\, 73.5 \,\bigr\},
+$$
+
+the weekly equivalent of the ten-and-a-half-hour daily rule used in the Women's Empowerment in Agriculture Index [@Seymour2019GFS]. The third replaces the binary with its depth and severity, which is the Foster-Greer-Thorbecke class applied to time rather than to income. With the normalised shortfall
+
+$$
+g_{iw}(\lambda) \;=\; \frac{C_{iw} - \lambda\, m_{w}}{\lambda\, m_{w}} \; T^{\lambda}_{iw},
+$$
+
+the aggregate measures are
+
+$$
+P_{\alpha}(\lambda) \;=\;
+\frac{\sum_{i \in B_{w}} \omega_{iw}\, \bigl[g_{iw}(\lambda)\bigr]^{\alpha}}
+     {\sum_{i \in B_{w}} \omega_{iw}},
+\qquad \alpha = 0,\,1,\,2,
+$$
+
+where $\alpha$ is the aversion parameter: $\alpha = 0$ returns the headcount, $\alpha = 1$ the average depth of the time deficit among the time poor, and $\alpha = 2$ its severity. The fourth is a split of the same person across the two sides of the boundary, entering $E_{iw}$ and $U_{iw}$ separately or through the unpaid share $U_{iw}/C_{iw}$, which lets us ask whether it is total committed time or its unpaid composition that carries any effect we find. Table 1 sets all of these out, with the rounds each is available in and the role each would play.
+
+```{r tab1, results = "asis"}
+grid_table(
+  data.frame(
+    Indicator = c("Time poor (preferred)", "Wider line", "Extreme tail",
+                  "Absolute weekly rule", "Depth and severity",
+                  "Unpaid share", "Long economic hours"),
+    Definition = c("C > 1.5 m", "C > 1.25 m", "C > 2 m", "C > 73.5 hours",
+                   "P1 and P2 at 1.5 m", "U / C", "E > 1.5 m of E"),
+    Rounds = c("GLSS 5, 6", "GLSS 5, 6", "GLSS 5, 6", "GLSS 5, 6",
+               "GLSS 5, 6", "GLSS 5, 6", "GLSS 7"),
+    Role = c("main treatment; frontier technology group",
+             "sensitivity to the threshold",
+             "sensitivity to the threshold",
+             "comparability with index-based work",
+             "continuous alternative to the binary",
+             "mechanism split",
+             "falsification; never labelled time poverty"),
+    stringsAsFactors = FALSE, check.names = FALSE),
+  widths = c(21, 19, 11, 37),
+  caption = paste("Table 1. The preferred indicator and the subsets and variants",
+                  "available from the same release. C denotes committed time, E",
+                  "economic hours, U unpaid hours and m the round median, as",
+                  "defined above.")
+)
+```
+
+*Notes.* C denotes committed time, E economic hours, U unpaid domestic and care hours, and m the weighted median of the relevant quantity in the round, all as defined in the text above. P1 and P2 are the depth and severity measures. Every indicator is computed on the same reference population: individuals aged 15 and over with a valid response to the modules the round supports, weighted by the round's sampling weight. *Source.* Authors' construction from the Ghana Living Standards Survey microdata published by the Ghana Statistical Service.
+
+**Coverage.** The indicator is defined for GLSS 5 (2005/06) and GLSS 6 (2012/13), the two rounds that field both sides of the definition. In GLSS 7 (2016/17) the unpaid module was not fielded, so $U_{iw}$ is unobserved and the same arithmetic applied to $E_{iw}$ alone yields a different quantity, which we carry under a different name,
+
+$$
+L_{iw} \;=\; \mathbf{1}\bigl\{\, E_{iw} \,>\, 1.5\, m^{E}_{w} \,\bigr\},
+$$
+
+where $m^{E}_{w}$ is the weighted median of economic hours on $B_{w}$. We call $L_{iw}$ a long-hours indicator and never a time-poverty indicator. In the crop-farmer sample this gives 5,455 members in GLSS 5 and 9,665 in GLSS 6, so 15,120 carry the preferred measure, and a further 5,652 in GLSS 7 carry the long-hours indicator only.
+
+The case for the indicator is that it is the object the literature defines rather than a proxy for it. It is measured at the individual level, so spouse-farmers enter the sample instead of being absorbed into a household head; the line is a weighted population median rather than a sample artefact; the binary is directly usable both as the matching treatment and as the meta-frontier's technology grouping; and its gender gradient runs in the direction the mechanism predicts, which the previous indicator's did not.
+
+Its limits are equally plain. It is a relative line, so it locates a person in a distribution rather than against any absolute standard of hardship, and a round in which everyone works longer records no more time poverty. It rests on stylised seven-day recall rather than a diary, and it cannot record simultaneous activity, so the level is a lower bound and the gender gap is understated rather than overstated. It imposes no consumption condition, so a person with ample income who chooses long hours is counted as time poor alongside one who has no choice. And it is unavailable for the most recent round, which costs the study currency.
+
+## 3. Background
+
+Section 2 stated the indicator; this section sets out the literature it comes from, the evidence it is meant to extend, and the questions that evidence leaves open. We put it before the diagnosis of what we had so that the measurement decisions in Sections 5 to 7 are read against the state of the field rather than against intuition. It draws on the synthesis we compiled for this study, which catalogues 110 documents, and it distinguishes throughout between what has been estimated, what has been asserted, and what has been observed qualitatively.
+
+### 3.1 What the concept has been used to explain
+
+Time poverty entered development economics as a way of saying that a household can be adequately resourced in money and still fail to convert those resources into welfare, because the time the conversion requires is not there. Two conceptions coexist and they do not rank the same people as poor. The first counts total work, paid plus unpaid, against a line; the second counts what remains after necessary and committed activities and asks whether the remainder falls short. The distinction is not academic. Applying five thresholds drawn from both families to a single Bangladeshi dataset, Seymour and co-authors recover headcounts ranging from 8.8 to 20.4 per cent [@Seymour2019GFS], and a United States application of the discretionary-time family makes men more likely to be time poor than women [@KalenkoskiHamrick2013], the reverse of every excess-work application in Africa. Which family a study adopts is therefore part of its findings, not a preliminary to them.
+
+Bardasi and Wodon [-@BardasiWodon2010] add a condition that most applications, ours included, omit. A person is time-and-consumption poor only if the household is consumption poor, or would become so were that person to reduce their hours to the line. In Guinea the condition roughly halves the headcount, from 43.7 to 20.4 per cent at the fifty-hour line, and widens the female-to-male ratio from 1.41 to 1.64. Its rationale is that long hours impoverish only when they are not chosen; Harvey and Mukhopadhyay [-@Harvey2007] reach the same place from the other direction, rejecting the wage-rate formulation on the ground that labour market imperfections deny the choice in the first place. We do not implement it, and it stands as decision three in Section 13 rather than as a settled matter.
+
+A third distinction cuts across both families and matters for what any survey can see. Floro [-@Floro2014Slides] separates time poverty, a question of duration, from work intensity, a question of simultaneity. The magnitudes involved are not small: among Thai home-based workers the gender gap in total work is about an hour a day on primary activities and 3.7 hours once overlapping activities are counted [@FloroPichetpongsa2010]. Work in rural Senegal [@MarterKenyon2023] adds the interpretive point that women deliberately increase task simultaneity in the peak agricultural season, so simultaneity is a response to constraint rather than evidence of slack.
+
+What the two families share is the content of the boundary, and it is that agreement, rather than any particular threshold, that every measurement decision in this study turns on. Vickery's [-@Vickery1977] original formulation treats time and money as jointly necessary inputs to a household's consumption standard, so that a household with adequate income but inadequate time is poor in a way an income line cannot see. Bardasi and Wodon [-@BardasiWodon2006] operationalise this as a relative line: a person is time poor if their total committed hours, market work plus domestic and care work, exceed a multiple of the median, conventionally 1.25, 1.5 or 2 times. The Levy Institute's income and time-adjusted measures [@Zacharias2018Levy], the Women's Empowerment in Agriculture Index workload indicator [@Seymour2019GFS], and the discretionary-time deficits used in the European literature [@Burchardt2008; @Goodin2008] differ in threshold and in arithmetic, but they agree on the content: unpaid work is inside the boundary, not outside it.
+
+### 3.2 Where a time constraint would appear in the production framework
+
+Our design recovers two distinct objects: the technology a farmer can reach, and the efficiency with which she uses it. The channels the literature proposes sort cleanly between those two and the input vector itself. Writing $y_{i}$ for the output of farmer $i$ and $x_{i}$ for the input vector, and letting $f^{g}(\cdot)$ denote the frontier of the technology group $g$ to which the farmer belongs and $f^{*}(\cdot)$ the meta-frontier that envelops all group frontiers, observed output decomposes as
+
+$$
+y_{i} \;=\; f^{*}(x_{i}) \,\times\, \mathrm{TGR}_{i} \,\times\, \mathrm{TE}_{i} \,\times\, \exp(v_{i}),
+\qquad
+\mathrm{TGR}_{i} \;=\; \frac{f^{g}(x_{i})}{f^{*}(x_{i})},
+$$
+
+where $\mathrm{TGR}_{i}$ is the technology gap ratio, the share of the best available technology that the farmer's own group can reach; $\mathrm{TE}_{i}$ is technical efficiency relative to that group frontier; and $v_{i}$ is symmetric noise. A time constraint can act on $x_{i}$, on $\mathrm{TGR}_{i}$ or on $\mathrm{TE}_{i}$, and the three are observationally distinct: withdrawing hours moves the farmer along the frontier, foreclosing a technology moves the frontier itself, and doing the same operations late or unsupervised moves the farmer away from whichever frontier applies. Table 2 sorts the channels the literature proposes into those three positions.
+
+```{r tab2, results = "asis"}
+grid_table(
+  data.frame(
+    Channel = c(
+      "Hours withdrawn from own-farm work",
+      "Seasonal bottleneck: hours available over the year but not at the peak",
+      "Constrained reallocation to a superior technology set",
+      "Forgone learning: no time for extension, training or producer organisations",
+      "Supervision failure: hired labour unmanaged",
+      "Timeliness failure: planting, weeding and harvest done late",
+      "Fatigue: output per hour falls beyond a threshold of total hours",
+      "Attention divided across simultaneous tasks"),
+    Appears = c(
+      "Input vector", "Input vector, or efficiency if timing is unobserved",
+      "Technology gap", "Technology gap and adoption",
+      "Efficiency", "Efficiency", "Efficiency", "Efficiency"),
+    Evidence = c(
+      "Stated as theory [@KesSwaminathan2006; @AroraRada2017]; not estimated",
+      "Documented for Malawi and Mozambique [@WodonBeegle2006]; weeding labour identified as the binding constraint on maize yields [@Leonardo2015]",
+      "Asserted in review [@KesSwaminathan2006]; not estimated",
+      "Qualitative interviews [@MarterKenyon2023]; one study finds the benefit of association membership vanishes in the top third of the committed-time distribution [@Barrios2025]",
+      "Qualitative [@Pierotti2022]; no estimate",
+      "Access to mutual labour support raises maize productivity 46.1% and technical efficiency 18.3% in northern Ghana; women 28.6 pp less likely to have access [@Cobbinah2023]",
+      "Causal, but estimated outside agriculture [@Pencavel2015; @CollewetSauermann2017]",
+      "Correlational [@FloroPichetpongsa2010; @DelecourtFitzpatrick2021]"),
+    stringsAsFactors = FALSE, check.names = FALSE),
+  widths = c(31, 20, 44),
+  caption = paste("Table 2. Channels by which a time constraint could affect farm",
+                  "output, where each would appear in the decomposition above, and",
+                  "the strength of the evidence for it. No entry in this table has",
+                  "been estimated on a time-poverty measure in a farm production",
+                  "setting.")
+)
+```
+
+*Notes.* Entries summarise claims made in the cited literature; none is an estimate produced here. The third column records the strongest form in which each claim appears, distinguishing what has been estimated from what has been asserted or observed qualitatively. Percentages in that column are the authors' reported effects and are not comparable with one another. *Source.* Authors' compilation from the 110-document literature synthesis prepared for this study.
+
+This agreement matters more than it may appear, because the unpaid component is not a marginal addition but the component that carries the sign. The Guinean, pan-African and Ghanaian magnitudes are in Section 3.5 below; what they amount to is that on market hours alone men look the more burdened sex, and on total committed time women do. A measure that omits unpaid work therefore does not deliver a conservative or attenuated version of time poverty. It delivers a different quantity, with the opposite sign on the one dimension the study is designed to examine.
+
+Our design compounds this. The meta-stochastic frontier treats time-poverty status as the variable defining technology groups, and the matching stage exact-matches on sex within that treatment. If the treatment is a long-paid-hours dummy that is more common among men, then the technology gap the frontier recovers is the gap between long-hours and short-hours farmers, and whatever gender story survives is carried entirely by the covariate rather than by the treatment. The measure is not an input to the estimate; on this design it determines what the estimate is of.
+
+
+### 3.3 What has actually been estimated
+
+For farm output, close to nothing. The review located a single paper connecting a time-poverty concept to farm production, a gendered peasant-household model for rural Mozambique in which a tightening time constraint leads women to cut both farm hours and leisure [@AroraRada2017], and it reports directions rather than estimates. Every quantitative time-poverty study we found in a farming population either treats time poverty as the outcome or regresses a non-production outcome on it: non-farm participation [@TayeTesfaye2024], child schooling [@Martey2022CIR], well-being [@Barrios2025], aspirations [@Martey2024FE], food insecurity [@MarteyKoomson2025]. Farm output, yield, total factor productivity and technical efficiency do not appear as outcomes anywhere in that set.
+
+The nearest quantitative evidence proxies the burden instead of measuring it. In Uganda [@Ali2016], female-managed plots hold a 12.9 per cent net resource advantage, so the unexplained gap in returns to identical inputs is 30.4 per cent, and childcare responsibility accounts for roughly half of it, operating through differential returns to the child dependency ratio; the study contains no time-use data. In northern Ghana [@Cobbinah2023], access to mutual labour support raises maize productivity by 46.1 per cent and technical efficiency by 18.3 per cent, through timelier planting, weeding and harvesting, and women are 28.6 percentage points less likely to have access. And on Ghanaian cassava farms [@Missiame2021], off-farm income significantly raises inefficiency on female-managed plots, which the authors attribute to competing time demands. That is an inference from an income variable rather than a measurement of time.
+
+One time variable has entered a productivity model, and it returned a null. Diiro and co-authors [-@Diiro2018] include the abbreviated empowerment index's workload indicator, a binary at ten and a half hours a day, alongside five other empowerment domains in a control-function model of maize yields in western Kenya. A one per cent increase in overall empowerment raises yields by about 6.4 per cent; production decisions, group membership, income control and asset ownership all contribute; the workload indicator is insignificant. This is the result our paper must engage rather than omit. Two readings are available and we should state which we hold. Either the time constraint does not bind on productivity, or the null reflects a coarse instrument: a single day, primary activities only, a binary cut, in a setting where the headcount moves by more than a factor of two across plausible rules. The evidence assembled in the review is consistent with the second reading and does not establish it, and that is the form the claim should take in the manuscript.
+
+The strongest causal evidence that the channel operates at all comes from outside agriculture. A three-arm experiment among Nairobi business owners [@Delecourt2025] found that time-saving domestic services raised revenue by 70.4 per cent while cash produced no business gains, which separates the time channel from the liquidity channel more cleanly than anything in the farm literature. Piped-water rollout in the Kyrgyz Republic released collection time into leisure and farm labour, and household cereal production rose [@Meeks2017]. Ugandan businesses operating with a small child present [@DelecourtFitzpatrick2021] earn 48 per cent lower profits than comparable female-owned businesses without one, with stockouts rather than prices or product quality accounting for the difference. That is an execution deficit at given inputs, which is what technical inefficiency means, though the authors are explicit that the finding is correlational.
+
+The uncomfortable results belong in the paper as well. Time released is not automatically converted into output: roughly a fifth of the time freed by one water intervention went to farm work and about half was reabsorbed by other domestic tasks [@Cook2021]; a household water connection elsewhere freed time that became leisure with no income gain [@Devoto2012]; and a recent evaluation reports a null on both agricultural and non-agricultural self-employment despite gains in salaried work [@Ajayi2022]. A hypothesis that time relief raises farm output has to survive these, not ignore them.
+
+### 3.4 Technology adoption
+
+Here the literature predicts opposite signs and never tests both within one sample. Labour-using practices raise total labour and should discourage adoption by the time constrained: conservation agriculture increases total labour across five countries with women absorbing a disproportionate share [@MonttLuu2018]; access to hired labour is a highly significant predictor of adopting the system of rice intensification [@GrafOya2021]; row planting raises labour with yields unchanged [@Vandercasteelen2018]; and Ghanaian adopters of improved rice seed with inorganic fertiliser add 13.93 hours a week of farm labour, compressing women's domestic time and leisure [@Addison2020]. Labour-saving practices should work the other way: push-pull suppression saves 38 person-days per hectare for women [@Diiro2021], improved cookstoves release around 34 minutes a day [@Krishnapriya2021], and mechanised ploughing and animal traction release field labour [@Diao2014; @NamulondoBashaasha]. A single pooled adoption coefficient across the two classes is close to uninterpretable, which argues for a within-sample sign test rather than a headline adoption effect. Labour-saving is in any case a property of an operation rather than of a technology: push-pull cuts weeding and land-preparation labour while raising harvest labour.
+
+The closest paper to ours is Ghanaian. Working with 810 married couples in the north, Jarawura and co-authors [-@Jarawura2026] find that unpaid care hours mediate approximately 38 per cent of the gender gap in intercropping adoption, 25 per cent for legume rotation and 19 per cent for groundnut intercropping, with women reporting four and a half hours a day of unpaid care against men's forty-two minutes. It is the only quantified bridge in this literature between a time burden and agricultural technology uptake. It is also not a time-poverty study: it uses continuous care hours rather than a threshold-based classification, decomposes a gender gap rather than estimating a time-poverty effect, rests on a purposive dyadic sample in one region, and does not touch efficiency.
+
+A learning channel runs alongside the field-labour one and is distinct from it. Senegalese women report not having the time to sit and listen to information that might improve their productivity [@MarterKenyon2023]; and the well-being benefit of membership in a Colombian coffee farmers' association vanishes entirely for the top third of the non-discretionary-time distribution [@Barrios2025], which is to say that the principal extension channel stops delivering above a time threshold. This is also the most frequently named and least measured explanation for the literature's standing puzzle, that 36 per cent of first-year adopters of the system of rice intensification in Bangladesh abandoned it in year two despite positive measured profits net of family labour costs [@Barrett2022].
+
+### 3.5 Gender
+
+Gender is not a subsidiary dimension of this literature; it is the reason the concept exists, and the gap is created by unpaid work rather than by market work. In Guinea [@BardasiWodon2010], men spend more time in the labour market than women, 34.7 hours against 27.4, while women spend 17.5 hours on domestic chores against men's 2.5. For Ghana, Zacharias and co-authors [-@Zacharias2018Levy] find the gender gap in time deficits is driven entirely by household production requirements, 27 hours a week for employed women against 6 for men, and not by employment hours. The gap widens as the threshold rises, because the right tail of the hours distribution is disproportionately female: the Guinean female-to-male ratio moves from 1.41 at a fifty-hour line to 2.54 at seventy and a half.
+
+Three further findings bear directly on our specification. Every available instrument understates the gap: measured differences grow substantially once simultaneous activities are counted [@FloroPichetpongsa2010; @Arora2015], and supervisory care, being on call rather than performing a task, is invisible to activity-based questionnaires altogether [@DornFolbre2022]. Empowerment and assets do not relieve women's time: assets and education do not significantly reduce women's time poverty in rural Mozambique [@Arora2015], women with greater decision-making authority report less leisure [@KhedKrishna2023], and participation in a women's empowerment project raised women's time poverty by 15 percentage points in one Nigerian study [@Adeyeye2021]. Empowerment variables should therefore not be treated as controls that will absorb the time-poverty effect, because they are jointly determined with it. And Bardasi and Wodon's own simulation [@BardasiWodon2006Chapter] finds the time margin (the number of people able to raise their hours, and by how much) barely differs between men and women, so the sex difference in the consequence of longer hours sits almost entirely in the average return per hour. That is an argument for separate group frontiers rather than a pooled frontier with a sex dummy, which is the design we already have.
+
+One caution applies to the Ghanaian evidence specifically. Of the GLSS-based time-poverty papers in our collection [@Martey2021Energy; @Martey2022EnPol; @Martey2022CIR; @MarteyKoomson2025], none estimates gender-stratified effects; two name gender disaggregation explicitly as future work and one reports the gender difference descriptively only. That is the clearest and most defensible gap statement available to us.
+
+### 3.6 What this leaves open
+
+Read together, the literature supports a clear statement of contribution and does not support a strong prior about the result. No study estimates the effect of a time-poverty measure on farm technical efficiency; none estimates it on agricultural technology adoption; Ghana's meta-frontier literature and Ghana's GLSS time-poverty literature are disjoint; and the gender-productivity-gap literature proxies the care burden with dependency ratios rather than measuring time. Those four gaps are what this study is positioned to close, and they are close-able with the reconstructed measure and were not close-able with the one we had, because the one we had contained no unpaid work.
+
+Three further gaps we can address only in part, and the manuscript should say which. The two-sign prediction on adoption requires that labour-saving and labour-using practices both be observed in the same sample. Seasonality is documented as a threat in every cross-sectional design in this literature, and specifically for Ghanaian farm households [@Martey2024FE; @WodonBeegle2006]; retaining the month of interview lets us control for it without resolving it. And simultaneity and supervisory care cannot be measured in any round of the GLSS, which biases an hours-based measure downward for women. That is a limitation to state plainly, and the reason we describe our gender gap as a lower bound throughout.
+
+## 4. The measure the study has been using
+
+By that standard the measure we have been using fails at the first step, and it is worth being precise about how. The previous release was built from a single file supplied outside the pipeline, with no code behind it, derived from the GLSS 7 employment section. That section records hours in the past seven days across eight economic activities: work for a wage or salary, work as a paid domestic servant, work on the household farm, running a non-farm enterprise, helping in a household member's non-farm enterprise, catching fish or collecting natural products, apprenticeship, and voluntary work for a non-household member. All eight are gated on economic activity. None is housework.
+
+Three features of the previous construction bound what it could have measured. First, the component labelled as unpaid work was assembled from paid domestic service, fishing and gathering, apprenticeship and volunteering. Paid domestic service is answered by 249 of 59,864 respondents, or 0.42 per cent, because the question asks about employment as a domestic worker for a wage, not about housework in one's own home. In the analysis sample the whole so-called unpaid component amounted to 3.8 per cent of committed time. Second, the indicator that reached the estimation was rebuilt on paid hours only, after the committed-time version had been computed and discarded, so the treatment was a cutoff at 45 hours of paid work per week. In the notation of Section 2, what reached the estimation was
+
+$$
+T^{\mathrm{old}}_{i} \;=\; \mathbf{1}\bigl\{\, P_{i} \,>\, 1.5\, m^{P} \,\bigr\},
+\qquad
+P_{i} \;=\; E^{\mathrm{wage}}_{i} + E^{\mathrm{farm}}_{i} + E^{\mathrm{nf}}_{i} + E^{\mathrm{help}}_{i},
+$$
+
+where $P_{i}$ is hours of paid and self-employed work (wage employment, own farm, own non-farm enterprise, and help in a household member's non-farm enterprise) and $m^{P}$ is the unweighted median of $P_{i}$ among household heads. No term on the unpaid side of the definition appears anywhere in it. Third, the sample was restricted to household heads, which reduced the release to exactly one record per household, 68.8 per cent male, and removed 200 spouse-farmers of whom 91.5 per cent were women.
+
+Two further defects sit behind those three, one latent and one live. The latent one does not reach the shipped indicator but would have bitten anyone who repaired the overwrite without also repairing the base: the reference distribution for the median included children from age five and individuals never administered the employment module, whose missing responses had been converted to zeros; 55.5 per cent of that base recorded zero hours, so the median was zero. Any relative cutoff on that base collapses to
+
+$$
+\mathbf{1}\bigl\{\, C_{i} > \lambda \cdot 0 \,\bigr\} \;=\; \mathbf{1}\bigl\{\, C_{i} > 0 \,\bigr\}
+\qquad \text{for every } \lambda,
+$$
+
+an indicator of having done any economic activity at all, and identical across every threshold the code nominally distinguishes. The live defect did reach the release: the alternative thresholds retained for robustness were each set to missing wherever they disagreed with the main indicator, so that the surviving observations correlated with it at unity by construction. The robustness check was the main specification re-run on a non-random 85 per cent subsample.
+
+We record these plainly and without attribution. They are the reason the reconstruction was necessary, not a matter of blame; the same mapping of unpaid work appears in at least one published GLSS time-poverty paper, which is worth verifying before we cite its unpaid-work results.
+
+## 5. What the GLSS actually contains
+
+The obvious question is whether the survey could have supported anything better. It could, and in two of the three rounds it still does. Section 4 of the GLSS questionnaire is titled Employment and Time Use, and in GLSS 4 through GLSS 6 the second half of that title is not decorative. Part H of the GLSS 6 instrument (Part H likewise in GLSS 5, Part J in GLSS 4) asks each household member aged seven and over how much time they spent in the last seven days on each of a list of housekeeping and care activities, recording hours and minutes separately for each. GLSS 6 lists fourteen: collecting firewood, fetching water, washing clothes, ironing, cleaning the house and compound, cooking, shopping for the household, running errands, washing dishes, caring for children, caring for the elderly, caring for the sick, collecting food from the garden, and helping children with schoolwork. GLSS 5 lists thirteen: the same first twelve, including all three care items, with a single residual "other housekeeping" question in place of the garden and schoolwork items. GLSS 4 lists eleven. The recall window is the same seven days used by the employment questions, which is what makes the two directly additive rather than merely adjacent.
+
+GLSS 7 does not field this module. We confirmed its absence by scanning all 205 variables of the GLSS 7 employment file across Parts A to F rather than inferring it from the published report. What GLSS 7 gained in exchange is the eight-activity economic battery described in Section 4, which is finer than anything in the earlier rounds; what it lost is the entire unpaid side. The two capabilities are in complementary distribution, and no round has both.
+
+The earlier rounds are excluded for a different reason. GLSS 4 carries the housekeeping module but records employment in weeks rather than hours, with no hours variable anywhere in its employment section, so no comparable total can be formed; GLSS 3 is the same. GLSS 8 microdata are not available to us. Table 3 sets out what each round supports.
+
+```{r tab3, results = "asis"}
+grid_table(
+  data.frame(
+    Round = c("GLSS 3", "GLSS 4", "GLSS 5", "GLSS 6", "GLSS 7"),
+    Economic = c("not in hours", "weeks only", "total hours, all jobs",
+                 "total hours, all jobs", "8 activities, hours"),
+    Unpaid = c("housekeeping items, unlabelled", "11 activities, hours",
+               "13 activities, hours and minutes",
+               "14 activities incl. child, elder, sick care",
+               "module not fielded"),
+    Measure = c("none", "none", "committed time", "committed time",
+                "economic hours only"),
+    stringsAsFactors = FALSE, check.names = FALSE),
+  widths = c(9, 22, 40, 20),
+  caption = paste("Table 3. What each round of the GLSS can support, by column:",
+                  "economic hours, unpaid domestic and care time, and the measure",
+                  "available. A committed-time measure requires hours on both sides",
+                  "of the boundary in a common recall window.")
+)
+```
+
+*Notes.* Economic hours refers to the form in which the employment module records time worked. Unpaid domestic and care refers to the housekeeping and care battery in Part H of Section 4 (Part J in GLSS 4). GLSS 8 microdata were not available at the time of writing. *Source.* Authors' assessment of the GLSS questionnaires and distributed data files, Ghana Statistical Service.
+
+Three questionnaire items carry labels in the distributed data that do not describe what they ask, and each one, taken at face value, produces a wrong measure. In GLSS 7, the item labelled as hours worked for a wage or salary at column 5 of Part A is the follow-up to a question about employment as a domestic worker, and records hours in that job; the item labelled non-productive agriculture asks about catching fish, prawns or wildlife and collecting other natural products, which is own-use production of goods and sits inside the national accounts production boundary rather than outside it. In GLSS 6, the item labelled as the number of jobs done at column 5 of Part A is in fact total hours worked across all jobs in the last seven days: its median is 40, its ninety-fifth percentile 78, and it is greater than or equal to reported main-job hours for every respondent in the file. The job count is the preceding column. GLSS 5 has the same structure, with a total-hours item and a separate main-job item, and adding the two double counts, which is how an earlier reading of the file produced 57 paid hours per week. We verified each of these against the printed instrument and against the distribution in the data, and the reconstruction uses the totals only.
+
+## 6. The reconstructed measure
+
+Committed time is defined in Section 2. What this section adds is how each of its two components is built from the questionnaire and what changed in building them. The unpaid side is recorded activity by activity, in hours and minutes separately, so
+
+$$
+U_{iw} \;=\; \sum_{a=1}^{A_{w}} \left( h_{iaw} + \frac{n_{iaw}}{60} \right),
+$$
+
+where $h_{iaw}$ and $n_{iaw}$ are the hours and the minutes individual $i$ reports for activity $a$ in round $w$, and $A_{w}$ is the number of activities the round lists: fourteen in GLSS 6 and thirteen in GLSS 5. Committed time is bounded above by the length of the week,
+
+$$
+C_{iw} \;=\; \min\bigl\{\, E_{iw} + U_{iw},\; 168 \,\bigr\},
+$$
+
+a cap that binds for 225 of the 169,364 records and exists to stop an implausible response from moving the median. The base for the threshold is adults aged fifteen and over who were administered the relevant module, weighted by the round's sampling weight. Every indicator in Table 1 is computed on that base, including the absolute weekly rule, which we name for what it is rather than for the index it derives from, since that index measures a single day.
+
+Three departures from the previous construction are worth stating because each changes a number. Individuals never administered the module are excluded rather than recorded as zero, which is why the GLSS 7 farmer count falls from the 6,688 farmer-members the round contains to the 5,652 the measure can be computed for, even as the total sample rises. All individuals are retained rather than heads alone, and the choice of unit is left to the estimation script. And the threshold arithmetic is carried out in whole minutes rather than in hours: every reported figure is a multiple of one-sixtieth of an hour, which binary floating point cannot represent exactly, and thirty-nine GLSS 5 respondents sit precisely on the 1.5 line, where a rounding error of one part in ten million decides their classification and can decide it differently on a different machine. In minutes the comparison is exact. Writing $\tilde{C}_{iw} = 60\, C_{iw}$ and $\tilde{m}_{w} = 60\, m_{w}$ for the same two quantities expressed in whole minutes, the classification we ship is
+
+$$
+T^{\lambda}_{iw} \;=\; \mathbf{1}\bigl\{\, \tilde{C}_{iw} \,>\, \lambda\, \tilde{m}_{w} \,\bigr\},
+$$
+
+in which $\tilde{C}_{iw}$ is an integer and $\lambda\, \tilde{m}_{w}$ is an exact multiple for every $\lambda$ we use, so no respondent's classification depends on a rounding error. The convention at an exact tie follows Bardasi and Wodon [-@BardasiWodon2010]: committed time must exceed the line, so a person on it is not time poor.
+
+Because GLSS 7 supports only the economic side, every record carries a flag naming the basis on which its time total was computed, and only records on the fuller basis carry committed time in the sense Section 2 defines. Records on the two bases must never be pooled without that flag entering the specification, and Section 12 argues that they should not be pooled at all.
+
+Table 4 reports the population-level result. Two things in it are worth pausing on. First, measured economic hours rise across the three rounds for both sexes, and the gap between men and women narrows from 5.3 to 3.2 hours per week, a plausible trend that has nothing to do with the instrument change. Second, total committed time falls, from 42.1 and 57.2 hours in GLSS 5 to 40.2 and 37.0 in GLSS 7, and the female excess of 15.1 hours becomes a female deficit of 3.2. The second pattern is an artefact of the module being dropped; the first is not. Figure 1 separates them. Figures 2 and 3 then establish that nothing in the comparison depends on where the line is drawn: the women's distribution of committed time lies above the men's across the whole region in which any plausible threshold falls in GLSS 5 and GLSS 6, and below it in GLSS 7, and the ordering of the headcounts is invariant from the median itself out to two and a half times it.
+
+```{r tab4}
+knitr::kable(
+  data.frame(
+    Round = c("GLSS 5", "", "GLSS 6", "", "GLSS 7", ""),
+    Sex = rep(c("Men", "Women"), 3),
+    Economic = c("31.3", "26.0", "34.1", "28.9", "40.2", "37.0"),
+    Unpaid   = c("10.9", "31.6", "5.5", "16.4", "--", "--"),
+    Total    = c("42.1", "57.2", "39.6", "45.3", "40.2", "37.0"),
+    Median   = c("48.3", "", "43.0", "", "40.0", ""),
+    `Time poor` = c("14.3%", "32.0%", "19.6%", "27.6%", "11.0%", "7.5%"),
+    check.names = FALSE),
+  align = c("l", "l", "r", "r", "r", "r", "r"),
+  caption = "Table 4. Committed time and time poverty by round and sex, adults aged 15 and over, weighted. Hours per week. Time-poor share is the proportion above 1.5 times the round median. Base sizes 21,624 (GLSS 5), 42,585 (GLSS 6) and 22,213 (GLSS 7); GLSS 7 totals cover economic activity only."
+)
+```
+
+*Notes.* Weighted means in hours per week on the reference population of the round, that is adults of fifteen and over who answered the modules it fields. The median is the weighted median of committed time in the round and is common to both sexes. Time poor is the share above 1.5 times that median. GLSS 7 columns cover economic activity only. *Source.* Authors' construction from the Ghana Living Standards Survey microdata published by the Ghana Statistical Service.
+
+```{r fig1, fig.height = 3.0, fig.cap = "Figure 1. Mean hours per week by round and sex, adults aged 15 and over, weighted. Economic hours rise steadily for both sexes and converge. Unpaid domestic and care work is where the sexes differ, and it is absent from GLSS 7, which is why the total for that round is not comparable with the other two."}
+op <- par(mfrow = c(1, 3), mar = c(3.6, 3.6, 2.2, 0.6), bg = SURF, family = "sans")
+for (p in panels) {
+  panel(c(0.4, 3.6), c(0, 62), seq(0, 60, 10),
+        ylab = if (p == panels[1]) "Hours per week" else NULL,
+        xat = 1:3, xlabs = rlab, title = p, xaxs = "i")
+  bars2(getcomp(p, "Men"), getcomp(p, "Women"))
+  if (p == panels[2]) {
+    text(3, 4, "module not\nfielded", col = MUTED, cex = 0.85, adj = c(0.5, 0))
+  }
+  if (p == panels[1]) sexkey(0.55, 61)
+}
+par(op)
+```
+
+*Notes.* Weighted means, individuals aged 15 and over with a valid module response; base sizes 21,624 (GLSS 5), 42,585 (GLSS 6) and 22,213 (GLSS 7). The unpaid panel is empty for GLSS 7 because the module was not fielded, so the total for that round covers economic activity only and is not comparable with the totals for the other two. *Source.* Authors' construction from the Ghana Living Standards Survey microdata published by the Ghana Statistical Service.
+
+```{r fig2, fig.height = 2.9, fig.cap = "Figure 2. Share of adults with committed time above a given number of hours per week. In GLSS 5 and GLSS 6 the women's curve lies above the men's throughout the region where the thresholds fall, so any relative line classifies more women than men. In GLSS 7 the curves cross below the median and the ordering reverses."}
+op <- par(mfrow = c(1, 3), mar = c(3.8, 3.8, 2.2, 0.6), bg = SURF, family = "sans")
+for (i in seq_along(rounds)) {
+  r <- rounds[i]; k <- surv$round == r; med <- medians$median[i]
+  panel(c(0, 110), c(0, 100), seq(0, 100, 25),
+        ylab = if (i == 1) "Share of adults above (%)" else NULL,
+        xat = seq(0, 90, 30), xlab = "Committed hours per week",
+        title = sub(" \\(", ", ", sub("\\)", "", r)), xaxs = "i")
+  abline(v = c(med, 1.5 * med), col = BASE, lwd = 0.6)
+  text(c(med, 1.5 * med) + 2, 98, c("median", "1.5x median"),
+       srt = 90, adj = c(1, 0), col = MUTED, cex = 0.78)
+  lines(surv$hours[k], 100 * surv$men[k],   col = MEN,   lwd = 2)
+  lines(surv$hours[k], 100 * surv$women[k], col = WOMEN, lwd = 2)
+  if (i == 1) sexkey_line(2, 30)
+}
+par(op)
+```
+
+*Notes.* Weighted survival curves on the same base as Figure 1, truncated at 110 hours per week for display; committed time is top-coded at 168 hours. Vertical rules mark the round median and 1.5 times it. The vertical distance between the two curves at the 1.5 rule is the gender gap in the headcount. *Source.* Authors' construction from the Ghana Living Standards Survey microdata published by the Ghana Statistical Service.
+
+```{r fig3, fig.height = 2.9, fig.cap = "Figure 3. Time-poor share by threshold, from the median itself to two and a half times it. The ordering of the sexes is invariant to the threshold within each round, so nothing in the comparison depends on the choice of 1.5. The stepped appearance of the GLSS 7 curves reflects heaping of reported hours on multiples of ten."}
+op <- par(mfrow = c(1, 3), mar = c(3.8, 3.8, 2.2, 0.6), bg = SURF, family = "sans")
+for (i in seq_along(rounds)) {
+  r <- rounds[i]; k <- sens$round == r
+  panel(c(1, 2.5), c(0, 62), seq(0, 60, 15),
+        ylab = if (i == 1) "Share time poor (%)" else NULL,
+        xat = c(1, 1.5, 2, 2.5), xlab = "Multiple of the median",
+        title = sub(" \\(", ", ", sub("\\)", "", r)), xaxs = "i")
+  abline(v = 1.5, col = BASE, lwd = 0.6)
+  text(1.52, 1.5, "1.5x", col = MUTED, cex = 0.8, adj = c(0, 0))
+  lines(sens$k[k], 100 * sens$men[k],   col = MEN,   lwd = 2)
+  lines(sens$k[k], 100 * sens$women[k], col = WOMEN, lwd = 2)
+  if (i == 1) sexkey_line(1.95, 61)
+}
+par(op)
+```
+
+*Notes.* Weighted headcounts on the same base as Figure 1, recomputed at each multiple of the round median from 1.0 to 2.5 in steps of 0.05. The vertical rule marks the 1.5 multiple used throughout the report. *Source.* Authors' construction from the Ghana Living Standards Survey microdata published by the Ghana Statistical Service.
+
+## 7. The previous release and the reconstruction compared
+
+The reconstruction is not a corrected version of the previous release; the two do not have the same rows, the same unit of observation, or the same construct. Table 5 sets out the differences that bear on the estimation sample.
+
+```{r tab5}
+knitr::kable(
+  data.frame(
+    ` ` = c("Rounds", "Unit", "Records", "Construct", "Threshold base",
+            "Farmer-members", "Female share, GLSS 7", "Alternative thresholds",
+            "External inputs"),
+    `Previous release` = c(
+      "GLSS 7", "household head", "14,009", "paid hours above a cutoff",
+      "all ages, 55% zeros, unweighted", "6,331", "23.2%",
+      "set to missing where they disagreed with the main one",
+      "one supplied file, no code"),
+    `Reconstruction` = c(
+      "GLSS 5, GLSS 6, GLSS 7", "individual", "169,364",
+      "economic plus unpaid hours above a cutoff, where the module exists",
+      "adults 15+, module respondents, weighted",
+      "20,772, of which 15,120 on a measured basis", "25.8%",
+      "retained intact; depth and severity added",
+      "none; built from published microdata"),
+    check.names = FALSE),
+  align = c("l", "l", "l"),
+  caption = "Table 5. The two releases compared, on the dimensions that affect the estimation sample."
+)
+```
+
+*Notes.* The two releases are compared as shipped. Farmer-members are individuals in the consolidated crop-farmer data for whom the time measure can be computed; the 15,120 figure covers GLSS 5 and GLSS 6, where unpaid work is observed. *Source.* Authors' comparison of the previous release with the reconstruction described in Section 6.
+
+The clearest way to see what changed is to hold the round fixed. Figure 4 places the reconstructed headcounts for the three rounds beside the previous measure on the same GLSS 7 farmers. The reconstruction identifies women more often than men in both rounds where unpaid work is observed, by 40.1 against 14.0 per cent in GLSS 5 and 30.1 against 21.0 per cent in GLSS 6, and less often in the round where it is not. The previous measure identified men more often, in the round where unpaid work is not observed. Every element of that pattern follows from the content of the instrument.
+
+```{r fig4, fig.height = 3.1, fig.width = 6.0, fig.cap = "Figure 4. Share of crop farmers classified time poor at 1.5 times the round median, by sex. The first three groups use the reconstructed measure; the fourth applies the previous measure to the same GLSS 7 farmers. Unpaid domestic and care work is observed in GLSS 5 and GLSS 6 only."}
+op <- par(mar = c(4.0, 4.0, 0.8, 0.6), bg = SURF, family = "sans")
+m <- 100 * reversal$share[reversal$sex == "Men"]
+w <- 100 * reversal$share[reversal$sex == "Women"]
+panel(c(0.4, 4.6), c(0, 46), seq(0, 40, 10),
+      ylab = "Share classified time poor (%)", xat = 1:4,
+      xlabs = c("GLSS 5", "GLSS 6", "GLSS 7", "GLSS 7"), xaxs = "i")
+mtext(c("reconstructed", "reconstructed", "reconstructed", "previous measure"),
+      side = 1, at = 1:4, line = 1.7, cex = 0.85, col = MUTED)
+bars2(m, w, width = 0.36)
+text(seq_len(4) - 0.19, m + 1, sprintf("%.0f", m), col = INK2, cex = 0.85, adj = c(0.5, 0))
+text(seq_len(4) + 0.19, w + 1, sprintf("%.0f", w), col = INK2, cex = 0.85, adj = c(0.5, 0))
+abline(v = 3.5, col = BASE, lwd = 0.6)
+sexkey(3.9, 45, horiz = FALSE)
+par(op)
+```
+
+*Notes.* Weighted shares of crop farmers classified time poor at 1.5 times the round median, by sex. The first three groups apply the reconstructed measure to 5,455, 9,665 and 5,652 farmer-members respectively; the fourth applies the previous measure to the 6,331 GLSS 7 farmers it retained. In GLSS 7 the measure covers economic activity only. Bar labels are rounded to whole percentage points. *Source.* Authors' construction from the Ghana Living Standards Survey microdata published by the Ghana Statistical Service.
+
+On the 5,372 GLSS 7 farmers common to both releases (Table 6), the two classifications agree for 79.8 per cent, a figure that flatters them, because both classify most people as not time poor. Of the 1,516 farmers the previous measure flagged, 457 remain flagged, or 30.1 per cent. Of the 483 the reconstruction flags, 457 were also flagged before, so the new measure is close to a subset of the old one on this round, which is what one would expect when the same economic hours are being thresholded on a cleaner base. Chance-corrected agreement is Cohen's $\kappa$,
+
+$$
+\kappa \;=\; \frac{p_{o} - p_{e}}{1 - p_{e}},
+$$
+
+where $p_{o}$ is the share of farmers the two measures classify alike and $p_{e}$ the share they would classify alike if each assigned its own marginal frequencies at random. Here $p_{o} = 0.798$ and $p_{e} = 0.679$, so $\kappa = 0.37$. Any result estimated on the previous treatment should be treated as an estimate on a different variable rather than as a noisier version of the same one.
+
+```{r tab6}
+knitr::kable(
+  data.frame(
+    ` ` = c("Previous: not poor", "Previous: time poor", "Total"),
+    `Reconstruction: not poor` = c("3,830", "1,059", "4,889"),
+    `Reconstruction: time poor` = c("26", "457", "483"),
+    Total = c("3,856", "1,516", "5,372"),
+    check.names = FALSE),
+  align = c("l", "r", "r", "r"),
+  caption = "Table 6. Classification of the 5,372 GLSS 7 crop farmers present in both releases. Raw agreement 79.8 per cent; Cohen's kappa 0.37."
+)
+```
+
+*Notes.* Restricted to the 5,372 GLSS 7 crop farmers present in both releases, unweighted. Both classifications use a 1.5 multiple of the relevant median. Raw agreement is 79.8 per cent and Cohen's kappa is 0.37. *Source.* Authors' comparison of the previous release with the reconstruction.
+
+One further point belongs here rather than with the limits of the measure. The previous supplied file cannot be reproduced exactly. Diffing it against the published GLSS 7 files shows about one per cent of cells differing in the employment block, with values displaced between adjacent members of the same household, which indicates a different vintage of the file or hand edits we cannot see. The reconstruction is therefore a clean rebuild rather than a bug-compatible one, and small differences from previously circulated numbers are expected and are not errors in either direction.
+
+# Part II. What it can identify
+
+## 8. What has to be identified
+
+The study estimates two objects, and they carry different identification burdens. Let $T_{i}$ denote the time-poverty status of farmer $i$ as defined in the measurement memorandum, $y_{i}$ observed output, and $x_{i}$ the input vector. The meta-frontier decomposition recovers a technology gap ratio and a technical efficiency score, and the parameter of interest is the difference in each between the time poor and the time rich,
+
+$$
+\tau_{\mathrm{TGR}} \;=\; E\bigl[\, \mathrm{TGR}_{i}(1) - \mathrm{TGR}_{i}(0) \,\bigr],
+\qquad
+\tau_{\mathrm{TE}} \;=\; E\bigl[\, \mathrm{TE}_{i}(1) - \mathrm{TE}_{i}(0) \,\bigr],
+$$
+
+where $\mathrm{TGR}_{i}(t)$ and $\mathrm{TE}_{i}(t)$ are the potential technology gap and efficiency of farmer $i$ under time-poverty status $t$. Because the frontier is estimated separately by group, the identifying assumption is not only that assignment is ignorable but that group membership is not itself a function of unobserved productivity. Writing $Z_{i}$ for the conditioning set, what we need is
+
+$$
+\bigl\{\, \mathrm{TGR}_{i}(0), \mathrm{TGR}_{i}(1), \mathrm{TE}_{i}(0), \mathrm{TE}_{i}(1) \,\bigr\} \;\perp\; T_{i} \;\vert\; Z_{i},
+\qquad 0 < P(T_{i}=1 \,\vert\, Z_{i}) < 1 .
+$$
+
+The first condition is conditional independence and it is not testable. The second is overlap and it is. Sections 10 and 11 are an attempt to make the first assumption as defensible as the data allow, and Section 11 is an attempt to say what happens if it fails.
+
+Two features of this treatment make the assumption harder than it would be for, say, a technology dummy. Time poverty is a relative classification, so a farmer's status depends on the whole distribution in their round, not only on their own hours. And the hours that generate it are measured over the seven days before interview, which makes anything measured in the same window a potential consequence rather than a cause. The conditioning set must therefore be built from variables that are fixed with respect to that window.
+
+## 9. Why an instrumental-variables strategy is not available
+
+The obvious instrument for a household time burden is the infrastructure that determines it. This is the strategy in the water and energy literature: piped-water rollout releases collection time and raises household production [@Meeks2017], improved cookstoves release about 34 minutes a day [@Krishnapriya2021], and a Nairobi experiment shows that relieving domestic time raises business revenue while cash does not [@Delecourt2025]. The GLSS community questionnaire records, for each enumeration area, whether households have electricity, whether they have access to pipe-borne or borehole water, whether the road is impassable for part of the year, and whether an agricultural extension office is present. We built all four for GLSS 5 and GLSS 6 and matched them to 83.9 per cent of the farmer sample.
+
+They fail both tests. In a linear first stage that already contains the full current matching set, the four excluded instruments produce an F statistic of 2.00. That is far below the conventional threshold of 10 and further still below the thresholds now used for weak-instrument-robust inference. In the reduced form, the same four instruments enter the yield equation with a joint F of 2.95 and p of 0.019, with community electricity at t = -2.67 and community extension office at t = -1.96. Community infrastructure predicts farm output directly, which is unsurprising, and that is exactly what the exclusion restriction forbids.
+
+The household-level version fails earlier. Table 7 reports the imbalance on the household water and fuel variables. Cooking fuel does not discriminate because almost nobody uses anything but wood or charcoal; water distance does not discriminate because it is essentially identical in the two groups. A variable with no variation across the treatment cannot instrument for it.
+
+```{r tab7, results = "asis"}
+grid_table(
+  data.frame(
+    Variable = c("Cooking with wood or charcoal", "Piped water at the dwelling",
+                 "Electric lighting", "Distance to drinking water",
+                 "Community: any piped or borehole water", "Community: any electricity",
+                 "Community: road impassable part of the year",
+                 "Community: agricultural extension office"),
+    `Time poor` = c("0.959", "0.024", "0.582", "111.2", "0.093", "0.302", "1.464", "0.135"),
+    `Not time poor` = c("0.944", "0.018", "0.608", "110.7", "0.100", "0.296", "1.479", "0.102"),
+    SMD = c("+0.070", "+0.037", "-0.052", "+0.003", "-0.024", "+0.013", "-0.029", "+0.102"),
+    stringsAsFactors = FALSE, check.names = FALSE),
+  widths = c(38, 12, 15, 9),
+  caption = paste("Table 7. Household and community infrastructure, treated against",
+                  "control, GLSS 5 and GLSS 6 crop farmers. SMD is the standardized",
+                  "mean difference. Only the community extension office exceeds the",
+                  "conventional 0.10 threshold, and Section 10 argues it belongs in the",
+                  "conditioning set rather than in an instrument.")
+)
+```
+
+*Notes.* Household variables come from Section 7 Part D of the questionnaire, community variables from Sections 2 and 5 of the community questionnaire, matched to farmers by enumeration area. Distance to drinking water is in metres. Household variables match 99.9 per cent of the farmer sample and community variables 83.9 per cent. *Source.* Authors' construction from the Ghana Living Standards Survey microdata published by the Ghana Statistical Service.
+
+One route we have not closed off is a supply-side instrument constructed from outside the survey, for example rainfall or growing-degree-day deviations matched to the enumeration area and the interview date. That would shift the seasonal labour requirement without operating on farm technology through any other channel that we cannot control for. It is a real option and it is outside the GLSS.
+
+## 10. What the design conditions on, and what it misses
+
+Matching currently uses six continuous covariates, five categorical covariates, and four exact strata: region, ecological zone, locality type and sex. Figure 5 places the standardized mean differences of those variables alongside the candidates we tested. The pattern is the point. Of the ten largest imbalances in the sample, only one, age, is currently matched on.
+
+```{r fig5, fig.height = 4.4, fig.cap = "Figure 5. Standardized mean differences between time-poor and time-rich crop farmers, GLSS 5 and GLSS 6. Blue marks variables already in the matching set, orange marks candidates that are not. The vertical rules at plus and minus 0.10 are the conventional balance threshold."}
+d <- smd[order(abs(smd$smd)), ]
+op <- par(mar = c(3.6, 12.5, 0.8, 1.0), bg = SURF, family = "sans")
+plot.new(); plot.window(xlim = c(-0.40, 0.20), ylim = c(0.5, nrow(d) + 0.5), yaxs = "i")
+rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = SURF, border = NA)
+abline(v = seq(-0.4, 0.2, 0.1), col = GRID, lwd = 0.6)
+abline(v = c(-0.1, 0.1), col = BASE, lwd = 0.8)
+abline(v = 0, col = BASE, lwd = 0.8)
+segments(0, seq_len(nrow(d)), d$smd, seq_len(nrow(d)),
+         col = ifelse(d$matched, MATCHED, UNMATCH), lwd = 1.2)
+points(d$smd, seq_len(nrow(d)), pch = 19, cex = 0.9,
+       col = ifelse(d$matched, MATCHED, UNMATCH))
+axis(2, at = seq_len(nrow(d)), labels = d$variable, las = 1, col = NA,
+     col.axis = MUTED, cex.axis = 0.78, line = -0.4)
+axis(1, at = seq(-0.4, 0.2, 0.1), col = BASE, col.axis = MUTED,
+     cex.axis = 0.8, lwd = 0.6)
+mtext("Standardized mean difference", side = 1, line = 2.2, cex = 0.8, col = INK2)
+legend("bottomleft", legend = c("In the matching set", "Not in the matching set"),
+       col = c(MATCHED, UNMATCH), pch = 19, bty = "n", cex = 0.8,
+       text.col = INK2, pt.cex = 0.9)
+par(op)
+```
+
+*Notes.* Standardized mean differences on 19,663 farmer-season observations from GLSS 5 and GLSS 6, covering 14,735 distinct farmers, with complete data on all listed variables; treated share 0.227. Crop-area covariates, which are also matched on, are omitted for legibility. Household head status, household composition and community extension access were constructed for this exercise from the household roster and the community questionnaire and are not currently in the release used for matching. *Source.* Authors' construction from the Ghana Living Standards Survey microdata and the consolidated crop-farmer data.
+
+Two of these deserve comment. Household head status carries a standardized difference of -0.316, second only to age, and it appears only because the reconstruction retains all individuals rather than heads alone. The previous design suppressed it by construction and therefore never had to condition on it. Cultivated area, household labour, land fragmentation and extension contact are also imbalanced, but the second half of this section argues that they are the wrong kind of variable to add.
+
+The month of interview is the strongest single addition and the easiest to justify. The share classified time poor moves from 0.151 to 0.308 across the twelve months of GLSS 5 fieldwork and from 0.173 to 0.296 across GLSS 6. Adding month dummies to a treatment model that already contains every current matching variable gives a likelihood-ratio chi-squared of 76.3 on 11 degrees of freedom. Month also predicts the outcome, at an F of 9.62 on 11 degrees of freedom in the yield equation, and including it moves the estimated treatment coefficient by 19 per cent. A variable that predicts treatment, predicts outcome, and is fixed before either is realised is a confounder by definition. It is also the variable the seasonality literature says to worry about [@Martey2024FE; @WodonBeegle2006].
+
+Household composition is the second block. The current design compresses the household into three scalars: size in adult equivalents, the female adult-equivalent ratio, and a dependency ratio. That cannot distinguish two toddlers from two teenagers, and it cannot express whether another adult woman is present to absorb the domestic load, which is the mechanism the literature identifies [@BardasiWodon2010; @Ali2016]. We rebuilt the roster for all 169,364 individuals in the three rounds and constructed counts by age and sex, own children under five linked through the parent identifier fields, and the number of other adult women. Jointly they are significant after conditioning on the full current set, at a likelihood-ratio chi-squared of 65.3 on 7 degrees of freedom, and the coefficient on other adult women is negative, which is the substitute-carer margin appearing exactly where the theory says it should.
+
+Table 8 sets out both blocks with the evidence for each.
+
+```{r tab8, results = "asis"}
+grid_table(
+  data.frame(
+    Candidate = c("Month of interview", "Household head status",
+                  "Persons 60 and over", "Other adult women 15-59",
+                  "Children 5-14", "Adult men 15-59", "Children under 5",
+                  "Own children under 5", "Spouse co-resident",
+                  "Community extension office"),
+    Source = c("release", "release", "roster", "roster", "roster", "roster",
+               "roster", "roster", "roster", "community"),
+    SMD = c("see note", "-0.316", "-0.217", "-0.147", "+0.108", "-0.045",
+            "+0.119", "+0.114", "-0.162", "+0.102"),
+    Evidence = c(
+      "LR chi2(11) = 76.3 on treatment; F(11) = 9.62 on yield; moves the treatment coefficient by 19 per cent",
+      "second largest imbalance in the sample; visible only once non-heads are retained",
+      "significant in the treatment model (z = 2.87) and marginal on yield (t = -1.76)",
+      "the substitute-carer margin; z = -3.52 on treatment",
+      "z = 4.98 on treatment; t = -1.61 on yield",
+      "z = 3.46 on treatment; t = -2.02 on yield",
+      "z = 2.14 on treatment; no outcome signal",
+      "z = 1.61 on treatment; no outcome signal",
+      "not significant once the counts are included",
+      "z = 6.06 on treatment and t = -1.96 on yield, so a confounder rather than an instrument"),
+    stringsAsFactors = FALSE, check.names = FALSE),
+  widths = c(20, 11, 10, 37),
+  caption = paste("Table 8. Candidate additions to the conditioning set, with the",
+                  "standardized mean difference and the test evidence for each.",
+                  "Source records where each variable comes from: the reconstructed",
+                  "release, the household roster in Section 1, or the community",
+                  "questionnaire.")
+)
+```
+
+*Notes.* Tests are on 19,663 GLSS 5 and GLSS 6 crop farmers. Treatment-model statistics come from a logit that already contains every current matching covariate; yield-equation statistics come from a log-yield regression that also contains the logged input vector, with standard errors clustered on the enumeration area. The month of interview has no single standardized difference because it is categorical; the treated share ranges from 0.151 to 0.308 across months in GLSS 5. *Source.* Authors' construction from the Ghana Living Standards Survey microdata and the consolidated crop-farmer data.
+
+Two cautions belong with this list rather than after it.
+
+The composition block predicts the treatment strongly and the outcome weakly, at a joint F of 1.55 with p of 0.145 in the yield equation, and adding it moves the treatment coefficient by under 4 per cent. Covariates that predict treatment but not outcome behave like instruments inside a propensity score: they can inflate variance without reducing bias. The disciplined response is to add the four with some outcome signal, elders, children 5 to 14, adult men and other adult women, and to report the specification with and without the remainder rather than adding the block wholesale.
+
+The second caution is about mediators. Cultivated area, household labour, land fragmentation and extension contact are all imbalanced and all sit in the consolidated data already, so adding them costs nothing mechanically. But each is plausibly a decision taken in response to a time constraint rather than a condition prior to it, and conditioning on a mediator removes part of the effect the study is trying to measure. Household composition and the interview date carry no such risk against a seven-day recall window, which is the reason to prefer them.
+
+Geography is a partial option. The current exact strata give 84 cells across GLSS 5 and GLSS 6, with a median of 100 observations and 36 per cent holding fewer than 50, so the strata are already thin and cannot be refined without losing matches. District is available in the release for GLSS 6, with 27 codes, and for GLSS 7, with 214, but is missing entirely for GLSS 5, so it cannot serve as a common stratum across the estimation sample.
+
+## 11. What the measure supports and what it does not
+
+The reconstructed measure is now recognisable as the object the time-poverty literature works with, and it can be compared against that literature rather than merely against itself. On the definitional side it satisfies the requirements Bardasi and Wodon [-@BardasiWodon2010] set out (total work on both sides of the paid boundary, an individual unit of observation, a relative line on a defensible reference distribution) with two exceptions we do not conceal: it implements no consumption condition, and it cannot observe simultaneous activity. Both are taken up in the second half of this section, alongside the two further limits that the instrument rather than the definition imposes.
+
+Our magnitudes sit below the published African time-use figures rather than above them. Charmes [-@Charmes2006] reports around five and a half hours a day of unpaid work for Ghanaian women from the earlier rounds; we recover 4.5 hours a day in GLSS 5 and 2.3 in GLSS 6. Part of that gap is the recall instrument, since a stylised seven-day question undercounts relative to a diary, consistently and by a wide margin in the methodological literature. Part may instead be a real easing of the water and fuel burden over a period in which improved-source access rose substantially. We cannot separate the two with these data, and we should not write as though we can. What survives either explanation is the gender gradient, which is the quantity the identification uses.
+
+The channels in Table 2 are also engaged by the reconstructed measure and were not engaged by the previous one. Every entry in that table runs through the time a farmer must commit to work she cannot decline: the calendar cost of a labour-demanding practice, the hour that extension asks for, the weeding done late. An indicator of long paid hours speaks to none of them; it is closer to a measure of labour supply than of labour constraint, and a farmer who works long paid hours because her returns are high is its clearest case rather than its exception. We are not claiming the literature establishes these channels for Ghana. The direct evidence is thin, and the one time variable that has entered a productivity model returned a null its authors attribute to a coarse binary. That is why the reconstruction retains depth and severity alongside the headcount, and why Section 13 asks the team to decide between them rather than assuming the binary.
+
+
+Four limits bound what can be concluded from the measure, and the paper should carry all four rather than discover them in review. The recall instrument is stylised, not a diary: respondents are asked to total their time across a week, and per-activity answers cluster at whole hours with a visible spike at eight for cooking, which is consistent with some respondents answering for a typical day rather than for the week. Our magnitudes are correspondingly low against the diary-based literature. We can bound the direction of the bias but not its size.
+
+Simultaneous activity is not recorded, so supervisory care, meaning responsibility for a child while doing something else, is invisible. This is the single largest known source of undercount in stylised time-use measurement [@UNSD2024; @ILO2018] and it falls almost entirely on women, so the gender gap we report is a lower bound.
+
+The consumption condition is the third, and it is a limit of the definition we adopted rather than of the survey. Section 3.1 sets out what it does: it withholds the label from anyone whose household would not fall into consumption poverty were that person to cut their hours back to the line. We have not implemented it, so a farmer who works long hours because her returns are high is counted alongside one who has no alternative, and any effect we estimate averages across the two. Section 13 puts this to the team as a decision rather than settling it here.
+
+The fourth limit is one no reconstruction can lift. The unpaid module does not exist in GLSS 7, and nothing in the other rounds can supply it. The water-collection and cooking-fuel items in the GLSS 7 housing section would support a partial, infrastructure-driven time-burden measure: minutes to the water source, who in the household collects, quantity needed per day, stove and fuel type. But that is a different construct from a domestic and care module, and building it would commit the paper to a different framing. The alternative used elsewhere is to match the survey to Ghana's 2009 time-use survey, as the Levy Institute did for GLSS 6 [@RiosAvila2016]; it is defensible and it is a substantial piece of work in its own right.
+
+Conditioning on more observables does not deliver identification; it makes a failure of the assumption less likely without making it impossible. The standard way to say how much less likely is to ask how strong selection on unobservables would have to be, relative to selection on observables, to overturn the result [@Oster2019].
+
+We ran that exercise on the naive yield equation. The coefficient on time poverty is +0.068 with no controls, where the regression explains almost nothing, and -0.015 with the full conditioning set including month and composition, where it explains 30.5 per cent of the variance. The controlled estimate has a clustered standard error of 0.026, so it is not distinguishable from zero. Setting the maximum attainable R-squared to 1.3 times the controlled value, the bounded estimate is -0.040, which lies about one and a half standard errors from the controlled estimate, and the ratio of unobserved to observed selection needed to drive the coefficient to zero is 0.60 in absolute value. A ratio below one means unobserved selection weaker than what we already observe would be enough to move the answer.
+
+We report this to be clear about what it does and does not show. It is a statement about a naive log-yield regression, not about the frontier decomposition, and a bounding exercise around an estimate that is already indistinguishable from zero carries limited information. What it does establish is that the paper cannot lean on conditional independence as though it were innocuous, and that a sensitivity analysis has to be part of the results rather than a referee's addition.
+
+# Part III. What we propose
+
+## 12. What this means for the study
+
+We recommend estimating the study on GLSS 5 and GLSS 6, and carrying GLSS 7 separately under a name that describes what it measures. The argument is that the paper's contribution is the gender dimension of unpaid work, and on GLSS 7 that dimension is not observed. Estimating on the two rounds where it is observed gives 15,120 farmer-members, more than twice the previous sample, a treatment whose gender gradient points the way the channels in Table 2 say it should, and a variable we can define in the paper without qualification. Pooling all three rounds would buy recency and a larger n at the cost of a treatment that means one thing in two-thirds of the sample and its near-opposite in the rest. And if the wave interaction is estimated properly, the GLSS 7 stratum contributes little beyond a coefficient we would then have to explain.
+
+### 12.1 What we gain
+
+The treatment becomes the construct the paper names. Committed time includes cooking, cleaning, water and fuel collection and, in both rounds, care of children, of the elderly and of the sick, so the gender gradient is measured rather than assumed. The sample more than doubles, and because the release is at individual level rather than one record per household, spouse-farmers, overwhelmingly women and the group the mechanism is about, are in it. Two rounds allow us to say whether the relationship is stable across a seven-year interval, which a single cross-section cannot. The threshold is now relative to a weighted population median on adults, so it is a population quantity rather than a sample artefact. Depth and severity measures let us test whether the null in the existing literature is a treatment-coarseness problem. And interview month and year survive into the release, so we can control for the season of interview, which matters given the evidence that Ghanaian farm time poverty is strongly seasonal [@Martey2024FE].
+
+### 12.2 What it costs
+
+The economic side is coarser. GLSS 5 and GLSS 6 record total hours across all jobs, not the eight-activity battery, so we lose the ability to decompose economic time by activity, a decomposition the previous design never used but one a referee may ask for. The most recent round leaves the main analysis, which weakens any policy framing that leans on currency; our latest observation becomes 2012/13. The unpaid module's magnitudes are lower than the diary-based literature, so the level of measured time poverty is probably understated, and we should present headcounts as relative rather than absolute statements. The two rounds sit either side of a change in the census sampling frame, which is the routine kind of re-basing rather than a break, but it should be stated. And the results are not comparable with the previous draft's; anything already written on the old treatment has to be re-estimated, not merely updated.
+
+### 12.3 What we do with GLSS 7
+
+We would keep it, as a separate specification with its own name (long economic hours, not time poverty) and report it as a falsification exercise rather than a robustness check. If the frontier results on GLSS 5 and GLSS 6 are driven by committed time rather than by long hours as such, then the GLSS 7 specification should behave differently, and demonstrating that is worth more than an extra 5,652 observations. If instead it behaves identically, we have learned that our treatment is proxying labour supply, which we would need to know before publication rather than after.
+
+### 12.4 The estimation strategy
+
+Four components, in the order they would appear in the paper.
+
+First, condition on the enriched set: the current covariates, plus the month of interview, head status, and the outcome-relevant part of the household composition block, with community extension access as a factor where the community file matches. Report balance before and after, and report the estimate with and without the composition variables that predict treatment alone.
+
+Second, use GLSS 7 as a falsification sample. The long-hours indicator defined there is built from the same economic hours on the same relative rule but contains no unpaid work, and its gender gradient runs the other way. If the frontier results on GLSS 5 and GLSS 6 are driven by committed time rather than by long hours as such, the GLSS 7 specification should behave differently. This is a stronger test than a threshold-sensitivity check because it varies the construct rather than the cutoff.
+
+Third, exploit the threshold. The measure is a relative line, so farmers just above and just below the cutoff are similar in committed time but differently labelled. Comparing them isolates the classification from the underlying hours, and comparing the binary against the depth measure says whether any effect is a threshold phenomenon or a dose response. The literature's one existing null is attributed by its own authors to a coarse binary [@Diiro2018], which makes this worth doing on its own terms.
+
+Fourth, report bounds. An Oster-style calculation on the frontier estimates, and a Rosenbaum-style sensitivity analysis on the matched treatment effects, stating how large an unobserved confounder would have to be to overturn the sign.
+
+What we would not do is report an instrumental-variables specification built on community infrastructure. The first stage is weak, the exclusion restriction fails on its face, and a referee who runs the reduced form will find what we found in Section 9.
+
+## 13. Decisions
+
+### 13.1 Decisions taken
+
+The team settled four questions on 9 August 2026, and the draft prose in Appendix B is written to those choices.
+
+1. Identification rests on selection on observables, with formal bounds. The estimates will be reported as associations conditional on observables in a balanced sample, in the form our land tenure and disability papers use, with an Oster-style calculation and a Rosenbaum sensitivity analysis added rather than asserted away.
+
+2. The community-questionnaire variables stay out of the conditioning set. Only community extension access is imbalanced, and buying it costs the 16.1 per cent of farmers whose enumeration area does not match the community file. The full sample is worth more than one covariate.
+
+3. No external instrument for this paper. Weather deviations matched to enumeration area and interview date remain the one credible route and are noted in the conclusion as future work.
+
+4. The threshold comparison is a robustness exercise. It sits with the alternative multiples and the depth measure rather than carrying the main results.
+
+### 13.2 Decisions outstanding
+
+Four decisions need the team rather than the code, and the first two block estimation.
+
+1. Whether to adopt the recommendation in Section 12, or instead to pool all three rounds with the basis flag interacted with the wave. We favour the former and have set the release up so that either is a one-line choice.
+
+2. Whether the recall window of the housekeeping and care module is weekly, as the instrument states, or was answered daily by a subset of respondents. This bounds how much of the true burden we capture and it should be settled against the field manual before any magnitude is quoted in the manuscript.
+
+3. Whether to implement the consumption condition set out in Section 3.1 and taken up in Section 11. It is part of the definition the paper cites, we have omitted it, and a referee who knows that literature will ask why.
+
+4. Whether the frontier's technology groups should continue to be defined by the binary headcount, or by the depth measure now available. The existing null in this literature is attributed by its own authors to a coarse binary, which is an argument for at least reporting both.
+
+Two items are ours to close rather than the team's: the interim copy of the release left behind by a file-lock error during the run should be deleted, and the reconstruction should be re-run once the GLSS 8 microdata become available, since a third round with the module would settle the trend question that two rounds can only raise.
+
+# References
+
+::: {#refs}
+:::
+
+# Appendix A. Variable construction and sources
+
+## A.1 The measure
+
+This appendix documents, for each survey round, the source module, the survey item, the question as it is put to the respondent, and the treatment of that item in constructing committed time and the time-poverty indicators. It is drafted for the manuscript rather than for this memorandum, and follows the question-level documentation used in our disability and resource-extraction papers.
+
+Two conventions apply throughout. Survey items are identified by the code they carry in the distributed data files, prefixed by the questionnaire section in which they appear: an item beginning `s4a` belongs to Section 4 Part A (employment), one beginning `s4h` to Section 4 Part H (housekeeping and care), and one beginning `s1q` to Section 1 (household roster). Where the distributed label and the questionnaire disagree, the questionnaire governs and the discrepancy is recorded in the table.
+
+```{r tabA1, results = "asis"}
+tabA1 <- data.frame(
+  Component = c(
+    "Economic time, E", "Economic time, E", "Economic time, E",
+    "Unpaid domestic and care time, U", "Unpaid domestic and care time, U",
+    "Unpaid domestic and care time, U",
+    "Reference population", "Survey design",
+    "Committed time, C", "Round line, m",
+    "Time-poor indicator", "Depth and severity",
+    "Long-hours indicator, L", "Linkage key"),
+  Round = c("GLSS 5", "GLSS 6", "GLSS 7", "GLSS 5", "GLSS 6", "GLSS 7",
+            "All", "All", "GLSS 5, 6", "All", "GLSS 5, 6", "GLSS 5, 6",
+            "GLSS 7", "All"),
+  Item = c(
+    "s4aq3", "s4aq5",
+    "s4aq3, s4aq5, s4aq7, s4aq10, s4aq13, s4aq16, s4aq18, s4aq20",
+    "s4hq1h to s4hq13h; s4hq1m to s4hq13m",
+    "s4hq1h to s4hq14h; s4hq1m to s4hq14m",
+    "none", "s1q2, s1q3, s1q5y", "cover and location files",
+    "derived", "derived", "derived", "derived", "derived",
+    "area, household and member codes"),
+  Question = c(
+    "\"Number of hours worked\": total hours across all jobs, last 7 days.",
+    "Label reads \"Number of jobs done\"; the questionnaire column records total hours across all jobs, last 7 days.",
+    "Eight items, each \"During the past 7 days, how many hours did [NAME]...\": wage or salary work; work as a paid domestic worker; own farm or other agriculture; own non-farm enterprise; helping in another member's non-farm enterprise; catching fish, prawns or wildlife or collecting natural products; apprenticeship; voluntary work for a non-household member.",
+    "Thirteen activities, hours and minutes recorded separately, last 7 days: collecting firewood; fetching water; washing clothes; ironing; cleaning; cooking; shopping; running errands; washing dishes and pots; caring for children; caring for the elderly; caring for the sick; other housekeeping.",
+    "Fourteen activities, hours and minutes recorded separately, last 7 days: the first twelve as in GLSS 5, plus collecting food from the garden and helping children with schoolwork.",
+    "Module not fielded.",
+    "Sex; relationship to head; year of birth.",
+    "Sampling weight; month and year of interview; region, ecological zone, district, locality type.",
+    "", "", "", "", "", ""),
+  Construction = c(
+    "Taken as E. The separate main-job item s4aq7 is not added: s4aq3 already covers all jobs and summing the two double counts.",
+    "Taken as E. The job count is the preceding item s4aq4. Checked against the data: median 40, 95th percentile 78, and at least main-job hours (s4aq9) for 100 per cent of respondents.",
+    "Summed to E. Value 999 is a non-response code, not 999 hours, and is set missing. Two items are renamed for the manuscript: s4aq5 is hours as a paid domestic worker, not general wage work; s4aq16 is fishing and gathering, own-use production of goods inside the national accounts boundary.",
+    "U is the sum over activities of hours plus minutes divided by sixty, carried in whole minutes through the threshold arithmetic.",
+    "As GLSS 5.",
+    "U is unobserved. The round supports no time-poverty measure and carries the long-hours indicator instead.",
+    "Individuals aged 15 and over with a valid response to the modules the round supports. Non-respondents are excluded, not zero-filled.",
+    "All medians, headcounts and means are weighted. Month and year are retained so season of enumeration can be controlled.",
+    "C is E plus U, top-coded at the length of a week, 168 hours; the cap binds for 225 of 169,364 person-records.",
+    "Weighted median of C over the reference population, computed separately by round.",
+    "One if C exceeds the stated multiple of the round median, zero otherwise; the inequality is strict. Thresholds are evaluated in whole minutes so that no case is decided by floating-point rounding.",
+    "Foster-Greer-Thorbecke measures at the same line, with the shortfall normalised by the line.",
+    "One if E exceeds 1.5 times the weighted median of E. Reported under its own name, never as time poverty.",
+    "The person-level file merges to the consolidated crop-farmer data on enumeration area, household and member identifiers, matching completely in all three rounds."),
+  stringsAsFactors = FALSE, check.names = FALSE)
+
+grid_table(
+  tabA1, widths = c(17, 9, 17, 32, 33),
+  caption = paste("Table A1. Construction of committed time and the time-poverty",
+                  "indicators from the Ghana Living Standards Survey employment and",
+                  "time-use modules. Item codes are those carried in the distributed",
+                  "data files.")
+)
+```
+
+*Notes.* Item codes are those carried in the distributed data files, under the prefix convention stated above. The final column records the check performed on each item and, where a label and its question diverge, what the questionnaire establishes. Blank cells indicate that the column does not apply to a derived quantity. *Source.* Authors' compilation from the GLSS questionnaires and distributed data files, Ghana Statistical Service.
+
+Three rows of the table record a divergence between a distributed label and the question that lies behind it, one in each of GLSS 5, GLSS 6 and GLSS 7. Section 5 explains what each divergence is and what taking the label at face value would cost; the table records the check that settled it, so that the mapping can be reproduced from the appendix alone.
+
+## A.2 The additional conditioning variables
+
+```{r tabA2, results = "asis"}
+grid_table(
+  data.frame(
+    Block = c("Interview timing", "Head status", "Household composition",
+              "Own children", "Spouse", "Community infrastructure",
+              "Community extension", "Household water and fuel"),
+    Round = c("all", "all", "all", "all", "all", "GLSS 5, 6, 7",
+              "GLSS 5, 6, 7", "GLSS 5, 6, 7"),
+    Item = c("cover and location files", "s1q3", "s1q2, s1q5y",
+             "s1q15, s1q19", "s1q7", "cs2q6 to cs2q13", "cs5q5 to cs5q8",
+             "s7dq1 to s7dq16"),
+    Construction = c(
+      "Month and year of interview, carried into the reconstructed release",
+      "Relationship to household head, recoded to a head indicator",
+      "Counts of persons by age band and sex within the household: under 5, 5 to 14, men and women 15 to 59, and 60 and over",
+      "Children under 5 in the household whose mother or father identifier matches the individual, counted per individual",
+      "Whether the individual's spouse is a co-resident household member",
+      "Any household with electricity, any with pipe-borne or borehole water, road impassable for part of the year, dry and rainy season water source, matched by enumeration area",
+      "Presence of an agricultural extension office, distance to it, whether an officer is stationed in the community and whether officers visit farmers",
+      "Main drinking water source, distance and, from GLSS 6, minutes to collect water and back, who collects it, main cooking fuel, main lighting source"),
+    stringsAsFactors = FALSE, check.names = FALSE),
+  widths = c(16, 12, 16, 40),
+  caption = paste("Table A2. Sources for the conditioning variables proposed in",
+                  "Section 10. Item codes are those carried in the distributed data",
+                  "files, with the s1 prefix denoting Section 1 of the household",
+                  "questionnaire, s7 Section 7, and the cs prefix the community",
+                  "questionnaire.")
+)
+```
+
+*Notes.* Water collection time in minutes is recorded in GLSS 6 and GLSS 7 but not in GLSS 5, which carries distance only; the GLSS 6 median is 10 minutes. Household composition, own children and spouse co-residence were built for all 169,364 individuals in the reconstructed release and match it exactly. Community variables match 83.9 per cent of the GLSS 5 and GLSS 6 farmer sample. *Source.* Authors' compilation from the GLSS household and community questionnaires and distributed data files, Ghana Statistical Service.
+
+# Appendix B. Draft text for the manuscript
+
+The two blocks below are drafted for the paper rather than for this document. The first is written to sit as Section 2, Data; the second inside the empirical specification section, after the meta-frontier equations. Both follow the form our resource extraction, land tenure and disability papers use, and both are self-contained, so they restate definitions given earlier here rather than cross-referring to them.
+
+### 2. Data
+
+#### 2.1 Data sources and construction
+
+We use two rounds of the Ghana Living Standards Survey (GLSS): 2005/06 (GLSS 5) and 2012/13 (GLSS 6). These are repeated cross-sectional surveys representative at the national and regional levels. The GLSS employs a two-stage stratified design in which enumeration areas are selected as primary sampling units and households are then randomly selected within each area for detailed interview. Except for the time-use variables, all household- and farm-level variables come from a consolidated farmer-level GLSS dataset [@tsiboe2020] that has been used in several previous studies [@tsiboe2019; @tsiboe2021; @tsiboe2022; @gaku2023]. We restrict the sample to crop-producing households and exclude crop yields below the 2.5th or above the 97.5th percentile within each crop and round. Unless otherwise noted, all descriptive statistics and aggregate efficiency scores use the GLSS sampling weights, so reported means are representative of the surveyed population of crop producers.
+
+The consolidated dataset carries no measure of how farmers allocate their time. We therefore construct one from the original GLSS individual questionnaires and merge it into the farmer-level data using the enumeration area, household and member identifiers, which match completely in both rounds. Section 4 of the GLSS instrument is titled Employment and Time Use. Part A records, for every household member aged seven and over, the hours worked in the seven days before interview; Part H records, over the same window and from the same respondents, the hours and minutes given to each housekeeping and care activity in a fixed list, thirteen items in GLSS 5 and fourteen in GLSS 6, among them cooking, cleaning, fetching water, collecting firewood, and care for children, older people and the sick. Because the two parts share a reference period, their hours are directly additive. Table A1 documents, for each round, the source items, the question wording, the response options, and their mapping into the analysis variables.
+
+We define an individual's *committed time* as the sum of hours in all economic activity and hours in all unpaid housekeeping and care work in the seven days before interview, top-coded at the length of a week. A person is classified as *time poor* if their committed time exceeds one and a half times the weighted median of committed time among adults aged fifteen and over in the same round, following Bardasi and Wodon [-@BardasiWodon2010]. Three features of that definition are choices rather than conventions and we state them here. First, the reference population excludes children and excludes individuals who were not administered the module, rather than recording them as working zero hours; a base containing large numbers of definitional zeros drives the median toward zero and turns any relative line into an indicator of labour force participation. Second, the comparison is strict, so a person sitting exactly on the line counts as not time poor. Third, the unit of observation is the individual, not the household head, so that spouses who farm remain in the sample; women are 91.5 per cent of the members that a head-of-household restriction would remove. Under this definition, 22.3 per cent of crop farmers in GLSS 5 and 23.9 per cent in GLSS 6 are time poor, and the composition of that group is the paper's point of departure: women are classified time poor at 40.1 per cent against men's 14.0 in GLSS 5, and at 30.1 against 21.0 in GLSS 6.
+
+We also report three alternatives to the headline indicator, all constructed from the same committed-time variable. Thresholds of 1.25 and 2 times the median test whether the results turn on where the line is drawn. An absolute line of 73.5 hours a week replaces the relative line with a fixed one; it is the weekly counterpart of the ten-and-a-half-hour daily workload rule in the Women's Empowerment in Agriculture Index [@Seymour2019GFS], and we report it under its own name, because that index rests on a single day's diary rather than on a week's recall and the two are related but not identical constructs. And the Foster-Greer-Thorbecke depth and severity measures replace the binary with the size of the time deficit, which matters because the only null in this literature [@Diiro2018] is one its own authors read as a consequence of thresholding too crudely. Throughout the paper, *time poor* refers to the 1.5-times-median classification on committed time; any other threshold or construct is named explicitly where it is used.
+
+GLSS 7 (2016/17) is excluded from the main analysis. The Ghana Statistical Service did not field the housekeeping and care module in that round, a fact we established against the microdata itself rather than against the survey report, so unpaid work is unobserved and no committed-time measure can be formed. Applying the same relative rule to economic hours alone in GLSS 7 yields a long-hours indicator that classifies 8.6 per cent of male and 6.9 per cent of female farmers, reversing the gradient found in both rounds where unpaid work is observed. We report that specification as a falsification exercise rather than as a robustness check: it tests whether our results are driven by committed time or merely by long hours, and it should not be read as evidence about the level or the incidence of time poverty in 2016/17.
+
+#### 2.2 What the measure supports, and what it does not
+
+The construction has four properties that make it suited to the question and three that bound what can be concluded from it. On the first, the measure spans both sides of the paid-unpaid boundary, which is what distinguishes time poverty from long working hours and is the reason the gender gradient runs as it does; it is individual, so the treatment varies within households and spouse-farmers are retained; its line is drawn on the weighted population of adults rather than on the estimation sample, so the classification is a population quantity; and it is available in two rounds seven years apart, which allows the relationship to be examined for stability rather than estimated once.
+
+Against this, the recall instrument is stylised rather than a diary: a respondent reports a weekly total from memory instead of logging activity as it happens, and the methodological literature is consistent that this undercounts unpaid work. Women's measured unpaid work falls from 4.5 hours a day in 2005/06 to 2.3 in 2012/13, against roughly five and a half hours a day for Ghanaian women in diary-based sources [@Charmes2006]. Some of that shortfall is the instrument and some may be a genuine reduction in the time that water and fuel now take, as access to improved sources widened; these data cannot apportion it. Relatedly, the module does not record simultaneous activity, so time spent responsible for a dependent while performing another task goes unrecorded, and that omission falls almost entirely on women. Finally, the measure implements no consumption condition: a person who works long hours from choice and a person who works long hours from necessity are classified alike.
+
+These three limitations move the results in known directions, and we interpret the estimates accordingly. Because unpaid work is undercounted and the undercount is concentrated among women, the measured incidence of time poverty is a lower bound and the measured gender gap is conservative; a correction for either would widen, not narrow, the disparities we report. Because the line is relative, our headcounts describe position within each round's distribution and are not comparable across rounds as levels, which is why we estimate within rounds and report the trend in the gap rather than in the headcount. And because no consumption condition is imposed, the time-poor group contains some farmers whose long hours are voluntary; if those farmers are systematically more productive, their inclusion attenuates any negative association between time poverty and farm performance, so the estimates we report should be read as a floor on the effect rather than as a point estimate of it. The direction of every one of these biases is toward understatement, which is the sense in which the design is conservative.
+
+### 4.x Matching
+
+Farmers classified as time poor differ systematically from those who are not, in ways that bear directly on farm performance. They are five years younger on average, they are less often household heads, they live with fewer elderly members and more children, and they are more likely to have been interviewed in some months than in others. Comparing the two groups as they stand would confound the time constraint with those differences.
+
+The meta-frontier framework is unusually exposed to this problem, because the groups whose frontiers it envelops are formed by the farmers themselves rather than by the analyst. Whenever group membership reflects a choice or a circumstance correlated with productive capacity, the estimated technology gap conflates the technology a group can reach with the kind of farmer who ends up in it. The applied literature has converged on a common response: construct a matched sample first, and estimate the meta-frontier on it. @Mayen2010 do this for organic against conventional dairy farms in the United States, where the decision to convert is plainly not random; @Tiedemann2013 do the same for organic and conventional arable farms in Germany; @CrespoCebada2014 apply it to publicly and privately owned schools in Spain; and @Asmare2022 use a bias-corrected frontier for adapting and non-adapting subsistence farmers. @BravoUreta2021 set out the alternative, a selectivity-corrected frontier in the manner of @Greene2010, and it is instructive for what it requires: an exclusion restriction that predicts group membership and not production. Section 9 reports that the GLSS contains none for time poverty, which is the reason we take the matched-sample route rather than the selection-correction route.
+
+Matching therefore enters at one point in the estimation and one only. The group-specific frontiers are estimated on the full sample of each group. The matched sample is used to estimate the enveloping meta-frontier, and hence the technology gap ratio and the meta-frontier efficiency scores that the comparison rests on. Our purpose also differs from the matching-imputation estimators that replace a missing potential outcome with a matched unit's observed one and derive their large-sample properties from that substitution [@AbadieImbens2006; @AbadieImbens2016]. We are not imputing anything. We are reducing the dependence of the envelope on functional form by ensuring that the farmers whose frontiers it compares are alike in observable respects [@Ho2007; @Stuart2010].
+
+Matching is based on farmer characteristics (age, years of education, marital status, religion, ethnicity, and relationship to the household head), household characteristics (size in adult equivalents, the dependency ratio, the female adult-equivalent ratio, and the composition of the household by age and sex), production characteristics (crop diversification, the share of land allocated to each crop, land ownership, and access to credit), and the month of interview. Observations are paired strictly within the same sex, survey round, region, ecological zone, and rural or urban locality, so that measured differences in technology and efficiency are attributable to time-poverty status rather than to context.
+
+Three elements of that list warrant a word because they are additions to the specification used in our earlier work. The household composition variables count members by age band and sex rather than compressing them into a dependency ratio; the distinction matters because the domestic and care burden that generates time poverty depends on whether the dependants are infants or adolescents, and on whether another adult woman is present to share it [@BardasiWodon2010; @Ali2016]. Relationship to the household head enters as a matching covariate rather than as a sample restriction, since the measure is computed for every adult and spouses who farm are retained. And the month of interview is matched on because the time-poverty classification is measured over the seven days before interview and Ghanaian farm workloads are strongly seasonal [@Martey2024FE; @WodonBeegle2006]: in our data the share classified time poor moves from 0.151 to 0.308 across the twelve months of GLSS 5 fieldwork.
+
+Balancing treated and untreated farmers on this many continuous and categorical covariates simultaneously requires a distance metric. We implement one-to-one nearest-neighbour matching under several: Euclidean and scaled Euclidean distance, Mahalanobis distance [@Rubin1980], robust Mahalanobis distance [@Rosenbaum2020], and propensity scores estimated with logit, probit, complementary log-log and cauchit links. Each is assessed on standardized mean differences, variance ratios and Kolmogorov-Smirnov statistics, with balance indicated by standardized differences near zero and variance ratios near one [@Rubin2001; @Stuart2010]. The specification reported in the main analysis is the one that performs best across those diagnostics; the appendix reports every metric against every covariate so the choice can be inspected rather than taken on assertion.
+
+Standard errors are obtained by jackknife resampling at the enumeration-area level. For each of 100 resamples one enumeration area is excluded, the matching is repeated, and the group frontiers and meta-frontier are re-estimated with the regularity corrections imposed. This accommodates the hierarchical survey design, the sampling variability introduced by matching, and the fact that the correction enforcing monotonicity and quasi-concavity precludes a conventional variance-covariance matrix. The estimation sample contains repeated observations on the same farmer across cropping seasons, so the resampling is at the enumeration area rather than the observation, and observations from one farmer are never split across resamples.
+
+The time-poverty line is a weighted population median, computed on all adults aged fifteen and over in the round rather than on the estimation sample, so that the classification is a statement about the population and not an artefact of who happens to farm. Matching and frontier estimation are unweighted, since the object of interest is the conditional relationship rather than a population mean.
+
+### 4.y Identification
+
+**Identification rests on selection on observables.** Matching balances the farmer, household, production and timing characteristics listed above within strata defined by sex, round, region, ecological zone and locality, and requires overlap on those characteristics. It cannot address confounding from unobserved determinants of both committed time and farm performance. Four are worth naming. Physical stamina and health shape both how many hours a person can sustain and how productive those hours are. Farming ability, in the sense that the frontier literature means it, may lead more capable farmers to take on more work of every kind. Household norms about who cooks, fetches water and minds children are unobserved and plausibly correlated with norms about who makes farm decisions. And plot quality, which we do not observe, may determine both the labour a farm demands and the output it yields. The last is the sharpest case: a farm that requires more weeding both raises its operator's committed time and signals conditions that depress yield.
+
+Stronger correction would require a valid exclusion restriction. A selectivity-corrected stochastic frontier of the kind @Greene2010 proposes, and @BravoUreta2021 apply, would address selection into the two groups directly, but it needs an instrument that predicts time-poverty status and not production, and the GLSS contains none. We tested the obvious candidates. The community questionnaire records, for each enumeration area, whether households have electricity, whether they have access to pipe-borne or borehole water, whether the road is impassable for part of the year, and whether an agricultural extension office is present. In a first stage that already contains the full matching set, those four instruments produce an F statistic of 2.00, far below any conventional threshold. In the reduced form they enter the yield equation with a joint F of 2.95 and a p value of 0.019, so they predict the outcome directly and the exclusion restriction fails. Household-level water and fuel technology fails for a simpler reason: 95.9 per cent of time-poor farmers and 94.4 per cent of the rest cook with wood or charcoal, and mean distance to the water source differs between the groups by half a metre. There is a second reason the selection-correction route sits awkwardly here. Those models are built for the adoption of a discrete technology, where the selection equation describes a decision the farmer makes. Time poverty is not adopted. It is a classification imposed on a distribution of hours that are themselves the product of household circumstance, so the selection equation would have to model the allocation of a household's total labour rather than a single choice. **We therefore interpret the estimated differences in the technology gap ratio, technical efficiency and meta-frontier efficiency as associations conditional on observables in a balanced sample, not as causal effects of time poverty.** Where the discussion uses the language of influence or effect, it should be read in that sense.
+
+Two exercises bound what that assumption is doing. First, we report the ratio of selection on unobservables to selection on observables that would be required to drive the estimate to zero, following the coefficient-stability logic of @AltonjiElderTaber2005 as formalised by @Oster2019. Adding the full conditioning set moves the association between time poverty and log yield from 0.068 to -0.015 and raises the explained variance from near zero to 0.305, and at a maximum attainable R-squared of 1.3 times the controlled value the implied ratio is 0.60. A ratio below one means that unobserved selection weaker than the selection we already observe would be sufficient to overturn the estimate, and we report it as such rather than presenting the controlled coefficient as settled. Second, we report a Rosenbaum sensitivity analysis on the matched treatment effects, stating how large an unobserved confounder would have to be, relative to the matched covariates, to render the difference statistically indistinguishable from zero [@Rosenbaum2020].
+
+The design also admits a falsification test that varies the construct rather than the threshold. GLSS 7 fields the same relative rule on the same economic-activity hours but does not field the housekeeping and care module, so the indicator it supports measures long working hours and not committed time, and its gender gradient runs in the opposite direction. If the results reported here are driven by the time constraint rather than by long hours as such, the GLSS 7 specification should behave differently. We report it under its own name and read agreement between the two as evidence against our interpretation rather than for it.
+
+### 4.z Limitations
+
+Six limitations follow from the data rather than the design, and the estimates should be read with all six in view.
+
+The time-use module is a stylised seven-day recall rather than a diary. Respondents report a weekly total from memory, and the methodological literature is consistent that this undercounts unpaid work. Our estimate of women's unpaid work sits well below diary-based figures for Ghanaian women, which means the measured incidence of time poverty is a lower bound.
+
+The module does not record simultaneous activity, so time spent responsible for a dependant while performing another task goes unrecorded. This omission falls almost entirely on women, and the gender gap we report is therefore conservative.
+
+The classification implements no consumption condition. A farmer who works long hours because her returns are high is counted alongside one who has no alternative, so any estimated relationship averages across the constrained and the unconstrained. If long hours are more often chosen among the more productive, this attenuates the association we report.
+
+The line is relative to each round's median, so headcounts describe position within a distribution rather than an absolute standard, and levels are not comparable across rounds. We therefore estimate within rounds and interpret movements in the gap rather than in the headcount.
+
+The data are repeated cross-sections rather than a panel, and the estimation sample contains a farmer once per cropping season, so wave-to-wave patterns describe changing associations across successive samples of farmers and not changes within farmers over time.
+
+Finally, the no-interference assumption is not innocuous in this setting. Labour is exchanged between households through hiring, reciprocal work groups and family arrangements, so one farmer's time constraint can affect another farmer's labour supply within the same community. Matching within enumeration-area strata and clustering at that level accommodate the resulting correlation but do not remove the spillover, and estimates should be read as differences between comparable farmers in a given community rather than as the effect of removing time poverty from the population.

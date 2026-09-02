@@ -65,3 +65,4 @@ replications
 
 # Harmonization run logs are local artefacts, not part of the repo.
 data-raw/scripts/data-prep/glss/logs/
+studies/financial_inclusion/narrative

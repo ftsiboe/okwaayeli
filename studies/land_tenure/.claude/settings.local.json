@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "c:\\nextcloud\\Documents\\Research work\\Working papers\\Manuscripts\\land_tenure\\narrative\\sections",
+      "C:\\nextcloud\\Documents\\Research work\\Working papers\\Manuscripts\\land_tenure\\narrative\\sections"
+    ],
+    "allow": [
+      "Bash(grep -o '`r [^`]*`' 01_introduction.Rmd)"
+    ]
+  }
+}

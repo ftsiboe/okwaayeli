@@ -21,9 +21,73 @@
 
 ## Note S1. Construction and Harmonization of Community Agricultural Service Delivery Variables
 
-<!-- STUB. The v000 draft has prose here; it was NOT carried over because the draft's
-     Appendix is 5,835 words of table content and the Note bodies need reading against
-     the recovered data/tables/tableS1.csv and tableS2.csv before they are trusted. -->
+<!-- WRITTEN 2026-08-13. This Note holds the construction detail that Section 2.1
+     previously carried. That subsection had grown to twelve paragraphs and was
+     doing two jobs at once. Section 2.1 now states each rule and its
+     consequence and refers here for the derivation; nothing was dropped in the
+     move, and several rules are set out more fully here than they were there.
+
+     Every number below is an inline lookup, as in the main text. Table S1 and
+     Table S2 are cited here and in Section 2.1 both, since a reader may arrive
+     from either direction. -->
+
+### The community questionnaire and the merge
+
+The consolidated farmer-level dataset harmonizes farm production outcomes across survey rounds but carries no community-level information on agricultural service provision. Those measures were built from the agriculture section of the GLSS community questionnaire and merged into the farmer-level data using survey and enumeration-area identifiers, so that every farm operator inherits the service environment of the enumeration area in which the household was sampled.
+
+The community questionnaire is not administered to households. It is put to a panel of community opinion leaders, and the survey protocol requires that panel to reflect the occupational, ethnic, gender and religious composition of the locality. What the resulting variables record is therefore a key-informant report of what is available in a community. They are not administrative records of service delivery, and they are not household reports of services received. Three consequences follow. A community counted as served may contain farmers who never encountered the service. A community counted as unserved may contain farmers who obtained advice privately or from a neighbouring locality. And the reliability of an item depends on how visible the thing being reported is, so the presence of an extension officer is more dependably recorded than, for instance, the distance to an office few informants have travelled to.
+
+Where a community contributes more than one record to the questionnaire, indicators are collapsed to a single observation per survey and enumeration area by taking the maximum across records. A service therefore counts as available if any informant record reports it. This rule is deliberately permissive: it treats disagreement among informants as evidence of presence rather than of absence, on the reasoning that an informant is more likely to be unaware of a service that exists than to invent one that does not. The direction of any resulting error is toward classifying communities as served, which works against finding a difference between the two groups rather than for it.
+
+### Harmonization across rounds
+
+Community agricultural service variables are harmonized using GLSS7 as the reference structure, since it is the most recent round and organizes the service questions most clearly. In GLSS7 the relevant items are cs5q5 to cs5q15. Between them they cover the presence of an agricultural extension office and the distance to it, whether an extension officer is stationed in the community, whether an officer visits farmers, the agency providing the service, the services extension agents provide, compliance with extension guidance, the presence of an agricultural or fishing association, the services that association provides, participation in an agricultural cooperative, and tractor availability.
+
+GLSS6 is numbered identically to GLSS7 across this block and required no renaming. GLSS5 did. That round carries no compliance item, and because the item is absent rather than merely unasked, the questions following it sit one position earlier than their GLSS7 counterparts: the association, cooperative and tractor questions all shift. Mapping GLSS5 onto the GLSS7 structure is thus a renaming exercise rather than a recoding one. Table S2 reports that mapping in full, and Table S1 gives the source question and construction rule for every variable in the final set.
+
+One item has no GLSS5 equivalent at all, which is compliance with extension guidance. Every statistic involving it is restricted to GLSS6 and GLSS7. Table 5 therefore rests on a smaller denominator than Tables 2 to 4, and its note records this. The consequence for that table's trend column is worth stating here as well as there: a percentage change per year computed across two survey rounds is an interpolation between two points rather than a trend, and should not be read as one.
+
+### Indicators of the source of provision
+
+Four indicators of the institutional source of service delivery enter the analysis. A community is classified as having *any service source* if it has an agricultural or fishing association, an agricultural cooperative, or active extension; an *association* source if an agricultural or fishing association is present; a *cooperative* source if farmers participate in an agricultural cooperative; and an *active extension* source if an extension officer visits farmers in the community.
+
+These are four separate binary treatments, each estimated against its own pair of group-specific frontiers, rather than four levels of a single categorical treatment. The distinction governs how the estimates may be combined. Because each contrast is fitted independently, the four sets of frontier parameters are not constrained to agree with one another, and the four estimated gaps are not components of a decomposition that sums to the aggregate.
+
+### Indicators of service content
+
+A second set of indicators captures the content of the services available: planting or seed-use support, mechanization, credit, irrigation, animal husbandry, fertilizer and other agrochemical inputs, post-harvest, marketing or storage support, communal labour, employment, and record-keeping. These enter the analysis as a disaggregation of an estimated gap rather than as treatments in their own right.
+
+They are not all drawn from the same question, and the difference governs what each one means. The community questionnaire carries two service rosters. One lists the services the extension agent provides, at cs5q10a to cs5q10d in GLSS6 and GLSS7 and cs5q9a to cs5q9d in GLSS5. The other lists the services the agricultural or fishing association provides, at cs5q13a to cs5q13c and cs5q11a to cs5q11c respectively. The content indicators therefore fall into three groups rather than one.
+
+Three are built from the extension roster alone: planting or seed-use advice, irrigation, and animal husbandry. Three are built from the association roster alone: communal labour, employment, and record-keeping. The remainder are set to one if either roster reports the service, so credit, mechanization, agrochemical and fertilizer inputs, and post-harvest or marketing support record availability from either provider without distinguishing which.
+
+The asymmetry carries a practical consequence a reader of Table 4 should hold on to. Comparing irrigation against credit in that table is comparing an extension-only measure against a pooled one, and the difference between the two is not a difference between service types alone. It also bears on the service-content disaggregation in Section 5: an indicator drawn from a single roster has a narrower base than one drawn from both, so the estimates behind the two are not equally precise even where their cell counts are similar. Nothing in the questionnaire permits a symmetric construction, since the two rosters do not offer the same options.
+
+### The threshold for active extension
+
+Active extension requires a threshold, because the underlying variable is not binary. The community questionnaire asks separately whether an extension office exists, whether an officer is stationed locally, and whether an officer visits farmers, and the harmonized variable combines the three into a set of states running from no extension presence of any kind through to office, stationed officer and visits together.
+
+We classify a community as having active extension when an officer visits, which is the partition above which farmer-facing contact occurs. The reason lies in what the frontier estimates. A frontier characterises a technology a farmer can actually reach, and an extension office in a community no officer visits does not place a farmer on a different technology from one with no office at all. The alternative rule, counting any extension infrastructure as active, would pool communities where farmers have contact with an adviser and communities that have only a building.
+
+The choice is not close-run, because the passive states are nearly empty. Table 3 reports the full distribution. Communities with a stationed officer and no visit account for `r tbl_pct("table3", "share/Pooled", "v1", 0)` of farmers and communities with an office and no visit for `r tbl_pct("table3", "share/Pooled", "v2", 0)`, against `r tbl_pct("table3", "share/Pooled", "v3", 0)` where an officer visits and no other infrastructure is present. Moving the threshold down to any infrastructure would reclassify a small share of the sample while merging two exposures that differ in kind.
+
+Two features of the underlying variable qualify how the threshold should be understood. Its lower states are not ordered by intensity: an office without an officer and an officer without an office are two kinds of passive presence rather than two rungs of a ladder, so the rule is a partition and not a dose threshold. And communities with an office or a stationed officer but no visits fall into the comparison group under this rule. Section 5 reports the estimates under a stricter definition that excludes those communities from the comparison group as well, so that the sensitivity of the results to this decision can be read rather than assumed.
+
+### The comparison group for source-specific contrasts
+
+The three source-specific treatments require one further rule, and it departs from the sibling studies in this repository. A community with no association but with a cooperative or active extension is set to missing rather than to zero, and so drops out of the association comparison entirely. The same applies to the cooperative and active-extension contrasts.
+
+The reasoning is that such a community is treated under a different arm rather than untreated. Coding it zero would place served farms in the reference group, which does more than mislabel a category: it contaminates the frontier against which the treated group is measured, and it does so in the direction of understating any difference. The retained comparison group is therefore communities with no agricultural service source of any kind. What the resulting estimate identifies should be stated precisely. It is the difference between association-served communities and communities with no service source at all, and it is not the effect of an association relative to other service arrangements.
+
+The rule is not costless. Of the `r fmt_num(assert_present(objs$prevalence$n_all), 0)` farm observations in the analysis sample, the association contrast retains `r fmt_num(sum(unlist(objs$prevalence$n_obs$services1)), 0)`, the cooperative contrast `r fmt_num(sum(unlist(objs$prevalence$n_obs$services2)), 0)` and the active-extension contrast `r fmt_num(sum(unlist(objs$prevalence$n_obs$services3)), 0)`; the remainder are served under another arm and are excluded. Because all four contrasts draw on the same comparison group, their estimates are not statistically independent, and they should not be pooled or differenced as though drawn from separate samples. Section 5 reports a robustness arm in which the excluded communities are coded zero instead.
+
+### Implausible values and item non-response
+
+Implausible values are set to missing before the community-level collapse. Extension distances of 999 kilometres or more, and tractor counts of 99 or more, are treated as non-responses rather than as observations, on the reasoning that both are conventional sentinel codes rather than measurements. Both rules are applied to the community record rather than to the farm, so a single suppressed community removes the variable for every farm in its enumeration area.
+
+Neither rule bites hard. Across the `r fmt_num(assert_present(objs$suppression$records), 0)` community records behind GLSS5 to GLSS7, the distance rule suppresses `r fmt_num(assert_present(objs$suppression$distance$suppressed), 0)` and the tractor rule `r fmt_num(assert_present(objs$suppression$tractors$suppressed), 0)`, all of them in the two later rounds.
+
+Ordinary item non-response on the same two questions is a considerably larger matter and, to our knowledge, has not been reported before. Distance to the nearest extension office is not recorded at all for `r fmt_num(assert_present(objs$suppression$distance$missing), 0)` community records, and the tractor count for `r fmt_num(assert_present(objs$suppression$tractors$missing), 0)`, an order of magnitude more than the two suppression rules remove between them. Distance is thus unobserved for close to a quarter of communities, which is the reason it enters this study as a descriptive covariate and never as a treatment or as a frontier input. Both sets of counts were measured at the point of suppression, because downstream a suppressed value and an absent one are indistinguishable.
 
 ## Note S2. Drivers of technical inefficiency
 
@@ -130,9 +194,14 @@ ft_tableS8()
 
 \newpage
 
-#### Figure S1. Covariate balancing summary
+#### Figure S1. Covariate balance before and after matching
 
-![](../output/figures/Covariate_balance_variance.png){width=9.3in}
+<!-- Love plot, built by fig_modern001_balance() in scripts/101. If that rebuild
+     could not resolve the columns in covariate_balance.rds, 101 copies the legacy
+     Covariate_balance_variance.png to this name and says so loudly, so this image
+     is always present and always valid. -->
+
+![](../output/figures/covariate_balance_love.png){width=9.3in}
 
 <!-- Closes Tables S1-S8 AND Figure S1 (9.3in wide) as one landscape run. -->
 
@@ -143,6 +212,13 @@ sec_landscape()
 \newpage
 
 #### Figure S2. Different Model Specifications Generally Show Increasing Impact of Farmer Agricultural Service Provision on Crop Production Output for Ghanaian Farmers (2005-2017)
+
+<!-- Unchanged: still fig_robustness(). A modern001 specification curve was built
+     for this slot and withdrawn. The curve answers whether the result survives
+     the whole space of choices; this figure answers what each alternative gives,
+     measure by measure, against the preferred estimate, which is the question
+     the appendix is asked. Figure S1 above IS on the new system, so the two
+     supplementary figures deliberately differ in style. -->
 
 ![](../output/figures/robustness.png){width=6.3in}
 

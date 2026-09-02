@@ -3,7 +3,7 @@ Financial Inclusion and Credit Impacts on Crop Production in Ghana
 
 <!-- README.md is generated from financial_inclusion.Rmd. Please edit that file. -->
 
-![Status: Drafting (v005)](https://img.shields.io/badge/status-drafting-lightgrey)
+![Status: Full draft (v006)](https://img.shields.io/badge/status-full%20draft-blue)
 
 For an overview of the broader project context, please refer to the main
 [okwaayeli README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md)
@@ -13,9 +13,20 @@ See the
 [LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
 file in the repository root for details.
 
-**Status**: Drafting (v005). Consolidated into the canonical study layout on
-2026-08-08; the automated narrative system landed the same day, and the sections
-in [`narrative/sections/`](narrative/sections/) render from the pipeline.
+**Status**: Full draft (v006, 2026-09-02). Every section is written, including
+the abstract and the conclusion, which were scaffolds until now. The narrative
+was revised end to end against the current pipeline output, and the headline
+result changed direction in the process: credit-using households operate a
+technology set that lies *farther* from the best-practice frontier than that of
+matched non-users, not nearer to it, and the meta-frontier efficiency shortfall
+is a technology gap rather than a management gap. Results and discussion are
+integrated in `05_results.Rmd`; `06_discussion.Rmd` is superseded. The
+superseded sections are kept in
+[`narrative/revision/superseded/`](narrative/revision/superseded/) and the
+revision is documented in
+[`narrative/revision/revision_notes.md`](narrative/revision/revision_notes.md),
+whose section 4 lists the sixteen items that need author input before the draft
+is circulated.
 
 ### Contributors
 
@@ -54,8 +65,7 @@ same automated manuscript system `resource_extraction` and `land_tenure` use:
 Measured quantities in the sections resolve at knit time against
 `narrative/article_objects.json` and the exhibit cache, with no fallback — a
 lookup that cannot resolve stops the knit. The exceptions are listed in each
-section's banner. **`03_financial_inclusion_context.Rmd` is the one section not
-yet fully live**; the literals that remain are enumerated in its banner.
+section's banner. Each section's banner states what is live and what is deliberately literal.
 
 **Keywords**: financial inclusion; credit; mobile money; technical efficiency;
 meta-stochastic frontier; Ghana

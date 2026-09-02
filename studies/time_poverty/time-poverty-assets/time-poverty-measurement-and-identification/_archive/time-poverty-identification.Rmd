@@ -1,0 +1,363 @@
+---
+title: "Identifying the effect of time poverty on farm performance"
+subtitle: "What the Ghana Living Standards Survey can and cannot support, and the strategy we propose"
+author: "Prepared for the study team"
+date: "9 August 2026"
+bibliography: time-poverty-measure-review-and-construction.bib
+link-citations: true
+output:
+  word_document:
+    fig_caption: true
+    fig_width: 7.2
+    fig_height: 3.0
+  html_document:
+    theme: readable
+    toc: true
+    toc_float: true
+    fig_caption: true
+    fig_width: 7.2
+    fig_height: 3.0
+  pdf_document:
+    fig_caption: true
+    fig_width: 7.2
+    fig_height: 3.0
+---
+
+<!--
+STATUS
+  First draft. Every figure quoted here was computed on the reconstructed
+  release joined to the consolidated crop-farmer data and, where stated, to
+  the GLSS household and community questionnaires. Sections 7 and 8 are
+  proposals rather than results.
+
+RENDERING
+  rmarkdown::render("time-poverty-identification.Rmd", output_format = "all")
+  Requires knitr and rmarkdown only; the figure uses base graphics. The
+  bibliography file is shared with the measurement memorandum and must sit
+  beside this file.
+-->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
+                      dpi = 300, fig.align = "center")
+
+MATCHED <- "#2a78d6"   # covariate already in the matching set
+UNMATCH <- "#eb6834"   # candidate not currently used
+SURF    <- "#fcfcfb"; GRID <- "#e1e0d9"; BASE <- "#c3c2b7"
+MUTED   <- "#898781"; INK2 <- "#52514e"
+
+grid_table <- function(df, widths, caption = NULL) {
+  cols <- names(df)
+  rule <- function(ch) paste0("+", paste(vapply(widths,
+            function(w) strrep(ch, w + 2), character(1)), collapse = "+"), "+")
+  block <- function(vals) {
+    cells <- Map(function(v, w) {
+      x <- strwrap(v, width = w); if (!length(x)) x <- ""
+      formatC(x, width = -w)
+    }, as.character(vals), widths)
+    h <- max(vapply(cells, length, integer(1)))
+    cells <- lapply(seq_along(cells), function(j)
+      c(cells[[j]], rep(strrep(" ", widths[j]), h - length(cells[[j]]))))
+    vapply(seq_len(h), function(i)
+      paste0("| ", paste(vapply(cells, function(cc) cc[i], character(1)),
+                         collapse = " | "), " |"), character(1))
+  }
+  out <- c(rule("-"), block(cols), rule("="))
+  for (i in seq_len(nrow(df))) out <- c(out, block(unlist(df[i, ])), rule("-"))
+  if (!is.null(caption)) out <- c(out, "", paste0(": ", caption))
+  cat(out, sep = "\n")
+}
+```
+
+```{r inputs}
+## Standardised mean differences, treated against control, on the 19,663
+## GLSS 5 and GLSS 6 crop farmers with complete data. Treated share 0.227.
+smd <- data.frame(
+  variable = c("Age", "Household head", "Persons 60 and over", "Spouse co-resident",
+               "Other adult women 15-59", "Land fragmentation", "Children under 5",
+               "Household labour", "Own children under 5", "Cultivated area",
+               "Children 5-14", "Extension contact", "Community extension office",
+               "Years of education", "Female adult-equivalent ratio",
+               "Dependency ratio", "Adult men 15-59", "Adult women 15-59",
+               "Crop mix", "Household size", "Cooking with wood or charcoal",
+               "Electric lighting", "Piped water at home", "Distance to water"),
+  smd = c(-0.346, -0.316, -0.217, -0.162, -0.147, -0.160, 0.119,
+          -0.121, 0.114, -0.112, 0.108, 0.108, 0.102,
+          -0.083, 0.054, -0.046, -0.045, 0.043, -0.007, 0.012,
+          0.070, -0.052, 0.037, 0.003),
+  matched = c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+              FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+              TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE,
+              FALSE, FALSE, FALSE, FALSE),
+  stringsAsFactors = FALSE
+)
+```
+
+# 1. Summary
+
+The measurement memorandum established what the treatment is. This one asks the harder question: under what assumption can the coefficient on that treatment be read as an effect, and does the Ghana Living Standards Survey (GLSS) support the assumption. We investigated three routes and report on all three, including the one that fails.
+
+An instrumental-variables strategy is not available in these data. The natural candidates, the community-level water, electricity, road and extension infrastructure recorded in the community questionnaire, are jointly weak in the first stage, with an F statistic of 2.00 on four excluded instruments, and they are not excludable: the same four enter the yield equation with a joint F of 2.95 and p of 0.019, and community electricity alone carries a t statistic of -2.67. An instrument that predicts the outcome directly is a control variable, not an instrument. We recommend abandoning that route rather than reporting a weak-instrument specification and defending it.
+
+The household-level infrastructure route fails for a different and simpler reason: there is almost no variation to exploit. Among crop farmers in these two rounds, 95.9 per cent of the time poor and 94.4 per cent of the rest cook with wood or charcoal, 2.4 against 1.8 per cent have piped water at the dwelling, and mean distance to the water source differs by 0.5 metres. Water and fuel technology cannot separate the treated from the untreated in a rural Ghanaian farming sample.
+
+That leaves selection on observables, which is the design the study already uses. It can be materially strengthened. Four blocks of pre-determined variables are currently absent from the matching set and are imbalanced past the conventional 0.10 threshold: the month of interview, household head status, the age and sex composition of the household, and community extension access. The month of interview is the most consequential: it predicts the treatment at a likelihood-ratio chi-squared of 76.3 on 11 degrees of freedom, predicts log yield at an F of 9.62, and moves the naive treatment coefficient by 19 per cent on its own. Head status carries a standardized difference of -0.316, second only to age, and became visible only because the reconstruction stopped restricting the sample to heads.
+
+None of this makes the design credible on its own. A bounding exercise in the style of Oster puts the identified set well outside the confidence interval of the controlled estimate, so the paper has to report sensitivity analysis rather than assert conditional independence. Section 7 sets out the strategy we propose: a richer matching set, the GLSS 7 long-hours specification as a falsification test, and formal bounds.
+
+# 2. What has to be identified
+
+The study estimates two objects, and they carry different identification burdens. Let $T_{i}$ denote the time-poverty status of farmer $i$ as defined in the measurement memorandum, $y_{i}$ observed output, and $x_{i}$ the input vector. The meta-frontier decomposition recovers a technology gap ratio and a technical efficiency score, and the parameter of interest is the difference in each between the time poor and the time rich,
+
+$$
+\tau_{\mathrm{TGR}} \;=\; E\bigl[\, \mathrm{TGR}_{i}(1) - \mathrm{TGR}_{i}(0) \,\bigr],
+\qquad
+\tau_{\mathrm{TE}} \;=\; E\bigl[\, \mathrm{TE}_{i}(1) - \mathrm{TE}_{i}(0) \,\bigr],
+$$
+
+where $\mathrm{TGR}_{i}(t)$ and $\mathrm{TE}_{i}(t)$ are the potential technology gap and efficiency of farmer $i$ under time-poverty status $t$. Because the frontier is estimated separately by group, the identifying assumption is not only that assignment is ignorable but that group membership is not itself a function of unobserved productivity. Writing $Z_{i}$ for the conditioning set, what we need is
+
+$$
+\bigl\{\, \mathrm{TGR}_{i}(0), \mathrm{TGR}_{i}(1), \mathrm{TE}_{i}(0), \mathrm{TE}_{i}(1) \,\bigr\} \;\perp\; T_{i} \;\vert\; Z_{i},
+\qquad 0 < P(T_{i}=1 \,\vert\, Z_{i}) < 1 .
+$$
+
+The first condition is conditional independence and it is not testable. The second is overlap and it is. Everything in Sections 4 to 6 is an attempt to make the first assumption as defensible as the data allow, and Section 6 is an attempt to say what happens if it fails.
+
+Two features of this treatment make the assumption harder than it would be for, say, a technology dummy. Time poverty is a relative classification, so a farmer's status depends on the whole distribution in their round, not only on their own hours. And the hours that generate it are measured over the seven days before interview, which makes anything measured in the same window a potential consequence rather than a cause. The conditioning set must therefore be built from variables that are fixed with respect to that window.
+
+# 3. Why an instrumental-variables strategy is not available
+
+The obvious instrument for a household time burden is the infrastructure that determines it. This is the strategy in the water and energy literature: piped-water rollout releases collection time and raises household production [@Meeks2017], improved cookstoves release about 34 minutes a day [@Krishnapriya2021], and a Nairobi experiment shows that relieving domestic time raises business revenue while cash does not [@Delecourt2025]. The GLSS community questionnaire records, for each enumeration area, whether households have electricity, whether they have access to pipe-borne or borehole water, whether the road is impassable for part of the year, and whether an agricultural extension office is present. We built all four for GLSS 5 and GLSS 6 and matched them to 83.9 per cent of the farmer sample.
+
+They fail both tests. In a linear first stage that already contains the full current matching set, the four excluded instruments produce an F statistic of 2.00. That is far below the conventional threshold of 10 and further still below the thresholds now used for weak-instrument-robust inference. In the reduced form, the same four instruments enter the yield equation with a joint F of 2.95 and p of 0.019, with community electricity at t = -2.67 and community extension office at t = -1.96. Community infrastructure predicts farm output directly, which is unsurprising, and that is exactly what the exclusion restriction forbids.
+
+The household-level version fails earlier. Table 1 reports the imbalance on the household water and fuel variables. Cooking fuel does not discriminate because almost nobody uses anything but wood or charcoal; water distance does not discriminate because it is essentially identical in the two groups. A variable with no variation across the treatment cannot instrument for it.
+
+```{r tab1, results = "asis"}
+grid_table(
+  data.frame(
+    Variable = c("Cooking with wood or charcoal", "Piped water at the dwelling",
+                 "Electric lighting", "Distance to drinking water",
+                 "Community: any piped or borehole water", "Community: any electricity",
+                 "Community: road impassable part of the year",
+                 "Community: agricultural extension office"),
+    `Time poor` = c("0.959", "0.024", "0.582", "111.2", "0.093", "0.302", "1.464", "0.135"),
+    `Not time poor` = c("0.944", "0.018", "0.608", "110.7", "0.100", "0.296", "1.479", "0.102"),
+    SMD = c("+0.070", "+0.037", "-0.052", "+0.003", "-0.024", "+0.013", "-0.029", "+0.102"),
+    stringsAsFactors = FALSE, check.names = FALSE),
+  widths = c(38, 12, 15, 9),
+  caption = paste("Table 1. Household and community infrastructure, treated against",
+                  "control, GLSS 5 and GLSS 6 crop farmers. SMD is the standardized",
+                  "mean difference. Only the community extension office exceeds the",
+                  "conventional 0.10 threshold, and Section 5 argues it belongs in the",
+                  "conditioning set rather than in an instrument.")
+)
+```
+
+*Notes.* Household variables come from Section 7 Part D of the questionnaire, community variables from Sections 2 and 5 of the community questionnaire, matched to farmers by enumeration area. Distance to drinking water is in metres. Household variables match 99.9 per cent of the farmer sample and community variables 83.9 per cent. *Source.* Authors' construction from the Ghana Living Standards Survey microdata published by the Ghana Statistical Service.
+
+One route we have not closed off is a supply-side instrument constructed from outside the survey, for example rainfall or growing-degree-day deviations matched to the enumeration area and the interview date. That would shift the seasonal labour requirement without operating on farm technology through any other channel that we cannot control for. It is a real option and it is outside the GLSS.
+
+# 4. What the current design conditions on
+
+Matching currently uses six continuous covariates, five categorical covariates, and four exact strata: region, ecological zone, locality type and sex. Figure 1 places the standardized mean differences of those variables alongside the candidates we tested. The pattern is the point. Of the ten largest imbalances in the sample, only one, age, is currently matched on.
+
+```{r fig1, fig.height = 4.4, fig.cap = "Figure 1. Standardized mean differences between time-poor and time-rich crop farmers, GLSS 5 and GLSS 6. Blue marks variables already in the matching set, orange marks candidates that are not. The vertical rules at plus and minus 0.10 are the conventional balance threshold."}
+d <- smd[order(abs(smd$smd)), ]
+op <- par(mar = c(3.6, 12.5, 0.8, 1.0), bg = SURF, family = "sans")
+plot.new(); plot.window(xlim = c(-0.40, 0.20), ylim = c(0.5, nrow(d) + 0.5), yaxs = "i")
+rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = SURF, border = NA)
+abline(v = seq(-0.4, 0.2, 0.1), col = GRID, lwd = 0.6)
+abline(v = c(-0.1, 0.1), col = BASE, lwd = 0.8)
+abline(v = 0, col = BASE, lwd = 0.8)
+segments(0, seq_len(nrow(d)), d$smd, seq_len(nrow(d)),
+         col = ifelse(d$matched, MATCHED, UNMATCH), lwd = 1.2)
+points(d$smd, seq_len(nrow(d)), pch = 19, cex = 0.9,
+       col = ifelse(d$matched, MATCHED, UNMATCH))
+axis(2, at = seq_len(nrow(d)), labels = d$variable, las = 1, col = NA,
+     col.axis = MUTED, cex.axis = 0.78, line = -0.4)
+axis(1, at = seq(-0.4, 0.2, 0.1), col = BASE, col.axis = MUTED,
+     cex.axis = 0.8, lwd = 0.6)
+mtext("Standardized mean difference", side = 1, line = 2.2, cex = 0.8, col = INK2)
+legend("bottomleft", legend = c("In the matching set", "Not in the matching set"),
+       col = c(MATCHED, UNMATCH), pch = 19, bty = "n", cex = 0.8,
+       text.col = INK2, pt.cex = 0.9)
+par(op)
+```
+
+*Notes.* Standardized mean differences on 19,663 farmer-season observations from GLSS 5 and GLSS 6, covering 14,735 distinct farmers, with complete data on all listed variables; treated share 0.227. Crop-area covariates, which are also matched on, are omitted for legibility. Household head status, household composition and community extension access were constructed for this exercise from the household roster and the community questionnaire and are not currently in the release used for matching. *Source.* Authors' construction from the Ghana Living Standards Survey microdata and the consolidated crop-farmer data.
+
+Two of these deserve comment. Household head status carries a standardized difference of -0.316, second only to age, and it appears only because the reconstruction retains all individuals rather than heads alone. The previous design suppressed it by construction and therefore never had to condition on it. Cultivated area, household labour, land fragmentation and extension contact are also imbalanced, but Section 5 argues that they are the wrong kind of variable to add.
+
+# 5. What should be added, and what should not
+
+The month of interview is the strongest single addition and the easiest to justify. The share classified time poor moves from 0.151 to 0.308 across the twelve months of GLSS 5 fieldwork and from 0.173 to 0.296 across GLSS 6. Adding month dummies to a treatment model that already contains every current matching variable gives a likelihood-ratio chi-squared of 76.3 on 11 degrees of freedom. Month also predicts the outcome, at an F of 9.62 on 11 degrees of freedom in the yield equation, and including it moves the estimated treatment coefficient by 19 per cent. A variable that predicts treatment, predicts outcome, and is fixed before either is realised is a confounder by definition. It is also the variable the seasonality literature says to worry about [@Martey2024FE; @WodonBeegle2006].
+
+Household composition is the second block. The current design compresses the household into three scalars: size in adult equivalents, the female adult-equivalent ratio, and a dependency ratio. That cannot distinguish two toddlers from two teenagers, and it cannot express whether another adult woman is present to absorb the domestic load, which is the mechanism the literature identifies [@BardasiWodon2010; @Ali2016]. We rebuilt the roster for all 169,364 individuals in the three rounds and constructed counts by age and sex, own children under five linked through the parent identifier fields, and the number of other adult women. Jointly they are significant after conditioning on the full current set, at a likelihood-ratio chi-squared of 65.3 on 7 degrees of freedom, and the coefficient on other adult women is negative, which is the substitute-carer margin appearing exactly where the theory says it should.
+
+Table 2 sets out both blocks with the evidence for each.
+
+```{r tab2, results = "asis"}
+grid_table(
+  data.frame(
+    Candidate = c("Month of interview", "Household head status",
+                  "Persons 60 and over", "Other adult women 15-59",
+                  "Children 5-14", "Adult men 15-59", "Children under 5",
+                  "Own children under 5", "Spouse co-resident",
+                  "Community extension office"),
+    Source = c("release", "release", "roster", "roster", "roster", "roster",
+               "roster", "roster", "roster", "community"),
+    SMD = c("see note", "-0.316", "-0.217", "-0.147", "+0.108", "-0.045",
+            "+0.119", "+0.114", "-0.162", "+0.102"),
+    Evidence = c(
+      "LR chi2(11) = 76.3 on treatment; F(11) = 9.62 on yield; moves the treatment coefficient by 19 per cent",
+      "second largest imbalance in the sample; visible only once non-heads are retained",
+      "significant in the treatment model (z = 2.87) and marginal on yield (t = -1.76)",
+      "the substitute-carer margin; z = -3.52 on treatment",
+      "z = 4.98 on treatment; t = -1.61 on yield",
+      "z = 3.46 on treatment; t = -2.02 on yield",
+      "z = 2.14 on treatment; no outcome signal",
+      "z = 1.61 on treatment; no outcome signal",
+      "not significant once the counts are included",
+      "z = 6.06 on treatment and t = -1.96 on yield, so a confounder rather than an instrument"),
+    stringsAsFactors = FALSE, check.names = FALSE),
+  widths = c(20, 11, 10, 37),
+  caption = paste("Table 2. Candidate additions to the conditioning set, with the",
+                  "standardized mean difference and the test evidence for each.",
+                  "Source records where each variable comes from: the reconstructed",
+                  "release, the household roster in Section 1, or the community",
+                  "questionnaire.")
+)
+```
+
+*Notes.* Tests are on 19,663 GLSS 5 and GLSS 6 crop farmers. Treatment-model statistics come from a logit that already contains every current matching covariate; yield-equation statistics come from a log-yield regression that also contains the logged input vector, with standard errors clustered on the enumeration area. The month of interview has no single standardized difference because it is categorical; the treated share ranges from 0.151 to 0.308 across months in GLSS 5. *Source.* Authors' construction from the Ghana Living Standards Survey microdata and the consolidated crop-farmer data.
+
+Two cautions belong with this list rather than after it.
+
+The composition block predicts the treatment strongly and the outcome weakly, at a joint F of 1.55 with p of 0.145 in the yield equation, and adding it moves the treatment coefficient by under 4 per cent. Covariates that predict treatment but not outcome behave like instruments inside a propensity score: they can inflate variance without reducing bias. The disciplined response is to add the four with some outcome signal, elders, children 5 to 14, adult men and other adult women, and to report the specification with and without the remainder rather than adding the block wholesale.
+
+The second caution is about mediators. Cultivated area, household labour, land fragmentation and extension contact are all imbalanced and all sit in the consolidated data already, so adding them costs nothing mechanically. But each is plausibly a decision taken in response to a time constraint rather than a condition prior to it, and conditioning on a mediator removes part of the effect the study is trying to measure. Household composition and the interview date carry no such risk against a seven-day recall window, which is the reason to prefer them.
+
+Geography is a partial option. The current exact strata give 84 cells across GLSS 5 and GLSS 6, with a median of 100 observations and 36 per cent holding fewer than 50, so the strata are already thin and cannot be refined without losing matches. District is available in the release for GLSS 6, with 27 codes, and for GLSS 7, with 214, but is missing entirely for GLSS 5, so it cannot serve as a common stratum across the estimation sample.
+
+# 6. What remains, and how to bound it
+
+Conditioning on more observables does not deliver identification; it makes a failure of the assumption less likely without making it impossible. The standard way to say how much less likely is to ask how strong selection on unobservables would have to be, relative to selection on observables, to overturn the result [@Oster2019].
+
+We ran that exercise on the naive yield equation. The coefficient on time poverty is +0.068 with no controls, where the regression explains almost nothing, and -0.015 with the full conditioning set including month and composition, where it explains 30.5 per cent of the variance. The controlled estimate has a clustered standard error of 0.026, so it is not distinguishable from zero. Setting the maximum attainable R-squared to 1.3 times the controlled value, the bounded estimate is -0.040, which lies about one and a half standard errors from the controlled estimate, and the ratio of unobserved to observed selection needed to drive the coefficient to zero is 0.60 in absolute value. A ratio below one means unobserved selection weaker than what we already observe would be enough to move the answer.
+
+We report this to be clear about what it does and does not show. It is a statement about a naive log-yield regression, not about the frontier decomposition, and a bounding exercise around an estimate that is already indistinguishable from zero carries limited information. What it does establish is that the paper cannot lean on conditional independence as though it were innocuous, and that a sensitivity analysis has to be part of the results rather than a referee's addition.
+
+# 7. The strategy we propose
+
+Four components, in the order they would appear in the paper.
+
+First, condition on the enriched set: the current covariates, plus the month of interview, head status, and the outcome-relevant part of the household composition block, with community extension access as a factor where the community file matches. Report balance before and after, and report the estimate with and without the composition variables that predict treatment alone.
+
+Second, use GLSS 7 as a falsification sample. The long-hours indicator defined there is built from the same economic hours on the same relative rule but contains no unpaid work, and its gender gradient runs the other way. If the frontier results on GLSS 5 and GLSS 6 are driven by committed time rather than by long hours as such, the GLSS 7 specification should behave differently. This is a stronger test than a threshold-sensitivity check because it varies the construct rather than the cutoff.
+
+Third, exploit the threshold. The measure is a relative line, so farmers just above and just below the cutoff are similar in committed time but differently labelled. Comparing them isolates the classification from the underlying hours, and comparing the binary against the depth measure says whether any effect is a threshold phenomenon or a dose response. The literature's one existing null is attributed by its own authors to a coarse binary [@Diiro2018], which makes this worth doing on its own terms.
+
+Fourth, report bounds. An Oster-style calculation on the frontier estimates, and a Rosenbaum-style sensitivity analysis on the matched treatment effects, stating how large an unobserved confounder would have to be to overturn the sign.
+
+What we would not do is report an instrumental-variables specification built on community infrastructure. The first stage is weak, the exclusion restriction fails on its face, and a referee who runs the reduced form will find what we found in Section 3.
+
+# 8. Decisions taken
+
+The team settled four questions on 9 August 2026, and the draft prose in Appendix B is written to those choices.
+
+1. Identification rests on selection on observables, with formal bounds. The estimates will be reported as associations conditional on observables in a balanced sample, in the form our land tenure and disability papers use, with an Oster-style calculation and a Rosenbaum sensitivity analysis added rather than asserted away.
+
+2. The community-questionnaire variables stay out of the conditioning set. Only community extension access is imbalanced, and buying it costs the 16.1 per cent of farmers whose enumeration area does not match the community file. The full sample is worth more than one covariate.
+
+3. No external instrument for this paper. Weather deviations matched to enumeration area and interview date remain the one credible route and are noted in the conclusion as future work.
+
+4. The threshold comparison is a robustness exercise. It sits with the alternative multiples and the depth measure rather than carrying the main results.
+
+# References
+
+::: {#refs}
+:::
+
+# Appendix A. Sources for the additional conditioning variables
+
+```{r tabA1, results = "asis"}
+grid_table(
+  data.frame(
+    Block = c("Interview timing", "Head status", "Household composition",
+              "Own children", "Spouse", "Community infrastructure",
+              "Community extension", "Household water and fuel"),
+    Round = c("all", "all", "all", "all", "all", "GLSS 5, 6, 7",
+              "GLSS 5, 6, 7", "GLSS 5, 6, 7"),
+    Item = c("cover and location files", "s1q3", "s1q2, s1q5y",
+             "s1q15, s1q19", "s1q7", "cs2q6 to cs2q13", "cs5q5 to cs5q8",
+             "s7dq1 to s7dq16"),
+    Construction = c(
+      "Month and year of interview, carried into the reconstructed release",
+      "Relationship to household head, recoded to a head indicator",
+      "Counts of persons by age band and sex within the household: under 5, 5 to 14, men and women 15 to 59, and 60 and over",
+      "Children under 5 in the household whose mother or father identifier matches the individual, counted per individual",
+      "Whether the individual's spouse is a co-resident household member",
+      "Any household with electricity, any with pipe-borne or borehole water, road impassable for part of the year, dry and rainy season water source, matched by enumeration area",
+      "Presence of an agricultural extension office, distance to it, whether an officer is stationed in the community and whether officers visit farmers",
+      "Main drinking water source, distance and, from GLSS 6, minutes to collect water and back, who collects it, main cooking fuel, main lighting source"),
+    stringsAsFactors = FALSE, check.names = FALSE),
+  widths = c(16, 12, 16, 40),
+  caption = paste("Table A1. Sources for the conditioning variables proposed in",
+                  "Section 5. Item codes are those carried in the distributed data",
+                  "files, with the s1 prefix denoting Section 1 of the household",
+                  "questionnaire, s7 Section 7, and the cs prefix the community",
+                  "questionnaire.")
+)
+```
+
+*Notes.* Water collection time in minutes is recorded in GLSS 6 and GLSS 7 but not in GLSS 5, which carries distance only; the GLSS 6 median is 10 minutes. Household composition, own children and spouse co-residence were built for all 169,364 individuals in the reconstructed release and match it exactly. Community variables match 83.9 per cent of the GLSS 5 and GLSS 6 farmer sample. *Source.* Authors' compilation from the GLSS household and community questionnaires and distributed data files, Ghana Statistical Service.
+
+# Appendix B. Draft identification and matching prose for the manuscript
+
+What follows is drafted for the paper rather than for this memorandum. It is written to sit inside the empirical specification section, after the meta-frontier equations and before the results, in the form our resource extraction, land tenure and disability papers use. Because it has to stand on its own once lifted into the manuscript, it restates definitions and caveats given earlier here rather than cross-referring to them.
+
+## 4.x Matching
+
+Farmers classified as time poor differ systematically from those who are not, in ways that bear directly on farm performance. They are five years younger on average, they are less often household heads, they live with fewer elderly members and more children, and they are more likely to have been interviewed in some months than in others. Comparing the two groups as they stand would confound the time constraint with those differences.
+
+The meta-frontier framework is unusually exposed to this problem, because the groups whose frontiers it envelops are formed by the farmers themselves rather than by the analyst. Whenever group membership reflects a choice or a circumstance correlated with productive capacity, the estimated technology gap conflates the technology a group can reach with the kind of farmer who ends up in it. The applied literature has converged on a common response: construct a matched sample first, and estimate the meta-frontier on it. @Mayen2010 do this for organic against conventional dairy farms in the United States, where the decision to convert is plainly not random; @Tiedemann2013 do the same for organic and conventional arable farms in Germany; @CrespoCebada2014 apply it to publicly and privately owned schools in Spain; and @Asmare2022 use a bias-corrected frontier for adapting and non-adapting subsistence farmers. @BravoUreta2021 set out the alternative, a selectivity-corrected frontier in the manner of @Greene2010, and it is instructive for what it requires: an exclusion restriction that predicts group membership and not production. Section 3 of this memorandum reports that the GLSS contains none for time poverty, which is the reason we take the matched-sample route rather than the selection-correction route.
+
+Matching therefore enters at one point in the estimation and one only. The group-specific frontiers are estimated on the full sample of each group. The matched sample is used to estimate the enveloping meta-frontier, and hence the technology gap ratio and the meta-frontier efficiency scores that the comparison rests on. Our purpose also differs from the matching-imputation estimators that replace a missing potential outcome with a matched unit's observed one and derive their large-sample properties from that substitution [@AbadieImbens2006; @AbadieImbens2016]. We are not imputing anything. We are reducing the dependence of the envelope on functional form by ensuring that the farmers whose frontiers it compares are alike in observable respects [@Ho2007; @Stuart2010].
+
+Matching is based on farmer characteristics (age, years of education, marital status, religion, ethnicity, and relationship to the household head), household characteristics (size in adult equivalents, the dependency ratio, the female adult-equivalent ratio, and the composition of the household by age and sex), production characteristics (crop diversification, the share of land allocated to each crop, land ownership, and access to credit), and the month of interview. Observations are paired strictly within the same sex, survey round, region, ecological zone, and rural or urban locality, so that measured differences in technology and efficiency are attributable to time-poverty status rather than to context.
+
+Three elements of that list warrant a word because they are additions to the specification used in our earlier work. The household composition variables count members by age band and sex rather than compressing them into a dependency ratio; the distinction matters because the domestic and care burden that generates time poverty depends on whether the dependants are infants or adolescents, and on whether another adult woman is present to share it [@BardasiWodon2010; @Ali2016]. Relationship to the household head enters as a matching covariate rather than as a sample restriction, since the measure is computed for every adult and spouses who farm are retained. And the month of interview is matched on because the time-poverty classification is measured over the seven days before interview and Ghanaian farm workloads are strongly seasonal [@Martey2024FE; @WodonBeegle2006]: in our data the share classified time poor moves from 0.151 to 0.308 across the twelve months of GLSS 5 fieldwork.
+
+Balancing treated and untreated farmers on this many continuous and categorical covariates simultaneously requires a distance metric. We implement one-to-one nearest-neighbour matching under several: Euclidean and scaled Euclidean distance, Mahalanobis distance [@Rubin1980], robust Mahalanobis distance [@Rosenbaum2020], and propensity scores estimated with logit, probit, complementary log-log and cauchit links. Each is assessed on standardized mean differences, variance ratios and Kolmogorov-Smirnov statistics, with balance indicated by standardized differences near zero and variance ratios near one [@Rubin2001; @Stuart2010]. The specification reported in the main analysis is the one that performs best across those diagnostics; the appendix reports every metric against every covariate so the choice can be inspected rather than taken on assertion.
+
+Standard errors are obtained by jackknife resampling at the enumeration-area level. For each of 100 resamples one enumeration area is excluded, the matching is repeated, and the group frontiers and meta-frontier are re-estimated with the regularity corrections imposed. This accommodates the hierarchical survey design, the sampling variability introduced by matching, and the fact that the correction enforcing monotonicity and quasi-concavity precludes a conventional variance-covariance matrix. The estimation sample contains repeated observations on the same farmer across cropping seasons, so the resampling is at the enumeration area rather than the observation, and observations from one farmer are never split across resamples.
+
+The time-poverty line is a weighted population median, computed on all adults aged fifteen and over in the round rather than on the estimation sample, so that the classification is a statement about the population and not an artefact of who happens to farm. Matching and frontier estimation are unweighted, since the object of interest is the conditional relationship rather than a population mean.
+
+## 4.y Identification
+
+**Identification rests on selection on observables.** Matching balances the farmer, household, production and timing characteristics listed above within strata defined by sex, round, region, ecological zone and locality, and requires overlap on those characteristics. It cannot address confounding from unobserved determinants of both committed time and farm performance. Four are worth naming. Physical stamina and health shape both how many hours a person can sustain and how productive those hours are. Farming ability, in the sense that the frontier literature means it, may lead more capable farmers to take on more work of every kind. Household norms about who cooks, fetches water and minds children are unobserved and plausibly correlated with norms about who makes farm decisions. And plot quality, which we do not observe, may determine both the labour a farm demands and the output it yields. The last is the sharpest case: a farm that requires more weeding both raises its operator's committed time and signals conditions that depress yield.
+
+Stronger correction would require a valid exclusion restriction. A selectivity-corrected stochastic frontier of the kind @Greene2010 proposes, and @BravoUreta2021 apply, would address selection into the two groups directly, but it needs an instrument that predicts time-poverty status and not production, and the GLSS contains none. We tested the obvious candidates. The community questionnaire records, for each enumeration area, whether households have electricity, whether they have access to pipe-borne or borehole water, whether the road is impassable for part of the year, and whether an agricultural extension office is present. In a first stage that already contains the full matching set, those four instruments produce an F statistic of 2.00, far below any conventional threshold. In the reduced form they enter the yield equation with a joint F of 2.95 and a p value of 0.019, so they predict the outcome directly and the exclusion restriction fails. Household-level water and fuel technology fails for a simpler reason: 95.9 per cent of time-poor farmers and 94.4 per cent of the rest cook with wood or charcoal, and mean distance to the water source differs between the groups by half a metre. There is a second reason the selection-correction route sits awkwardly here. Those models are built for the adoption of a discrete technology, where the selection equation describes a decision the farmer makes. Time poverty is not adopted. It is a classification imposed on a distribution of hours that are themselves the product of household circumstance, so the selection equation would have to model the allocation of a household's total labour rather than a single choice. **We therefore interpret the estimated differences in the technology gap ratio, technical efficiency and meta-frontier efficiency as associations conditional on observables in a balanced sample, not as causal effects of time poverty.** Where the discussion uses the language of influence or effect, it should be read in that sense.
+
+Two exercises bound what that assumption is doing. First, we report the ratio of selection on unobservables to selection on observables that would be required to drive the estimate to zero, following the coefficient-stability logic of @AltonjiElderTaber2005 as formalised by @Oster2019. Adding the full conditioning set moves the association between time poverty and log yield from 0.068 to -0.015 and raises the explained variance from near zero to 0.305, and at a maximum attainable R-squared of 1.3 times the controlled value the implied ratio is 0.60. A ratio below one means that unobserved selection weaker than the selection we already observe would be sufficient to overturn the estimate, and we report it as such rather than presenting the controlled coefficient as settled. Second, we report a Rosenbaum sensitivity analysis on the matched treatment effects, stating how large an unobserved confounder would have to be, relative to the matched covariates, to render the difference statistically indistinguishable from zero [@Rosenbaum2020].
+
+The design also admits a falsification test that varies the construct rather than the threshold. GLSS 7 fields the same relative rule on the same economic-activity hours but does not field the housekeeping and care module, so the indicator it supports measures long working hours and not committed time, and its gender gradient runs in the opposite direction. If the results reported here are driven by the time constraint rather than by long hours as such, the GLSS 7 specification should behave differently. We report it under its own name and read agreement between the two as evidence against our interpretation rather than for it.
+
+## 4.z Limitations
+
+Six limitations follow from the data rather than the design, and the estimates should be read with all six in view.
+
+The time-use module is a stylised seven-day recall rather than a diary. Respondents report a weekly total from memory, and the methodological literature is consistent that this undercounts unpaid work. Our estimate of women's unpaid work sits well below diary-based figures for Ghanaian women, which means the measured incidence of time poverty is a lower bound.
+
+The module does not record simultaneous activity, so time spent responsible for a dependant while performing another task goes unrecorded. This omission falls almost entirely on women, and the gender gap we report is therefore conservative.
+
+The classification implements no consumption condition. A farmer who works long hours because her returns are high is counted alongside one who has no alternative, so any estimated relationship averages across the constrained and the unconstrained. If long hours are more often chosen among the more productive, this attenuates the association we report.
+
+The line is relative to each round's median, so headcounts describe position within a distribution rather than an absolute standard, and levels are not comparable across rounds. We therefore estimate within rounds and interpret movements in the gap rather than in the headcount.
+
+The data are repeated cross-sections rather than a panel, and the estimation sample contains a farmer once per cropping season, so wave-to-wave patterns describe changing associations across successive samples of farmers and not changes within farmers over time.
+
+Finally, the no-interference assumption is not innocuous in this setting. Labour is exchanged between households through hiring, reciprocal work groups and family arrangements, so one farmer's time constraint can affect another farmer's labour supply within the same community. Matching within enumeration-area strata and clustering at that level accommodate the resulting correlation but do not remove the spillover, and estimates should be read as differences between comparable farmers in a given community rather than as the effect of removing time poverty from the population.

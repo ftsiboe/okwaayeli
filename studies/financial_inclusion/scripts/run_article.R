@@ -19,7 +19,7 @@ DATA        <- FALSE  # 001  harmonized releases -> study_raw_data              
 MATCHING    <- FALSE  # 002  -> estimation_data, matched samples                EXPENSIVE
 TREATMENT   <- FALSE  # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
 MSF         <- FALSE  # 004  -> output/estimations/                             HPC, hours
-DESCRIPTIVE <- FALSE  # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
+DESCRIPTIVE <- TRUE  # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
 FIGURES     <- TRUE  # 101  -> output/figures/ (png + data)                    moderate
 WORKBOOK    <- TRUE  # 102  -> output/tables/financial_inclusion_tables.xlsx  minutes
 OBJECTS     <- TRUE   # 301  -> narrative/article_objects.json                  fast

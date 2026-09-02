@@ -1,3 +1,14 @@
+```{r setup-99-appendix, include=FALSE}
+# Knitting this section on its own? Load what ../land-tenure.Rmd normally
+# provides. A no-op under the parent, 303 or 304, which already have it.
+if (!exists("fmt_num")) {
+  .s <- c("_setup.R", "sections/_setup.R", "narrative/sections/_setup.R")
+  .s <- .s[file.exists(.s)]
+  if (!length(.s)) stop("cannot find sections/_setup.R from ", getwd(), call. = FALSE)
+  source(.s[1])
+}
+```
+
 # Supplementary material
 
 <!-- Layout mirrors studies/resource_extraction/narrative/sections/99_appendix.Rmd.
@@ -7,9 +18,9 @@
      Figures come from scripts/101_exhibit_figures.R into output/figures/.
      See scripts/README.md for the naming convention. -->
 
-## Note S1. Drivers of technical inefficiency
+## `r exhibit_head("inefficiency_note")`
 
-Table S7 reports the covariates entering the inefficiency term, estimated on the naive national
+`r xref("inefficiency_drivers")` reports the covariates entering the inefficiency term, estimated on the naive national
 frontier, on each group-specific frontier, and on the matched and unmatched meta-frontiers. A
 positive coefficient moves the farm away from its efficient frontier; age and education enter in
 logs and are therefore elasticities. Three features of that table bear on how the ownership results
@@ -25,7 +36,7 @@ being less likely to own the land they farm.
 The second concerns what is absent. Extension contact and mechanization carry no significant
 coefficient on any frontier, in either direction, and neither does age or crop diversification.
 Credit access is significant on the naive frontier and among owners, but with a positive sign: farmers with credit sit further from the frontier, not closer. We do not read this causally. Credit
-in these rounds reaches a small minority of farmers (Table 1), is not randomly assigned, and is
+in these rounds reaches a small minority of farmers (`r xref("summary_stats")`), is not randomly assigned, and is
 plausibly sought by farms already under production stress; the sign is as consistent with selection
 into borrowing as with any effect of borrowing on performance.
 
@@ -40,7 +51,7 @@ estimates are imprecise enough that the table cannot distinguish small effects f
 nulls there are better described as uninformative than as evidence of no relationship.
 
 One caution applies throughout. The inefficiency model is estimated jointly with the frontier, so
-its coefficients are conditional on the frontier specification. Figure S2 shows that the assumed
+its coefficients are conditional on the frontier specification. `r xref("robustness")` shows that the assumed
 distribution of the inefficiency term is the dimension to which the aggregate ownership results are
 most sensitive; the signs reported here are stable across the matching and functional-form
 dimensions and should not be assumed robust to distributional choice.
@@ -49,7 +60,7 @@ dimensions and should not be assumed robust to distributional choice.
 sec_landscape()
 ```
 
-#### Table S0. Construction of the farmland tenure indicators from the GLSS Section 8b plot rosters
+#### `r exhibit_head("tenure_construction")`
 
 ```{r tabS0, echo=FALSE}
 ft_tableS0()
@@ -61,7 +72,7 @@ sec_portrait()
 
 \newpage
 
-#### Table S1. Farmland ownership status amongst Ghanaian crop farmers (2012-2017)
+#### `r exhibit_head("ownership_status")`
 
 ```{r tabS1, echo=FALSE}
 ft_tableS1()
@@ -69,7 +80,7 @@ ft_tableS1()
 
 \newpage
 
-#### Table S2. Farmland mode of acquisition amongst Ghanaian crop farmers (2012-2017)
+#### `r exhibit_head("acquisition_mode")`
 
 ```{r tabS2, echo=FALSE}
 ft_tableS2()
@@ -77,7 +88,7 @@ ft_tableS2()
 
 \newpage
 
-#### Table S3. Farmland ownership rights amongst Ghanaian crop farmers (2012-2017)
+#### `r exhibit_head("ownership_rights")`
 
 ```{r tabS3, echo=FALSE}
 ft_tableS3()
@@ -85,7 +96,7 @@ ft_tableS3()
 
 \newpage
 
-#### Table S4. Farmland sharecropping agreements amongst Ghanaian crop farmers (2012-2017)
+#### `r exhibit_head("sharecropping")`
 
 ```{r tabS4, echo=FALSE}
 ft_tableS4()
@@ -95,7 +106,7 @@ ft_tableS4()
 sec_portrait()
 ```
 
-#### Table S5. Mean meta stochastic frontier analysis results for Ghanaian crop producers from 1991-2017
+#### `r exhibit_head("msf_results")`
 
 ```{r tabS5, echo=FALSE}
 ft_tableS5()
@@ -105,7 +116,7 @@ ft_tableS5()
 sec_landscape()
 ```
 
-#### Table S6. Parity in technology level and technical efficiency by farmland ownership details in Ghana (1991-2017) - unmatched estimates
+#### `r exhibit_head("parity_unmatched")`
 
 ```{r tabS6, echo=FALSE}
 ft_tableS6()
@@ -113,7 +124,7 @@ ft_tableS6()
 
 \newpage
 
-#### Table S7. Determinants of crop production technical inefficiency and land-ownership-driven technology gaps in Ghana (1991-2017)
+#### `r exhibit_head("inefficiency_drivers")`
 
 ```{r tabS7, echo=FALSE}
 ft_tableS7()
@@ -121,7 +132,7 @@ ft_tableS7()
 
 \newpage
 
-#### Figure S1. Covariate balancing summary
+#### `r exhibit_head("covariate_balance")`
 
 ![](../output/figures/Covariate_balance_variance.png){width=9.3in}
 
@@ -129,7 +140,7 @@ ft_tableS7()
 sec_landscape()
 ```
 
-#### Figure S2. Alternative model specifications generally show a decreasing impact of land ownership on crop production output for Ghanaian farmers (1991-2017)
+#### `r exhibit_head("robustness")`
 
 ![](../output/figures/robustness.png){width=6.3in}
 

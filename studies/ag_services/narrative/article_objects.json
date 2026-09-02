@@ -1,0 +1,726 @@
+{
+  "meta": {
+    "generated": "2026-08-14 20:41:31.275761",
+    "study": "ag_services",
+    "source": "output/estimations/CropID_Pooled_<services0-3>_TL_hnormal_optimal.rds",
+    "matched_sample": "scaled_euclidean",
+    "service_tags": {
+      "services0": "Any source",
+      "services1": "Agricultural/fishing association",
+      "services2": "Agricultural cooperative",
+      "services3": "Agricultural extension"
+    },
+    "unresolved": [],
+    "ambiguous": []
+  },
+  "prevalence": {
+    "share": {
+      "services0": {
+        "GLSS5": 0.6548,
+        "GLSS6": 0.6191,
+        "GLSS7": 0.6283
+      },
+      "services1": {
+        "GLSS5": 0.4469,
+        "GLSS6": 0.3892,
+        "GLSS7": 0.3992
+      },
+      "services2": {
+        "GLSS5": 0.2407,
+        "GLSS6": 0.3599,
+        "GLSS7": 0.2617
+      },
+      "services3": {
+        "GLSS5": 0.6041,
+        "GLSS6": 0.5651,
+        "GLSS7": 0.6028
+      },
+      "farm_association": {
+        "GLSS5": 0.2789,
+        "GLSS6": 0.2427,
+        "GLSS7": 0.247
+      },
+      "community_cooperative": {
+        "GLSS5": 0.1094,
+        "GLSS6": 0.2142,
+        "GLSS7": 0.1318
+      },
+      "extension_officer_visit": {
+        "GLSS5": 0.5268,
+        "GLSS6": 0.4949,
+        "GLSS7": 0.5641
+      }
+    },
+    "n_obs": {
+      "services0": {
+        "GLSS5": 6124,
+        "GLSS6": 10431,
+        "GLSS7": 5964
+      },
+      "services1": {
+        "GLSS5": 3822,
+        "GLSS6": 6505,
+        "GLSS7": 3690
+      },
+      "services2": {
+        "GLSS5": 2784,
+        "GLSS6": 6207,
+        "GLSS7": 3003
+      },
+      "services3": {
+        "GLSS5": 5340,
+        "GLSS6": 9135,
+        "GLSS7": 5581
+      },
+      "farm_association": {
+        "GLSS5": 6124,
+        "GLSS6": 10431,
+        "GLSS7": 5964
+      },
+      "community_cooperative": {
+        "GLSS5": 6124,
+        "GLSS6": 10431,
+        "GLSS7": 5964
+      },
+      "extension_officer_visit": {
+        "GLSS5": 6124,
+        "GLSS6": 10431,
+        "GLSS7": 5964
+      }
+    },
+    "n": {
+      "GLSS5": 6124,
+      "GLSS6": 10431,
+      "GLSS7": 5964
+    },
+    "n_all": 22519,
+    "waves": ["GLSS5", "GLSS6", "GLSS7"],
+    "note": "Shares are over CropID == 'Pooled'. services1/2/3 are coded 0 = no services at all, 1 = this source, NA = served by another source, so their denominator (n_obs) is smaller than n."
+  },
+  "suppression": {
+    "distance": {
+      "by_round": {
+        "GLSS7": 26,
+        "GLSS6": 0,
+        "GLSS5": 0
+      },
+      "suppressed": 26,
+      "missing": 449,
+      "valid": 1485,
+      "records": 1960
+    },
+    "tractors": {
+      "by_round": {
+        "GLSS7": 2,
+        "GLSS6": 9,
+        "GLSS5": 0
+      },
+      "suppressed": 11,
+      "missing": 74,
+      "valid": 1875,
+      "records": 1960
+    },
+    "records": 1960,
+    "waves": ["GLSS5", "GLSS6", "GLSS7"],
+    "source": "data-raw/data-prep/glss/logs/11_suppression_counts.csv"
+  },
+  "eff": {
+    "services0": {
+      "label": "Any source",
+      "tgr": {
+        "none": 0.9403,
+        "any": 0.8522,
+        "gap": -0.088,
+        "gap_se": 0.0089,
+        "gap_p": 0,
+        "gap_pct": -9.3622,
+        "gap_arith": -0.088
+      },
+      "te": {
+        "none": 0.5606,
+        "any": 0.6059,
+        "gap": 0.0452,
+        "gap_se": 0.0065,
+        "gap_p": 0,
+        "gap_pct": 8.0704,
+        "gap_arith": 0.0452
+      },
+      "mte": {
+        "none": 0.5252,
+        "any": 0.531,
+        "gap": 0.0057,
+        "gap_se": 0.0018,
+        "gap_p": 0.002,
+        "gap_pct": 1.0871,
+        "gap_arith": 0.0057
+      }
+    },
+    "services1": {
+      "label": "Agricultural/fishing association",
+      "tgr": {
+        "none": 0.9608,
+        "any": 0.6981,
+        "gap": -0.2627,
+        "gap_se": 0.0152,
+        "gap_p": 0,
+        "gap_pct": -27.341,
+        "gap_arith": -0.2627
+      },
+      "te": {
+        "none": 0.5607,
+        "any": 0.6737,
+        "gap": 0.113,
+        "gap_se": 0.0117,
+        "gap_p": 0,
+        "gap_pct": 20.1512,
+        "gap_arith": 0.113
+      },
+      "mte": {
+        "none": 0.533,
+        "any": 0.4935,
+        "gap": -0.0395,
+        "gap_se": 0.0105,
+        "gap_p": 0.0003,
+        "gap_pct": -7.4076,
+        "gap_arith": -0.0395
+      }
+    },
+    "services2": {
+      "label": "Agricultural cooperative",
+      "tgr": {
+        "none": 0.9297,
+        "any": 0.9396,
+        "gap": 0.0098,
+        "gap_se": 0.0109,
+        "gap_p": 0.3692,
+        "gap_pct": 1.0554,
+        "gap_arith": 0.0098
+      },
+      "te": {
+        "none": 0.5607,
+        "any": 0.5549,
+        "gap": -0.0058,
+        "gap_se": 0.0088,
+        "gap_p": 0.5118,
+        "gap_pct": -1.0318,
+        "gap_arith": -0.0058
+      },
+      "mte": {
+        "none": 0.5085,
+        "any": 0.5188,
+        "gap": 0.0103,
+        "gap_se": 0.0026,
+        "gap_p": 0.0001,
+        "gap_pct": 2.0262,
+        "gap_arith": 0.0103
+      }
+    },
+    "services3": {
+      "label": "Agricultural extension",
+      "tgr": {
+        "none": 0.9407,
+        "any": 0.8533,
+        "gap": -0.0874,
+        "gap_se": 0.0086,
+        "gap_p": 0,
+        "gap_pct": -9.2909,
+        "gap_arith": -0.0874
+      },
+      "te": {
+        "none": 0.5606,
+        "any": 0.6191,
+        "gap": 0.0585,
+        "gap_se": 0.0065,
+        "gap_p": 0,
+        "gap_pct": 10.4395,
+        "gap_arith": 0.0585
+      },
+      "mte": {
+        "none": 0.5204,
+        "any": 0.5376,
+        "gap": 0.0172,
+        "gap_se": 0.0018,
+        "gap_p": 0,
+        "gap_pct": 3.3073,
+        "gap_arith": 0.0172
+      }
+    }
+  },
+  "by_wave": {
+    "tgr": {
+      "wave": ["GLSS5", "GLSS6", "GLSS7"],
+      "gap": {
+        "GLSS5": -0.15,
+        "GLSS6": -0.0686,
+        "GLSS7": -0.0071
+      },
+      "se": {
+        "GLSS5": 0.0102,
+        "GLSS6": 0.011,
+        "GLSS7": 0.0058
+      },
+      "p": {
+        "GLSS5": 0,
+        "GLSS6": 0,
+        "GLSS7": 0.2254
+      }
+    },
+    "te": {
+      "wave": ["GLSS5", "GLSS6", "GLSS7"],
+      "gap": {
+        "GLSS5": 0.028,
+        "GLSS6": 0.0636,
+        "GLSS7": 0.039
+      },
+      "se": {
+        "GLSS5": 0.0076,
+        "GLSS6": 0.0071,
+        "GLSS7": 0.0049
+      },
+      "p": {
+        "GLSS5": 0.0004,
+        "GLSS6": 0,
+        "GLSS7": 0
+      }
+    },
+    "mte": {
+      "wave": ["GLSS5", "GLSS6", "GLSS7"],
+      "gap": {
+        "GLSS5": -0.0403,
+        "GLSS6": 0.0331,
+        "GLSS7": 0.038
+      },
+      "se": {
+        "GLSS5": 0.0032,
+        "GLSS6": 0.0025,
+        "GLSS7": 0.002
+      },
+      "p": {
+        "GLSS5": 0,
+        "GLSS6": 0,
+        "GLSS7": 0
+      }
+    }
+  },
+  "elasticities": {
+    "land": {
+      "naive": 0.7232,
+      "none": 0.7205,
+      "any": 0.7307,
+      "meta": 0.7247,
+      "gap": 0.0102,
+      "gapm": 0.0065
+    },
+    "planting_materials": {
+      "naive": 0.0476,
+      "none": 0.0548,
+      "any": 0.0435,
+      "meta": 0.0504,
+      "gap": -0.0113,
+      "gapm": -0.0081
+    },
+    "family_labour": {
+      "naive": 0.1776,
+      "none": 0.1808,
+      "any": 0.1774,
+      "meta": 0.177,
+      "gap": -0.0034,
+      "gapm": -0.0073
+    },
+    "hired_labour": {
+      "naive": 0.0247,
+      "none": 0.0219,
+      "any": 0.0264,
+      "meta": 0.0238,
+      "gap": 0.0045,
+      "gapm": 0.0051
+    },
+    "fertilizer": {
+      "naive": 0.0117,
+      "none": 0.0098,
+      "any": 0.0129,
+      "meta": 0.0128,
+      "gap": 0.0031,
+      "gapm": 0.0036
+    },
+    "pesticide": {
+      "naive": 0.0212,
+      "none": 0.019,
+      "any": 0.022,
+      "meta": 0.0203,
+      "gap": 0.003,
+      "gapm": 0.0026
+    },
+    "rts": {
+      "naive": 1.006,
+      "none": 1.0067,
+      "any": 1.0129,
+      "meta": 1.009,
+      "gap": 0.0062,
+      "gapm": 0.0025
+    }
+  },
+  "functional_form": {
+    "naive": {
+      "loglik_tl": -32341.33,
+      "loglik_cd": -32945.69,
+      "k_tl": 61,
+      "k_cd": 40,
+      "lr": 1208.72,
+      "df": 21,
+      "p": 8.0284e-243
+    },
+    "none": {
+      "loglik_tl": -11748.9,
+      "loglik_cd": -11997.32,
+      "k_tl": 61,
+      "k_cd": 40,
+      "lr": 496.84,
+      "df": 21,
+      "p": 6.7509e-92
+    },
+    "any": {
+      "loglik_tl": -20532.56,
+      "loglik_cd": -20900.35,
+      "k_tl": 61,
+      "k_cd": 40,
+      "lr": 735.58,
+      "df": 21,
+      "p": 3.9905e-142
+    },
+    "meta": {
+      "loglik_tl": 18559.19,
+      "loglik_cd": 13405.71,
+      "k_tl": 61,
+      "k_cd": 40,
+      "lr": 10306.96,
+      "df": 21,
+      "p": 0
+    }
+  },
+  "by_service": {
+    "services_agchemicals": {
+      "provided": {
+        "tgr": -0.0587,
+        "te": 0.0509,
+        "mte": 0.0247
+      },
+      "not_provided": {
+        "tgr": -0.059,
+        "te": 0.0436,
+        "mte": 0.0138
+      }
+    },
+    "services_credit": {
+      "provided": {
+        "tgr": null,
+        "te": null,
+        "mte": null
+      },
+      "not_provided": {
+        "tgr": -0.0533,
+        "te": 0.0439,
+        "mte": 0.0196
+      }
+    },
+    "services_husbandry": {
+      "provided": {
+        "tgr": null,
+        "te": null,
+        "mte": null
+      },
+      "not_provided": {
+        "tgr": -0.059,
+        "te": 0.0001,
+        "mte": -0.022
+      }
+    },
+    "services_labour": {
+      "provided": {
+        "tgr": null,
+        "te": null,
+        "mte": null
+      },
+      "not_provided": {
+        "tgr": -0.0594,
+        "te": 0.0244,
+        "mte": -0.0018
+      }
+    },
+    "services_mechanization": {
+      "provided": {
+        "tgr": -0.0487,
+        "te": -0.3119,
+        "mte": -0.3085
+      },
+      "not_provided": {
+        "tgr": -0.0604,
+        "te": 0.022,
+        "mte": -0.0038
+      }
+    },
+    "services_planting": {
+      "provided": {
+        "tgr": -0.0559,
+        "te": 0.0784,
+        "mte": 0.0503
+      },
+      "not_provided": {
+        "tgr": -0.0696,
+        "te": -0.0602,
+        "mte": -0.0835
+      }
+    },
+    "services_post_harvest": {
+      "provided": {
+        "tgr": -0.0916,
+        "te": 0.4144,
+        "mte": 0.3561
+      },
+      "not_provided": {
+        "tgr": -0.0607,
+        "te": 0.015,
+        "mte": -0.0111
+      }
+    },
+    "services_records": {
+      "provided": {
+        "tgr": null,
+        "te": null,
+        "mte": null
+      },
+      "not_provided": {
+        "tgr": -0.0578,
+        "te": 0.0302,
+        "mte": 0.0051
+      }
+    }
+  },
+  "heterogeneity": {
+    "female": {
+      "0": {
+        "tgr": -0.0519,
+        "te": 0.0167,
+        "mte": -0.0047
+      },
+      "1": {
+        "tgr": -0.0849,
+        "te": 0.0242,
+        "mte": -0.0132
+      }
+    },
+    "age": {
+      "1": {
+        "tgr": -0.0618,
+        "te": 0.0141,
+        "mte": -0.0125
+      },
+      "2": {
+        "tgr": -0.0608,
+        "te": 0.0152,
+        "mte": -0.0098
+      },
+      "3": {
+        "tgr": -0.0541,
+        "te": 0.0348,
+        "mte": 0.0113
+      }
+    },
+    "edu": {
+      "0": {
+        "tgr": -0.034,
+        "te": 0.0271,
+        "mte": 0.0117
+      },
+      "1": {
+        "tgr": -0.0745,
+        "te": 0.0316,
+        "mte": -0.0008
+      },
+      "2": {
+        "tgr": -0.0894,
+        "te": 0.02,
+        "mte": -0.0185
+      },
+      "3": {
+        "tgr": -0.0988,
+        "te": 0.0344,
+        "mte": -0.0067
+      },
+      "4": {
+        "tgr": -0.0386,
+        "te": 0.0473,
+        "mte": 0.0367
+      }
+    },
+    "ecozone": {
+      "Coastal Savanna": {
+        "tgr": -0.1276,
+        "te": 0.0261,
+        "mte": -0.0394
+      },
+      "Forest Zone": {
+        "tgr": -0.1149,
+        "te": 0.0351,
+        "mte": -0.0096
+      },
+      "Guinea Savanah": {
+        "tgr": 0.0018,
+        "te": -3.6192e-10,
+        "mte": 0.0018
+      },
+      "Sudan Savanah": {
+        "tgr": 0.0027,
+        "te": 0,
+        "mte": 0.0027
+      },
+      "Transitional Zone": {
+        "tgr": -0.0877,
+        "te": 0.0343,
+        "mte": -0.0104
+      }
+    },
+    "region": {
+      "Ashanti": {
+        "tgr": -0.1351,
+        "te": 0.0362,
+        "mte": -0.0141
+      },
+      "Brong Ahafo": {
+        "tgr": -0.0822,
+        "te": 0.0307,
+        "mte": -0.0062
+      },
+      "Central": {
+        "tgr": -0.0911,
+        "te": 0.0431,
+        "mte": 0.0045
+      },
+      "Eastern": {
+        "tgr": -0.1226,
+        "te": 0.0422,
+        "mte": -0.0137
+      },
+      "Greater Accra": {
+        "tgr": -0.1625,
+        "te": 0.0518,
+        "mte": -0.0326
+      },
+      "Northern": {
+        "tgr": 0.0084,
+        "te": 3.61e-06,
+        "mte": 0.0084
+      },
+      "Upper East": {
+        "tgr": -0.012,
+        "te": 0,
+        "mte": -0.0119
+      },
+      "Upper West": {
+        "tgr": 0.0054,
+        "te": 0,
+        "mte": 0.0054
+      },
+      "Volta": {
+        "tgr": -0.133,
+        "te": 0.0392,
+        "mte": -0.0258
+      },
+      "Western": {
+        "tgr": -0.0862,
+        "te": 0.0111,
+        "mte": -0.0205
+      }
+    },
+    "crop": {
+      "Beans": {
+        "tgr": 0.001,
+        "te": 0.0026,
+        "mte": 0.0112
+      },
+      "Cassava": {
+        "tgr": -0.1059,
+        "te": 0.0244,
+        "mte": -0.0162
+      },
+      "Cocoa": {
+        "tgr": -0.0549,
+        "te": 0.013,
+        "mte": -0.0121
+      },
+      "Maize": {
+        "tgr": -0.0652,
+        "te": 0.0152,
+        "mte": -0.0101
+      },
+      "Millet": {
+        "tgr": -0.004,
+        "te": 0.0014,
+        "mte": -0.0008
+      },
+      "Peanut": {
+        "tgr": -0.0221,
+        "te": 0.0301,
+        "mte": 0.014
+      },
+      "Pepper": {
+        "tgr": -0.0415,
+        "te": 0.0573,
+        "mte": 0.0484
+      },
+      "Plantain": {
+        "tgr": -0.1001,
+        "te": 0.0497,
+        "mte": 0.0124
+      },
+      "Rice": {
+        "tgr": 0.0117,
+        "te": 0.0332,
+        "mte": 0.0464
+      },
+      "Sorghum": {
+        "tgr": 0.0152,
+        "te": -0.0023,
+        "mte": 0.0144
+      },
+      "Yam": {
+        "tgr": -0.0273,
+        "te": 0.0248,
+        "mte": 0.0197
+      }
+    }
+  },
+  "ranked": {
+    "region": {
+      "level": ["Greater Accra", "Volta", "Western", "Ashanti", "Eastern", "Brong Ahafo", "Upper East", "Upper West", "Northern", "Central"],
+      "pct": [-7.2091, -5.9824, -5.1455, -4.1608, -3.3458, -1.3842, -1.276, 0.5797, 0.8899, 1.1502]
+    },
+    "crop": {
+      "level": ["Cassava", "Cocoa", "Maize", "Millet", "Beans", "Sorghum", "Peanut", "Yam", "Plantain", "Rice", "Pepper"],
+      "pct": [-3.8891, -2.6407, -1.5122, -0.0903, 1.2888, 1.5675, 1.618, 2.8703, 3.5583, 5.3591, 10.0441]
+    }
+  },
+  "diagnostics": {
+    "gamma": {
+      "naive": 0.6037,
+      "none": 0.6349,
+      "any": 0.5833,
+      "meta": 0.9802,
+      "meta_u": 0.8429
+    },
+    "mono": {
+      "naive": 0.6535,
+      "none": 0.6195,
+      "any": 0.4053,
+      "meta_m": 0.9998,
+      "meta_u": 0.9998
+    },
+    "curv": {
+      "naive": 0.1732,
+      "none": 0.3527,
+      "any": 0.1778,
+      "meta_m": 0.3706,
+      "meta_u": 0.3245
+    }
+  }
+}

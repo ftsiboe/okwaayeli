@@ -1,12 +1,31 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup-00-abstract, include=FALSE}
+# Knitting this section on its own? Load what ../land-tenure.Rmd normally
+# provides. A no-op under the parent, 303 or 304, which already have it.
+if (!exists("fmt_num")) {
+  .s <- c("_setup.R", "sections/_setup.R", "narrative/sections/_setup.R")
+  .s <- .s[file.exists(.s)]
+  if (!length(.s)) stop("cannot find sections/_setup.R from ", getwd(), call. = FALSE)
+  source(.s[1])
+}
+```
+
 # Abstract
 
-Secure land tenure is widely assumed to raise agricultural productivity by strengthening investment incentives and easing access to credit, and land titling has become a common instrument of agricultural policy across sub-Saharan Africa. Whether ownership itself improves farm performance remains unsettled, in part because aggregate productivity comparisons cannot separate the technology a farmer is able to reach from the efficiency with which that technology is used. Here we analyse `r fmt_num(N_ALL, 0)` farm households observed across five rounds of the Ghana Living Standards Survey, combining statistical matching with a meta-stochastic frontier that recovers these two components separately. Landowners and matched non-owners differ by less than one percentage point in overall efficiency, a difference that is statistically significant but economically small. Disaggregating by tenure form reverses the expected pattern: documented owners and holders of transferable rights fall below comparable non-owners in meta-frontier efficiency, and owners lead only within particular routes of land access. The direction of the ownership gap thus depends on which dimension of tenure is measured. Formal ownership appears neither necessary nor sufficient for superior farm performance, suggesting that titling alone is unlikely to raise productivity without complementary input, credit, and market reforms.
+Secure land tenure is widely expected to raise agricultural productivity by strengthening investment incentives and improving access to credit, making land titling a common policy across sub-Saharan Africa. However, whether land ownership itself improves farm performance remains unsettled, as aggregate comparisons may conceal differences in the technology farmers can access and the efficiency with which they use it. We address this issue by examining productivity differences between landowners and non-owners in Ghana, with a focus on technology endowment and production efficiency. Combining statistical matching with a meta-stochastic frontier analysis on `r fmt_num(N_ALL, 0)` farm households across five rounds of the Ghana Living Standards Survey, we find negligible differences between landowners and matched non-owners, with gaps of less than one percentage point across all measures, indicating that non-owners have marginally higher access to the best available technology, while landowners use their production frontier more efficiently. Disaggregating ownership further shows that documented owners and farmers with transferable land rights have lower meta-frontier efficiency than comparable non-owners, with the gap widening as transfer rights become more complete. Farmers who acquired land through purchase, rental, or family allocation are closer to the available technology but are less efficient in using it. These findings suggest that land ownership is neither necessary for accessing available technology nor sufficient for using it efficiently, as rental, sharecropping, and borrowing can already facilitate access to land while documentation and transfer rights provide no clear efficiency advantage. Landownership  alone is therefore unlikely to raise agricultural productivity without complementary improvements in input use, credit access, and market conditions.
 
-<!-- FLAG (Nature Communications): the journal does not use JEL classifications, and keywords
-     are supplied through the submission system rather than the manuscript. Both lines are
-     retained below for the current economics-journal target; delete them if submitting to
-     Nature Communications. -->
-
-**Keywords**: land tenure; ownership; meta-stochastic frontier; technical efficiency; technology gap; Ghana
-
-**JEL Classification**: Q15, Q12, O13, O55
+```{r frontmatter-extras, echo=FALSE, results='asis'}
+# Keywords and JEL codes belong in the manuscript at economics journals and are
+# supplied through the submission system at others; Nature Communications uses
+# neither. Switch with ARTICLE_TARGET, the same idiom as ARTICLE_CSL in the
+# parent Rmd: ARTICLE_TARGET=nature drops both lines, anything else keeps them.
+if (!identical(tolower(Sys.getenv("ARTICLE_TARGET", "economics")), "nature")) {
+  cat("**Keywords**: land tenure; ownership; meta-stochastic frontier; technical efficiency; technology gap; Ghana\n\n")
+  cat("**JEL Classification**: Q15, Q12, O13, O55\n")
+}
+```

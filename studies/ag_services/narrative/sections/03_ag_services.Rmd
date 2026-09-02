@@ -1,0 +1,91 @@
+<!-- Promoted back to a top-level section on 2026-08-13, reversing the
+     2026-08-07 demotion to §2.3 and restoring the v000 draft's numbering.
+     Outline developed 2026-08-13 from the built exhibits.
+
+     WHAT THIS SECTION IS FOR. It describes the agricultural service environment
+     Ghanaian crop farmers actually face, so that the comparison in Section 5 is
+     read against a known institutional setting rather than an assumed one. It
+     is descriptive and contextual. No frontier estimate appears here.
+
+     RULES.
+       1. Live lookups only. Every number belongs to Tables 2 to 5 and is
+          reachable through the table builders. Each marker names the row key and
+          column for what it needs. The values quoted in the markers are
+          navigational and must not survive into the prose as literals.
+       2. Row keys are qualified: "share/Pooled" for the headcount block and
+          "trend/Pooled" for the percentage-change block. An unqualified crop
+          label matches both blocks and will fail.
+       3. Column ids by table:
+            Table 2  v1 MoFA, v2 NGO, v3 cooperative
+            Table 3  v1 officer access only, v2 office access only,
+                     v3 visits only, v4 visit plus officer, v5 visit plus
+                     office, v6 office and officer plus visit
+            Table 4  v1 planting, v2 agrochemicals, v3 communal labour,
+                     v4 irrigation, v5 post-harvest, v6 credit,
+                     v7 mechanization, v8 records
+            Table 5  v1 did not comply, v2 partially, v3 fully
+       4. This is the one section of the paper resting on external literature
+          rather than on the pipeline. The block at the foot of this file lists
+          what is needed and what the bibliography already holds. Do not write a
+          paragraph around a citation that does not exist yet.
+       5. Caution carried from the sibling review: the disability paper narrates
+          third-decimal differences across crop cells with few observations.
+          Tables 2 to 5 have the same shape and invite the same error. The crop
+          rows are there for reference; the pooled row is what the prose quotes.
+
+     WHAT THE TABLES SHOW, so the paragraphs have something to be about. Four
+     observations, none of them currently stated anywhere in the paper:
+       (i)   provision is a public near-monopoly;
+       (ii)  access is contact-based rather than infrastructural;
+       (iii) the service menu is agronomically narrow;
+       (iv)  it is narrowing further, and the items retreating fastest are the
+             ones that relieve capital and labour constraints.
+
+     Target 800 to 1,100 words across seven markers. -->
+
+# 3. Agricultural service delivery in Ghana
+
+[[OUTLINE ¶1. the regional frame, cast broadly before narrowing. Agricultural extension and farmer-organisation coverage in sub-Saharan Africa: what share of smallholders reach any advisory service, how delivery has shifted between public agencies, non-governmental providers and producer organisations over the past two decades, and what the recurring constraint has been. External literature only, no numbers from this study. Keep it to about two-thirds the length of ¶2, since the paper is about Ghana.]]
+
+[[OUTLINE ¶2. Ghana. Ministry of Food and Agriculture extension officer-to-farmer ratios, the decentralisation of extension delivery to district assemblies and what it did to coverage, and the penetration of farmer-based organisations and cooperatives. This paragraph carries the institutional facts the rest of the section quantifies, so it should end where ¶3 begins, on the question of who actually provides the service a farmer encounters. External literature only.]]
+
+[[OUTLINE ¶3. Table 2, who provides. The headline is a near-monopoly and should be stated as one. The Ministry is the provider in roughly half of all farmer-communities; non-governmental organisations and cooperatives together reach under one percent. Lookups: tbl_pct("table2", "share/Pooled", "v1"), with "v2" and "v3" for the two private channels. The trend block adds a second point worth one sentence: public provision is flat to slightly declining while cooperative provision grows fast from a base so small that the growth changes nothing about coverage. Lookups: tbl_val("table2", "trend/Pooled", "v1") and "v3". Do not report the NGO trend as growth; its standard error is of the same order as the estimate.]]
+
+[[OUTLINE ¶4. Table 3, what form access takes. Extension in Ghana is contact rather than infrastructure. Communities where an officer visits and nothing else is present are the single largest served state, about a third of farmers, while communities with an office but no visit, or a stationed officer but no visit, are each rarer than one farmer in forty. Lookups: tbl_pct("table3", "share/Pooled", "v3") for visits only, "v1" and "v2" for the two passive states, "v6" for the fully equipped state. Section 2.1 already uses the same three figures to justify the active-extension threshold, so this paragraph should extend rather than repeat: the composition is shifting, with office-based delivery growing quickly and stationed-officer arrangements declining. Lookups: tbl_val("table3", "trend/Pooled", "v5") and "v4".
+
+     NOTE FOR WHOEVER WRITES THIS. The share of farmers in communities with no extension presence of any kind is roughly two in five, and it is NOT in Table 3, which omits it as the reference category. It is also not the complement of active extension, which Section 2.1 reports and which is a different quantity. If the paragraph wants it, add it to the exhibit or to the article objects first rather than deriving it in the text.]]
+
+[[OUTLINE ¶5. Table 4, what the services contain. This is the most substantive paragraph in the section and it carries observation (iii). The menu is bimodal. Planting and seed-use advice and agrochemical advice each reach about half of all farmer-communities; every other service type reaches under a fifth, and irrigation advice under one percent. Lookups: tbl_pct("table4", "share/Pooled", "v1") and "v2" for the two common ones, then "v5" post-harvest, "v6" credit, "v7" mechanization, "v3" communal labour, "v8" records, "v4" irrigation. The point to draw is that Ghanaian agricultural extension is overwhelmingly agronomic advice, and that the services which would relieve capital, labour and water constraints are the ones farmers are least likely to encounter.]]
+
+[[OUTLINE ¶6. Table 4 again, the direction of travel, carrying observation (iv). The menu is not static and it is narrowing. Agrochemical advice and mechanization support are growing; communal labour, credit, employment and animal husbandry services are all contracting, several of them fast. Lookups: tbl_val("table4", "trend/Pooled", "v7") for mechanization, "v6" credit, "v3" communal labour, "v2" agrochemicals. State the pattern rather than each number: the services being withdrawn are those that relieve capital and labour constraints, and those expanding supply advice and equipment. Whether this is a shift in provision or in what informants report is not something these data settle, and the paragraph should say so rather than assume the former.]]
+
+[[OUTLINE ¶7. Table 5, compliance, and the close. Where advice is given, compliance is the norm rather than the exception: full compliance is the largest single category and outright non-compliance the smallest. Lookups: tbl_pct("table5", "share/Pooled", "v3") for full, "v2" partial, "v1" did not comply.
+
+     TWO CAUTIONS THAT MUST APPEAR. First, this table rests on GLSS6 and GLSS7 only, because the compliance item does not exist in GLSS5, and Section 2.1 records why. Second, its trend column is a percentage change per year computed across two survey rounds, which is an interpolation between two points rather than a trend, and the largest value in that column is implausible on its face. Report the levels and leave the trend column alone, or report it with that qualification stated.
+
+     Close the section on the service environment as a whole rather than on compliance: public, contact-based, agronomically narrow, and narrowing. That is the setting the rest of the paper measures against.]]
+
+<!-- LITERATURE THIS SECTION NEEDS.
+
+     ALREADY IN references.bib and usable: @Tsiboe2019, @Tsiboe2022,
+     @Asravor2024, @Ansah2023, @Adaku2022 for the Ghanaian technical-efficiency
+     literature, and @Tsiboe2021c for fertilizer subsidy, which bears directly
+     on ¶6's contracting input-support services.
+
+     NOT IN THE BIBLIOGRAPHY. Each needs a source found and added.
+       * extension coverage in sub-Saharan Africa, for ¶1.
+       * Ministry of Food and Agriculture extension officer-to-farmer ratios and
+         the decentralisation of delivery, for ¶2. These are the two hardest
+         facts the section asserts and both need a citable source; the ratio in
+         particular is often quoted secondhand and should be traced to an
+         original.
+       * farmer-based organisation and cooperative penetration in Ghana, for ¶2
+         and ¶3. Section 6 needs the same literature for its account of the
+         association result, so one search closes both.
+       * post-harvest loss and marketing support in Ghanaian smallholder
+         systems, for ¶5. Section 6 needs this too.
+       * agricultural mechanization policy in Ghana, for ¶5 and ¶6. Section 6
+         needs this too.
+
+     Three of these five are shared with Section 6's outline. Resolving them
+     once serves both sections and is worth doing in a single pass. -->

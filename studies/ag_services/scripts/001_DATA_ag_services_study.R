@@ -36,7 +36,7 @@ study_environment <- study_setup(project_name = project_name, layout = "v2")
 #  STAGE 000 - BUILD THE AG SERVICES RELEASE, OR USE THE SAVED ONE
 # =============================================================================
 #  The harmonizer lives with the other GLSS harmonization scripts, in
-#  data-raw/scripts/data-prep/glss/. It is 11_ag_services.do there, and it can
+#  data-raw/data-prep/glss/. It is 11_ag_services.do there, and it can
 #  also be run as part of the whole set via that folder's 00_run_all.do.
 #
 #  WHY THIS IS NOT get_household_data()
@@ -66,8 +66,15 @@ study_environment <- study_setup(project_name = project_name, layout = "v2")
 
 HARMONIZE <- TRUE   # TRUE = rebuild with Stata when available; FALSE = never try
 
+# PATH CORRECTED 2026-08-13. The three paths below read
+# data-raw/scripts/data-prep/glss/ until today; the directory is
+# data-raw/data-prep/glss/, with no `scripts` component. The bug was invisible
+# on any machine without Stata, because the branch that uses .DO is skipped
+# there and the stopifnot() below never runs. It failed only on the machines
+# that can actually rebuild the release.
+
 .REL <- "data-raw/releases/harmonized_data"
-.DO  <- "data-raw/scripts/data-prep/glss/11_ag_services.do"
+.DO  <- "data-raw/data-prep/glss/11_ag_services.do"
 .DST <- file.path(.REL, "harmonized_ag_services_data.dta")
 .rebuilt <- FALSE
 
@@ -90,7 +97,7 @@ if (isTRUE(HARMONIZE)) {
   } else {
     message("001: rebuilding the release with ", basename(.stata))
     stopifnot(file.exists(.DO))
-    .log <- "data-raw/scripts/data-prep/glss/logs/11_ag_services.log"
+    .log <- "data-raw/data-prep/glss/logs/11_ag_services.log"
     unlink(.log)
     .flag <- if (.Platform$OS.type == "windows") "/e" else "-b"
     .rc <- system2(.stata, c(.flag, "do", shQuote(normalizePath(.DO, winslash = "/"))),

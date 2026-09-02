@@ -1,6 +1,9 @@
 # run_article.R
 # One entry point for the land_tenure pipeline. Set a stage TRUE to run it.
-# Run from the okwaayeli repo root.
+#
+# Run from the study root (the folder holding narrative/ and scripts/), or from
+# the okwaayeli repo root -- scripts/_paths.R resolves either. Set
+# LAND_TENURE_ROOT to override.
 #
 # Defaults are the cheap path: rebuild the article from the caches already on
 # disk. Turn stages on as their inputs change.
@@ -8,14 +11,37 @@
 # See scripts/README.md for the naming convention. In short: a NUMBER means a
 # position in a sequence; the two unnumbered *_helpers files are libraries,
 # sourced by whatever needs them, and never "run".
-rm(list = ls(all = TRUE)); gc() 
+rm(list = ls(all = TRUE)); gc()
 
-devtools::document()
+# Paths: resolve the study root once, so this runs from a standalone checkout as
+# well as from the okwaayeli monorepo. See scripts/_paths.R.
+if (!exists("PROJECT_ROOT")) {
+  .p <- c("scripts/_paths.R", "../scripts/_paths.R",
+          "studies/land_tenure/scripts/_paths.R")
+  .p <- .p[file.exists(.p)]
+  if (!length(.p))
+    stop("run_article.R: cannot find scripts/_paths.R -- run from the study root.",
+         call. = FALSE)
+  source(.p[1])
+}
+
+# The okwaayeli helpers: the working tree in the monorepo (load_all, so edits are
+# picked up), the installed copy standalone. Replaces devtools::document(), which
+# needs a package in the working directory and fails outright without one.
+okwaayeli_load()
 # ============================================================================
 # STAGES
 # ============================================================================
+#
+# NB the 001 flag is DATA_PREP, not DATA. scripts/_paths.R defines DATA as the
+# path to data/, and a stage flag of that name overwrites it -- 301 then builds
+# se_path as "FALSE/land_tenure_study_environment.rds", finds nothing, and emits
+# an EMPTY objs$frame. The render dies several minutes later in a section that
+# looks unrelated ("objs$frame$own_prev$GLSS5 is missing or NA"). Do not rename
+# it back, and do not add a flag called OUTPUT, FIGURE, TABLES, NARRATIVE,
+# SCRIPTS or STUDY for the same reason.
 INITIALIZE  <- FALSE  # 000  study scaffolding                                  fast
-DATA        <- FALSE  # 001  harmonized releases -> study_raw_data              fast
+DATA_PREP   <- FALSE  # 001  harmonized releases -> study_raw_data              fast
 MATCHING    <- FALSE  # 002  -> estimation_data, matched samples                EXPENSIVE
 TREATMENT   <- FALSE  # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
 MSF         <- FALSE  # 004  -> output/estimations/                             HPC, hours
@@ -23,7 +49,7 @@ DESCRIPTIVE <- FALSE  # 100  -> data/descriptive_exhibits.rds                   
 FIGURES     <- FALSE  # 101  -> output/figures/ (png + data), output/tables/    moderate
 WORKBOOK    <- FALSE  # 102  -> output/tables/land_tenure_tables.xlsx           fast
 OBJECTS     <- TRUE  # 301  -> narrative/article_objects.json                  fast
-RENDER      <- TRUE  # 302  -> narrative/land-tenure.docx / .html              fast
+RENDER      <- TRUE  # 302  -> narrative/output/land-tenure.docx / .html       fast
 
 # ---- Citation style ---------------------------------------------------------
 CITATION_STYLE <- "ieee"   # "elsevier" (Harvard, author-date) or "ieee"
@@ -44,11 +70,11 @@ CITATION_STYLE <- "ieee"   # "elsevier" (Harvard, author-date) or "ieee"
 #   article only .................. OBJECTS + RENDER                (default)
 #   descriptives changed .......... DESCRIPTIVE + OBJECTS + RENDER
 #   re-estimated (004 on HPC) ..... FIGURES + OBJECTS + RENDER
-#   harmonized data changed ....... DATA + MATCHING + TREATMENT + (004 on HPC)
+#   harmonized data changed ....... DATA_PREP + MATCHING + TREATMENT + (004 on HPC)
 #                                   then DESCRIPTIVE + FIGURES + OBJECTS + RENDER
 #   sending tables to a co-author . WORKBOOK (after 100/101 are current)
 
-.SCRIPTS <- "studies/land_tenure/scripts"
+.SCRIPTS <- SCRIPTS   # absolute, from scripts/_paths.R
 
 # ---- Guards: the couplings that are not obvious ------------------------------
 
@@ -56,8 +82,8 @@ CITATION_STYLE <- "ieee"   # "elsevier" (Harvard, author-date) or "ieee"
 # estimation_data -- 002 is what attaches that. So running DATA without MATCHING
 # silently strips estimation_data from the .rds, and everything downstream (003,
 # 004, 100, 301) then fails or quietly reads nothing.
-if (DATA && !MATCHING)
-  stop("run_article.R: DATA = TRUE requires MATCHING = TRUE.\n",
+if (DATA_PREP && !MATCHING)
+  stop("run_article.R: DATA_PREP = TRUE requires MATCHING = TRUE.\n",
        "  001 re-saves the study environment WITHOUT estimation_data; only 002 ",
        "attaches it.\n  Running 001 alone leaves the environment unusable ",
        "downstream.", call. = FALSE)
@@ -102,7 +128,7 @@ Keep.List <- c("Keep.List", ls())
 # Pipeline
 # ============================================================================
 .run(INITIALIZE,  "000_initialize.R",                 "Initialize")
-.run(DATA,        "001_DATA_land_tenure_study.R",     "Data")
+.run(DATA_PREP,   "001_DATA_land_tenure_study.R",     "Data")
 .run(MATCHING,    "002_MATCHING_land_tenure_study.R", "Matching")
 .run(TREATMENT,   "003_TREATMENT_land_tenure_study.R","Treatment effects")
 .run(MSF,         "004_MSF_land_tenure_study.R",      "Meta-stochastic frontier")
@@ -112,7 +138,7 @@ Keep.List <- c("Keep.List", ls())
 
 if (OBJECTS || RENDER) {
   Sys.setenv(ARTICLE_CSL = if (identical(CITATION_STYLE, "ieee"))
-    "csl/ieee.csl" else "csl/elsevier-harvard.csl")
+    "references/csl/ieee.csl" else "references/csl/elsevier-harvard.csl")
   # A library, not a stage: 301 and 302 both need it, and so does the Rmd.
   source(file.path(.SCRIPTS, "article_helpers.R"))
 }

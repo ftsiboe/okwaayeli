@@ -14,7 +14,15 @@
 #   Efficiency comparisons use the MATCHED sample (opt_sample); frontier
 #   parameters (elasticities, gamma) use the UNMATCHED sample for group
 #   frontiers, the matched sample for the meta-frontier.
-if (!exists("OBJECTS_JSON")) source("studies/land_tenure/scripts/article_helpers.R")
+if (!exists("OBJECTS_JSON")) {
+  .p <- c("scripts/article_helpers.R", "../scripts/article_helpers.R",
+          "studies/land_tenure/scripts/article_helpers.R")
+  .p <- .p[file.exists(.p)]
+  if (!length(.p))
+    stop("301_article_objects.R: cannot find scripts/article_helpers.R -- run ",
+         "from the study root.", call. = FALSE)
+  source(.p[1])
+}
 suppressPackageStartupMessages(library(jsonlite))
 
 EST <- file.path(OUTPUT, "estimations")
@@ -134,8 +142,12 @@ mono <- rates("mono")
 curv <- rates("curv")
 
 # --- 3c) Ownership gaps within acquisition / sharecropping categories --------
-# disag_efficiencyGap_lvl, matched sample: (no ownership minus some ownership)
-# within each category. Labels per data-raw/scripts/data-prep/glss/10_land_tenure.do.
+# disag_efficiencyGap_lvl, matched sample: (SOME ownership minus NO ownership)
+# within each category -- level[TCHLvel==1] - level[TCHLvel==0], so a negative
+# entry places LANDOWNERS behind. Verified as an exact identity against the
+# disag_efficiency levels (LndAq purchased TE: 0.44283923 - 0.55498788 =
+# -0.11214865). This comment said the reverse until 2026-08-13.
+# Labels per data-raw/okwaayeli_DATA.do.
 dg <- pooled$disagscors
 dg$disasg <- as.character(dg$disagscors_var)
 dg$level  <- as.character(dg$disagscors_level)
@@ -187,9 +199,21 @@ if (anyNA(unlist(eff)) || anyNA(unlist(elasticities)) || anyNA(unlist(gamma))) {
 # the 2000 PHC. Each wave stays internally representative, so all five are kept
 # in the pooled estimation, but comparisons spanning GLSS4/GLSS5 are not drawn
 # from a common population -- hence the trend analysis is restricted to GLSS5-7.
-# Full verification trail: narrative/diagnostics/tenure_variable_documentation.md
+# Full verification trail: narrative/docs/diagnostics/tenure_variable_documentation.md
 frame <- local({
-  se <- if (file.exists(se_path)) readRDS(se_path) else NULL
+  # Fail here, not later. A missing study environment used to leave objs$frame
+  # empty, and the render then died in 02_data with "objs$frame$own_prev$GLSS5
+  # is missing or NA" -- minutes later, in a section that looks unrelated, with
+  # nothing pointing back to this. The usual cause was DATA being overwritten by
+  # a caller (run_article.R once had a stage flag of that name), which makes
+  # se_path "FALSE/land_tenure_study_environment.rds"; naming the path in the
+  # error is what makes that diagnosable at a glance.
+  if (!file.exists(se_path))
+    stop("301_article_objects.R: no study environment at\n  ", se_path,
+         "\nIf that path looks wrong, DATA has been overwritten by the calling ",
+         "script; it should be the absolute path to data/ from scripts/_paths.R.",
+         call. = FALSE)
+  se <- readRDS(se_path)
   # estimation_data is attached by 002_MATCHING; study_raw_data by 001_DATA.
   # Accept either: running 001 alone re-saves the environment WITHOUT
   # estimation_data (002 has not re-attached it yet), and the ownership

@@ -20,18 +20,30 @@ tryCatch({rm(list= ls()[!(ls() %in% c(Keep.List))]);gc() }, error = function(e){
 
 library(ggplot2)
 
-devtools::document()
+# Paths: resolve the study root once, so this runs from a standalone checkout as
+# well as from the okwaayeli monorepo. See scripts/_paths.R.
+if (!exists("PROJECT_ROOT")) {
+  .p <- c("scripts/_paths.R", "../scripts/_paths.R",
+          "studies/land_tenure/scripts/_paths.R")
+  .p <- .p[file.exists(.p)]
+  if (!length(.p))
+    stop("cannot find scripts/_paths.R -- run from the study root.", call. = FALSE)
+  source(.p[1])
+}
+
+# The okwaayeli helpers: the working tree in the monorepo (load_all, so edits
+# are picked up), the installed copy standalone. Replaces devtools::document(),
+# which needs a package in the working directory and fails outright without one.
+okwaayeli_load()
 
 project_name = "land_tenure"
-study_environment <- readRDS(
-  file.path(paste0("studies/", project_name, "/data"),
-            paste0(project_name,"_study_environment.rds")))
+study_environment <- study_env()
 
 # Repair wd in memory and create the folders. wd is a snapshot frozen into the
 # .rds by whichever run last called study_setup(), so without this a stage uses
 # the layout as of the last MATCHING run. layout is passed explicitly so this
 # works before 001 next re-runs and bakes it in. See ?study_dirs.
-study_environment <- study_dirs(study_environment, layout = "v2")
+study_environment <- rebase_wd(study_dirs(study_environment, layout = "v2"))
 
 mspecs_optimal <- study_environment$match_specification_optimal
 
@@ -63,7 +75,12 @@ res <- res[!res$sample %in% "unmatched",]
 res <- res[res$CoefName %in% "disag_efficiencyGap_lvl",]
 res <- res[c("disasg","level","fxnforms","distforms","Survey","input","technology_variable","Tech","CoefName","Estimate","Estimate.sd","jack_pv")]
 
-fig <- fig_heterogeneity00(res=res,y_title="Level difference (No ownership minus some ownership)\n",study_environment=study_environment)
+# SIGN: disag_efficiencyGap_lvl is level[TCHLvel==1] - level[TCHLvel==0], i.e.
+# SOME ownership minus NO ownership (verified as an exact identity against the
+# disag_efficiency levels: LndAq purchased TE, 0.44283923 - 0.55498788 =
+# -0.11214865). The label read "No ownership minus some ownership" until
+# 2026-08-13 and was reversed. Do not restore it.
+fig <- fig_heterogeneity00(res=res,y_title="Level difference (Some ownership minus no ownership)\n",study_environment=study_environment)
 fig[["genderAge"]] <- fig[["genderAge"]] + theme(axis.text.x = element_text(size = 5.5))
 ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_crop_region.png"), fig[["crop_region"]],dpi = 600,width = 8, height = 5)
 ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_genderAge.png"), fig[["genderAge"]],dpi = 600,width = 8, height = 5)
@@ -76,7 +93,10 @@ write.csv(res, file.path(study_dir_figure_data(study_environment),"effects_by_ri
 
 # Fig - Robustness              
 rm(list= ls()[!(ls() %in% c(Keep.List))])
-fig_robustness(y_title="\nLevel difference [No ownership minus some ownership]",
+# SIGN: see the note on fig_heterogeneity00 above. efficiencyGap_lvl is
+# level[TCHLvel==1] - level[TCHLvel==0]: TGR 0.8474277 - 0.8555425 =
+# -0.008114770, this panel's main TGR estimate. Label was reversed until 2026-08-13.
+fig_robustness(y_title="\nLevel difference [Some ownership minus no ownership]",
                res_list = c(file.path(study_environment$wd$output,"estimations","CropID_Pooled_OwnLnd_CD_hnormal_optimal.rds"),
                             list.files(file.path(study_environment$wd$output,"estimations"),
                                        pattern = "CropID_Pooled_OwnLnd_TL_",full.names = T)),
@@ -132,7 +152,10 @@ fig <- ggplot(
   scale_color_manual("", values = c("orange", "darkgreen", "blue")) +
   scale_shape_manual("", values = c(21, 25, 24, 22, 23, 3, 4, 8, 11)) +
   scale_y_continuous(breaks = seq(-10, 10, by = 2.5)) +
-  labs(title = "", x = "", y = "Percentage point difference  [No ownership minus some ownership]\n", caption = "") +
+  # SIGN: Gap_lvl is level[TCHLvel==1] - level[TCHLvel==0], SOME minus NO
+  # ownership; the wave means average to the pooled figure (TGR: mean of the five
+  # waves = -0.008114770). Label was reversed until 2026-08-13.
+  labs(title = "", x = "", y = "Percentage point difference  [Some ownership minus no ownership]\n", caption = "") +
   theme_bw() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(legend.position = "bottom") +
