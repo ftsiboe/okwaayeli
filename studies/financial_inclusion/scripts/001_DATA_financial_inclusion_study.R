@@ -47,8 +47,8 @@ study_environment <- study_setup(project_name = project_name, layout = "v2")
 # the GHAgricProductivityLab GitHub repo, then reads them with haven.
 farmer_data <- get_household_data("harmonized_crop_farmer_data")
 
-# financial_data <- get_household_data("harmonized_financial_inclusion_data")
-financial_data  <- as.data.frame(haven::read_dta("data-raw/releases/harmonized_data/harmonized_financial_inclusion_data.dta"))
+financial_data <- get_household_data("harmonized_financial_inclusion_data")
+# financial_data  <- as.data.frame(haven::read_dta("data-raw/releases/harmonized_data/harmonized_financial_inclusion_data.dta"))
 
 # financial_index <- get_household_data("financial_inclusion_index")
 financial_index  <- as.data.frame(haven::read_dta("data-raw/releases/harmonized_data/financial_inclusion_index.dta"))

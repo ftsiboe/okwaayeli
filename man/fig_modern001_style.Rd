@@ -28,22 +28,22 @@ figure set.
 fig_modern001_style()$hue
 }
 \seealso{
-Other modern001 figure helpers: 
-\code{\link{fig_modern001_balance}()},
-\code{\link{fig_modern001_check}()},
-\code{\link{fig_modern001_decomposition}()},
-\code{\link{fig_modern001_dumbbell}()},
-\code{\link{fig_modern001_fmt}()},
-\code{\link{fig_modern001_grid}()},
-\code{\link{fig_modern001_palette}()},
-\code{\link{fig_modern001_points}()},
-\code{\link{fig_modern001_prepare}()},
-\code{\link{fig_modern001_reference}()},
-\code{\link{fig_modern001_save}()},
-\code{\link{fig_modern001_scales}()},
-\code{\link{fig_modern001_significant}()},
-\code{\link{fig_modern001_slope}()},
-\code{\link{fig_modern001_speccurve}()},
-\code{\link{fig_modern001_theme}()}
+Other modern001 figure helpers:
+\code{\link[=fig_modern001_balance]{fig_modern001_balance()}},
+\code{\link[=fig_modern001_check]{fig_modern001_check()}},
+\code{\link[=fig_modern001_decomposition]{fig_modern001_decomposition()}},
+\code{\link[=fig_modern001_dumbbell]{fig_modern001_dumbbell()}},
+\code{\link[=fig_modern001_fmt]{fig_modern001_fmt()}},
+\code{\link[=fig_modern001_grid]{fig_modern001_grid()}},
+\code{\link[=fig_modern001_palette]{fig_modern001_palette()}},
+\code{\link[=fig_modern001_points]{fig_modern001_points()}},
+\code{\link[=fig_modern001_prepare]{fig_modern001_prepare()}},
+\code{\link[=fig_modern001_reference]{fig_modern001_reference()}},
+\code{\link[=fig_modern001_save]{fig_modern001_save()}},
+\code{\link[=fig_modern001_scales]{fig_modern001_scales()}},
+\code{\link[=fig_modern001_significant]{fig_modern001_significant()}},
+\code{\link[=fig_modern001_slope]{fig_modern001_slope()}},
+\code{\link[=fig_modern001_speccurve]{fig_modern001_speccurve()}},
+\code{\link[=fig_modern001_theme]{fig_modern001_theme()}}
 }
 \concept{modern001 figure helpers}

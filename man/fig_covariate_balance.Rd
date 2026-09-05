@@ -24,13 +24,13 @@ Balance is best where the standardised difference is near zero and the
 variance ratio near one.
 }
 \seealso{
-Other exhibit figures: 
-\code{\link{ers_theme}()},
-\code{\link{fig_distribution}()},
-\code{\link{fig_dsistribution}()},
-\code{\link{fig_heterogeneity00}()},
-\code{\link{fig_input_te}()},
-\code{\link{fig_robustness}()},
-\code{\link{tab_main_specification}()}
+Other exhibit figures:
+\code{\link[=ers_theme]{ers_theme()}},
+\code{\link[=fig_distribution]{fig_distribution()}},
+\code{\link[=fig_dsistribution]{fig_dsistribution()}},
+\code{\link[=fig_heterogeneity00]{fig_heterogeneity00()}},
+\code{\link[=fig_input_te]{fig_input_te()}},
+\code{\link[=fig_robustness]{fig_robustness()}},
+\code{\link[=tab_main_specification]{tab_main_specification()}}
 }
 \concept{exhibit figures}
