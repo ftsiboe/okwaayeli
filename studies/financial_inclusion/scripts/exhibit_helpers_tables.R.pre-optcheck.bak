@@ -419,41 +419,6 @@ if (is.na(.opt))
 # The four row groups are FOUR SEPARATE ESTIMATION FILES, not four levels inside
 # one. Each technology_variable was fitted on its own frontier, so the object
 # tag changes per row -- see 004:86's technology_variables.
-# ---- .assert_opt_fitted(): name the mismatch instead of printing a blank table --
-#
-# Tables 4, 5 and 6 key their matched-sample cells on `sample = .opt`, which is
-# read from study_environment$match_specification_optimal -- i.e. from what 002
-# LAST CHOSE. The cells themselves come from the estimation objects -- i.e. from
-# what 004 LAST FITTED. When those two disagree, every key misses and the tables
-# come back empty, and .guard_filled() then reports "the row map's indicator
-# names almost certainly do not match the cache" and points at
-# descriptive_exhibits$shares -- which has nothing to do with these tables. That
-# message is correct for the descriptive tables and badly wrong for these, and it
-# costs an hour of looking in the wrong place. Observed 2026-09-03: 002 re-run on
-# a changed release moved the optimum from probit to cauchit while the fits still
-# carried probit.
-#
-# So check it up front and say what is actually wrong. This changes no output: if
-# the fits and the environment agree it is silent.
-.assert_opt_fitted <- function(tag = "credit_hh") {
-  if (is.na(.opt)) return(invisible(NULL))          # already warned at .opt
-  ef <- tryCatch(.read_est(tag)$ef_mean, error = function(e) NULL)
-  if (is.null(ef) || !"sample" %in% names(ef)) return(invisible(NULL))
-  have <- unique(as.character(ef$sample))
-  if (.opt %in% have) return(invisible(NULL))
-  stop("exhibit_helpers_tables.R: the matched sample the exhibits ask for was ",
-       "never fitted.\n",
-       "  the environment's optimal matching sample : ", .opt, "\n",
-       "  samples present in the estimation objects : ",
-       paste(have, collapse = ", "), "\n",
-       "  Tables 4, 5 and 6 read the fits but are keyed on the environment, so ",
-       "every matched cell\n  misses and the tables build empty. This is a ",
-       "vintage mismatch, NOT a row-map problem:\n  002 has been re-run since ",
-       "004 was last fitted. Re-run 004 (job_msf.sbatch) against the current\n",
-       "  environment, or restore the environment that the current fits were ",
-       "computed on.", call. = FALSE)
-}
-
 .T5_TAGS <- c("credit_hh", "credit_self", "credit_spouse", "credit_member")
 .T5_LABS <- c("Anyone including farmer", "Farmer", "Spouse of farmer",
               "Household members other than spouses or child")
@@ -463,7 +428,6 @@ if (is.na(.opt))
                 MTE = "Meta-frontier technical efficiency (MTE)")
 
 .tbl5_live <- function() .memo("tbl5", function() {
-  .assert_opt_fitted("credit_hh")
   rows <- list()
   for (ty in names(.T5_BLOCKS)) {
     rows[[length(rows) + 1]] <- data.frame(
@@ -567,7 +531,6 @@ ft_table5 <- function()
 .T6_LEVEL <- "1"
 
 .tbl6_live <- function() .memo("tbl6", function() {
-  .assert_opt_fitted("credit_hh")
   ds <- .read_est("credit_hh")$disagscors
   out <- .T6_MAP
   for (cc in paste0("c", 1:3)) out[[cc]] <- ""
@@ -714,7 +677,6 @@ ft_table6 <- function()
 # section before this goes out.
 
 .tbl4_live <- function() .memo("tbl4", function() {
-  .assert_opt_fitted("credit_hh")
   E  <- .read_est("credit_hh")
   el <- E$el_mean; ef <- E$ef_mean; sf <- E$sf_estm
   rows <- list()

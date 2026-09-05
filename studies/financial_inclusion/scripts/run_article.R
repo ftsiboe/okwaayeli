@@ -19,11 +19,11 @@ DATA        <- TRUE  # 001  harmonized releases -> study_raw_data              f
 MATCHING    <- TRUE  # 002  -> estimation_data, matched samples                EXPENSIVE
 TREATMENT   <- TRUE  # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
 MSF         <- FALSE  # 004  -> output/estimations/                             HPC, hours
-DESCRIPTIVE <- TRUE  # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
-FIGURES     <- TRUE  # 101  -> output/figures/ (png + data)                    moderate
-WORKBOOK    <- TRUE  # 102  -> output/tables/financial_inclusion_tables.xlsx  minutes
-OBJECTS     <- TRUE   # 301  -> narrative/article_objects.json                  fast
-RENDER      <- TRUE   # 302  -> narrative/financial-inclusion.docx / .html      fast
+DESCRIPTIVE <- FALSE   # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
+FIGURES     <- FALSE   # 101  -> output/figures/ (png + data)                    moderate
+WORKBOOK    <- FALSE   # 102  -> output/tables/financial_inclusion_tables.xlsx  minutes
+OBJECTS     <- FALSE   # 301  -> narrative/article_objects.json                  fast
+RENDER      <- FALSE   # 302  -> narrative/financial-inclusion.docx / .html      fast
 
 # ---- Citation style ---------------------------------------------------------
 CITATION_STYLE <- "ieee"       # "ieee" (numbered) or "elsevier" (Harvard, author-date)

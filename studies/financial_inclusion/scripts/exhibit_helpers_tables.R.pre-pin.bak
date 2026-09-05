@@ -419,41 +419,6 @@ if (is.na(.opt))
 # The four row groups are FOUR SEPARATE ESTIMATION FILES, not four levels inside
 # one. Each technology_variable was fitted on its own frontier, so the object
 # tag changes per row -- see 004:86's technology_variables.
-# ---- .assert_opt_fitted(): name the mismatch instead of printing a blank table --
-#
-# Tables 4, 5 and 6 key their matched-sample cells on `sample = .opt`, which is
-# read from study_environment$match_specification_optimal -- i.e. from what 002
-# LAST CHOSE. The cells themselves come from the estimation objects -- i.e. from
-# what 004 LAST FITTED. When those two disagree, every key misses and the tables
-# come back empty, and .guard_filled() then reports "the row map's indicator
-# names almost certainly do not match the cache" and points at
-# descriptive_exhibits$shares -- which has nothing to do with these tables. That
-# message is correct for the descriptive tables and badly wrong for these, and it
-# costs an hour of looking in the wrong place. Observed 2026-09-03: 002 re-run on
-# a changed release moved the optimum from probit to cauchit while the fits still
-# carried probit.
-#
-# So check it up front and say what is actually wrong. This changes no output: if
-# the fits and the environment agree it is silent.
-.assert_opt_fitted <- function(tag = "credit_hh") {
-  if (is.na(.opt)) return(invisible(NULL))          # already warned at .opt
-  ef <- tryCatch(.read_est(tag)$ef_mean, error = function(e) NULL)
-  if (is.null(ef) || !"sample" %in% names(ef)) return(invisible(NULL))
-  have <- unique(as.character(ef$sample))
-  if (.opt %in% have) return(invisible(NULL))
-  stop("exhibit_helpers_tables.R: the matched sample the exhibits ask for was ",
-       "never fitted.\n",
-       "  the environment's optimal matching sample : ", .opt, "\n",
-       "  samples present in the estimation objects : ",
-       paste(have, collapse = ", "), "\n",
-       "  Tables 4, 5 and 6 read the fits but are keyed on the environment, so ",
-       "every matched cell\n  misses and the tables build empty. This is a ",
-       "vintage mismatch, NOT a row-map problem:\n  002 has been re-run since ",
-       "004 was last fitted. Re-run 004 (job_msf.sbatch) against the current\n",
-       "  environment, or restore the environment that the current fits were ",
-       "computed on.", call. = FALSE)
-}
-
 .T5_TAGS <- c("credit_hh", "credit_self", "credit_spouse", "credit_member")
 .T5_LABS <- c("Anyone including farmer", "Farmer", "Spouse of farmer",
               "Household members other than spouses or child")
@@ -463,7 +428,6 @@ if (is.na(.opt))
                 MTE = "Meta-frontier technical efficiency (MTE)")
 
 .tbl5_live <- function() .memo("tbl5", function() {
-  .assert_opt_fitted("credit_hh")
   rows <- list()
   for (ty in names(.T5_BLOCKS)) {
     rows[[length(rows) + 1]] <- data.frame(
@@ -477,22 +441,13 @@ if (is.na(.opt))
         # cross-tabulation against Tech (1 == "0"). See
         # narrative/diagnostics/estimation_object_keying.md.
         #
-        # restrict now follows .RESTRICT, as Table 4 does.
-        #
-        # The comment this replaces claimed Restricted and Unrestricted carry
-        # identical estimates for TGR/TE/MTE. That is true of TGR ONLY. On the
-        # 2026-09-03 fits, matched sample, stat = "mean":
-        #
-        #     TGR   -0.0527 under both
-        #     TE    +0.0025 (t  +2.0) Restricted | -0.0139 (t -18.4) Unrestricted
-        #     MTE   -0.0285 (t -22.6) Restricted | -0.0429 (t -27.9) Unrestricted
-        #
-        # Table 5 reading Unrestricted while Table 4 read .RESTRICT is what made
-        # the two tables disagree on the TE sign, and it is why the prose could
-        # not sign that gap. One pin, one specification, both tables.
+        # restrict is pinned to "Unrestricted" but does not matter for these
+        # measures: the probe shows Restricted and Unrestricted carry identical
+        # Estimates for TGR/TE/MTE. Pinned anyway so the key stays unique --
+        # .jcell() stops on duplicates.
         .jcell(ef, list(TCHLvel = lv, type = ty, sample = .opt,
                         Survey = "GLSS0", stat = "mean", CoefName = coef,
-                        estType = "teBC", restrict = .RESTRICT))
+                        estType = "teBC", restrict = "Unrestricted"))
       }
       a <- cel("0", "efficiency"); b <- cel("1", "efficiency")
       # The difference is CARRIED, not computed. ef_mean emits a triple for
@@ -567,7 +522,6 @@ ft_table5 <- function()
 .T6_LEVEL <- "1"
 
 .tbl6_live <- function() .memo("tbl6", function() {
-  .assert_opt_fitted("credit_hh")
   ds <- .read_est("credit_hh")$disagscors
   out <- .T6_MAP
   for (cc in paste0("c", 1:3)) out[[cc]] <- ""
@@ -593,8 +547,7 @@ ft_table5 <- function()
       out[[paste0("c", j)]][i] <- .jcell(ds, list(
         disagscors_var = v, disagscors_level = .T6_LEVEL, input = inputs[j],
         CoefName = "disag_efficiencyGap_lvl", stat = "mean",
-        # .RESTRICT, as Tables 4 and 5 -- see the note in .tbl5_live().
-        sample = .opt, Survey = "GLSS0", restrict = .RESTRICT,
+        sample = .opt, Survey = "GLSS0", restrict = "Unrestricted",
         estType = "teBC"))
     }
   }
@@ -714,7 +667,6 @@ ft_table6 <- function()
 # section before this goes out.
 
 .tbl4_live <- function() .memo("tbl4", function() {
-  .assert_opt_fitted("credit_hh")
   E  <- .read_est("credit_hh")
   el <- E$el_mean; ef <- E$ef_mean; sf <- E$sf_estm
   rows <- list()

@@ -25,5 +25,5 @@ devtools::build_manual(path = getwd())
 
 # Optional: run tests / full package check (uncomment when needed)
 # devtools::test()
-devtools::check()
+devtools::check(run_dont_test=TRUE)
 

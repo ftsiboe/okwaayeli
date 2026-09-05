@@ -59,26 +59,9 @@ financial_index  <- as.data.frame(haven::read_dta("data-raw/releases/harmonized_
 #   - EaId    : enumeration area
 #   - HhId    : household ID
 #   - Mid     : member ID
-# NAME THE COLLISION, do not let dplyr rename it.
-#
-# Locality is the ONLY non-key column carried by both harmonized_crop_farmer_data
-# and harmonized_financial_inclusion_data. Joined as-is, dplyr suffixes the pair
-# to Locality.x / Locality.y and BARE `Locality` ceases to exist -- which breaks
-# 002 at its complete-case step, because Locality is one of the exact-match
-# strata (match_variables_exact). The failure surfaces as the unattributable
-# "undefined columns selected", far from this line.
-#
-# Verified 2026-09-03: the two columns agree on all 60,530 merged rows, so which
-# one survives is immaterial; the farmer file's is kept because that is the base
-# table and carries the rest of the farm-level covariates. If a future release
-# makes them disagree, this is the line that decides it, and the decision should
-# be made deliberately rather than by join order.
-#
-# The Stata index do-file guards the same collision with an explicit keepusing();
-# this is the R-side equivalent.
 study_data <- dplyr::inner_join(
   farmer_data,
-  dplyr::select(financial_data, -dplyr::any_of("Locality")),
+  financial_data,
   by = c("Surveyx", "EaId", "HhId", "Mid")
 )
 

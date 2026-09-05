@@ -42,7 +42,10 @@ cache directory determined by:
 tools::R_user_dir("GHAgricProductivityLab", which = "cache")
 }
 
-If the file already exists locally, it is not re-downloaded.
+If the file already exists locally its size is compared with the release
+asset's, and it is re-downloaded only when they differ. If the release
+cannot be reached the cached copy is used and a warning is issued, so that
+offline compute nodes still run.
 
 \strong{GitHub Authentication}
 \itemize{
