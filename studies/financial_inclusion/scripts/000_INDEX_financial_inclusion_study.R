@@ -48,7 +48,7 @@
 # ==============================================================================
 
 suppressPackageStartupMessages({
-  library(haven); library(dplyr); library(tidyr)
+  library(haven); library(dplyr)   # tidyr is NOT used and is NOT in DESCRIPTION Imports
 })
 devtools::load_all(".", quiet = TRUE)
 
