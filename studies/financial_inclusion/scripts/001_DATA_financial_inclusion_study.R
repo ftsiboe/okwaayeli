@@ -51,7 +51,15 @@ financial_data <- get_household_data("harmonized_financial_inclusion_data")
 # financial_data  <- as.data.frame(haven::read_dta("data-raw/releases/harmonized_data/harmonized_financial_inclusion_data.dta"))
 
 # financial_index <- get_household_data("financial_inclusion_index")
-financial_index  <- as.data.frame(haven::read_dta("data-raw/releases/harmonized_data/financial_inclusion_index.dta"))
+# MOVED 2026-09-03 to the study's own data/ folder. The index is a study
+# artefact, not a shared harmonized release -- only this study reads it -- and
+# it is now built by scripts/000_INDEX_financial_inclusion_study.R (the R port
+# of the Stata original), so it can be regenerated on a cluster with no Stata
+# instead of being copied by hand. Copying it by hand is what silently dropped
+# 3,214 operators on 2026-09-03: a stale copy is indistinguishable from a fresh
+# one until the sample size is inspected.
+financial_index  <- as.data.frame(readRDS(
+  file.path("studies", "financial_inclusion", "data", "financial_inclusion_index.rds")))
 
 # ---- Merge farmer and land tenure data at the household-member level
 # Merge keys:

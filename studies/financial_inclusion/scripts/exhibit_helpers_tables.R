@@ -1529,23 +1529,38 @@ ft_tableS5 <- function() {
 # while .STUDY_ROOT points at studies/financial_inclusion and the knit runs from
 # narrative/. Search the candidates rather than pinning one, and name all of
 # them if the file is absent.
-.S6_REL <- file.path("data-raw", "releases", "harmonized_data")
+# MOVED 2026-09-03: the index and its diagnostics are STUDY artefacts, not
+# shared harmonized releases -- only this study reads them. They now live in
+# studies/financial_inclusion/data/, written by the R port of the index builder
+# (scripts/000_INDEX_financial_inclusion_study.R), which replaced the Stata
+# original so the index can be built on a cluster with no Stata. The old
+# data-raw location is still searched so an older checkout keeps rendering.
+.S6_REL <- file.path("studies", "financial_inclusion", "data")
+.S6_REL_OLD <- file.path("data-raw", "releases", "harmonized_data")
+# .rds is the current build (R port); .dta is kept in the search so a checkout
+# predating 2026-09-03, or a Stata-built copy, still renders.
+.S6_RDS <- "financial_inclusion_index_diagnostics.rds"
 .S6_DTA <- "financial_inclusion_index_diagnostics.dta"
 # cwd = repo root -> "."; cwd = study root -> ".." or "../.."; cwd = narrative/
 # (the knit) -> "../../..". .STUDY_ROOT is carried too, for a checkout that
 # vendors the release under the study.
-.S6_CANDIDATES <- unique(file.path(
-  c(".", "..", file.path("..", ".."), file.path("..", "..", ".."), .STUDY_ROOT),
-  .S6_REL, .S6_DTA))
+.S6_ROOTS <- c(".", "..", file.path("..", ".."), file.path("..", "..", ".."),
+               .STUDY_ROOT)
+.S6_CANDIDATES <- unique(c(
+  file.path(.S6_ROOTS, .S6_REL,     .S6_RDS),   # study data/, .rds  (current)
+  file.path(.STUDY_ROOT, "data",    .S6_RDS),
+  file.path(.S6_ROOTS, .S6_REL,     .S6_DTA),   # study data/, .dta
+  file.path(.S6_ROOTS, .S6_REL_OLD, .S6_DTA),   # data-raw       (pre-2026-09-03)
+  file.path(.STUDY_ROOT, "data",    .S6_DTA)))
 
 .s6_path <- function() {
   hit <- .S6_CANDIDATES[file.exists(.S6_CANDIDATES)]
   if (!length(hit))
-    stop("exhibit_helpers_tables.R: Table S6 cannot find ", .S6_DTA, ".\n",
+    stop("exhibit_helpers_tables.R: Table S6 cannot find ", .S6_RDS, ".\n",
          "  Looked in:\n    ", paste(.S6_CANDIDATES, collapse = "\n    "),
          "\n  That release is written by the DIAGNOSTICS block of ",
-         "scripts/000_INDEX_financial_inclusion_study.do. Run it once from ",
-         "Stata, then re-render. No stored copy is substituted.", call. = FALSE)
+         "scripts/000_INDEX_financial_inclusion_study.R. Run it once, then ",
+         "re-render. No stored copy is substituted.", call. = FALSE)
   hit[1]
 }
 
@@ -1584,7 +1599,12 @@ ft_tableS5 <- function() {
     stop("exhibit_helpers_tables.R: Table S6 needs 'haven' to read ", .S6_DTA,
          ".\n  install.packages(\"haven\")", call. = FALSE)
   p <- .s6_path()
-  d <- as.data.frame(haven::read_dta(p))
+  d <- if (grepl("\\.rds$", p, ignore.case = TRUE)) as.data.frame(readRDS(p))
+       else as.data.frame(haven::read_dta(p))
+  # The Stata postfile named the count column N. haven::write_dta() refuses a
+  # bare "N" as a Stata variable name, so the R port writes Nobs; accept either
+  # and normalise, so a workbook built from either release is identical.
+  if (!"N" %in% names(d) && "Nobs" %in% names(d)) names(d)[names(d) == "Nobs"] <- "N"
   need <- c("round", "locality", "indicator", "loading", "N", "rho")
   miss <- setdiff(need, names(d))
   if (length(miss))

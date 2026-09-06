@@ -11,23 +11,19 @@
 rm(list = ls(all = TRUE)); gc()
 
 devtools::document()
-
-unlink(list.files(tools::R_user_dir("okwaayeli", which = "cache"),full.names = TRUE))
-
 # ============================================================================
 # STAGES
 # ============================================================================
-INITIALIZE  <- TRUE  # 000  study scaffolding                                  fast
-INDEX       <- TRUE  # 000  -> data/financial_inclusion_index.rds             ~1 min
-DATA        <- TRUE  # 001  harmonized releases -> study_raw_data              fast
-MATCHING    <- TRUE  # 002  -> estimation_data, matched samples                EXPENSIVE
-TREATMENT   <- TRUE  # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
+INITIALIZE  <- FALSE  # 000  study scaffolding                                  fast
+DATA        <- FALSE  # 001  harmonized releases -> study_raw_data              fast
+MATCHING    <- FALSE  # 002  -> estimation_data, matched samples                EXPENSIVE
+TREATMENT   <- FALSE  # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
 MSF         <- FALSE  # 004  -> output/estimations/                             HPC, hours
-DESCRIPTIVE <- FALSE   # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
-FIGURES     <- FALSE   # 101  -> output/figures/ (png + data)                    moderate
-WORKBOOK    <- FALSE   # 102  -> output/tables/financial_inclusion_tables.xlsx  minutes
-OBJECTS     <- FALSE   # 301  -> narrative/article_objects.json                  fast
-RENDER      <- FALSE   # 302  -> narrative/financial-inclusion.docx / .html      fast
+DESCRIPTIVE <- TRUE   # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
+FIGURES     <- TRUE   # 101  -> output/figures/ (png + data)                    moderate
+WORKBOOK    <- TRUE   # 102  -> output/tables/financial_inclusion_tables.xlsx  minutes
+OBJECTS     <- TRUE   # 301  -> narrative/article_objects.json                  fast
+RENDER      <- TRUE   # 302  -> narrative/financial-inclusion.docx / .html      fast
 
 # ---- Citation style ---------------------------------------------------------
 CITATION_STYLE <- "ieee"       # "ieee" (numbered) or "elsevier" (Harvard, author-date)
@@ -39,8 +35,6 @@ CITATION_STYLE <- "ieee"       # "ieee" (numbered) or "elsevier" (Harvard, autho
 # ============================================================================
 # What depends on what
 # ============================================================================
-# 000_INDEX -> 001                     the index is a 001 INPUT, not a stage
-#                                      output; see the guard below
 # 001 -> 002 -> 003 -> 004 -> 101      estimation, then the figures off it
 #                     001 -> 100       descriptives read study_raw_data
 #                            100 -|
@@ -51,22 +45,15 @@ CITATION_STYLE <- "ieee"       # "ieee" (numbered) or "elsevier" (Harvard, autho
 #   article only .................. OBJECTS + RENDER                (default)
 #   descriptives changed .......... DESCRIPTIVE + OBJECTS + RENDER
 #   re-estimated (004 on HPC) ..... FIGURES + OBJECTS + RENDER
-#   index definition changed ...... INDEX + DATA + MATCHING + TREATMENT + (004)
-#   harmonized data changed ....... INDEX + DATA + MATCHING + TREATMENT + (004 on HPC)
+#   harmonized data changed ....... DATA + MATCHING + TREATMENT + (004 on HPC)
 #                                   then DESCRIPTIVE + FIGURES + OBJECTS + RENDER
 #
-# The financial-inclusion index USED to be upstream of all this and not a stage:
-# a Stata do-file with a hardcoded Windows path, run by hand, writing into
-# data-raw/. That made it the one study input every machine had to receive by
-# hand -- and on 2026-09-03 a stale copy on the cluster silently dropped 3,214
-# farm operators, because 001 inner-joins on it and a stale index is
-# indistinguishable from a fresh one until the sample size is inspected.
-#
-# It is now INDEX above: an R port (000_INDEX_financial_inclusion_study.R,
-# validated against the Stata build to 1e-13 on the loadings and exactly on the
-# released values) writing data/financial_inclusion_index.rds. Any machine with
-# R can rebuild it, so nothing is hand-carried. See
-# narrative/diagnostics/financial_inclusion_index_documentation.md.
+# Upstream of all of this and NOT a stage here:
+#   scripts/000_INDEX_financial_inclusion_study.do (Stata) builds the financial
+#   inclusion index -- the variable this study is named for -- and writes it to
+#   data-raw/releases/harmonized_data/. 001 reads it back. Rerun it by hand in
+#   Stata when the index definition changes. See
+#   narrative/diagnostics/financial_inclusion_index_documentation.md.
 
 .SCRIPTS <- "studies/financial_inclusion/scripts"
 
@@ -81,32 +68,6 @@ if (DATA && !MATCHING)
        "  001 re-saves the study environment WITHOUT estimation_data; only 002 ",
        "attaches it.\n  Running 001 alone leaves the environment unusable ",
        "downstream.", call. = FALSE)
-
-# The index is DERIVED from harmonized_crop_farmer_data and
-# harmonized_financial_inclusion_data, and 001 inner-joins on it. So an index
-# older than either release drops every member whose keys the two no longer
-# share -- silently, because an inner join has no way to complain. Warn when
-# 001 is about to run against an index that predates its own inputs.
-if (DATA && !INDEX) {
-  .ix <- file.path("studies", "financial_inclusion", "data",
-                   "financial_inclusion_index.rds")
-  if (!file.exists(.ix)) {
-    stop("run_article.R: DATA = TRUE but the financial-inclusion index is ",
-         "missing:\n  ", .ix, "\n  Set INDEX = TRUE; 001 inner-joins on it and ",
-         "cannot run without it.", call. = FALSE)
-  }
-  .cache <- tools::R_user_dir("okwaayeli", which = "cache")
-  .src <- file.path(.cache, c("harmonized_crop_farmer_data.dta",
-                              "harmonized_financial_inclusion_data.dta"))
-  .src <- .src[file.exists(.src)]
-  if (length(.src) && any(file.mtime(.src) > file.mtime(.ix))) {
-    warning("run_article.R: the financial-inclusion index is OLDER than a ",
-            "release it is built from.\n  index : ", .ix, "\n  Set ",
-            "INDEX = TRUE, or 001 will join on a stale index and drop members ",
-            "without reporting it.", call. = FALSE, immediate. = TRUE)
-  }
-  rm(.ix, .cache, .src)
-}
 
 # 004 is a SLURM array (job_msf.sbatch, --array=1-60). Sourcing it here fits
 # every specification sequentially on this machine, which is not a thing you
@@ -148,7 +109,6 @@ Keep.List <- c("Keep.List", ls())
 # Pipeline
 # ============================================================================
 .run(INITIALIZE,  "000_initialize.R",                        "Initialize")
-.run(INDEX,       "000_INDEX_financial_inclusion_study.R",   "Financial-inclusion index (PCA)")
 .run(DATA,        "001_DATA_financial_inclusion_study.R",     "Data")
 .run(MATCHING,    "002_MATCHING_financial_inclusion_study.R", "Matching")
 .run(TREATMENT,   "003_TREATMENT_financial_inclusion_study.R","Treatment effects")
