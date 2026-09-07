@@ -1,9 +1,6 @@
-Financial Inclusion and Credit Impacts on Crop Production in Ghana
-================
-
 <!-- README.md is generated from financial_inclusion.Rmd. Please edit that file. -->
 
-![Status: Full draft (v006)](https://img.shields.io/badge/status-full%20draft-blue)
+![Status: Complete draft, pipeline-generated](https://img.shields.io/badge/status-complete%20draft-brightgreen)
 
 For an overview of the broader project context, please refer to the main
 [okwaayeli README](https://github.com/ftsiboe/okwaayeli/blob/main/README.md)
@@ -13,20 +10,36 @@ See the
 [LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
 file in the repository root for details.
 
-**Status**: Full draft (v006, 2026-09-02). Every section is written, including
-the abstract and the conclusion, which were scaffolds until now. The narrative
-was revised end to end against the current pipeline output, and the headline
-result changed direction in the process: credit-using households operate a
-technology set that lies *farther* from the best-practice frontier than that of
-matched non-users, not nearer to it, and the meta-frontier efficiency shortfall
-is a technology gap rather than a management gap. Results and discussion are
-integrated in `05_results.Rmd`; `06_discussion.Rmd` is superseded. The
-superseded sections are kept in
-[`narrative/revision/superseded/`](narrative/revision/superseded/) and the
-revision is documented in
-[`narrative/revision/revision_notes.md`](narrative/revision/revision_notes.md),
-whose section 4 lists the sixteen items that need author input before the draft
-is circulated.
+**Status**: Complete draft, 2026-09-07. Every section is written and every
+study-derived number in the text is an inline R lookup against the pipeline's
+own table builds -- nothing is hand-typed, and a lookup that cannot resolve
+stops the knit rather than printing a stale value.
+
+The whole pipeline was rebuilt on a single cluster run of 2026-09-07, so
+matching, treatment effects and frontier estimates share one vintage, and every
+exhibit is pinned to one specification (`.RESTRICT = "Restricted"`,
+`.STAT = "wmean"`, declared together in `scripts/exhibit_helpers_tables.R`).
+
+The headline runs against the hypothesis that motivated the study.
+Credit-using households operate a technology set that lies *farther* from the
+best-practice frontier than that of matched non-users, not nearer to it; the
+technical-efficiency difference is small and its sign is a property of whether
+the comparison group is balanced; and the meta-frontier shortfall is therefore a
+technology gap rather than a management gap. The gap is absent in one case worth
+naming: when the farmer is the borrower. It is widest when the loan is held by
+the spouse.
+
+Results and discussion are integrated in `narrative/sections/05_results.Rmd`;
+`06_discussion.Rmd` is a tombstone and holds no content. The revision record,
+including what the 2026-09-07 re-run changed and what remains open, is in
+[`narrative/revision/`](narrative/revision/) -- start at its `README.md`, then
+`revision_notes.md` section 10.
+
+**Before submission**: `narrative/sections/96_declarations.Rmd` carries two
+`REPLACE` markers, Funding and Author contributions. They are HTML comments, so
+they neither fail the build nor appear in the rendered document, and the
+`.Rmd` validator strips comments before its placeholder scan. Nothing will
+catch them for you.
 
 ### Contributors
 
@@ -56,16 +69,12 @@ pipeline. A second copy here would be hand-typed and would drift from the paper
 -- silently, and on the headline result. Link to it; do not restate it.
 -->
 
-The full text, tables and figures are in [`narrative/`](narrative/), built by the
-same automated manuscript system `resource_extraction` and `land_tenure` use:
-`narrative/sections/*.Rmd` assembled by `302_render_article.R` into
-`financial-inclusion.docx` / `.html`. The superseded Word drafts are kept in
-`narrative/legacy/` and `narrative/old/` for provenance only.
-
-Measured quantities in the sections resolve at knit time against
-`narrative/article_objects.json` and the exhibit cache, with no fallback — a
-lookup that cannot resolve stops the knit. The exceptions are listed in each
-section's banner. Each section's banner states what is live and what is deliberately literal.
+The full text, tables and figures are in [`narrative/`](narrative/), written
+as `.Rmd` sections under [`narrative/sections/`](narrative/sections/) and knit
+to `narrative/financial-inclusion.docx` and `.html` by the pipeline. The Word
+drafts in `narrative/legacy/` and `narrative/old/` are the pre-migration
+history and are **not** the paper; their numbers were hand-typed and several of
+them are now wrong.
 
 **Keywords**: financial inclusion; credit; mobile money; technical efficiency;
 meta-stochastic frontier; Ghana
@@ -74,51 +83,63 @@ meta-stochastic frontier; Ghana
 
 ### Reproducing
 
-Run from the repository root, via `scripts/run_article.R` (stage flags) or by
-calling the numbered steps directly, in order.
+Run from the repository root. `scripts/run_article.R` is the single entry
+point: set a stage `TRUE` to run it, and the guards in that file will stop you
+from running a stage without the stage it depends on.
 
-    000_initialize   scaffolding                       fast
-    000_INDEX        -> harmonized financial_inclusion_index (Stata)
-    001_DATA         harmonized releases -> raw data   fast
-    002_MATCHING     -> estimation_data                EXPENSIVE
-    003_TREATMENT    -> treatment effects              EXPENSIVE
-    004_MSF          -> output/estimations/            HPC (job_msf.sbatch)
-    100/101/102_*    -> output/tables/, output/figures/  moderate
-    301_article_objects -> narrative/article_objects.json
-    302_render_article  -> narrative/financial-inclusion.docx/.html
+```
+INITIALIZE    000_initialize.R                       scaffolding          fast
+INDEX         000_INDEX_financial_inclusion_study.R  -> data/*.rds        ~1 min
+DATA          001_DATA_...                           releases -> raw      fast
+MATCHING      002_MATCHING_...                       -> estimation_data   EXPENSIVE
+TREATMENT     003_TREATMENT_...                      -> treatment effects EXPENSIVE
+MSF           004_MSF_...                            -> output/estimations/  HPC
+DESCRIPTIVE   100_exhibit_descriptive_stats.R        -> data/*.rds        ~5-10 min
+FIGURES       101_exhibit_figures.R                  -> output/figures/   moderate
+WORKBOOK      102_exhibit_table_workbook.R           -> output/tables/    minutes
+OBJECTS       301_article_objects.R                  -> article_objects.json  fast
+RENDER        302_render_article.R                   -> .docx / .html     fast
+```
+
+On a cluster, `004` is submitted as an array job (`scripts/job_msf.sbatch`)
+rather than through the runner, and the other stages are run on either side of
+it. **The array can fail silently**: `004` wraps every specification in a
+`tryCatch` that discards the error, so a specification that dies leaves no file
+and the task still exits 0. Run
+`probes/probe_missing_estimations.R` afterwards to see which of the
+specifications actually produced output, and
+`probes/probe_capture_spec_error.R` to read the error for one that did not.
+
+Two coupling rules that are easy to get wrong, and that the guards in
+`run_article.R` enforce:
+
+- `DATA` re-saves the study environment **without** `estimation_data`; only
+  `MATCHING` attaches it. Running `001` alone leaves everything downstream
+  broken.
+- The frontier fits are estimated against a specific set of matched draws.
+  Re-running `MATCHING` after `004` invalidates the fits without changing a
+  single file date that would tell you.
 
 Data preparation upstream of `001` is Stata
 (`data-raw/data-prep/glss/03_financial_inclusion.do`), which harmonizes the raw
-GLSS files.
+GLSS files into the release assets that `001` retrieves with
+`get_household_data()`.
 
-### The treatment variable
+The financial-inclusion index -- a *covariate*, not the treatment -- is built by
+`scripts/000_INDEX_financial_inclusion_study.R`, an R port of the original
+Stata do-file (kept in `scripts/old-codes/`) validated against it to 1e-13 on
+the loadings and exactly on the released values. It writes
+`data/financial_inclusion_index.rds` and its diagnostics beside it. The port
+exists because the index was once the one study input that had to be hand-copied
+between machines, and a stale copy on the cluster silently dropped 3,214 farm
+operators through the inner join in `001` while the run reported success. Any
+machine with R can now rebuild it. Its construction is documented in the paper
+as Note S1.
 
-**The treatment is `credit_hh`, household access to credit** — 1 if the farm
-operator, spouse, a child, or another household member applied for a loan in the
-past 12 months, was granted it, and recorded a positive amount. It is built in
-`data-raw/data-prep/glss/03_financial_inclusion.do:1339-1416`, set as the
-estimation flag at `002_MATCHING:63`
-(`Treat <- as.integer(as.numeric(DATA$credit_hh > 0))`), and used as the frontier
-grouping variable at `004_MSF:86`. Every estimation object on disk is named
-`*_credit_hh_*`.
+The treatment is `credit_hh`. Its construction, and that of every other credit
+and financial-service variable, is documented in the paper as Table S0 and in
+[`narrative/diagnostics/credit_variable_documentation.md`](narrative/diagnostics/credit_variable_documentation.md).
 
-**The financial inclusion index is not the treatment.**
-`scripts/000_INDEX_financial_inclusion_study.do` builds `FinIdx` and writes it as
-a harmonized release that `001` reads back; it enters as a *covariate* —
-`FinIdxSi` in the matching distance (`002_MATCHING:69`) and `FinIdxCat` as a
-heterogeneity dimension (`004_MSF:187`). The two play different roles and should
-not be conflated. Earlier revisions of this README described the index as "the
-treatment variable itself"; that was wrong and is corrected here (2026-08-09).
-
-Full documentation:
-[`narrative/diagnostics/credit_variable_documentation.md`](narrative/diagnostics/credit_variable_documentation.md)
-for the treatment, and
-[`narrative/diagnostics/financial_inclusion_index_documentation.md`](narrative/diagnostics/financial_inclusion_index_documentation.md)
-for the index.
-
-See [`scripts/README.md`](scripts/README.md) for the naming convention and for
-what this study still lacks against `resource_extraction` and `land_tenure`.
-
-------------------------------------------------------------------------
+---
 
 *Maintained by [ftsiboe](https://github.com/ftsiboe)*

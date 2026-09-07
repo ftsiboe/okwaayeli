@@ -19,12 +19,21 @@ bibliography: references.bib
 #   IEEE (numbered):                 csl/ieee.csl               [current]
 #   Elsevier Harvard (author-date):  csl/elsevier-harvard.csl
 #
-# Every citation in sections/ is bracketed (`[@key]`), so both styles render
-# without rewriting prose. Two things do NOT follow the switch automatically:
-# reference.docx styles the bibliography for hanging-indent author-date, and
-# 02_data.Rmd still carries five hand-typed markers "[21], [22], [23], [25],
-# [26]" left over from the pre-Harvard draft. Under IEEE those are
-# indistinguishable from citeproc's own output while pointing at nothing.
+# Citations in sections/ are roughly half bracketed ([@key]) and half narrative
+# (@key, which renders "Author [n]" under IEEE and "Author (year)" under
+# Harvard). Both forms follow the switch, so neither needs rewriting when the
+# style changes. Verified 2026-09-07: 83 bracketed, 82 narrative.
+#
+# One thing does NOT follow the switch: reference.docx styles the bibliography
+# for hanging-indent author-date, so a move to IEEE numbering leaves the list
+# formatted for the style it is not in.
+#
+# An earlier version of this note warned that 02_data.Rmd carried five
+# hand-typed markers "[21], [22], [23], [25], [26]" from the pre-Harvard draft,
+# which under IEEE would be indistinguishable from citeproc's output while
+# pointing at nothing. Those are GONE -- a scan of every section on 2026-09-07
+# found zero literal [NN] markers outside HTML comments, where the numbers that
+# remain are Word-draft comment ids, not citations.
 csl: "`r Sys.getenv('ARTICLE_CSL', 'csl/ieee.csl')`"
 link-citations: true
 ---

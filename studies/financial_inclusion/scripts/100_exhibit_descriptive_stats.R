@@ -191,9 +191,16 @@ message("Shares: ", length(IND), " indicators x ", length(crops_b), " crops ..."
 t2 <- do.call(rbind, lapply(crops_b, function(cr) {
   dc <- dt[as.character(dt$CropID) == cr, , drop = FALSE]
   if (!nrow(dc)) return(NULL)
+  # wave_diff_direction: Table 3's change column is headed "Change (2012/13 to
+  # 2016/17)", so it must be LATER less EARLIER. The package default is the
+  # reverse, kept there because resource_extraction and land_tenure parity-check
+  # against Stata do-files that use it. wave_diff_scale: the loan-amount rows go
+  # through this same call, and the default x100 turned a GHS 824.60 change into
+  # 82,459.505; "indicator_only" leaves non-0/1 outcomes in their own units.
   r <- try(descriptive_indicator_shares(
     descriptive_prepare(dc), IND,
-    trend = "wave_diff", waves = DESC_WAVES, per_wave = TRUE),
+    trend = "wave_diff", waves = DESC_WAVES, per_wave = TRUE,
+    wave_diff_direction = "to_less_from", wave_diff_scale = "indicator_only"),
     silent = TRUE)
   if (inherits(r, "try-error") || is.null(r)) {
     message("  no shares for crop: ", cr)

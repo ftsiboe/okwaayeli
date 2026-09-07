@@ -218,9 +218,16 @@ lapply(
             # lets them ship.
             #
             # The second clause requires at least one untreated observation, so
-            # only variables that can support a contrast are carried. Applied
-            # passes (1,657 non-borrower records against 3,050); Accept, Proces
-            # and the Refusal_* block do not, or do so on a handful.
+            # only variables that can support a contrast are carried.
+            #
+            # VERIFIED against the 2026-09-07 run, from the disag_variables list
+            # in narrative/article_objects.json: the gate drops every Source_*,
+            # Collateral_* and Use_* variable, which is what it is for. Applied,
+            # Accept, Proces and Refusal_2..6 all PASS -- an earlier version of
+            # this comment claimed Accept, Proces and the Refusal_* block did
+            # not, and that was wrong. Table 6 reports Applied, Proces and
+            # Refused and does not report the Refusal_* block, which is a
+            # choice made in .T6_MAP rather than a consequence of this gate.
             if(round(mean(data[,ddx],na.rm=T),2) >= 0.03 &&
                sum(!is.na(data[,ddx]) & data[,technology_variable] %in% 0) > 0){ 
               disagscors_list <- c(disagscors_list,ddx)

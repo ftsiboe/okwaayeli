@@ -17,17 +17,17 @@ unlink(list.files(tools::R_user_dir("okwaayeli", which = "cache"),full.names = T
 # ============================================================================
 # STAGES
 # ============================================================================
-INITIALIZE  <- TRUE  # 000  study scaffolding                                  fast
-INDEX       <- TRUE  # 000  -> data/financial_inclusion_index.rds             ~1 min
-DATA        <- TRUE  # 001  harmonized releases -> study_raw_data              fast
-MATCHING    <- TRUE  # 002  -> estimation_data, matched samples                EXPENSIVE
-TREATMENT   <- TRUE  # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
-MSF         <- FALSE  # 004  -> output/estimations/                             HPC, hours
-DESCRIPTIVE <- FALSE   # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
-FIGURES     <- FALSE   # 101  -> output/figures/ (png + data)                    moderate
-WORKBOOK    <- FALSE   # 102  -> output/tables/financial_inclusion_tables.xlsx  minutes
-OBJECTS     <- FALSE   # 301  -> narrative/article_objects.json                  fast
-RENDER      <- FALSE   # 302  -> narrative/financial-inclusion.docx / .html      fast
+INITIALIZE  <- TRUE # 000  study scaffolding                                  fast
+INDEX       <- FALSE # 000  -> data/financial_inclusion_index.rds             ~1 min
+DATA        <- FALSE # 001  harmonized releases -> study_raw_data              fast
+MATCHING    <- FALSE # 002  -> estimation_data, matched samples                EXPENSIVE
+TREATMENT   <- FALSE # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
+MSF         <- FALSE # 004  -> output/estimations/                             HPC, hours
+DESCRIPTIVE <- FALSE # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
+FIGURES     <- FALSE # 101  -> output/figures/ (png + data)                    moderate
+WORKBOOK    <- FALSE # 102  -> output/tables/financial_inclusion_tables.xlsx  minutes
+OBJECTS     <- TRUE # 301  -> narrative/article_objects.json                  fast
+RENDER      <- TRUE # 302  -> narrative/financial-inclusion.docx / .html      fast
 
 # ---- Citation style ---------------------------------------------------------
 CITATION_STYLE <- "ieee"       # "ieee" (numbered) or "elsevier" (Harvard, author-date)
@@ -50,7 +50,9 @@ CITATION_STYLE <- "ieee"       # "ieee" (numbered) or "elsevier" (Harvard, autho
 # Typical runs:
 #   article only .................. OBJECTS + RENDER                (default)
 #   descriptives changed .......... DESCRIPTIVE + OBJECTS + RENDER
-#   re-estimated (004 on HPC) ..... FIGURES + OBJECTS + RENDER
+#   re-estimated (004 on HPC) ..... FIGURES + WORKBOOK + OBJECTS + RENDER
+#   exhibit builders edited ....... FIGURES + WORKBOOK + OBJECTS + RENDER
+#   prose only .................... OBJECTS + RENDER
 #   index definition changed ...... INDEX + DATA + MATCHING + TREATMENT + (004)
 #   harmonized data changed ....... INDEX + DATA + MATCHING + TREATMENT + (004 on HPC)
 #                                   then DESCRIPTIVE + FIGURES + OBJECTS + RENDER

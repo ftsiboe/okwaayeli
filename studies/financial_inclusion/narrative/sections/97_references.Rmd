@@ -1,1 +1,14 @@
+<!--
+The heading alone is not enough. Pandoc places the bibliography where it finds a
+div with id "refs", and if there is none it appends the list to the very END of
+the document. Because 98_tables_and_figures and 99_appendix are included AFTER
+this file, that put the reference list after the appendix while this heading sat
+in the middle of the document with nothing under it -- which reads, correctly, as
+a missing reference list. The fenced div below is the anchor; keep it directly
+under the heading, and keep this file included before the exhibits.
+-->
+
 # References
+
+::: {#refs}
+:::

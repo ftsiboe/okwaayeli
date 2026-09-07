@@ -349,7 +349,7 @@ exhibit_cache_clear <- function() {
   f <- function(x) if (is.na(x)) "?" else format(round(x), big.mark = ",")
   c(sprintf("GLSS6 (2012/13) (n=%s)", f(n("GLSS6"))),
     sprintf("GLSS7 (2016/17) (n=%s)", f(n("GLSS7"))),
-    sprintf("Change (2012/13 to 2016/17, pp) (n=%s)", f(n("pooled"))))
+    sprintf("Change (2012/13 to 2016/17) (n=%s)", f(n("pooled"))))
 }
 
 .tbl2_live <- function() .memo("tbl2", function() .shares_live(.T2_MAP, "Table 2"))
@@ -360,7 +360,7 @@ ft_table2 <- function()
     spanner = c("", "Mean (standard deviation)", ""),
     spanwidths = c(1, 2, 1),
     notes = c("Standard deviations in parentheses.",
-      "The change column is the difference in margins between waves, in percentage points (GLSS6 less GLSS7).",
+      "The change column is the difference in margins between waves (GLSS7 less GLSS6), in percentage points for the indicator rows and in nominal Ghana cedis for the loan-amount rows.",
       "Restricted to GLSS6-GLSS7, the rounds administering the financial inclusion module in comparable form.",
       .SRC_NOTE))
 
@@ -369,7 +369,7 @@ ft_table3 <- function()
     spanner = c("", "Mean (standard deviation)", ""),
     spanwidths = c(1, 2, 1),
     notes = c("Standard deviations in parentheses.",
-      "The change column is the difference in margins between waves, in percentage points (GLSS6 less GLSS7).",
+      "The change column is the difference in margins between waves (GLSS7 less GLSS6), in percentage points for the indicator rows and in nominal Ghana cedis for the loan-amount rows.",
       "Loan amounts are in nominal Ghana cedis.",
       .SRC_NOTE))
 
@@ -480,8 +480,11 @@ if (is.na(.opt))
         # restrict now follows .RESTRICT, as Table 4 does.
         #
         # The comment this replaces claimed Restricted and Unrestricted carry
-        # identical estimates for TGR/TE/MTE. That is true of TGR ONLY. On the
-        # 2026-09-03 fits, matched sample, stat = "mean":
+        # identical estimates for TGR/TE/MTE. That is true of TGR ONLY. The
+        # illustration below is from the SUPERSEDED 2026-09-03 fits under the
+        # simple mean, kept because it is what motivated the pin; for current
+        # values see Fig. S2 panel F, which reports the same contrast under
+        # .RESTRICT and .STAT. Matched sample, stat = "mean", 2026-09-03:
         #
         #     TGR   -0.0527 under both
         #     TE    +0.0025 (t  +2.0) Restricted | -0.0139 (t -18.4) Unrestricted
@@ -491,7 +494,7 @@ if (is.na(.opt))
         # the two tables disagree on the TE sign, and it is why the prose could
         # not sign that gap. One pin, one specification, both tables.
         .jcell(ef, list(TCHLvel = lv, type = ty, sample = .opt,
-                        Survey = "GLSS0", stat = "mean", CoefName = coef,
+                        Survey = "GLSS0", stat = .STAT, CoefName = coef,
                         estType = "teBC", restrict = .RESTRICT))
       }
       a <- cel("0", "efficiency"); b <- cel("1", "efficiency")
@@ -525,8 +528,24 @@ ft_table5 <- function()
 
 # ---- Table 6: parity by financial-service indicator --------------------------
 # Same query 101_exhibit_figures.R runs for the heterogeneity figures:
-# CoefName == "disag_efficiencyGap_lvl" is the no-credit-less-credit difference,
-# and `input` carries TGR / TE / MTE.
+# CoefName == "disag_efficiencyGap_lvl" is the CREDIT-LESS-NO-CREDIT (B less A)
+# difference -- the same orientation as efficiencyGap_lvl in Tables 4 and 5, and
+# as line 505 states. `input` carries TGR / TE / MTE.
+#
+# 2026-09-07: the spanner and note below said "no credit less credit", the exact
+# reverse of what the cells hold, which inverted the reading of every row. The
+# cells were never wrong; the labels were. Verified against Table 4: the pooled
+# B-A TGR gap is -0.101 and Table 6's bank-account row prints -0.105, same sign
+# and magnitude. Under the old label that row read as credit users having a
+# HIGHER technology gap ratio, which is the opposite of the paper's finding.
+# 2026-09-07: four rows removed -- "Not necessary/interested"
+# (NonBanked_Why_7), "Employer/union" (Bank_Info_3), "Representative from the
+# financial institution" (Bank_Info_8) and "Collateral/trust" (Collateral_3).
+# Each rendered blank because 004's both-arms gate drops a disaggregation
+# variable with no untreated observations: the item is elicited only of
+# borrowers, so every farmer in scope is treated by construction and the cell
+# is not a contrast. That is Appiah-Twumasi's v005 comment [23] behaving
+# correctly; a blank row shipping under .guard_filled()'s 75% tolerance was not.
 .T6_MAP <- data.frame(
   label = c(
     "Has bank account/contributing to a scheme", "Insured",
@@ -536,26 +555,23 @@ ft_table5 <- function()
     "Susu scheme",
     "Reasons for no bank account and contributing to a loan/savings scheme",
     "Don't have enough money or income", "Don't have regular income",
-    "Financial institutions are too far away", "Not necessary/interested",
+    "Financial institutions are too far away",
     "Type of account held in the financial institution",
     "Current or cheque", "Savings",
     "Source of financial institution knowledge",
-    "Colleagues/relatives", "Community/assoc. leaders", "Employer/union",
-    "Radio", "Representative from the financial institution",
+    "Colleagues/relatives", "Community/assoc. leaders",
+    "Radio",
     "Loan application outcomes",
-    "Loan applied", "Loan application processing", "Loan application rejected",
-    "Collateral/trust"),
-  header = c(0,0, 1, 0,0,0,0,0,0, 1, 0,0,0,0, 1, 0,0, 1, 0,0,0,0,0, 1, 0,0,0, 0),
+    "Loan applied", "Loan application processing", "Loan application rejected"),
+  header = c(0,0, 1, 0,0,0,0,0,0, 1, 0,0,0, 1, 0,0, 1, 0,0,0, 1, 0,0,0),
   Variable = c(
     "Banked", "Insured",
     NA, "InstTyp_Bank", "InstTyp_Coop", "InstTyp_Invt", "InstTyp_Momo",
     "InstTyp_Save", "InstTyp_Susu",
     NA, "NonBanked_Why_1", "NonBanked_Why_2", "NonBanked_Why_3",
-    "NonBanked_Why_7",
     NA, "AccTyp_Curnt", "AccTyp_Save",
-    NA, "Bank_Info_1", "Bank_Info_2", "Bank_Info_3", "Bank_Info_7",
-    "Bank_Info_8",
-    NA, "Applied", "Proces", "Refused", "Collateral_3"),
+    NA, "Bank_Info_1", "Bank_Info_2", "Bank_Info_7",
+    NA, "Applied", "Proces", "Refused"),
   stringsAsFactors = FALSE)
 # v005 prints "#N/A" in the "Loan application Processing" row -- an Excel
 # artifact that reached print. It will render blank or live here; either is an
@@ -592,7 +608,7 @@ ft_table5 <- function()
       # 0/1 indicator, so this is uniform across the table.
       out[[paste0("c", j)]][i] <- .jcell(ds, list(
         disagscors_var = v, disagscors_level = .T6_LEVEL, input = inputs[j],
-        CoefName = "disag_efficiencyGap_lvl", stat = "mean",
+        CoefName = "disag_efficiencyGap_lvl", stat = .STAT,
         # .RESTRICT, as Tables 4 and 5 -- see the note in .tbl5_live().
         sample = .opt, Survey = "GLSS0", restrict = .RESTRICT,
         estType = "teBC"))
@@ -609,11 +625,11 @@ ft_table6 <- function()
     c("Technology gap ratio (TGR)", "Pure farmer technical efficiency (TE)",
       "Meta-frontier technical efficiency (MTE)"),
     first_lab = "", size = 8,
-    spanner = c("", "Difference [no credit less credit]"),
+    spanner = c("", "Difference [credit less no credit, B-A]"),
     spanwidths = c(1, 3),
     notes = c(.SIG_NOTE,
       "Jackknife standard errors in parentheses.",
-      "Each cell is the no-credit less credit difference within the stated group, from the matched sample.",
+      "Each cell is the credit less no-credit difference (B-A) within the stated group, from the matched sample, matching Tables 4 and 5.",
       .SRC_NOTE))
 
 # ==============================================================================
@@ -641,19 +657,36 @@ ft_table6 <- function()
   list(key = "Meta",     samp = "OPT"),
   list(key = "Meta",     samp = "unmatched"))
 
-# UNRESOLVED, and deliberately a single switch rather than a scatter of literals.
+# RESOLVED 2026-09-07, and deliberately a single switch rather than a scatter of
+# literals.
 #
-# Every frame carries restrict = "Restricted" / "Unrestricted" and the two
-# disagree for everything except TGR. Which one v005 reported cannot be settled
-# from the current objects, because they are a different vintage (fitted
-# 2026-04-26, against a matching that was re-run 2026-08-08) and reproduce none
-# of the draft's numbers exactly.
+# Every frame carries restrict = "Restricted" / "Unrestricted". They agree
+# exactly on TGR and differ on the efficiency margins: unrestricted moves the TE
+# gap close to zero and the MTE gap somewhat more negative (Fig. S2, panel F).
+# "Restricted" was originally a working guess, chosen because it came closest to
+# the v005 draft on the Land elasticity while the estimation objects were a
+# different vintage from the matching. The 2026-09-07 cluster re-run removed the
+# vintage problem, and Restricted is now the reported specification on its own
+# merits: it is the one under which the metafrontier satisfies monotonicity for
+# every observation and curvature for the largest share of them (Table 4's
+# diagnostics block), which is what the regularity restrictions are for.
 #
-# "Restricted" is the closer of the two on the most diagnostic comparison --
-# the Land elasticity, where Restricted gives 0.756 against v005's 0.753 while
-# Unrestricted gives 0.547. Taken as the working choice. Flip this one constant
-# after MSF re-runs and the parity check is done.
+# Changing this constant changes every table AND Fig. S2's reference band, and
+# Section 5.5 describes the unrestricted frontier as a robustness variant. If you
+# flip it, that paragraph has to be rewritten, not just re-rendered.
 .RESTRICT <- "Restricted"
+
+# AGGREGATION. The companion pin to .RESTRICT, and the other half of the
+# "one specification for every exhibit" rule. The estimation objects carry
+# wmean / mean / median / mode; until 2026-09-07 Tables 4, 5 and 6 and
+# Figures 2-4 silently read "mean" while Fig. S2's reference band read
+# "wmean", so the paper printed -0.101 in Table 4 and -0.1045 in the figure
+# for the same quantity, and Section 5.5 described the weighted mean as the
+# preferred estimate while the tables were unweighted. GLSS is a weighted
+# complex survey and Table 1's descriptives are weighted, so the weighted
+# mean is the headline and the simple mean and median are the variants
+# Fig. S2 reports. 101_exhibit_figures.R carries the same choice.
+.STAT <- "wmean"
 
 .samp_of <- function(x) if (identical(x, "OPT")) .opt else x
 
@@ -672,14 +705,42 @@ ft_table6 <- function()
 
 # Sum a diagnostic over the two waves. Only the sample-size row needs this; see
 # the GLSS0 note above.
+#
+# 2026-09-07: this returned "" for every column of Table 4, so the paper shipped
+# six frontiers with no n against any of them. Two faults. First, `==` against a
+# column holding NA yields NA, so `any(ok)` was NA rather than FALSE and the
+# guard could not do its job; land_tenure:466 and resource_extraction:207, which
+# both work, use `%in%` throughout, and this now matches them. Second, an empty
+# match returned "" -- a silent blank, which .guard_filled()'s 75% tolerance
+# then let through. It now falls back through the keyings that could plausibly
+# hold Nobs and, failing all of them, STOPS and prints the keys actually present
+# for that coefficient. A missing sample size is a defect to be seen, not a gap
+# to be papered over.
 .sum_waves <- function(df, col, coefname) {
-  v <- vapply(c("GLSS6", "GLSS7"), function(w) {
-    ok <- df$CoefName == coefname & as.character(df$TCHLvel) == col$key &
-          df$sample == .samp_of(col$samp) & df$restrict == .RESTRICT &
-          df$Survey == w
-    if (!any(ok)) NA_real_ else df$Estimate[ok][1]
-  }, numeric(1))
-  if (all(is.na(v))) "" else format(round(sum(v, na.rm = TRUE)), big.mark = ",")
+  pick <- function(surveys, restrict) {
+    ok <- df$CoefName %in% coefname &
+          as.character(df$TCHLvel) %in% col$key &
+          df$sample %in% .samp_of(col$samp) &
+          df$Survey %in% surveys
+    if (!is.null(restrict)) ok <- ok & df$restrict %in% restrict
+    df$Estimate[ok]
+  }
+  v <- pick(c("GLSS6", "GLSS7"), .RESTRICT)          # per-wave, as land_tenure
+  if (!length(v)) v <- pick(c("GLSS6", "GLSS7"), NULL)  # Nobs may not vary by restrict
+  if (!length(v)) v <- pick("GLSS0", .RESTRICT)      # some fits carry the pooled row only
+  if (!length(v)) v <- pick("GLSS0", NULL)
+  if (!length(v)) {
+    d <- df[df$CoefName %in% coefname, , drop = FALSE]
+    stop("exhibit_helpers_tables.R: Table 4 cannot resolve ", coefname,
+         " for TCHLvel ", col$key, " / sample ", .samp_of(col$samp), ".\n",
+         "  Rows carrying that coefficient at all: ", nrow(d), "\n",
+         "  Survey  : ", paste(unique(as.character(d$Survey)),  collapse = ", "), "\n",
+         "  sample  : ", paste(unique(as.character(d$sample)),  collapse = ", "), "\n",
+         "  restrict: ", paste(unique(as.character(d$restrict)), collapse = ", "), "\n",
+         "  TCHLvel : ", paste(unique(as.character(d$TCHLvel)), collapse = ", "),
+         call. = FALSE)
+  }
+  format(round(sum(v, na.rm = TRUE)), big.mark = ",")
 }
 
 # Plain value, no stars -- the diagnostics block prints rates and criteria.
@@ -728,7 +789,7 @@ ft_table6 <- function()
   add("Elasticity", 1, blank)
   for (i in seq_len(nrow(.T4_EL)))
     add(.T4_EL$label[i], 0, vapply(.FRONT_COLS, function(cc)
-      .fcell(el, cc, list(input = .T4_EL$input[i], stat = "mean"),
+      .fcell(el, cc, list(input = .T4_EL$input[i], stat = .STAT),
              level_coef = "elasticity", gap_coef = "elasticityGap_lvl"),
       character(1)))
 
@@ -741,7 +802,7 @@ ft_table6 <- function()
       add(names(which(c(Matched = "OPT", Unmatched = "unmatched") == sm)), 0,
           c(vapply(.FRONT_COLS[1:4], function(cc)
               .fcell(ef, utils::modifyList(cc, list(samp = sm)),
-                     list(type = ty, stat = "mean", estType = "teBC"),
+                     list(type = ty, stat = .STAT, estType = "teBC"),
                      level_coef = "efficiency", gap_coef = "efficiencyGap_lvl"),
               character(1)),
             "-", "-"))
@@ -944,7 +1005,13 @@ ft_tableS4 <- function()
             wave = "all", statistic = "mean")
   b <- .pick(m, k, "estimate"); s <- .pick(m, k, "sd")
   if (is.na(b)) return("")
-  sprintf("%.2f (%.2f)%s", b, s, if (isTRUE(dag)) " \u2020" else "")
+  # A crop x group cell holding one observation has a mean but no standard
+  # deviation, and "127.02 (NA)" reads as a build failure rather than as n = 1.
+  # Print the mean alone in that case; the parenthesis says "dispersion", and
+  # there is none to report.
+  dagger <- if (isTRUE(dag)) " \u2020" else ""
+  if (is.na(s)) sprintf("%.2f%s", b, dagger)
+  else sprintf("%.2f (%.2f)%s", b, s, dagger)
 }
 .d_trend <- function(m, tr, eq, cr, g, dag) {
   k <- list(treatment = tr, outcome = eq, crop = cr, group = g,
@@ -1089,8 +1156,9 @@ ft_tableS2 <- function()
     "tableS3" = .tblS3_live(),
     "tableS4" = .tblS4_live(),
     stop("exhibit_helpers_tables.R: no live build registered for '", id,
-         "'. Registered: table1, table2, table3, tableS1, tableS2. ",
-         "Tables 4/5/6/S3/S4 are still stubs.",
+         "'. Registered: table1, table2, table3, table4, table5, table6, ",
+         "tableS1, tableS2, tableS3, tableS4, and -- through the wrapper at ",
+         "the foot of this file -- tableS5 and tableS6.",
          call. = FALSE))
 }
 
@@ -1153,11 +1221,14 @@ tbl_pct <- function(id, label, col, digits = 1, block = NULL)
 
 # ==============================================================================
 # ROUND 2 ADDITIONS -- Table S5 (variable definitions) and Table S6 (index
-# loadings). Written 2026-09-02 for the Round-2 revision; not yet run.
+# loadings). Written 2026-09-02; APPENDED AND LIVE since 2026-09-02, and both
+# tables have rendered in every build since. The staging copy this was appended
+# from now sits in scripts/old-codes/exhibit_builders_round2.R and must not be
+# appended a second time.
 # ==============================================================================
-# WHERE THIS GOES
-#   Append this file VERBATIM to the END of scripts/exhibit_helpers_tables.R,
-#   after tbl_pct(). Nothing above it is modified. It defines
+# WHAT THIS IS
+#   The tail of scripts/exhibit_helpers_tables.R, following tbl_pct(). It
+#   defines
 #
 #       .tblS5_live() / ft_tableS5()      Table S5
 #       .tblS6_live() / ft_tableS6()      Table S6
@@ -1175,20 +1246,23 @@ tbl_pct <- function(id, label, col, digits = 1, block = NULL)
 #
 # WHEN YOU NEXT EDIT .live_table() BY HAND
 #   Fold "tableS5" = .tblS5_live() and "tableS6" = .tblS6_live() into its
-#   switch(), delete the wrapper at the foot of this block, and refresh that
-#   function's "Registered: ..." error text, which is already stale (it still
-#   says Tables 4/5/6/S3/S4 are stubs). The wrapper exists so that this block
-#   works the moment it is appended; the switch is where the registration
-#   belongs permanently, for the reason its own comment gives.
+#   switch() and delete the wrapper at the foot of this block. The wrapper
+#   exists so that this block worked the moment it was appended; the switch is
+#   where the registration belongs permanently. Its "Registered: ..." error text
+#   was refreshed 2026-09-07 and names every id including these two, so do not
+#   forget to amend it if you move them.
+#   Not urgent: the wrapper works, and no prose looks these two ids up.
 #
-# TABLE S6 NEEDS A RELEASE THAT DOES NOT LIVE IN THE STUDY FOLDER
-#   data-raw/releases/harmonized_data/financial_inclusion_index_diagnostics.dta
-#   is written by scripts/000_INDEX_financial_inclusion_study.do (the postfile
-#   block under DIAGNOSTICS), at the REPOSITORY root -- not under
-#   studies/financial_inclusion, which is what .STUDY_ROOT points at. Run that
-#   do-file once, from Stata, before knitting. If the .dta is absent
-#   ft_tableS6() stops and prints every path it looked in; it never degrades to
-#   a stored copy. Table S6 also needs the haven package.
+# WHERE TABLE S6 READS FROM  (changed 2026-09-07)
+#   studies/financial_inclusion/data/financial_inclusion_index_diagnostics.rds,
+#   written by the DIAGNOSTICS block of
+#   scripts/000_INDEX_financial_inclusion_study.R -- the R port that replaced
+#   the Stata do-file so the index can be rebuilt on a cluster with no Stata.
+#   That stage is INDEX in run_article.R. The old data-raw/ .dta location is
+#   still searched, after the .rds, so an older checkout keeps rendering; see
+#   .S6_CANDIDATES. If nothing is found ft_tableS6() stops and prints every path
+#   it looked in; it never degrades to a stored copy. Table S6 needs haven only
+#   for the legacy .dta path.
 #
 #   Table S5 needs nothing at all: it states the specification, not an
 #   estimate, so it is a literal data.frame here. Every variable name in it was

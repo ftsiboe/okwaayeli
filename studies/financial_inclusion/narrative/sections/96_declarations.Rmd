@@ -1,9 +1,32 @@
+<!--
+Drafted 2026-09-07. Data availability is written from what the repository
+actually does and should be accurate as it stands; check the release tag and
+the GSS wording against however the journal wants public archives cited.
+FUNDING and AUTHOR CONTRIBUTIONS are placeholders and MUST be replaced before
+submission -- they name what is needed rather than asserting anything.
+-->
+
 # Declarations
 
-**Funding.** <!-- TODO -->
+**Funding.** <!-- REPLACE. Name each grant with its awarding body and award
+number, or state "This research received no specific grant from any funding
+agency in the public, commercial or not-for-profit sectors." Do not submit
+with this comment in place. -->
 
 **Conflicts of interest.** The authors declare no competing interests.
 
-**Data availability.** <!-- TODO: point at the harmonized release. -->
+**Data availability.** This study uses the sixth and seventh rounds of the
+Ghana Living Standards Survey (GLSS6, 2012/13; GLSS7, 2016/17), collected by
+the Ghana Statistical Service and available from the Service on request. The
+harmonized analysis files derived from those rounds, the financial-inclusion
+index documented in Note S1, and the code that produces every table and figure
+in this paper are openly available in the `okwaayeli` repository at
+<https://github.com/ftsiboe/okwaayeli>; the harmonized datasets are distributed
+as release assets and are retrieved programmatically by the analysis scripts,
+so the results reported here can be reproduced from the repository without
+separate data preparation.
 
-**Author contributions.** <!-- TODO -->
+**Author contributions.** <!-- REPLACE with CRediT roles for each author, e.g.
+"F. Tsiboe: conceptualization, methodology, software, formal analysis, data
+curation, writing - original draft. [Co-author]: writing - review and editing,
+validation." Do not submit with this comment in place. -->

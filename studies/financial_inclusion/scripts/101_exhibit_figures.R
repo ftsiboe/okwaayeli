@@ -57,12 +57,12 @@ res$level  <- as.character(res$disagscors_level)
 res <- res[res$estType %in% "teBC",]
 res <- res[res$Survey %in% "GLSS0",]
 res <- res[res$restrict %in% "Restricted",]
-res <- res[res$stat %in% "mean",]
+res <- res[res$stat %in% "wmean",]  # .STAT in exhibit_helpers_tables.R -- keep in step
 res <- res[!res$sample %in% "unmatched",]
 res <- res[res$CoefName %in% "disag_efficiencyGap_lvl",]
 res <- res[c("disasg","level","fxnforms","distforms","Survey","input","technology_variable","Tech","CoefName","Estimate","Estimate.sd","jack_pv")]
 
-fig <- fig_heterogeneity00(res=res,y_title="Difference (no-credit less Credit)\n",study_environment=study_environment)
+fig <- fig_heterogeneity00(res=res,y_title="Difference (credit less no-credit)\n",study_environment=study_environment)
 fig[["genderAge"]] <- fig[["genderAge"]] + theme(axis.text.x = element_text(size = 5.5))
 ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_crop_region.png"), fig[["crop_region"]],dpi = 600,width = 8, height = 5)
 ggsave(file.path(study_dir_figures(study_environment),"heterogeneity_genderAge.png"), fig[["genderAge"]],dpi = 600,width = 8, height = 5)
@@ -80,7 +80,7 @@ fig <- ggplot(data = data, aes(x = x, y = Estimate, group = input, shape = input
   geom_errorbar(aes(ymax = Estimate + Estimate.sd, ymin = Estimate - Estimate.sd), width = 0.25) +
   geom_point(size = 2) +
   labs(title = "", x = "\nFormal account ownership", 
-       y = "Difference (no-credit less Credit)\n", caption = "") +
+       y = "Difference (credit less no-credit)\n", caption = "") +
   scale_fill_manual(name = "", values = c("orange", "darkgreen", "blue")) +
   scale_color_manual(name = "", values = c("orange", "darkgreen", "blue")) +
   scale_shape_manual(name = "", values = c(21, 22, 23, 24, 25, 8, 4)) +
@@ -183,7 +183,7 @@ openxlsx::saveWorkbook(wb,file.path(study_environment$wd$output,paste0(project_n
 
 # Fig - Robustness  
 rm(list= ls()[!(ls() %in% c(Keep.List))])
-fig_robustness(y_title="\nDifference [no-credit less Credit]",
+fig_robustness(y_title="\nDifference [credit less no-credit]",
                res_list = c(file.path(study_environment$wd$estimations,"CropID_Pooled_credit_hh_CD_hnormal_optimal.rds"),
                             list.files(study_environment$wd$estimations,
                                        pattern = "CropID_Pooled_credit_hh_TL_",full.names = T)),
@@ -220,7 +220,7 @@ res$level <- res$disagscors_level
 res <- res[res$estType %in% "teBC",]
 res <- res[res$Survey %in% "GLSS0",]
 res <- res[res$restrict %in% "Restricted",]
-res <- res[res$stat %in% "mean",]
+res <- res[res$stat %in% "wmean",]  # .STAT in exhibit_helpers_tables.R -- keep in step
 res <- res[!res$sample %in% "unmatched",]
 res <- res[res$CoefName %in% "disag_efficiencyGap_lvl",]
 res <- res[res$CoefName %in% "disag_efficiencyGap_lvl",]

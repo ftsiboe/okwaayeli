@@ -597,6 +597,16 @@ descriptive_expand_category <- function(data, category_var) {
 #'   only `StatTotal`).
 #' @param wave_var Character. Default `"Surveyx"`.
 #' @param weights Character or `NULL`.
+#' @param wave_diff_direction Character. Orientation of the `trend = "wave_diff"`
+#'   cell. `"from_less_to"` (default, and the historical behaviour) is
+#'   `waves[1] - waves[2]`, i.e. earlier less later; `"to_less_from"` is later
+#'   less earlier, which is what a column headed "change from X to Y" means.
+#'   Only `"from_less_to"` reproduces the resource_extraction and land_tenure
+#'   Stata parity checks, so it remains the default.
+#' @param wave_diff_scale Character. `"always"` (default, historical) multiplies
+#'   the difference by 100 for every outcome, which is right for shares and
+#'   nonsense for amounts. `"indicator_only"` applies the x100 only where the
+#'   outcome takes values in {0, 1} and leaves other outcomes in their own units.
 #'
 #' @return A `data.frame` with `outcome`, `wave`, `group = NA`, `statistic`,
 #'   `estimate`, `se`, `min`, `max`, `sd`, `n`. The pooled share is emitted with
@@ -608,8 +618,12 @@ descriptive_expand_category <- function(data, category_var) {
 descriptive_indicator_shares <- function(data, indicators,
                                          trend = c("continuous", "wave_diff", "none"),
                                          waves = NULL, per_wave = TRUE,
-                                         wave_var = "Surveyx", weights = NULL) {
+                                         wave_var = "Surveyx", weights = NULL,
+                                         wave_diff_direction = c("from_less_to", "to_less_from"),
+                                         wave_diff_scale = c("always", "indicator_only")) {
   trend <- match.arg(trend)
+  wave_diff_direction <- match.arg(wave_diff_direction)
+  wave_diff_scale <- match.arg(wave_diff_scale)
   if (trend == "wave_diff" && (is.null(waves) || length(waves) != 2))
     stop("descriptive_indicator_shares(): trend='wave_diff' needs waves=c(from,to).",
          call. = FALSE)
@@ -640,11 +654,32 @@ descriptive_indicator_shares <- function(data, indicators,
     } else if (trend == "wave_diff") {
       a <- s_waves$estimate[s_waves$wave == waves[1]]
       b <- s_waves$estimate[s_waves$wave == waves[2]]
-      if (length(a) && length(b)) out[[length(out) + 1]] <- data.frame(
-        wave = "trend", group = NA_character_, statistic = "change_pp",
-        estimate = (a[1] - b[1]) * 100, se = NA_real_, min = NA_real_,
-        max = NA_real_, sd = NA_real_, n = NA_real_, outcome = v,
-        stringsAsFactors = FALSE)
+      if (length(a) && length(b)) {
+        # DIRECTION. The original behaviour is waves[1] - waves[2], i.e. EARLIER
+        # less LATER, which is what the resource_extraction and land_tenure
+        # parity checks against the Stata do-files expect. It is also the reverse
+        # of what a column headed "change from <first wave> to <last wave>"
+        # states, so a study whose exhibit is headed that way passes
+        # wave_diff_direction = "to_less_from". Default is unchanged.
+        d <- if (wave_diff_direction == "to_less_from") b[1] - a[1] else a[1] - b[1]
+
+        # SCALE. x100 turns a share difference into percentage points. Studies
+        # that push non-share outcomes (loan amounts, areas, quantities) through
+        # this same call get a meaningless number from it -- a GHS 824.60 change
+        # printing as 82,459.505. wave_diff_scale = "indicator_only" applies the
+        # x100 only where the outcome is genuinely a 0/1 indicator, and leaves
+        # everything else in its own units. Default is unchanged.
+        vv <- data[[v]]
+        vv <- vv[!is.na(vv)]
+        is_ind <- length(vv) > 0 && all(vv %in% c(0, 1))
+        sc <- if (wave_diff_scale == "indicator_only" && !is_ind) 1 else 100
+
+        out[[length(out) + 1]] <- data.frame(
+          wave = "trend", group = NA_character_, statistic = "change_pp",
+          estimate = d * sc, se = NA_real_, min = NA_real_,
+          max = NA_real_, sd = NA_real_, n = NA_real_, outcome = v,
+          stringsAsFactors = FALSE)
+      }
     }
   }
   if (!length(out)) return(NULL)

@@ -11,7 +11,9 @@ descriptive_indicator_shares(
   waves = NULL,
   per_wave = TRUE,
   wave_var = "Surveyx",
-  weights = NULL
+  weights = NULL,
+  wave_diff_direction = c("from_less_to", "to_less_from"),
+  wave_diff_scale = c("always", "indicator_only")
 )
 }
 \arguments{
@@ -32,6 +34,18 @@ only \code{StatTotal}).}
 \item{wave_var}{Character. Default \code{"Surveyx"}.}
 
 \item{weights}{Character or \code{NULL}.}
+
+\item{wave_diff_direction}{Character. Orientation of the \code{trend = "wave_diff"}
+cell. \code{"from_less_to"} (default, and the historical behaviour) is
+\code{waves[1] - waves[2]}, i.e. earlier less later; \code{"to_less_from"} is later
+less earlier, which is what a column headed "change from X to Y" means.
+Only \code{"from_less_to"} reproduces the resource_extraction and land_tenure
+Stata parity checks, so it remains the default.}
+
+\item{wave_diff_scale}{Character. \code{"always"} (default, historical) multiplies
+the difference by 100 for every outcome, which is right for shares and
+nonsense for amounts. \code{"indicator_only"} applies the x100 only where the
+outcome takes values in {0, 1} and leaves other outcomes in their own units.}
 }
 \value{
 A \code{data.frame} with \code{outcome}, \code{wave}, \code{group = NA}, \code{statistic},

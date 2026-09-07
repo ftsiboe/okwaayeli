@@ -1,3 +1,19 @@
+# =============================================================================
+# SPENT STAGING COPY -- DO NOT APPEND, DO NOT EDIT, DO NOT SOURCE.
+#
+# This file was written on 2026-09-02 to be appended verbatim to the end of
+# scripts/exhibit_helpers_tables.R. That was done the same day, and Tables S5
+# and S6 have rendered in every build since. The live definitions are in
+# exhibit_helpers_tables.R, below the "ROUND 2 ADDITIONS" banner, and they have
+# been edited since this copy was taken -- most importantly Table S6 now reads
+# the .rds written by the R port of the index builder, not a Stata .dta under
+# data-raw/.
+#
+# Appending it a second time would define ft_tableS5()/ft_tableS6() twice and
+# wrap .live_table() twice. Kept only so the provenance of that block is
+# legible. Moved here 2026-09-07.
+# =============================================================================
+
 # ==============================================================================
 # ROUND 2 ADDITIONS -- Table S5 (variable definitions) and Table S6 (index
 # loadings). Written 2026-09-02 for the Round-2 revision; not yet run.

@@ -1,3 +1,18 @@
+* =============================================================================
+* SUPERSEDED 2026-09-06 by scripts/000_INDEX_financial_inclusion_study.R.
+*
+* The R port reproduces this do-file's output to 1e-13 on the loadings, exactly
+* on the released FinIdx / FinIdxSi values, and with zero off-diagonal
+* disagreement on FinIdxCat. It writes to studies/financial_inclusion/data as
+* .rds rather than to a hardcoded Windows path under data-raw/.
+*
+* This file is kept as the reference implementation the port was validated
+* against. It is not run by any stage. Do not use it to regenerate the index:
+* its output path no longer matches what 001 reads, and a stale index is
+* indistinguishable from a fresh one until the sample size is inspected -- which
+* is exactly how 3,214 farm operators were silently dropped on 2026-09-03.
+* =============================================================================
+
 /**************************************************************************
  * Filename: studies/financial_inclusion/scripts/000_INDEX_financial_inclusion_study.do
  * Author: Francis Tsiaboe (ftsiboe)

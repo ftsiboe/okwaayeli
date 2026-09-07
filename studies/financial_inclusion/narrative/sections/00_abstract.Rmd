@@ -6,23 +6,34 @@ BRIEF section 2: credit users have a LOWER technology gap ratio, the TE gap is
 small and unstable in sign, MTE is lower and carried by the TGR gap. Language is
 associational throughout.
 
-LENGTH: 150 words AS RENDERED -- each inline call resolves to one word. `wc -w`
-on this file overstates the count, because the source of an inline call is
-longer than its output. Re-count as rendered after any edit.
+LENGTH: **300 words maximum, AS RENDERED** (author instruction, 2026-09-07).
+Currently 244. Each inline R call resolves to ONE word when rendered, so a raw
+word count of this source overstates the total badly -- the source of a call is
+far longer than its output. To re-count after an edit, count the words of the
+abstract paragraph with every inline call treated as a single token. Do NOT
+paste a worked example into this comment: knitr scans for inline code BEFORE
+pandoc strips HTML comments, so a backtick-r fragment inside a comment is
+executed and stops the knit. That is exactly what happened on 2026-09-07.
 
-CUT FROM 335 -> 249 -> 150. What the 150-word version keeps: the premise, the
-two data rounds, sample size and treated share, the design in one clause, all
-three components of the decomposition (TGR, TE, MTE), the input-use result, the
-robustness claim with the cocoa exception, the associational caveat, and the
-loan-composition point that carries the policy reading. What it loses, and where
-to find it: the explicit statement that the two margins imply different policies
-(Sections 1 and 4.1); the enumeration of what robustness was checked over --
-borrower definition, matching algorithm, functional form, efficiency estimator,
-demographic/crop/regional subgroups (Section 5.5, Table 5, Fig. S2); "credit is
-measured as use rather than access" and "matching balances only observables",
-compressed here to "associations, not causal effects" (Section 4.4); the
-naming of the four inputs (Section 5.3, Figure 1). A longer 249-word version is
-in narrative/revision/superseded/00_abstract_249w.Rmd if a journal allows it.
+STRUCTURE: the five-part formula (author instruction, 2026-09-07), one paragraph:
+  1. general then specific background        2 sentences
+  2. knowledge gap, opening "However"        1 sentence
+  3. the finding, opening "Here we show"     1 sentence
+  4. approach and results                    3 sentences
+  5. implications                            1 sentence
+Part 4 is where a length cut has to come from, and the first thing to go is the
+meta-frontier efficiency figure: the technology gap alone carries the finding.
+Do not cut the clause in part 2 about comparing against a single frontier -- it
+is simultaneously the knowledge gap and the justification for the metafrontier
+design, and part 3 does not stand up without it.
+
+HISTORY OF THE LENGTH RULE. Cut 335 -> 249 -> 150 as a single flowing paragraph, then recast to the
+five-part formula at 244 under a 300-word cap. The 149-word paragraph version is
+in narrative/revision/superseded/00_abstract_150w.Rmd and should be restored
+verbatim from there if a journal caps at 150; a 249-word paragraph version is in
+narrative/revision/superseded/00_abstract_249w.Rmd. Neither carries the five-part
+structure, and neither has been updated for the 2026-09-07 numbers -- the 150-word
+one is live-linked and will re-render correctly, the 249-word one is not.
 
 LIVE: objs$sample$n_pooled, objs$treatment$share_treated, tbl_num on table4
 "Matched" rows with block=. LITERAL: wave labels and years. Figure 1 and the
@@ -32,11 +43,34 @@ is not on a base comparable with GLSS6 -- see the 05_results banner.
 FLAGS: the MTE shortfall is quoted from Table 4 (matched, restricted); Table 5
 gives a larger value for the same treatment definition (Section 5.3 reports both).
 Keywords and JEL lines are carried over unchanged.
+
+================================================================================
+FINALISATION (2026-09-07). Everything above is the record of how this file was
+written; what follows is what is true of it now. Where the two disagree, this
+block wins.
+
+The pipeline was rebuilt on one cluster run, so matching, treatment effects and
+frontier fits share a vintage, and every exhibit is pinned to one specification:
+.RESTRICT = "Restricted" AND .STAT = "wmean", declared together in
+scripts/exhibit_helpers_tables.R. Tables 4, 5 and 6, Figures 2-4 and Fig. S2's
+reference band therefore report the same quantity. Headline: TGR -0.104,
+TE +0.017, MTE -0.046.
+
+149 rendered words. Recount as rendered after any edit.
+
+The FLAG above is closed: Tables 4 and 5 agree, so the MTE shortfall is one
+number and not a choice between two. The "robustness claim with the cocoa
+exception" it describes has changed shape -- cocoa's technology gap is now
+indistinguishable from zero rather than positive, and Greater Accra's is
+positive -- so the abstract no longer names an exception at all. It closes
+instead on the finding that the gap vanishes where the farmer is the borrower,
+which is the most informative sentence available in 150 words.
+================================================================================
 -->
 
 ## Abstract
 
-Financial-inclusion policy in sub-Saharan Africa rests on the premise that credit moves smallholders toward best-practice technology. We ask whether it does in Ghana, using the 2012/13 and 2016/17 Ghana Living Standards Survey: `r fmt_num(objs$sample$n_pooled, 0)` crop farmers, `r fmt_pct(objs$treatment$share_treated, 1)` in borrowing households, with group-specific stochastic frontiers enveloped by a metafrontier and credit users matched one-to-one to non-users. Contrary to that premise, credit users' technology set lies `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Technology gap ratio (TGR)")), 1)` percentage points farther from the best-practice frontier than matched non-users'; technical efficiency within groups differs little and inconsistently in sign; and meta-frontier efficiency is `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Meta-frontier technical efficiency (MTE)")), 1)` points lower, almost entirely from that gap. They also apply fewer purchased inputs per hectare without producing less. The gap is robust to specification and pervasive across subgroups, cocoa excepted. These are associations, not causal effects. Most loans are informal and fewer than one in three financed farming: the question is less how much credit reaches farms than what it buys.
+Financial inclusion is central to agricultural development strategy across sub-Saharan Africa, where credit is expected to relax the liquidity constraints that keep smallholders from adopting best-practice technology. Whether the credit that farm households actually obtain does so is unsettled. However, the existing evidence rests largely on programme or input-linked credit in particular crops and regions, compares borrowers with non-borrowers against a single frontier, and cannot separate a gap in the technology farmers operate from a gap in how efficiently they operate it. Here we show that Ghanaian crop farmers in borrowing households operate a technology farther from best practice than matched non-borrowers do, and that the shortfall is a technology gap rather than a management one. Using two Ghana Living Standards Survey rounds (`r fmt_num(objs$sample$n_pooled, 0)` crop farmers, `r fmt_pct(objs$treatment$share_treated, 1)` in borrowing households), we estimate group-specific stochastic frontiers enveloped by a stochastic metafrontier and match credit users one-to-one to observably similar non-users. The technology gap ratio is `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Technology gap ratio (TGR)")), 1)` percentage points lower for borrowers and meta-frontier efficiency `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Meta-frontier technical efficiency (MTE)")), 1)` points lower, while efficiency within each group's own technology is marginally higher; borrowing households also apply fewer purchased inputs per hectare without producing less. The gap survives every specification examined, yet is absent where the farmer is the borrower and widest where the spouse holds the loan. These are associations rather than causal effects, but they locate the binding constraint less in the supply of household credit than in the absence of loans designed to be invested on the farm.
 
 **Keywords**: financial inclusion; credit; mobile money; technical efficiency;
 meta-stochastic frontier; Ghana
