@@ -22,7 +22,7 @@
 # builder that falls back to a frozen CSV lets the knit "succeed" while printing
 # stale numbers beside prose citing live ones. A failed render is cheaper.
 # A cell with no matching row renders "" -- that is an absent estimate, not a
-# substituted one, and matches land_tenure's behaviour.
+# substituted one, and matches land_tenure's behavior.
 #
 # KEYING. Credit group is TCHLvel, NOT Tech. The objects carry both for the same
 # concept and they disagree: land_tenure's header records Tech 1 == TCHLvel "0",
@@ -220,7 +220,7 @@ exhibit_cache_clear <- function() {
     "Farmer", "Household member",
     "Distance to nearest amenities (km)",
     "Bank", "Road", "Transportation",
-    "Insurance enrolment (multichoice)",
+    "Insurance enrollment (multichoice)",
     "Health", "Life", "Vehicle", "Pension", "Investment", "Death", "Education",
     "Asset", "Business", "Travel"),
   header = c(0, 1, rep(0,  9), 1, rep(0, 6), 1, 0,0,0, 1, 0,0,0,
@@ -483,7 +483,7 @@ if (is.na(.opt))
         # identical estimates for TGR/TE/MTE. That is true of TGR ONLY. The
         # illustration below is from the SUPERSEDED 2026-09-03 fits under the
         # simple mean, kept because it is what motivated the pin; for current
-        # values see Fig. S2 panel F, which reports the same contrast under
+        # values see Figure S2 panel F, which reports the same contrast under
         # .RESTRICT and .STAT. Matched sample, stat = "mean", 2026-09-03:
         #
         #     TGR   -0.0527 under both
@@ -662,16 +662,16 @@ ft_table6 <- function()
 #
 # Every frame carries restrict = "Restricted" / "Unrestricted". They agree
 # exactly on TGR and differ on the efficiency margins: unrestricted moves the TE
-# gap close to zero and the MTE gap somewhat more negative (Fig. S2, panel F).
+# gap close to zero and the MTE gap somewhat more negative (Figure S2, panel F).
 # "Restricted" was originally a working guess, chosen because it came closest to
 # the v005 draft on the Land elasticity while the estimation objects were a
 # different vintage from the matching. The 2026-09-07 cluster re-run removed the
 # vintage problem, and Restricted is now the reported specification on its own
-# merits: it is the one under which the metafrontier satisfies monotonicity for
+# merits: it is the one under which the meta frontier satisfies monotonicity for
 # every observation and curvature for the largest share of them (Table 4's
 # diagnostics block), which is what the regularity restrictions are for.
 #
-# Changing this constant changes every table AND Fig. S2's reference band, and
+# Changing this constant changes every table AND Figure S2's reference band, and
 # Section 5.5 describes the unrestricted frontier as a robustness variant. If you
 # flip it, that paragraph has to be rewritten, not just re-rendered.
 .RESTRICT <- "Restricted"
@@ -679,13 +679,13 @@ ft_table6 <- function()
 # AGGREGATION. The companion pin to .RESTRICT, and the other half of the
 # "one specification for every exhibit" rule. The estimation objects carry
 # wmean / mean / median / mode; until 2026-09-07 Tables 4, 5 and 6 and
-# Figures 2-4 silently read "mean" while Fig. S2's reference band read
+# Figures 2-4 silently read "mean" while Figure S2's reference band read
 # "wmean", so the paper printed -0.101 in Table 4 and -0.1045 in the figure
 # for the same quantity, and Section 5.5 described the weighted mean as the
 # preferred estimate while the tables were unweighted. GLSS is a weighted
 # complex survey and Table 1's descriptives are weighted, so the weighted
 # mean is the headline and the simple mean and median are the variants
-# Fig. S2 reports. 101_exhibit_figures.R carries the same choice.
+# Figure S2 reports. 101_exhibit_figures.R carries the same choice.
 .STAT <- "wmean"
 
 .samp_of <- function(x) if (identical(x, "OPT")) .opt else x
@@ -755,19 +755,30 @@ ft_table6 <- function()
 
 # ---- Table 4 -----------------------------------------------------------------
 .T4_EL <- data.frame(
-  label = c("Land", "Planting material", "Family labour", "Hired labour",
+  label = c("Land", "Planting material", "Family labor", "Hired labor",
             "Fertilizer", "Pesticide", "Returns to scale"),
   input = paste0("el", 1:7), stringsAsFactors = FALSE)
 
+# "Meta frontier LR test" (coef "LRT") was dropped on 2026-09-08. The quantity
+# stochastic_frontier-core.R computes is -2*(LL_Naive - (LL_Group + LL_Meta)),
+# but LL_Naive and LL_Group are the pooled-sample fits (all 15,696 operators)
+# while LL_Meta is fitted to the sample under comparison (3,734 matched, i.e.
+# 2 x 1,867 one-to-one pairs, as Table 4's sample-size row now prints). The
+# log-likelihoods are therefore not computed on a common set of observations,
+# so the difference is not a likelihood-ratio statistic and its sign carries no
+# test interpretation -- which is why the unmatched column printed a negative
+# "test statistic". Section 5.1 now rests the different-technologies point on
+# the group frontiers' own coefficients instead. Restore this row only if the
+# test is rebuilt on a common sample.
 .T4_DIAG <- data.frame(
   label = c("Sample size", "Monotonicity satisfaction rate",
             "Curvature satisfaction rate", "Schmidt & Lin (1984)",
             "Coelli (1995)", "Gutierrez (2001)", "Log likelihood",
-            "No. of parameters", "Meta frontier LR test",
+            "No. of parameters",
             "Ratio variance due to inefficiency"),
   coef  = c("Nobs", "mono", "curv", "olsSkew", "CoelliM3Test", "LRInef",
-            "mlLoglik", "nXvar", "LRT", "Gamma"),
-  digits = c(0, 2, 2, 3, 3, 3, 0, 0, 3, 3),
+            "mlLoglik", "nXvar", "Gamma"),
+  digits = c(0, 2, 2, 3, 3, 3, 0, 0, 3),
   stringsAsFactors = FALSE)
 # "Gutierrez (2001)" -> LRInef is INFERRED from magnitude and starring: v005
 # prints 192.705**, the shape of a likelihood-ratio statistic, and LRInef is the
@@ -861,8 +872,8 @@ ft_table4 <- function()
 
 .S3_MAP <- data.frame(
   label = c("Production function",
-            "Land [lnI1]", "Planting material [lnI2]", "Family labour [lnI3]",
-            "Hired labour [lnI4]", "Fertilizer [lnI5]", "Pesticide [lnI6]",
+            "Land [lnI1]", "Planting material [lnI2]", "Family labor [lnI3]",
+            "Hired labor [lnI4]", "Fertilizer [lnI5]", "Pesticide [lnI6]",
             "1/2 * lnI1 * lnI1", "lnI1*lnI2", "lnI1*lnI3", "lnI1*lnI4",
             "lnI1*lnI5", "lnI1*lnI6",
             "1/2 * lnI2 * lnI2", "lnI2*lnI3", "lnI2*lnI4", "lnI2*lnI5", "lnI2*lnI6",
@@ -965,8 +976,8 @@ ft_tableS4 <- function()
             "Cassava", "Yam", "Cocoyam", "Plantain", "Pepper", "Okra", "Tomato",
             "Cocoa", "Palm",
             "Land (ha)", "Land owned (dummy)", "Crop diversification (index)",
-            "Seed (real GH\u20b5/ha)", "Household labour (AE)",
-            "Hired labour (man-days/ha)", "Fertilizer (Kg/ha)",
+            "Seed (real GH\u20b5/ha)", "Household labor (AE)",
+            "Hired labor (man-days/ha)", "Fertilizer (Kg/ha)",
             "Pesticide (Liter/ha)", "Mechanization (dummy)", "Irrigation (dummy)",
             "Household",
             "Size (AE)", "Dependency (ratio)"),
@@ -1188,7 +1199,7 @@ tbl_num <- function(id, label, col, part = c("first", "paren", "bracket"),
     i <- i[i > b & i < end]
   }
   if (length(i) != 1)
-    stop("tbl_num(): ", length(i), " rows labelled '", label, "'",
+    stop("tbl_num(): ", length(i), " rows labeled '", label, "'",
          if (!is.null(block)) paste0(" in block '", block, "'") else "",
          " in ", id, "; expected 1.",
          if (length(i) > 1) " Pass block= to disambiguate." else
@@ -1336,7 +1347,7 @@ tbl_pct <- function(id, label, col, digits = 1, block = NULL)
       "Frontier output", .S5_NONE),
 
     # ---- frontier inputs -------------------------------------------------
-    H("Frontier inputs (logged, with the translog cross-terms of Equation (1))"),
+    H("Frontier inputs (logged, with the Translog cross-terms of Equation (1))"),
     R("Area",
       paste0("Cultivated land in hectares (Table 1, \"Land (ha)\"). Enters as ",
              "lnI1 and is the denominator of the per-hectare quantities ",
@@ -1347,11 +1358,11 @@ tbl_pct <- function(id, label, col, digits = 1, block = NULL)
              "\"Seed (real GH\u20b5/ha)\"). Enters as lnI2."),
       "Frontier input", .S5_POS),
     R("HHLaborAE",
-      paste0("Family labour supplied to the farm, in adult equivalents ",
-             "(Table 1, \"Household labour (AE)\"). Enters as lnI3."),
+      paste0("Family labor supplied to the farm, in adult equivalents ",
+             "(Table 1, \"Household labor (AE)\"). Enters as lnI3."),
       "Frontier input", .S5_POS),
     R("HirdHr",
-      paste0("Hired labour (Table 1, \"Hired labour (man-days/ha)\"). Enters ",
+      paste0("Hired labor (Table 1, \"Hired labor (man-days/ha)\"). Enters ",
              "as lnI4."),
       "Frontier input", .S5_POS),
     R("FertKg",
@@ -1405,7 +1416,7 @@ tbl_pct <- function(id, label, col, digits = 1, block = NULL)
       paste0("Operator is a woman (Table 1, \"Female farmer (dummy)\"). ",
              "Sections 4.1 and 5.6 anticipate a disadvantage in access to ",
              "technology rather than in management, so the expectation attaches ",
-             "to the metafrontier technology gap and not to the group ",
+             "to the meta frontier technology gap and not to the group ",
              "frontiers; no sign is posited for inefficiency."),
       "Inefficiency determinant", .S5_NONE),
     R("OwnLnd",
@@ -1543,7 +1554,7 @@ ft_tableS5 <- function() {
              "an exact-match stratum or a matching distance rather than a ",
              "regression, so that no coefficient sign exists to expect. The ",
              "criterion for the matching covariates is balance between users ",
-             "and non-users, reported for each of them in Fig. S1."),
+             "and non-users, reported for each of them in Figure S1."),
       paste0("The inefficiency covariates scale the variance of the one-sided ",
              "error term, so a positive coefficient means greater inefficiency ",
              "and, in Equation (3), a larger technology gap; a negative ",
@@ -1555,7 +1566,7 @@ ft_tableS5 <- function() {
              "production function and are not a prediction about credit. H3 of ",
              "Section 4.1 is a prediction about a difference of elasticities ",
              "between groups -- credit users' frontier more responsive to land ",
-             "and labour, and not more responsive to fertilizer -- which no ",
+             "and labor, and not more responsive to fertilizer -- which no ",
              "single row can carry."),
       paste0("004_MSF passes the survey round as a factor in both the frontier ",
              "shifters and the inefficiency determinants, but Tables S3 and S4 ",
@@ -1641,7 +1652,7 @@ ft_tableS5 <- function() {
 # Display labels. YerEdu / Banked / FinWorker / HHFinWorker are spelled out;
 # the ten Insured_* take the type word Table 2 prints for the same variable --
 # those are the variable labels carried in the .dta, read out rather than
-# guessed. An indicator with no entry here stops the build: a mislabelled row
+# guessed. An indicator with no entry here stops the build: a mislabeled row
 # in a table about what the index measures is worse than a failed render.
 .S6_LABS <- c(
   YerEdu          = "Years of schooling",
@@ -1737,10 +1748,10 @@ ft_tableS5 <- function() {
          "but not in the pooled fit: ", paste(extra, collapse = ", "),
          ". The row order is the pooled loading, so such a row has no place ",
          "to sit. Check the pooled pca in 000_INDEX.", call. = FALSE)
-  unlabelled <- setdiff(ind, names(.S6_LABS))
-  if (length(unlabelled))
+  unlabeled <- setdiff(ind, names(.S6_LABS))
+  if (length(unlabeled))
     stop("exhibit_helpers_tables.R: Table S6 has no display label for ",
-         paste(unlabelled, collapse = ", "),
+         paste(unlabeled, collapse = ", "),
          ". Add it to .S6_LABS -- and say so in Note S1, which enumerates the ",
          "indicator set.", call. = FALSE)
 
@@ -1866,7 +1877,7 @@ ft_tableS6 <- function() {
 # paper quietly citing a frozen value. This block cannot edit that switch --
 # it is appended after it -- so it wraps it, delegating every id it does not
 # add. Fold the two ids into the switch by hand and delete this wrapper the
-# next time that function is touched; behaviour is identical either way.
+# next time that function is touched; behavior is identical either way.
 #
 # The guard makes re-evaluating this block idempotent: without it, sourcing the
 # appended tail twice would wrap the wrapper.

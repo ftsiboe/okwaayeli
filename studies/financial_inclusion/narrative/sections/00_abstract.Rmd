@@ -24,7 +24,7 @@ STRUCTURE: the five-part formula (author instruction, 2026-09-07), one paragraph
 Part 4 is where a length cut has to come from, and the first thing to go is the
 meta-frontier efficiency figure: the technology gap alone carries the finding.
 Do not cut the clause in part 2 about comparing against a single frontier -- it
-is simultaneously the knowledge gap and the justification for the metafrontier
+is simultaneously the knowledge gap and the justification for the meta frontier
 design, and part 3 does not stand up without it.
 
 HISTORY OF THE LENGTH RULE. Cut 335 -> 249 -> 150 as a single flowing paragraph, then recast to the
@@ -52,7 +52,7 @@ block wins.
 The pipeline was rebuilt on one cluster run, so matching, treatment effects and
 frontier fits share a vintage, and every exhibit is pinned to one specification:
 .RESTRICT = "Restricted" AND .STAT = "wmean", declared together in
-scripts/exhibit_helpers_tables.R. Tables 4, 5 and 6, Figures 2-4 and Fig. S2's
+scripts/exhibit_helpers_tables.R. Tables 4, 5 and 6, Figures 2-4 and Figure S2's
 reference band therefore report the same quantity. Headline: TGR -0.104,
 TE +0.017, MTE -0.046.
 
@@ -70,7 +70,7 @@ which is the most informative sentence available in 150 words.
 
 ## Abstract
 
-Financial inclusion is central to agricultural development strategy across sub-Saharan Africa, where credit is expected to relax the liquidity constraints that keep smallholders from adopting best-practice technology. Whether the credit that farm households actually obtain does so is unsettled. However, the existing evidence rests largely on programme or input-linked credit in particular crops and regions, compares borrowers with non-borrowers against a single frontier, and cannot separate a gap in the technology farmers operate from a gap in how efficiently they operate it. Here we show that Ghanaian crop farmers in borrowing households operate a technology farther from best practice than matched non-borrowers do, and that the shortfall is a technology gap rather than a management one. Using two Ghana Living Standards Survey rounds (`r fmt_num(objs$sample$n_pooled, 0)` crop farmers, `r fmt_pct(objs$treatment$share_treated, 1)` in borrowing households), we estimate group-specific stochastic frontiers enveloped by a stochastic metafrontier and match credit users one-to-one to observably similar non-users. The technology gap ratio is `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Technology gap ratio (TGR)")), 1)` percentage points lower for borrowers and meta-frontier efficiency `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Meta-frontier technical efficiency (MTE)")), 1)` points lower, while efficiency within each group's own technology is marginally higher; borrowing households also apply fewer purchased inputs per hectare without producing less. The gap survives every specification examined, yet is absent where the farmer is the borrower and widest where the spouse holds the loan. These are associations rather than causal effects, but they locate the binding constraint less in the supply of household credit than in the absence of loans designed to be invested on the farm.
+Financial inclusion is central to agricultural development strategy across sub-Saharan Africa, where credit is expected to relax the liquidity constraints that keep smallholders from adopting best-practice technology. Whether the credit that farm households actually obtain does so is unsettled. However, the existing evidence rests largely on program or input-linked credit in particular crops and regions, compares borrowers with non-borrowers against a single frontier, and cannot separate a gap in the technology farmers operate from a gap in how efficiently they operate it. Here we show that Ghanaian crop farmers in borrowing households operate a technology farther from best practice than matched non-borrowers do, and that the shortfall is a technology gap rather than a management one. Using two Ghana Living Standards Survey rounds (`r fmt_num(objs$sample$n_pooled, 0)` crop farmers, `r fmt_pct(objs$treatment$share_treated, 1)` in borrowing households), we estimate group-specific stochastic frontiers enveloped by a stochastic meta frontier and match credit users one-to-one to observably similar non-users. The technology gap ratio is `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Technology gap ratio (TGR)")), 1)` percentage points lower for borrowers and meta-frontier efficiency `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Meta-frontier technical efficiency (MTE)")), 1)` points lower, while efficiency within each group's own technology is marginally higher; borrowing households also apply fewer purchased inputs per hectare without producing less. The gap survives every specification examined, yet is absent where the farmer is the borrower and widest where the spouse holds the loan. These are associations rather than causal effects, but they locate the binding constraint less in the supply of household credit than in the absence of loans designed to be invested on the farm.
 
 **Keywords**: financial inclusion; credit; mobile money; technical efficiency;
 meta-stochastic frontier; Ghana

@@ -55,7 +55,7 @@ moved ahead of Table S0 for this reason; nothing was renumbered.
 
 #### Note S1. Financial-Inclusion Index Construction
 
-The financial-inclusion index introduced in Section 2.3 and used as a matching covariate in Section 4.3 summarizes the non-credit dimensions of a farm household member's engagement with financial services. It is built on one record per household member, with that member's demographic characteristics averaged over the plots the member works, merged by enumeration area, household and member identifier to the harmonized financial-services release from which the indicators of Table S0 are drawn. The index is the first principal component of 14 indicators: the member's years of schooling, whether the member works in a financial institution, whether another member of the household does, whether the member owns an account with a financial institution or contributes to a savings scheme, and ten indicators of insurance cover (vehicle, medical, funeral, property, commercial, travel, life, retirement, education and other endowment or investment plans). The component is fitted on complete cases across all 14 indicators; on the current release the financial indicators are themselves complete, so that restriction binds only through years of schooling, which is carried down from the farmer file. Composite measures of this kind are standard in work that treats financial inclusion as a multidimensional construct spanning accounts, savings and insurance rather than as account ownership alone, in Africa as elsewhere [@Zins2016; @DemirgucKunt2017].
+The financial-inclusion index introduced in Section 4.3 summarizes the non-credit dimensions of a farm household member's engagement with financial services. It is built on one record per household member, with that member's demographic characteristics averaged over the plots the member works, merged by enumeration area, household and member identifier to the harmonized financial-services release from which the indicators of Table S0 are drawn. The index is the first principal component of 14 indicators: the member's years of schooling, whether the member works in a financial institution, whether another member of the household does, whether the member owns an account with a financial institution or contributes to a savings scheme, and ten indicators of insurance cover (vehicle, medical, funeral, property, commercial, travel, life, retirement, education and other endowment or investment plans). The component is fitted on complete cases across all 14 indicators; on the current release the financial indicators are themselves complete, so that restriction binds only through years of schooling, which is carried down from the farmer file. Composite measures of this kind are standard in work that treats financial inclusion as a multidimensional construct spanning accounts, savings and insurance rather than as account ownership alone, in Africa as elsewhere [@Zins2016; @DemirgucKunt2017].
 
 Three indicators available in the same release were deliberately left out: the community distances to the nearest bank, motorable road and public transport (Table S0). Coverage is the first reason. The community questionnaire is administered per enumeration area and does not reach every area, so the three distances are missing for about a fifth of the members in the release, and the complete-case rule would drop every one of them. That loss is not random. It falls disproportionately on urban enumeration areas in 2012/13, which is precisely the imbalance the harmonization avoids by joining the community block to the farmer records rather than restricting to it, so admitting the distances here would reintroduce the same selection one stage later. Construct is the second reason. The distances describe a place rather than a person and enter with the sign opposite to every other indicator, so a component that included them would mix how financially connected a member is with how far that member lives from a bank. Excluding them makes the index unambiguously the former and removes the need to reason about sign when the loadings are read.
 
@@ -214,20 +214,20 @@ ft_tableS4()
                 ACTUALLY CARRIES and reconcile the two descriptions before this
                 table is circulated. Expected sign: n/a (dependent variable).
 
-     Frontier inputs (six; each logged, with the translog cross-terms of
+     Frontier inputs (six; each logged, with the Translog cross-terms of
      Equation (1); elasticities in Table 4 are evaluated at the sample means)
        Area       Cultivated land, ha ("Land (ha)").                 Expected +
        SeedKg     Planting material ("Seed (real GH₵/ha)").     Expected +
-       HHLaborAE  Family labour, adult equivalents
-                  ("Household labour (AE)").                         Expected +
-       HirdHr     Hired labour ("Hired labour (man-days/ha)").       Expected +
+       HHLaborAE  Family labor, adult equivalents
+                  ("Household labor (AE)").                         Expected +
+       HirdHr     Hired labor ("Hired labor (man-days/ha)").       Expected +
        FertKg     Fertilizer ("Fertilizer (Kg/ha)").                 Expected +
        PestLt     Pesticide ("Pesticide (Liter/ha)").                Expected +
      Sign note for the block: positive, from monotonicity of the production
      function -- this is production theory, not a result. Table 4 reports the
      share of observations at which monotonicity and curvature in fact hold.
      H3 (Section 4.1) adds a between-group expectation and no more: the credit
-     users' frontier is expected to be MORE responsive to land and labour than
+     users' frontier is expected to be MORE responsive to land and labor than
      the non-users', and not more responsive to fertilizer. H3 is a prediction
      about a difference of elasticities, so it belongs in a footnote to this
      block, not in the sign column of a single row.
@@ -265,7 +265,7 @@ ft_tableS4()
                   Expected sign: none for inefficiency. The paper's framing
                   (Sections 4.1 and 5.4) anticipates a disadvantage in ACCESS TO
                   TECHNOLOGY rather than in management, so any expectation
-                  attaches to the metafrontier column and not to the group
+                  attaches to the meta frontier column and not to the group
                   frontiers; state that in words rather than printing a sign.
        OwnLnd     Household owns the land it farms ("Land owned (dummy)").
                   Expected -: secure tenure supports the investment and care
@@ -313,7 +313,7 @@ ft_tableS4()
        Head       Relationship to the household head.
      Expected sign for BOTH matching blocks: NOT APPLICABLE. These enter a
      distance, not a regression; the criterion they answer to is balance
-     between users and non-users, reported for every covariate in Fig. S1, not
+     between users and non-users, reported for every covariate in Figure S1, not
      a coefficient sign. Say so in the cell -- do not leave it blank and do not
      invent an expectation. Pairing requires complete information on every
      matching field, together with the identifiers, the survey weight and the

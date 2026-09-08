@@ -1,5 +1,5 @@
 ---
-title: "Financial Inclusion and Credit Impacts on Crop Production in Ghana"
+title: "Farm Technologies and Management Practices Financed through Existing Household Credit in Ghana"
 
 output:
   github_document:
@@ -37,10 +37,24 @@ See the
 [LICENSE](https://github.com/ftsiboe/okwaayeli/blob/main/LICENSE)
 file in the repository root for details.
 
-**Status**: Complete draft, 2026-09-07. Every section is written and every
-study-derived number in the text is an inline R lookup against the pipeline's
-own table builds -- nothing is hand-typed, and a lookup that cannot resolve
-stops the knit rather than printing a stale value.
+**Status**: Complete draft, revised 2026-09-08. Every section is written and
+every study-derived number in the text is an inline R lookup against the
+pipeline's own table builds -- nothing is hand-typed, and a lookup that cannot
+resolve stops the knit rather than printing a stale value.
+
+The 2026-09-08 revision did four things, recorded in full in
+[`narrative/revision/revision_notes.md`](narrative/revision/) section 11.
+(1) Redundancy: nineteen repeated claims, statistics and cross-references were
+consolidated to a single location each, taking Sections 2-5 from 17,943 to
+16,326 words. (2) The author's tracked changes in
+`narrative/financial-inclusion-final-ft.docx` were applied -- 192 style
+corrections, the new title, Funding resolved -- less six that introduced
+grammatical errors. (3) Three reporting defects were fixed: the meta-frontier LR
+row was dropped from Table 4 (see below), Sections 4.2 and 4.5 were corrected to
+name the four alternative inefficiency distributions that actually estimated,
+and four sign-narration errors in Section 5.6 were corrected against Table 6.
+(4) Citations: all 57 were verified against the published record and eight were
+purged.
 
 The whole pipeline was rebuilt on a single cluster run of 2026-09-07, so
 matching, treatment effects and frontier estimates share one vintage, and every
@@ -62,11 +76,29 @@ including what the 2026-09-07 re-run changed and what remains open, is in
 [`narrative/revision/`](narrative/revision/) -- start at its `README.md`, then
 `revision_notes.md` section 10.
 
-**Before submission**: `narrative/sections/96_declarations.Rmd` carries two
-`REPLACE` markers, Funding and Author contributions. They are HTML comments, so
-they neither fail the build nor appear in the rendered document, and the
-`.Rmd` validator strips comments before its placeholder scan. Nothing will
-catch them for you.
+**Before submission**, three things are open and none of them is mechanical.
+
+*Author contributions.* `narrative/sections/96_declarations.Rmd` carries a
+draft assembled from what the repository can evidence, with two **visible**
+`[ROLES TO CONFIRM]` placeholders for A. Adam and S. Gaku, whose contributions
+nothing in the repository, the revision record or the round-2 reports records.
+They are deliberately visible rather than HTML comments, so they cannot reach a
+submitted manuscript unnoticed the way the old Funding marker could. Funding was
+resolved to "no specific grant" on 2026-09-08 per the author's tracked edit.
+
+*Three uncited claims.* The citation purge left Section 4.1's tropical
+credit-and-insurance-market framing, and Section 4.2's TGR/TE/MTE decomposition
+and elasticity/returns-to-scale definition, carrying no citation. The
+decomposition is the paper's central method; if citations are restored, the
+verified sources are Battese, Rao & O'Donnell (2004),
+doi:10.1023/B:PROD.0000012454.06094.29, and O'Donnell, Rao & Battese (2008),
+doi:10.1007/s00181-007-0119-4.
+
+*Four unverified references.* `GSS2019`, `Tsiboe2021b`, `Kumar2013` and
+`Schmidt1984` were kept despite being unverifiable from open sources -- the
+first two are the study's own data source and the author's own paper, and the
+last two are confirmed at the record level. They need a reader with the PDFs,
+not another search.
 
 ### Contributors
 
@@ -136,6 +168,18 @@ and the task still exits 0. Run
 `probes/probe_missing_estimations.R` afterwards to see which of the
 specifications actually produced output, and
 `probes/probe_capture_spec_error.R` to read the error for one that did not.
+
+**Table 4 no longer reports a meta-frontier LR test.** The row was dropped on
+2026-09-08. `R/stochastic_frontier-core.R` computes it as
+`-2*(LL_Naive - (LL_Group + LL_Meta))`, but `LL_Naive` and `LL_Group` are the
+pooled-sample fits (all 15,696 operators) while `LL_Meta` is fitted to the
+sample under comparison (3,734 matched). The log-likelihoods are therefore not
+computed on a common set of observations, the difference is not a
+likelihood-ratio statistic, and its sign carries no test interpretation -- which
+is why the unmatched column printed -7,935. Section 5.1 now rests the
+different-technologies point on the group frontiers' own differing coefficients.
+Restore the row only if the test is rebuilt on a common sample; that needs a
+re-run of `004`.
 
 Two coupling rules that are easy to get wrong, and that the guards in
 `run_article.R` enforce:

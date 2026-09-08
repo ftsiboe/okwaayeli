@@ -1,5 +1,5 @@
 ---
-title: "Financial Inclusion and Credit Impacts on Crop Production in Ghana"
+title: "Farm Technologies and Management Practices Financed through Existing Household Credit in Ghana"
 output:
   # officedown (not word_document) so exhibits can sit in landscape sections;
   # word_document has no mechanism for page orientation.
@@ -56,6 +56,9 @@ Mark Appiah-Twumasi; Francis Tsiboe; Aisha Adam; Sylvanus Gaku; Peter Quartey
 ```{r child = "sections/00_abstract.Rmd"}
 ```
 
+```{r child = "sections/96_declarations.Rmd"}
+```
+
 ```{r child = "sections/01_introduction.Rmd"}
 ```
 
@@ -78,11 +81,9 @@ Mark Appiah-Twumasi; Francis Tsiboe; Aisha Adam; Sylvanus Gaku; Peter Quartey
 ```{r child = "sections/07_conclusion.Rmd"}
 ```
 
-```{r child = "sections/96_declarations.Rmd"}
-```
-
 ```{r child = "sections/97_references.Rmd"}
 ```
+
 
 \newpage
 
