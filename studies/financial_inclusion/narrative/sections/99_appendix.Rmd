@@ -67,6 +67,45 @@ What the index is not, finally, is the treatment. The treatment throughout this 
 
 \newpage
 
+<!--
+NOTES S2-S3 (2026-09-11, revised 2026-09-12). Prose moved here to meet the
+journal's word limit went back into the main text on 2026-09-12 at the author's
+instruction, condensed rather than pasted: first the seven blocks named in the
+comments on financial-inclusion.docx, then the two that were left (the two-step
+estimation detail, back into 4.2, and the Figure 1 gap estimation, back into
+5.3). What remains is the construction and scope of the credit indicator (S2)
+and the descriptive profile of the sample (S3), neither of which any comment
+asked back. Notes are numbered in order of first reference in the main text.
+-->
+
+#### Note S2. Construction and scope of the credit and financial-service indicators
+
+The consolidated dataset does not carry the financial-services module, so the credit and financial-service indicators are rebuilt from the original GLSS questionnaires. Using the enumeration area, household and member identifiers preserved in both files, we extract the items of Part B, Section 12a (credit, banking, use of financial services and insurance) for every member of a farm household and merge them to the farmer-level file. Table S0 in the appendix documents, for each round, the source item, the question wording, the response options and the mapping to each analysis variable. These items serve three purposes in the paper: they define the credit indicator described next, they describe the financial-services environment of crop farmers in Section 3 (Tables 2 and 3), and they supply the dimensions along which Section 5 examines heterogeneity in the credit contrasts (Table 6 and Figure 2).
+
+Credit use is defined for an individual as the conjunction of three conditions in the twelve months preceding the interview: the person applied for a loan (`s12aq7` in both rounds); the application was granted (`s12aq8` in GLSS6, `s12aq8a` to `s12aq8c` in GLSS7); and a positive loan amount was recorded (`s12aq10` in both rounds). Because the questionnaire elicits loan detail only from applicants whose loan was granted, requiring only a granted application, or only a positive amount, reproduces the indicator observation for observation; the conjunction matters for what it excludes rather than for what it includes. A person who applied and was refused, or whose application was still pending, is a non-user. Relaxing the criterion to any application regardless of outcome would raise the operator-level rate from `r fmt_pct(objs$credit$share_hh - objs$credit$reclass_farmer_only, 1)` to `r fmt_pct(objs$credit$applied_share, 1)`, but that is a different construct, one that pools refused and pending applicants with those who received funds.
+
+Three features of what the indicator measures bear on how the results should be read. First, it records the use of credit, not access to it. The credit-constraints literature classifies households by direct elicitation of whether they were rationed, discouraged or unconstrained at prevailing terms [@Guirkinger2008; @Kumar2013]; the GLSS module records refusals and, for non-applicants, the main reason for not applying (Table 3), but a household that could have borrowed and chose not to is pooled with one that could not borrow at all. The contrast we estimate is therefore between borrowers and non-borrowers rather than between the constrained and the unconstrained. Second, the indicator counts a loan from any source and for any purpose. Although the screening question refers to a loan from a financial institution, the source codes that follow include friends and relatives and group-based schemes, and Section 3 shows that these supply most of the loans farm households hold and that only a minority of loans are reported as taken for farming. The indicator should accordingly be read as household credit use rather than as agricultural credit, the construct that most of the Ghanaian studies reviewed in Section 1 examine [@Iddrisu2018; @Martey2019; @AppiahTwumasi2022], and household credit is fungible, so a loan reported for one purpose may finance another [@Hussain2016]. Third, the twelve-month recall window is not tied to the cropping calendar, so a loan may have been taken after the season's input decisions were made.
+
+Two asymmetries between the rounds bound the indicator further. The rounds do not code loan outcomes identically: GLSS6 records a binary granted or not granted, whereas GLSS7 adds a third status, "processing", which the indicator treats as non-use because no loan had been disbursed. This status applies to `r fmt_pct(objs$credit$processing_share_glss7, 1)` of GLSS7 applicants and has no GLSS6 counterpart, so cross-round comparisons of application outcomes in Section 3 set a two-way classification against a three-way one. In addition, GLSS7 elicits the status, source, purpose and collateral of up to three loans but records a single loan amount, so where an applicant reports several loans the amount cannot be attributed to a particular one; GLSS6, with one loan slot, has no such ambiguity. Neither asymmetry affects the treatment indicator, which depends only on whether some loan was granted and disbursed.
+
+Credit is one dimension of financial inclusion, and the same module supplies the others. From Section 12a we also construct indicators of formal account ownership, the type of institution and account held, transaction products used and insurance cover, and, from the GLSS community questionnaire, the distance from the farmer's community to the nearest bank, motorable road and public transport (Table S0). Section 3 uses these to describe the financial-services environment of crop farmers.
+
+\newpage
+
+#### Note S3. The sample of crop producers, trends between rounds, and the profile of borrowing households
+
+Operators cultivate at least one of banana, beans, cashew, cassava, citrus, cocoa, coconut, cocoyam, cotton/kenaf, maize, millet, oil palm, groundnut, plantain, potato, rice, sorghum, yam, sugarcane, tomato, pepper, okra, onion, eggplant, and other minor crops, and the sample spans the ten administrative regions of the period and all agro-ecological zones.
+
+Table 1 summarizes the farmer, production and household characteristics of the pooled sample and of credit users and non-users, together with the annual percentage change in each characteristic between the two rounds; daggers mark characteristics on which users and non-users differ at the 5% level. The average operator is `r fmt_num(tbl_num("table1", "Age (years)", 1), 0)` years old with `r fmt_num(tbl_num("table1", "Education (years)", 1), 1)` years of schooling, and `r tbl_pct("table1", "Female farmer (dummy)", 1, 0)` of operators are women. Households average `r fmt_num(tbl_num("table1", "Size (AE)", 1), 1)` adult equivalents with a dependency ratio of `r fmt_num(tbl_num("table1", "Dependency (ratio)", 1), 2)`. Farms are small, at `r fmt_num(tbl_num("table1", "Land (ha)", 1), 2)` ha on average, consistent with the smallholder profile reported in national statistics [@MoFA2017]; `r tbl_pct("table1", "Land owned (dummy)", 1, 0)` of operators own the land they farm, and the crop diversification index averages `r fmt_num(tbl_num("table1", "Crop diversification (index)", 1), 2)`. Mean crop output value is GH₵ `r fmt_num(tbl_num("table1", "All crops", 1), 0)` per hectare across all crops, with wide dispersion across crops. Purchased-input use is low and uneven: operators spend about GH₵ `r fmt_num(tbl_num("table1", "Seed (real GH₵/ha)", 1), 0)` per hectare on planting material, hire about `r fmt_num(tbl_num("table1", "Hired labor (man-days/ha)", 1), 0)` man-days per hectare, and apply about `r fmt_num(tbl_num("table1", "Fertilizer (Kg/ha)", 1), 0)` kg of fertilizer and `r fmt_num(tbl_num("table1", "Pesticide (Liter/ha)", 1), 0)` liters of pesticide per hectare, the fertilizer and pesticide means being dominated by a small number of very large values, as their standard deviations show; only `r tbl_pct("table1", "Mechanization (dummy)", 1, 0)` use mechanized equipment and `r tbl_pct("table1", "Irrigation (dummy)", 1, 0)` irrigate. This is a production environment in which output depends chiefly on land and household labor, and in which the lumpy, liquidity-intensive investments that credit is expected to finance are the exception rather than the rule.
+
+Credit users differ from non-users on a small number of characteristics, and they are the characteristics that matter most for who borrows and how farms perform. Users are younger (`r fmt_num(tbl_num("table1", "Age (years)", 3), 1)` against `r fmt_num(tbl_num("table1", "Age (years)", 2), 1)` years) and markedly more educated (`r fmt_num(tbl_num("table1", "Education (years)", 3), 1)` against `r fmt_num(tbl_num("table1", "Education (years)", 2), 1)` years), they are less likely to own the land they farm (`r tbl_pct("table1", "Land owned (dummy)", 3, 0)` against `r tbl_pct("table1", "Land owned (dummy)", 2, 0)`), and they hire more labor per hectare (`r fmt_num(tbl_num("table1", "Hired labor (man-days/ha)", 3), 0)` against `r fmt_num(tbl_num("table1", "Hired labor (man-days/ha)", 2), 0)` man-days). Output value per hectare across all crops does not differ significantly between the groups (GH₵ `r fmt_num(tbl_num("table1", "All crops", 3), 0)` against GH₵ `r fmt_num(tbl_num("table1", "All crops", 2), 0)`), and neither do farm size, household size, the dependency ratio, crop diversification, the share of women among operators, planting-material expenditure, family labor, fertilizer or pesticide intensity, mechanization or irrigation. Where crop-specific output values differ, the sign is not uniform: non-users record higher values per hectare for rice, groundnut and yam, and users for cocoyam. On the observable production record, then, borrowers are not a systematically more productive or more input-intensive group; they are a younger, more schooled group that is less likely to own its land and relies more on hired labor.
+
+The trend columns show that the two groups also changed differently between the rounds, and, because the survey is a repeated cross-section, these trends describe changes in the composition and practices of the two groups rather than changes within households. In the pooled sample, real output value per hectare rose by about `r fmt_num(tbl_num("table1", "All crops", 4), 0)`% per year, and schooling, landholding, land ownership, planting-material expenditure and both family and hired labor use increased, while crop diversification and mechanization declined; the pooled trends in fertilizer and pesticide intensity are imprecisely estimated. Schooling rose among non-users, by `r fmt_num(tbl_num("table1", "Education (years)", 5), 1)`% per year, but was flat among users, so the education gap between the groups narrowed; household size fell among non-users and rose among users; and land ownership rose faster among users (`r fmt_num(tbl_num("table1", "Land owned (dummy)", 6), 1)`% against `r fmt_num(tbl_num("table1", "Land owned (dummy)", 5), 1)`% per year). Fertilizer intensity rose by `r fmt_num(tbl_num("table1", "Fertilizer (Kg/ha)", 6), 1)`% per year among credit users, a trend that is precisely estimated, whereas the corresponding trend among non-users is not, although the two trends are not statistically distinguishable from each other. The composition of the credit-using group is therefore not fixed across rounds, which is one reason the matching in Section 4.3 is performed exactly within survey round.
+
+The profile of borrowing households also depends on who in the household borrows (Table S1). Where the operator is the borrower, operators are younger (`r fmt_num(tbl_num("tableS1", "Age (years)", 2), 1)` years) and more educated (`r fmt_num(tbl_num("tableS1", "Education (years)", 2), 1)` years) than the pooled average, less likely to own their land (`r tbl_pct("tableS1", "Land owned (dummy)", 2, 0)`) and hire more labor per hectare. Where the spouse is the borrower, households are larger (`r fmt_num(tbl_num("tableS1", "Size (AE)", 3), 1)` adult equivalents against `r fmt_num(tbl_num("tableS1", "Size (AE)", 1), 1)` in the pooled sample), more diversified and more likely to irrigate, and only `r tbl_pct("tableS1", "Female farmer (dummy)", 3, 0)` of operators are women, so spousal credit is in most such households a wife's loan on a husband-operated farm. Households in which a child holds the credit are too few to support separate inference. These contrasts are one reason the household definition is preferred and the person-specific definitions are reported alongside it: restricting attention to the operator's own borrowing would drop the spouse- and other-member-borrower households, which differ from operator-borrower households in size and cropping pattern.
+
+\newpage
+
 #### Table S0. Construction of the credit and financial-service variables from the GLSS Section 12a questionnaires
 
 | Analysis variable | GLSS6 item | GLSS7 item | Question wording | Response options |
@@ -367,15 +406,45 @@ ft_tableS6()
 
 \newpage
 
+#### Table S7. The financial-inclusion index among Ghanaian crop farmers, by survey round, locality, credit use, account ownership and region
+
+<!-- NEW EXHIBIT (2026-09-12), written for comment 35 on the 2026-09-11 draft:
+     the index was cited in Section 3 and defined only in the appendix, and the
+     author asked for the index to be introduced there and read.
+
+     Source: data/financial_inclusion_index_summary.rds, written by
+     scripts/103_exhibit_index_summary.R (INDEXSUM in run_article.R) from
+     FinIdxSi on the pooled operator sample. PORTRAIT.
+
+     Columns: Group | Index mean (sd) | Share in top fifth | Operators.
+     Blocks: all operators; survey round; locality; household credit use;
+     formal account; region (ordered by mean); regional extremes.
+
+     The locality and region blocks are written only if the estimation frame
+     carries those columns -- 103 names what it could not find and omits the
+     block rather than guessing a column name. The prose in Section 3 cites the
+     all-operator, round, credit-use, account and extreme rows only, so a
+     missing locality block costs the table a panel and the text nothing. -->
+
+```{r ft-tableS7}
+ft_tableS7()
+```
+
+\newpage
+
 #### Figure S1. Covariate balancing summary
 
 ![](../output/figures/Covariate_balance_variance.png){width=100%}
+
+*Note:* Each panel reports one balance diagnostic for every matching covariate: the absolute standardized mean difference, the variance ratio and the Kolmogorov-Smirnov statistic, whose targets are zero, one and zero respectively. Markers distinguish the unmatched sample from each of the eight matched samples of Section 4.3. The probit propensity-score sample, which ranks best on a composite of the three diagnostics, underlies Tables 4 to 6 and Figures 1 to 4.
 
 \newpage
 
 #### Figure S2. Different model specifications generally show decreasing impact of farmer credit access on crop production output for Ghanaian farmers (2012-2017)
 
 ![](../output/figures/robustness.png){width=100%}
+
+*Note:* Each row re-estimates the three credit-less-no-credit differences under one alternative specification, grouped by functional form, inefficiency distribution, efficiency estimator, aggregation rule, matched sample and regularity restriction; whiskers show jackknife uncertainty. The dashed line and shaded band mark the preferred specification reported in Table 4: a Translog frontier with a half-normal inefficiency term, Battese-Coelli scores aggregated by the weighted mean on the probit matched sample, with the regularity restrictions imposed. The truncated normal is absent because it returns no usable estimate (Section 5.5).
 
 <!--
 NOT IN THE PAPER: output/figures/score_distributions.png.

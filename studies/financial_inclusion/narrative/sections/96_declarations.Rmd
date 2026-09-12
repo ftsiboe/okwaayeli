@@ -3,8 +3,10 @@ Drafted 2026-09-07. Data availability is written from what the repository
 actually does and should be accurate as it stands; check the release tag and
 the GSS wording against however the journal wants public archives cited.
 FUNDING was resolved to "no specific grant" on 2026-09-08, per the tracked
-edit in financial-inclusion-final-ft.docx. AUTHOR CONTRIBUTIONS carries a DRAFT with two visible [ROLES TO CONFIRM]
-placeholders; it must be confirmed with all five authors before submission.
+edit in financial-inclusion-final-ft.docx. AUTHOR CONTRIBUTIONS: the two [ROLES TO CONFIRM] placeholders were resolved on
+2026-09-12 from the author's tracked edits in financial-inclusion.docx -- Adam
+and Gaku carry "writing -- review and editing" and conceptualization moved from
+Appiah-Twumasi to Tsiboe. Still to be confirmed with all five authors.
 -->
 
 # Declarations
@@ -47,9 +49,9 @@ submission.
                   Section 3's structure (revision_notes.md, comment [102]).
 -->
 
-**Author contributions.** M. Appiah-Twumasi: conceptualization, methodology,
-writing -- original draft, writing -- review and editing. F. Tsiboe:
-methodology, software, formal analysis, data curation, visualization,
-writing -- original draft, writing -- review and editing. A. Adam: [ROLES TO
-CONFIRM]. S. Gaku: [ROLES TO CONFIRM]. P. Quartey: writing -- review and
+**Author contributions.** M. Appiah-Twumasi: methodology, writing -- original
+draft, writing -- review and editing. F. Tsiboe: conceptualization, methodology,
+software, formal analysis, data curation, visualization, writing -- original
+draft, writing -- review and editing. A. Adam: writing -- review and editing.
+S. Gaku: writing -- review and editing. P. Quartey: writing -- review and
 editing, supervision.

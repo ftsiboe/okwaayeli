@@ -6,8 +6,9 @@ BRIEF section 2: credit users have a LOWER technology gap ratio, the TE gap is
 small and unstable in sign, MTE is lower and carried by the TGR gap. Language is
 associational throughout.
 
-LENGTH: **300 words maximum, AS RENDERED** (author instruction, 2026-09-07).
-Currently 244. Each inline R call resolves to ONE word when rendered, so a raw
+LENGTH: **250 words maximum, AS RENDERED** (journal "Preparation of
+Manuscripts" rule, 2026-09-11; was 300 under the 2026-09-07 instruction).
+Currently 245. Each inline R call resolves to ONE word when rendered, so a raw
 word count of this source overstates the total badly -- the source of a call is
 far longer than its output. To re-count after an edit, count the words of the
 abstract paragraph with every inline call treated as a single token. Do NOT
@@ -44,6 +45,17 @@ FLAGS: the MTE shortfall is quoted from Table 4 (matched, restricted); Table 5
 gives a larger value for the same treatment definition (Section 5.3 reports both).
 Keywords and JEL lines are carried over unchanged.
 
+FIRST PAGE (journal "Preparation of Manuscripts" rule, 2026-09-11). Page 1
+must show the title, an abstract of at most 250 words, 2 to 4 highlights of at
+most 125 characters each (spaces included, AS RENDERED), and up to three JEL
+codes. Author line, keywords and Declarations stay where they are by author
+decision of the same day. Highlight 2 carries one inline lookup; the other
+three are literal. Each highlight carries information the others do not
+(2026-09-12, author instruction): the gap, its decomposition, the input
+evidence, the borrower-identity result. Current rendered lengths:
+121, 114, 122, 94 characters. Recount if the TGR figure changes width.
+JEL cut from G21, G51, O13, Q12, Q14 to Q14, Q12, O13 (author choice).
+
 ================================================================================
 FINALISATION (2026-09-07). Everything above is the record of how this file was
 written; what follows is what is true of it now. Where the two disagree, this
@@ -70,9 +82,16 @@ which is the most informative sentence available in 150 words.
 
 ## Abstract
 
-Financial inclusion is central to agricultural development strategy across sub-Saharan Africa, where credit is expected to relax the liquidity constraints that keep smallholders from adopting best-practice technology. Whether the credit that farm households actually obtain does so is unsettled. However, the existing evidence rests largely on program or input-linked credit in particular crops and regions, compares borrowers with non-borrowers against a single frontier, and cannot separate a gap in the technology farmers operate from a gap in how efficiently they operate it. Here we show that Ghanaian crop farmers in borrowing households operate a technology farther from best practice than matched non-borrowers do, and that the shortfall is a technology gap rather than a management one. Using two Ghana Living Standards Survey rounds (`r fmt_num(objs$sample$n_pooled, 0)` crop farmers, `r fmt_pct(objs$treatment$share_treated, 1)` in borrowing households), we estimate group-specific stochastic frontiers enveloped by a stochastic meta frontier and match credit users one-to-one to observably similar non-users. The technology gap ratio is `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Technology gap ratio (TGR)")), 1)` percentage points lower for borrowers and meta-frontier efficiency `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Meta-frontier technical efficiency (MTE)")), 1)` points lower, while efficiency within each group's own technology is marginally higher; borrowing households also apply fewer purchased inputs per hectare without producing less. The gap survives every specification examined, yet is absent where the farmer is the borrower and widest where the spouse holds the loan. These are associations rather than causal effects, but they locate the binding constraint less in the supply of household credit than in the absence of loans designed to be invested on the farm.
+Financial inclusion is central to agricultural development strategy across sub-Saharan Africa, where credit is expected to relax the liquidity constraints that keep smallholders from adopting best-practice technology. Whether the credit that farm households obtain does so is unsettled. However, the existing evidence rests largely on program or input-linked credit in particular crops and regions, compares borrowers with non-borrowers against a single frontier, and cannot separate a gap in the technology farmers operate from a gap in how efficiently they operate it. Here we show that Ghanaian crop farmers in borrowing households operate a technology farther from best practice than matched non-borrowers do, and that the shortfall is a technology gap rather than a management one. Using two Ghana Living Standards Survey rounds (`r fmt_num(objs$sample$n_pooled, 0)` crop farmers, `r fmt_pct(objs$treatment$share_treated, 1)` in borrowing households), we estimate group-specific stochastic frontiers enveloped by a stochastic meta frontier and match credit users one-to-one to observably similar non-users. The technology gap ratio is `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Technology gap ratio (TGR)")), 1)` percentage points lower for borrowers and meta-frontier efficiency `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Meta-frontier technical efficiency (MTE)")), 1)` points lower, while efficiency within each group's own technology is marginally higher; borrowing households also apply fewer purchased inputs per hectare without producing less. The gap survives every specification examined yet is absent where the farmer is the borrower and widest where the spouse holds the loan. These are associations rather than causal effects, but they locate the binding constraint less in the supply of household credit than in the absence of loans designed to be invested on the farm.
+
+**Highlights**
+
+- Ghanaian crop farmers in borrowing households operate a technology farther from best practice than matched non-borrowers.
+- Borrowers' technology gap ratio is `r fmt_num(abs(100 * tbl_num("table4", "Matched", 4, block = "Technology gap ratio (TGR)")), 1)` points lower; efficiency within their own technology is marginally higher.
+- Borrowing households apply less fertilizer, planting material, hired labor and pesticide per hectare, and produce as much.
+- The gap is absent where the farmer is the borrower and widest where the spouse holds the loan.
 
 **Keywords**: financial inclusion; credit; mobile money; technical efficiency;
 meta-stochastic frontier; Ghana
 
-**JEL Classification**: G21, G51, O13, Q12, Q14
+**JEL Classification**: Q14, Q12, O13

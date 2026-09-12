@@ -24,6 +24,7 @@ MATCHING    <- FALSE # 002  -> estimation_data, matched samples                E
 TREATMENT   <- FALSE # 003  -> output/treatment_effects/, te_summary.rds       EXPENSIVE
 MSF         <- FALSE # 004  -> output/estimations/                             HPC, hours
 DESCRIPTIVE <- FALSE # 100  -> data/descriptive_exhibits.rds                   ~5-10 min
+INDEXSUM    <- FALSE # 103  -> data/financial_inclusion_index_summary.rds  seconds
 FIGURES     <- FALSE # 101  -> output/figures/ (png + data)                    moderate
 WORKBOOK    <- FALSE # 102  -> output/tables/financial_inclusion_tables.xlsx  minutes
 OBJECTS     <- TRUE # 301  -> narrative/article_objects.json                  fast
@@ -156,6 +157,7 @@ Keep.List <- c("Keep.List", ls())
 .run(TREATMENT,   "003_TREATMENT_financial_inclusion_study.R","Treatment effects")
 .run(MSF,         "004_MSF_financial_inclusion_study.R",      "Meta-stochastic frontier")
 .run(DESCRIPTIVE, "100_exhibit_descriptive_stats.R",          "Descriptive exhibits")
+.run(INDEXSUM,    "103_exhibit_index_summary.R",            "Index summary (Table S7)")
 .run(FIGURES,     "101_exhibit_figures.R",                    "Figures")
 .run(WORKBOOK,    "102_exhibit_table_workbook.R",             "Table workbook (xlsx)")
 

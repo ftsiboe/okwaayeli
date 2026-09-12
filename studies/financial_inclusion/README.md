@@ -15,6 +15,12 @@ every study-derived number in the text is an inline R lookup against the
 pipeline's own table builds -- nothing is hand-typed, and a lookup that cannot
 resolve stops the knit rather than printing a stale value.
 
+On 2026-09-11 the manuscript was fitted to the target journal's preparation rules, and on 2026-09-12 most of that move was reversed on the author's instruction. The first page carries the title, the abstract (under 250 words), four highlights of at most 125 characters and three JEL codes (Q14, Q12, O13); the four highlights were rewritten so that each carries information the others do not. Section 3 is intact. Sections 4.1, 4.3, 4.4, 5.1, 5.2, 5.4, 5.5, 5.6 and 6 carry their material again, condensed rather than pasted back, following the tracked changes and comments in `narrative/financial-inclusion.docx`. The two notes no comment had named -- the two-step estimation detail and the estimation of the Figure 1 gaps -- went back into 4.2 and 5.3 on the same day, so the appendix keeps only Notes S2 and S3: the construction and scope of the credit indicator, and the descriptive profile of the sample. The main text now runs to about 18,040 rendered words, above the journal's 10,000-word limit, which the author has set aside for now.
+
+Three internal contradictions were fixed at the same time: a purpose-share sum reported as covering "only about 104%" of loans, a mistrust reason described as "cited by more than one non-holder in ten" while rendering 0.3%, and a claim in 5.3 that the efficiency gap's sign moves across aggregation rules, which Section 5.5 contradicts. Every figure now carries a brief note. The introduction's findings paragraph was corrected: it still described a family-labor elasticity difference and a cocoa exception that the 2026-09-07 re-run had overturned.
+
+**Table S7 is new and does not render until its cache exists.** `scripts/103_exhibit_index_summary.R` (stage `INDEXSUM` in `run_article.R`) writes `data/financial_inclusion_index_summary.rds` from `FinIdxSi` on the pooled operator sample; `ft_tableS7()` in `scripts/exhibit_helpers_tables.R` formats it. Section 3 introduces the financial-inclusion index and reads it against that table, with every figure an inline lookup, so the knit stops until stage 103 has run.
+
 The 2026-09-08 revision did four things, recorded in full in
 [`narrative/revision/revision_notes.md`](narrative/revision/) section 11.
 (1) Redundancy: nineteen repeated claims, statistics and cross-references were
@@ -111,7 +117,7 @@ them are now wrong.
 **Keywords**: financial inclusion; credit; mobile money; technical efficiency;
 meta-stochastic frontier; Ghana
 
-**JEL Classification**: G21, G51, O13, Q12, Q14
+**JEL Classification**: Q14, Q12, O13
 
 ### Reproducing
 

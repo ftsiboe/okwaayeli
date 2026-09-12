@@ -1891,3 +1891,158 @@ if (!isTRUE(attr(.live_table, "round2_S5_S6"))) {
   }
   attr(.live_table, "round2_S5_S6") <- TRUE
 }
+
+
+# ==============================================================================
+# ROUND 3 ADDITION -- Table S7 (the financial-inclusion index over the sample).
+# Written 2026-09-12, appended after the Table S5/S6 block.
+# ==============================================================================
+# WHAT THIS IS
+#   Section 3 introduces the index and reads it; this is the table it reads.
+#   It defines
+#
+#       .tblS7_live() / ft_tableS7()      Table S7
+#
+#   and wraps .live_table() once more so tbl_num()/tbl_pct()/tbl_diff() reach
+#   the id "tableS7".
+#
+# INPUT
+#   studies/financial_inclusion/data/financial_inclusion_index_summary.rds,
+#   written by scripts/103_exhibit_index_summary.R. One row per reported group,
+#   with columns group, level, detail, n, mean, sd, p_top. No stored copy is
+#   substituted: if the cache is absent the build stops and names the script.
+#
+# CELLS
+#   c1  mean index (sd), on the unit interval
+#   c2  share of the group in the top fifth of the pooled index distribution,
+#       as a proportion -- the convention every share in these tables follows,
+#       so tbl_pct() reads it
+#   c3  operators
+# ==============================================================================
+
+.S7_RDS <- "financial_inclusion_index_summary.rds"
+.S7_CANDIDATES <- unique(c(
+  file.path(.S6_ROOTS, .S6_REL, .S7_RDS),
+  file.path(.STUDY_ROOT, "data", .S7_RDS)))
+
+.s7_path <- function() {
+  hit <- .S7_CANDIDATES[file.exists(.S7_CANDIDATES)]
+  if (!length(hit))
+    stop("exhibit_helpers_tables.R: Table S7 cannot find ", .S7_RDS, ".\n",
+         "  Looked in:\n    ", paste(.S7_CANDIDATES, collapse = "\n    "),
+         "\n  It is written by scripts/103_exhibit_index_summary.R ",
+         "(INDEXSUM in run_article.R). Run it once, then re-render.",
+         call. = FALSE)
+  hit[1]
+}
+
+.S7_BLOCKS <- c("All crop farmers", "Survey round", "Locality",
+                "Household credit use", "Formal account", "Region",
+                "Regional extremes")
+
+.s7_read <- function() .memo("index_summary", function() {
+  p <- .s7_path()
+  d <- as.data.frame(readRDS(p))
+  need <- c("group", "level", "n", "mean", "sd", "p_top")
+  miss <- setdiff(need, names(d))
+  if (length(miss))
+    stop("exhibit_helpers_tables.R: ", p, " lacks the column(s) ",
+         paste(miss, collapse = ", "), ". Columns present: ",
+         paste(names(d), collapse = ", "),
+         ".\n  These names are set in 103_exhibit_index_summary.R.",
+         call. = FALSE)
+  if (!"detail" %in% names(d)) d$detail <- NA_character_
+  for (cc in c("group", "level", "detail")) d[[cc]] <- as.character(d[[cc]])
+  for (cc in c("n", "mean", "sd", "p_top")) d[[cc]] <- as.numeric(d[[cc]])
+  if (anyNA(d$mean) || anyNA(d$n))
+    stop("exhibit_helpers_tables.R: ", p, " carries a row with no mean or no ",
+         "count. 103 writes a row only where the group is non-empty, so an NA ",
+         "here means the cache was edited by hand.", call. = FALSE)
+  if (anyDuplicated(paste(d$group, d$level, sep = "|")))
+    stop("exhibit_helpers_tables.R: ", p, " repeats a group/level pair; ",
+         "expected one row each.", call. = FALSE)
+  d
+})
+
+.tblS7_live <- function() .memo("tblS7", function() {
+  d <- .s7_read()
+  unknown <- setdiff(unique(d$group), .S7_BLOCKS)
+  if (length(unknown))
+    stop("exhibit_helpers_tables.R: Table S7 found the block(s) ",
+         paste(unknown, collapse = ", "), " in the cache but has no place for ",
+         "them. Add them to .S7_BLOCKS, in the order they should print.",
+         call. = FALSE)
+
+  rows <- list()
+  add <- function(label, header, cells)
+    rows[[length(rows) + 1L]] <<- data.frame(
+      c(list(label = label, header = header),
+        stats::setNames(as.list(cells), paste0("c", seq_along(cells)))),
+      stringsAsFactors = FALSE)
+
+  for (b in .S7_BLOCKS) {
+    dd <- d[d$group == b, , drop = FALSE]
+    if (!nrow(dd)) next
+    # A single-row block is its own heading -- "All crop farmers" needs no
+    # spanner above one line.
+    if (!(b == "All crop farmers" && nrow(dd) == 1L))
+      add(b, "1", c("", "", ""))
+    for (i in seq_len(nrow(dd)))
+      add(dd$level[i], "0",
+          c(sprintf("%.3f (%.3f)", dd$mean[i], dd$sd[i]),
+            sprintf("%.3f", dd$p_top[i]),
+            .fmt_n(dd$n[i])))
+  }
+
+  out <- do.call(rbind, rows)
+  out$header <- as.character(out$header)
+  out <- out[, c("label", "header", "c1", "c2", "c3")]
+  .guard_filled(out, "Table S7")
+  ex <- d[d$group == "Regional extremes", , drop = FALSE]
+  attr(out, "extremes") <- stats::setNames(ex$detail, ex$level)
+  out
+})
+
+ft_tableS7 <- function() {
+  d <- .tblS7_live()
+  ex <- attr(d, "extremes")
+  named <- if (length(ex) == 2 && !anyNA(ex))
+    paste0(" The highest and lowest regional means are ", ex[["Highest region"]],
+           " and ", ex[["Lowest region"]], ".") else ""
+  .ft_build(d,
+    c("Index mean (sd)", "Share in top fifth", "Operators"),
+    first_lab = "Group", size = 8,
+    notes = c(
+      paste0("The financial-inclusion index is the min-max scaled first ",
+             "principal component of the non-credit financial-service ",
+             "indicators of Table S6, fitted within survey-round-by-locality ",
+             "strata and placed on the metric of the pooled component ",
+             "(Note S1). It runs from 0 for the least to 1 for the most ",
+             "financially connected operator in the pooled sample, so its ",
+             "level is a position within this sample rather than an absolute ",
+             "measure of inclusion."),
+      paste0("Entries are unweighted means over farm operators, with standard ",
+             "deviations in parentheses. The top fifth is the highest 20% of ",
+             "the pooled index distribution; the share is the proportion of ",
+             "the group's operators in it, so the pooled row is 0.200 by ",
+             "construction.", named),
+      paste0("Groups are not mutually exclusive across blocks: every operator ",
+             "appears once in each block that applies. Regions are ordered by ",
+             "the group mean, largest first."),
+      .SRC_NOTE))
+}
+
+# ---- Registration ------------------------------------------------------------
+# Same pattern, and the same reason, as the S5/S6 wrapper above: this block is
+# appended after .live_table(), so it wraps rather than edits. Fold "tableS7"
+# into the switch by hand the next time that function is touched.
+if (!isTRUE(attr(.live_table, "round3_S7"))) {
+  .live_table_round2 <- .live_table
+  .live_table <- function(id) {
+    switch(id,
+      "tableS7" = .tblS7_live(),
+      .live_table_round2(id))
+  }
+  attr(.live_table, "round3_S7") <- TRUE
+  attr(.live_table, "round2_S5_S6") <- TRUE
+}

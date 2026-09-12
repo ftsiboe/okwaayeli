@@ -104,11 +104,15 @@ ft_table6()
 
 ![](../output/figures/input_TE.png){width=100%}
 
+*Note:* Markers are the proportional gap associated with household credit use, estimated on the one-to-one matched pairs as log-linear treatment effects, and whiskers show jackknife uncertainty. Each outcome is estimated three times: over the full matched sample, over the covariate distribution of non-users and over that of users. Inputs are per hectare; output and planting material are real values. Jackknife uncertainty is from 100 delete-one-enumeration-area replicates that re-run matching and estimation in every replicate (Section 4.5).
+
 \newpage
 
 #### Figure 2. The association between credit access and farm productivity differs by level of financial inclusion
 
 ![](../output/figures/heterogeneity_financial_inclusion.png){width=100%}
+
+*Note:* Markers are the credit-user mean less the matched non-user mean, shown for the technology gap ratio, technical efficiency and meta-frontier technical efficiency, by whether the household holds an account with a financial institution or contributes to a savings scheme; whiskers show jackknife uncertainty. Scores are operator-level summaries drawn from the single matched meta frontier; the frontiers are not re-estimated by subgroup, so the estimates describe heterogeneity within the main result rather than separate models. Jackknife uncertainty is from 100 delete-one-enumeration-area replicates that re-run matching and estimation in every replicate (Section 4.5).
 
 \newpage
 
@@ -116,8 +120,12 @@ ft_table6()
 
 ![](../output/figures/heterogeneity_genderAge.png){width=100%}
 
+*Note:* Markers are the credit-user mean less the matched non-user mean for the three efficiency measures, by operator gender, age band and level of schooling; whiskers show jackknife uncertainty. Scores are operator-level summaries drawn from the single matched meta frontier; the frontiers are not re-estimated by subgroup, so the estimates describe heterogeneity within the main result rather than separate models. Jackknife uncertainty is from 100 delete-one-enumeration-area replicates that re-run matching and estimation in every replicate (Section 4.5).
+
 \newpage
 
 #### Figure 4. Credit parity in crop production technology adoption and technical efficiency by major crops and administrative regions in Ghana (2012-2017)
 
 ![](../output/figures/heterogeneity_crop_region.png){width=100%}
+
+*Note:* Markers are the credit-user mean less the matched non-user mean for the three efficiency measures, by major crop and by administrative region of the period; whiskers show jackknife uncertainty. Scores are operator-level summaries drawn from the single matched meta frontier; the frontiers are not re-estimated by subgroup, so the estimates describe heterogeneity within the main result rather than separate models. Jackknife uncertainty is from 100 delete-one-enumeration-area replicates that re-run matching and estimation in every replicate (Section 4.5).
