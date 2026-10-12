@@ -28,6 +28,11 @@ data/*
 # scripts that live alongside the harmonized release.
 data-raw/*
 !data-raw/scripts/
+# The GLSS harmonization scripts moved from data-raw/scripts/data-prep/glss/
+# to data-raw/data-prep/glss/ (see _paths.do, FIX-16). Without this line the
+# data-raw/* rule above silently ignored every one of them.
+!data-raw/data-prep/
+data-raw/data-prep/**/_to_delete/
 !data-raw/releases/
 data-raw/releases/*
 !data-raw/releases/harmonized_data/
@@ -63,6 +68,7 @@ inst/doc/
 *.tar.gz
 replications
 
-# Harmonization run logs are local artefacts, not part of the repo.
-data-raw/scripts/data-prep/glss/logs/
+# Harmonization run logs (and validation CSVs written beside them) are local
+# artefacts, not part of the repo.
+data-raw/data-prep/**/logs/
 studies/financial_inclusion/narrative

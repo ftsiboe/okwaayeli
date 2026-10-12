@@ -55,6 +55,7 @@
 #   7     time_poverty                   7
 #   8     ag_services                    8
 #   9     input_dealers                  (no guard -- runs whenever case 9 fires)
+#   10    migration                      10
 #
 # Scripts live under <study>/scripts/ once a study is consolidated, and at the
 # study root before that. Check the path exists before adding or moving a case:
@@ -137,5 +138,13 @@ case "$SLURM_ARRAY_TASK_ID" in
     R --no-save -q < studies/input_dealers/scripts/001_DATA_input_dealers_study.R
     R --no-save -q < studies/input_dealers/scripts/002_MATCHING_input_dealers_study.R
     R --no-save -q < studies/input_dealers/scripts/003_TREATMENT_input_dealers_study.R
+    ;;
+
+  10)
+    echo "Running Migration Study"
+    R --no-save -q < studies/migration/scripts/000_initialize.R
+    R --no-save -q < studies/migration/scripts/001_DATA_migration_study.R
+    R --no-save -q < studies/migration/scripts/002_MATCHING_migration_study.R
+    R --no-save -q < studies/migration/scripts/003_TREATMENT_migration_study.R
     ;;
 esac

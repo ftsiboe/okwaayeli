@@ -194,6 +194,9 @@ flowchart LR
 - Time poverty and farm output gaps in Ghana \|
   [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/studies/time_poverty)
   — *code-only, manuscript pending*
+- Rural-urban migration and farm technology and efficiency in Ghana \|
+  [🗂️⚙️](https://github.com/ftsiboe/okwaayeli/tree/main/studies/migration)
+  — *staged, pipeline not yet run*
 
 ## ⬇️ Installation
 

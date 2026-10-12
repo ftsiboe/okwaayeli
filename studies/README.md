@@ -44,6 +44,8 @@ indicated by its name. The individual studies include:
 - **`input_dealers`**: Investigates the role of agricultural input dealers.
 - **`land_tenure`**: Assesses how land tenure security influences farm
   production.
+- **`migration`**: Examines how rural-urban migration (urban residence
+  experience and remittances from urban migrants) affects farm production.
 - **`resource_extraction`**: Investigates the impact of resource extraction
   activities on farm production.
 - **`societal_peace_and_cohesion`**: Examines how conflict and social
